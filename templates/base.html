@@ -1,13 +1,43 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{% block title %}{% endblock %}</title>
-</head>
-<body>
-    {% block content %}
-    {% endblock %}
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    </head>
+    <body>
+        {% block body %}
+
+        {% if messages %}
+        <div>
+        <strong>Messages:</strong>
+        <ul>
+            {% for message in messages %}
+            <li>{{message}}</li>
+            {% endfor %}
+        </ul>
+        </div>
+        {% endif %}
+
+        <div>
+        <strong>Menu:</strong>
+        <ul>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'account_email' %}">Change E-mail</a></li>
+            <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
+            {% else %}
+            <li><a href="{% url 'account_login' %}">Sign In</a></li>
+            <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
+            {% endif %}
+        </ul>
+        </div>
+        {% block content %}
+        {% endblock %}
+        {% endblock %}
+        {% block extra_body %}
+        {% endblock %}
+    </body>
 </html>
