@@ -1,3 +1,4 @@
+--upgrade pip
 django==2.2.9
 psycopg2-binary==2.8.4
 boto==2.49.0
