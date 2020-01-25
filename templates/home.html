@@ -5,7 +5,7 @@
 {% block content %}
     <h2>ホーム</h2>
     {% if user.is_authenticated %}
-        <p>ようこそ{{ user.get_username }}さん</p>
+        <p>ようこそ{{ user.usernonamae }}さん</p>
         <p><a href="{% url 'account_logout' %}">ログアウト</a></p>
     {% else %}
         <p><a href="{% url 'account_login' %}">ログイン</a></p>
