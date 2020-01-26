@@ -1,0 +1,13 @@
+{% load account %}{% user_display user as user_display %}{% load i18n %}{% autoescape off %}{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}ようこそ {{ site_name }}へ!
+
+※まだ本登録が完了していません。
+
+このメールは{{ user_display }}様のアカウントとメールアドレスを紐付けるための確認メールとなります。
+
+確認ができましたら、以下リンクより本登録を行ってください。 
+{{ activate_url }}
+{% endblocktrans %}
+{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}
+Thank you from {{ site_name }}!
+{{ site_domain }}{% endblocktrans %}
+{% endautoescape %}
