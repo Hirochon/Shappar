@@ -24,6 +24,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts.apps.AccountsConfig',     #カスタムユーザ
+    'django.contrib.sites',             #allauthではサイトを識別するsiteフレームワークが必須なためインストール
+    'allauth',                          #allauthアプリ
+    'allauth.account',                  #allauthの基本的なログイン認証系
+    'allauth.socialaccount',            #ソーシャル認証
+    'django_ses',                       #AmazonSESとの連携アプリ
 ]
 
 MIDDLEWARE = [
@@ -41,7 +47,10 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'templates', 'allauth'),
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -105,6 +114,36 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
+
+
+###########################
+# Authentication(allauth) #
+###########################
+
+SITE_ID = 1     #サイトの識別ID
+LOGIN_REDIRECT_URL = 'home'         #ログイン後のリダイレクト先
+LOGOUT_REDIRECT_URL = '/accounts/login/'    #ログアウト後のリダイレクト先
+AUTH_USER_MODEL = 'accounts.CustomUser'     #カスタムユーザーモデルの定義
+ACCOUNT_FORMS = {'signup': 'accounts.forms.MyCustomSignupForm'}    #カスタムフォームの定義
+ACCOUNT_EMAIL_REQUIRED = True      # 登録時にメールアドレスを必須項目にする。
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',                # デフォルトの設定
+    'allauth.account.auth_backends.AuthenticationBackend',      # allauthの認証方式
+)
+ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
+
+
+#######################
+# Amazon Web Services #
+#######################
+
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+
+# Email settings
+
+EMAIL_BACKEND = env('EMAIL_BACKEND')
+DEFAULT_FROM_EMAIL = SERVER_EMAIL = env('DEFAULT_FROM_EMAIL')
 
 
 if DEBUG:
