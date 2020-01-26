@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'allauth',                          #allauthアプリ
     'allauth.account',                  #allauthの基本的なログイン認証系
     'allauth.socialaccount',            #ソーシャル認証
+    'django_ses',                       #AmazonSESとの連携アプリ
 ]
 
 MIDDLEWARE = [
@@ -130,6 +131,19 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',      # allauthの認証方式
 )
 ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
+
+
+#######################
+# Amazon Web Services #
+#######################
+
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+
+# Email settings
+
+EMAIL_BACKEND = env('EMAIL_BACKEND')
+DEFAULT_FROM_EMAIL = SERVER_EMAIL = env('DEFAULT_FROM_EMAIL')
 
 
 if DEBUG:
