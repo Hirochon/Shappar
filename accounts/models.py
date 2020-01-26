@@ -17,7 +17,7 @@ class CustomUser(AbstractUser):
     choice_site = (("0","女"),("1","男"),("2","その他"),("3","無回答"))
     sex = models.CharField(verbose_name='性別', max_length=6, choices=choice_site)
     age = models.IntegerField(verbose_name='年齢', default=0, validators=[MinValueValidator(0),MaxValueValidator(150)])
-    born_at = models.DateTimeField(verbose_name='生年月日', blank=True, null=True)
+    born_at = models.DateField(verbose_name='生年月日', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
 
 
