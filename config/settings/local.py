@@ -1,5 +1,6 @@
 import os
 import environ
+from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -24,12 +25,25 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts.apps.AccountsConfig',     #カスタムユーザ
+    
+    # カスタムユーザ
+    'accounts.apps.AccountsConfig',
+
+    # API application
+    'apiv1.apps.Apiv1Config',
+
+    # allauth
     'django.contrib.sites',             #allauthではサイトを識別するsiteフレームワークが必須なためインストール
     'allauth',                          #allauthアプリ
     'allauth.account',                  #allauthの基本的なログイン認証系
     'allauth.socialaccount',            #ソーシャル認証
+
+    # AWS
     'django_ses',                       #AmazonSESとの連携アプリ
+
+    # 3rd party apps
+    'rest_framework',                   #RESTFrameworkアプリ
+    'djoser',                           #エンドポイントを設定
 ]
 
 MIDDLEWARE = [
@@ -144,6 +158,22 @@ AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
 
 EMAIL_BACKEND = env('EMAIL_BACKEND')
 DEFAULT_FROM_EMAIL = SERVER_EMAIL = env('DEFAULT_FROM_EMAIL')
+
+
+##################
+# REST Framework #
+##################
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
+    ]
+}
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES':('JWT',),
+    'ACCESS_TOKEN_LIFETIME':timedelta(minutes=30),
+}
 
 
 if DEBUG:
