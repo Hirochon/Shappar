@@ -129,6 +129,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',                # デフォルトの設定
     'allauth.account.auth_backends.AuthenticationBackend',      # allauthの認証方式
 )
+ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
 
 
 if DEBUG:
