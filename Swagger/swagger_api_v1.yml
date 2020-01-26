@@ -1,0 +1,1314 @@
+swagger: '2.0'
+info:
+  title: shappar
+  version: '1.0'
+  contact:
+    name: Fujiya
+  description: shappar api
+host: 'localhost:3000'
+schemes:
+  - http
+  - https
+produces:
+  - application/json
+consumes:
+  - application/json
+paths:
+  /api/v1/posts:
+    post:
+      summary: ''
+      operationId: post-api-posts
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            example-1: {}
+      description: new post
+      parameters: []
+      tags:
+        - posts
+  /api/v1/posts/public:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - posts
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              posts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    voted:
+                      type: boolean
+                      default: false
+                    text:
+                      type: string
+                    total:
+                      type: integer
+                    options:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          content:
+                            type: string
+                          num:
+                            type:
+                              - integer
+                              - 'null'
+          examples:
+            example-1:
+              posts:
+                - id: 1
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  voted: false
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 2
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 3
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 4
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 5
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 6
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 7
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 8
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 9
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+      operationId: get-api-v1-posts-public
+      description: get public posts
+  /api/v1/posts/private:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - posts
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              posts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    voted:
+                      type: boolean
+                      default: false
+                    text:
+                      type: string
+                    total:
+                      type: integer
+                    options:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          content:
+                            type: string
+                          num:
+                            type:
+                              - integer
+                              - 'null'
+          examples:
+            example-1:
+              posts:
+                - id: 1
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  voted: false
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 2
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 3
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 4
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 5
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 6
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 7
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 8
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 9
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+      operationId: get-api-v1-posts-private
+      description: get private posts
+  '/api/v1/posts/{postId}':
+    parameters:
+      - type: integer
+        name: postId
+        in: path
+        description: postId is required
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - posts
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              voted:
+                type: boolean
+                default: false
+              text:
+                type: string
+              total:
+                type: integer
+              options:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    content:
+                      type: string
+                    num:
+                      type:
+                        - integer
+                        - 'null'
+          examples:
+            example-1:
+              id: 1
+              text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+              voted: true
+              total: 1000
+              options:
+                - id: 1
+                  content: カレー
+                  num: 100
+                - id: 2
+                  content: ハンバーグ
+                  num: 300
+                - id: 3
+                  content: 唐揚げ
+                  num: 400
+                - id: 4
+                  content: '******************************************************************'
+                  num: 200
+      operationId: get-api-v1-posts-postId
+      description: get post details
+    post:
+      summary: ''
+      operationId: post-api-v1-posts-postId
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              voted:
+                type: boolean
+                default: false
+              text:
+                type: string
+              total:
+                type: integer
+              options:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    content:
+                      type: string
+                    num:
+                      type:
+                        - integer
+                        - 'null'
+          examples:
+            example-1:
+              id: 1
+              text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+              voted: true
+              total: 1000
+              options:
+                - id: 1
+                  content: カレー
+                  num: 100
+                - id: 2
+                  content: ハンバーグ
+                  num: 300
+                - id: 3
+                  content: 唐揚げ
+                  num: 400
+                - id: 4
+                  content: '******************************************************************'
+                  num: 200
+      description: vote post
+      tags:
+        - posts
+    put:
+      summary: ''
+      operationId: put-api-v1-posts-postId
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            example-1: {}
+      description: update post proparty or vote details
+      tags:
+        - posts
+    delete:
+      summary: ''
+      operationId: delete-api-v1-posts-postId
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            example-1: {}
+      description: delete post or vote
+      tags:
+        - posts
+  /api/v1/users:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              users:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    userID:
+                      type: string
+                    text:
+                      type: string
+                    iconURL:
+                      type: string
+                    homeImageURL:
+                      type: string
+          examples:
+            example-1:
+              users:
+                - id: 1
+                  name: sumple_user_name
+                  usersID: sample_user_001
+                  text: text text text text text text text
+                  iconURL: 'http://example.com/iconURL'
+                  homeImageURL: 'http://example.com/homeImageURL'
+                - id: 2
+                  name: sumple_user_name
+                  usersID: sample_user_001
+                  text: text text text text text text text
+                  iconURL: 'http://example.com/iconURL'
+                  homeImageURL: 'http://example.com/homeImageURL'
+                - id: 3
+                  name: sumple_user_name
+                  usersID: sample_user_001
+                  text: text text text text text text text
+                  iconURL: 'http://example.com/iconURL'
+                  homeImageURL: 'http://example.com/homeImageURL'
+                - id: 4
+                  name: sumple_user_name
+                  usersID: sample_user_001
+                  text: text text text text text text text
+                  iconURL: 'http://example.com/iconURL'
+                  homeImageURL: 'http://example.com/homeImageURL'
+                - id: 5
+                  name: sumple_user_name
+                  usersID: sample_user_001
+                  text: text text text text text text text
+                  iconURL: 'http://example.com/iconURL'
+                  homeImageURL: 'http://example.com/homeImageURL'
+      operationId: get-api-v1-users
+      description: get users list
+    post:
+      summary: ''
+      operationId: post-api-v1-users
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            example-1: {}
+      description: create new user
+      tags:
+        - users
+  '/api/v1/users/{userId}':
+    parameters:
+      - type: string
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              userID:
+                type: string
+              text:
+                type: string
+              iconURL:
+                type: string
+              homeImageURL:
+                type: string
+          examples:
+            example-1:
+              id: 1
+              name: sumple_user_name
+              usersID: sample_user_001
+              text: text text text text text text text
+              iconURL: 'http://example.com/iconURL'
+              homeImageURL: 'http://example.com/homeImageURL'
+      operationId: get-api-v1-users-userId
+      description: get user details
+    put:
+      summary: ''
+      operationId: put-api-v1-users-userId
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            example-1: {}
+      description: user detail update
+      tags:
+        - users
+    delete:
+      summary: ''
+      operationId: delete-api-v1-users-userId
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            example-1: {}
+      description: delete user
+      tags:
+        - users
+  '/api/v1/users/{userId}/settings':
+    parameters:
+      - type: string
+        name: userId
+        in: path
+        required: true
+    put:
+      summary: ''
+      operationId: put-api-v1-users-userId-settings
+      responses:
+        '200':
+          description: OK
+          examples:
+            example-1: {}
+          schema:
+            type: object
+      tags:
+        - users
+      description: update user settings
+    get:
+      summary: ''
+      operationId: get-api-v1-users-userId-settings
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              push:
+                type: boolean
+              darkmode:
+                type: boolean
+          examples:
+            example-1:
+              push: true
+              darkmode: false
+      description: get user settings
+      tags:
+        - users
+  '/api/v1/users/{userId}/posts':
+    parameters:
+      - type: string
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              posts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    voted:
+                      type: boolean
+                    text:
+                      type: string
+                    total:
+                      type: integer
+                    options:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          content:
+                            type: string
+                          num:
+                            type:
+                              - integer
+                              - 'null'
+          examples:
+            example-1:
+              posts:
+                - id: 1
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  voted: false
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: 100
+                    - id: 2
+                      content: ハンバーグ
+                      num: 300
+                    - id: 3
+                      content: 唐揚げ
+                      num: 400
+                    - id: 4
+                      content: '******************************************************************'
+                      num: 200
+                - id: 2
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: 100
+                    - id: 2
+                      content: ハンバーグ
+                      num: 300
+                    - id: 3
+                      content: 唐揚げ
+                      num: 400
+                    - id: 4
+                      content: '******************************************************************'
+                      num: 200
+                - id: 3
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: 100
+                    - id: 2
+                      content: ハンバーグ
+                      num: 300
+                    - id: 3
+                      content: 唐揚げ
+                      num: 400
+                    - id: 4
+                      content: '******************************************************************'
+                      num: 200
+                - id: 4
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: 100
+                    - id: 2
+                      content: ハンバーグ
+                      num: 300
+                    - id: 3
+                      content: 唐揚げ
+                      num: 400
+                    - id: 4
+                      content: '******************************************************************'
+                      num: 200
+                - id: 5
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: 100
+                    - id: 2
+                      content: ハンバーグ
+                      num: 300
+                    - id: 3
+                      content: 唐揚げ
+                      num: 400
+                    - id: 4
+                      content: '******************************************************************'
+                      num: 200
+                - id: 6
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: 100
+                    - id: 2
+                      content: ハンバーグ
+                      num: 300
+                    - id: 3
+                      content: 唐揚げ
+                      num: 400
+                    - id: 4
+                      content: '******************************************************************'
+                      num: 200
+                - id: 7
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: 100
+                    - id: 2
+                      content: ハンバーグ
+                      num: 300
+                    - id: 3
+                      content: 唐揚げ
+                      num: 400
+                    - id: 4
+                      content: '******************************************************************'
+                      num: 200
+                - id: 8
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: 100
+                    - id: 2
+                      content: ハンバーグ
+                      num: 300
+                    - id: 3
+                      content: 唐揚げ
+                      num: 400
+                    - id: 4
+                      content: '******************************************************************'
+                      num: 200
+                - id: 9
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: 100
+                    - id: 2
+                      content: ハンバーグ
+                      num: 300
+                    - id: 3
+                      content: 唐揚げ
+                      num: 400
+                    - id: 4
+                      content: '******************************************************************'
+                      num: 200
+      operationId: get-api-v1-users-userId-posts
+      description: get user posted posts
+  '/api/v1/users/{userId}/voted':
+    parameters:
+      - type: string
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              posts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    voted:
+                      type: boolean
+                    text:
+                      type: string
+                    total:
+                      type: integer
+                    options:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          content:
+                            type: string
+                          num:
+                            type:
+                              - integer
+                              - 'null'
+          examples:
+            example-1:
+              posts:
+                - id: 1
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  voted: false
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 2
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 3
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 4
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 5
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 6
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 7
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 8
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+                - id: 9
+                  voted: false
+                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+                  total: 1000
+                  options:
+                    - id: 1
+                      content: カレー
+                      num: null
+                    - id: 2
+                      content: ハンバーグ
+                      num: null
+                    - id: 3
+                      content: 唐揚げ
+                      num: null
+                    - id: 4
+                      content: '******************************************************************'
+                      num: null
+      operationId: get-api-v1-users-userId-voted
+      description: user voted posts
+  '/api/v1/friendships/{userId}':
+    post:
+      summary: ''
+      operationId: post-api-v1-friendships
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            example-1: {}
+      tags:
+        - friendships
+      description: create friendships
+    put:
+      summary: ''
+      operationId: put-api-v1-friendships
+      responses:
+        '200':
+          description: OK
+          examples:
+            example-1: {}
+          schema:
+            type: object
+      tags:
+        - friendships
+      description: update friendship
+    delete:
+      summary: ''
+      operationId: delete-api-v1-friendships
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            example-1: {}
+      tags:
+        - friendships
+      description: delete friendship
+    parameters:
+      - type: string
+        name: userId
+        in: path
+        required: true
+  '/api/v1/frendships/{userId}/following':
+    parameters:
+      - type: string
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - friendships
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              users:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    userId:
+                      type: string
+                    text:
+                      type: string
+                    iconURL:
+                      type: string
+                    homeImageURL:
+                      type: string
+          examples:
+            example-1:
+              users:
+                - id: 1
+                  usersID: sample_user_001
+                  text: text text text text text text text
+                  iconURL: 'http://example.com/iconURL'
+                  homeImageURL: 'http://example.com/homeImageURL'
+                - id: 2
+                  usersID: sample_user_001
+                  text: text text text text text text text
+                  iconURL: 'http://example.com/iconURL'
+                  homeImageURL: 'http://example.com/homeImageURL'
+                - id: 3
+                  usersID: sample_user_001
+                  text: text text text text text text text
+                  iconURL: 'http://example.com/iconURL'
+                  homeImageURL: 'http://example.com/homeImageURL'
+                - id: 4
+                  usersID: sample_user_001
+                  text: text text text text text text text
+                  iconURL: 'http://example.com/iconURL'
+                  homeImageURL: 'http://example.com/homeImageURL'
+                - id: 5
+                  usersID: sample_user_001
+                  text: text text text text text text text
+                  iconURL: 'http://example.com/iconURL'
+                  homeImageURL: 'http://example.com/homeImageURL'
+      operationId: get-api-v1-frendships-userId-following
+      description: get following users
+  '/api/v1/frendships/{userId}/followers':
+    parameters:
+      - type: string
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - friendships
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              users:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    userId:
+                      type: string
+                    text:
+                      type: string
+                    iconURL:
+                      type: string
+                    homeImageURL:
+                      type: string
+          examples:
+            example-1:
+              users:
+                - id: 1
+                  usersID: sample_user_001
+                  text: text text text text text text text
+                  iconURL: 'http://example.com/iconURL'
+                  homeImageURL: 'http://example.com/homeImageURL'
+                - id: 2
+                  usersID: sample_user_001
+                  text: text text text text text text text
+                  iconURL: 'http://example.com/iconURL'
+                  homeImageURL: 'http://example.com/homeImageURL'
+                - id: 3
+                  usersID: sample_user_001
+                  text: text text text text text text text
+                  iconURL: 'http://example.com/iconURL'
+                  homeImageURL: 'http://example.com/homeImageURL'
+                - id: 4
+                  usersID: sample_user_001
+                  text: text text text text text text text
+                  iconURL: 'http://example.com/iconURL'
+                  homeImageURL: 'http://example.com/homeImageURL'
+                - id: 5
+                  usersID: sample_user_001
+                  text: text text text text text text text
+                  iconURL: 'http://example.com/iconURL'
+                  homeImageURL: 'http://example.com/homeImageURL'
+      operationId: get-api-v1-frendships-userId-followers
+      description: get followers
+definitions: {}
+securityDefinitions: {}
+tags:
+  - name: posts
+  - name: users
+  - name: friendships
