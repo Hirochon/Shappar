@@ -5,7 +5,6 @@ module.exports = {
   },
   'extends': [
     'plugin:vue/essential',
-    'eslint:standard',
     '@vue/standard'
   ],
   rules: {
