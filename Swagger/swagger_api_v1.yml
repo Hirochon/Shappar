@@ -38,190 +38,9 @@ paths:
         '200':
           description: OK
           schema:
-            type: object
-            properties:
-              posts:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    voted:
-                      type: boolean
-                      default: false
-                    text:
-                      type: string
-                    total:
-                      type: integer
-                    options:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                          content:
-                            type: string
-                          num:
-                            type:
-                              - integer
+            $ref: '#/definitions/Posts'
           examples:
-            example-1:
-              posts:
-                - id: 1
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  voted: false
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 2
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 3
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 4
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 5
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 6
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 7
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 8
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 9
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
+            $ref: '#/definitions/Posts/x-examples'
       operationId: get-api-v1-posts-public
       description: get public posts
   /api/v1/posts/private:
@@ -233,190 +52,9 @@ paths:
         '200':
           description: OK
           schema:
-            type: object
-            properties:
-              posts:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    voted:
-                      type: boolean
-                      default: false
-                    text:
-                      type: string
-                    total:
-                      type: integer
-                    options:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                          content:
-                            type: string
-                          num:
-                            type:
-                              - integer
+            $ref: '#/definitions/Posts'
           examples:
-            example-1:
-              posts:
-                - id: 1
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  voted: false
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 2
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 3
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 4
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 5
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 6
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 7
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 8
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 9
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
+            $ref: '#/definitions/Posts/x-examples'
       operationId: get-api-v1-posts-private
       description: get private posts
   '/api/v1/posts/{postId}':
@@ -749,189 +387,9 @@ paths:
         '200':
           description: OK
           schema:
-            type: object
-            properties:
-              posts:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    voted:
-                      type: boolean
-                    text:
-                      type: string
-                    total:
-                      type: integer
-                    options:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                          content:
-                            type: string
-                          num:
-                            type:
-                              - integer
+            $ref: '#/definitions/Posts'
           examples:
-            example-1:
-              posts:
-                - id: 1
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  voted: false
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: 100
-                    - id: 2
-                      content: ハンバーグ
-                      num: 300
-                    - id: 3
-                      content: 唐揚げ
-                      num: 400
-                    - id: 4
-                      content: '******************************************************************'
-                      num: 200
-                - id: 2
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: 100
-                    - id: 2
-                      content: ハンバーグ
-                      num: 300
-                    - id: 3
-                      content: 唐揚げ
-                      num: 400
-                    - id: 4
-                      content: '******************************************************************'
-                      num: 200
-                - id: 3
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: 100
-                    - id: 2
-                      content: ハンバーグ
-                      num: 300
-                    - id: 3
-                      content: 唐揚げ
-                      num: 400
-                    - id: 4
-                      content: '******************************************************************'
-                      num: 200
-                - id: 4
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: 100
-                    - id: 2
-                      content: ハンバーグ
-                      num: 300
-                    - id: 3
-                      content: 唐揚げ
-                      num: 400
-                    - id: 4
-                      content: '******************************************************************'
-                      num: 200
-                - id: 5
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: 100
-                    - id: 2
-                      content: ハンバーグ
-                      num: 300
-                    - id: 3
-                      content: 唐揚げ
-                      num: 400
-                    - id: 4
-                      content: '******************************************************************'
-                      num: 200
-                - id: 6
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: 100
-                    - id: 2
-                      content: ハンバーグ
-                      num: 300
-                    - id: 3
-                      content: 唐揚げ
-                      num: 400
-                    - id: 4
-                      content: '******************************************************************'
-                      num: 200
-                - id: 7
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: 100
-                    - id: 2
-                      content: ハンバーグ
-                      num: 300
-                    - id: 3
-                      content: 唐揚げ
-                      num: 400
-                    - id: 4
-                      content: '******************************************************************'
-                      num: 200
-                - id: 8
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: 100
-                    - id: 2
-                      content: ハンバーグ
-                      num: 300
-                    - id: 3
-                      content: 唐揚げ
-                      num: 400
-                    - id: 4
-                      content: '******************************************************************'
-                      num: 200
-                - id: 9
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: 100
-                    - id: 2
-                      content: ハンバーグ
-                      num: 300
-                    - id: 3
-                      content: 唐揚げ
-                      num: 400
-                    - id: 4
-                      content: '******************************************************************'
-                      num: 200
+            $ref: '#/definitions/Posts/x-examples'
       operationId: get-api-v1-users-userId-posts
       description: get user posted posts
   '/api/v1/users/{userId}/voted':
@@ -948,189 +406,9 @@ paths:
         '200':
           description: OK
           schema:
-            type: object
-            properties:
-              posts:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    voted:
-                      type: boolean
-                    text:
-                      type: string
-                    total:
-                      type: integer
-                    options:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                          content:
-                            type: string
-                          num:
-                            type:
-                              - integer
+            $ref: '#/definitions/Posts'
           examples:
-            example-1:
-              posts:
-                - id: 1
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  voted: false
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 2
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 3
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 4
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 5
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 6
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 7
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 8
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
-                - id: 9
-                  voted: false
-                  text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-                  total: 1000
-                  options:
-                    - id: 1
-                      content: カレー
-                      num: null
-                    - id: 2
-                      content: ハンバーグ
-                      num: null
-                    - id: 3
-                      content: 唐揚げ
-                      num: null
-                    - id: 4
-                      content: '******************************************************************'
-                      num: null
+            $ref: '#/definitions/Posts/x-examples'
       operationId: get-api-v1-users-userId-voted
       description: user voted posts
   '/api/v1/friendships/{userId}':
@@ -1300,7 +578,504 @@ paths:
                   homeImageURL: 'http://example.com/homeImageURL'
       operationId: get-api-v1-frendships-userId-followers
       description: get followers
-definitions: {}
+definitions:
+  Posts:
+    title: Posts
+    type: object
+    properties:
+      posts:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            voted:
+              type: boolean
+              default: false
+            text:
+              type: string
+            total:
+              type: integer
+            options:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  content:
+                    type: string
+                  num:
+                    type:
+                      - integer
+    x-examples:
+      ' Unvoted':
+        posts:
+          - id: 1
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            voted: false
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: -1
+              - id: 2
+                content: ハンバーグ
+                num: -1
+              - id: 3
+                content: 唐揚げ
+                num: -1
+              - id: 4
+                content: '******************************************************************'
+                num: -1
+          - id: 2
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: -1
+              - id: 2
+                content: ハンバーグ
+                num: -1
+              - id: 3
+                content: 唐揚げ
+                num: -1
+              - id: 4
+                content: '******************************************************************'
+                num: -1
+          - id: 3
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: -1
+              - id: 2
+                content: ハンバーグ
+                num: -1
+              - id: 3
+                content: 唐揚げ
+                num: -1
+              - id: 4
+                content: '******************************************************************'
+                num: -1
+          - id: 4
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: -1
+              - id: 2
+                content: ハンバーグ
+                num: -1
+              - id: 3
+                content: 唐揚げ
+                num: -1
+              - id: 4
+                content: '******************************************************************'
+                num: -1
+          - id: 5
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: -1
+              - id: 2
+                content: ハンバーグ
+                num: -1
+              - id: 3
+                content: 唐揚げ
+                num: -1
+              - id: 4
+                content: '******************************************************************'
+                num: -1
+          - id: 6
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: -1
+              - id: 2
+                content: ハンバーグ
+                num: -1
+              - id: 3
+                content: 唐揚げ
+                num: -1
+              - id: 4
+                content: '******************************************************************'
+                num: -1
+          - id: 7
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: -1
+              - id: 2
+                content: ハンバーグ
+                num: -1
+              - id: 3
+                content: 唐揚げ
+                num: -1
+              - id: 4
+                content: '******************************************************************'
+                num: -1
+          - id: 8
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: -1
+              - id: 2
+                content: ハンバーグ
+                num: -1
+              - id: 3
+                content: 唐揚げ
+                num: -1
+              - id: 4
+                content: '******************************************************************'
+                num: -1
+          - id: 9
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: -1
+              - id: 2
+                content: ハンバーグ
+                num: -1
+              - id: 3
+                content: 唐揚げ
+                num: -1
+              - id: 4
+                content: '******************************************************************'
+                num: -1
+      Voted:
+        posts:
+          - id: 1
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            voted: false
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: 100
+              - id: 2
+                content: ハンバーグ
+                num: 300
+              - id: 3
+                content: 唐揚げ
+                num: 400
+              - id: 4
+                content: '******************************************************************'
+                num: 200
+          - id: 2
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: 100
+              - id: 2
+                content: ハンバーグ
+                num: 300
+              - id: 3
+                content: 唐揚げ
+                num: 400
+              - id: 4
+                content: '******************************************************************'
+                num: 200
+          - id: 3
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: 100
+              - id: 2
+                content: ハンバーグ
+                num: 300
+              - id: 3
+                content: 唐揚げ
+                num: 400
+              - id: 4
+                content: '******************************************************************'
+                num: 200
+          - id: 4
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: 100
+              - id: 2
+                content: ハンバーグ
+                num: 300
+              - id: 3
+                content: 唐揚げ
+                num: 400
+              - id: 4
+                content: '******************************************************************'
+                num: 200
+          - id: 5
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: 100
+              - id: 2
+                content: ハンバーグ
+                num: 300
+              - id: 3
+                content: 唐揚げ
+                num: 400
+              - id: 4
+                content: '******************************************************************'
+                num: 200
+          - id: 6
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: 100
+              - id: 2
+                content: ハンバーグ
+                num: 300
+              - id: 3
+                content: 唐揚げ
+                num: 400
+              - id: 4
+                content: '******************************************************************'
+                num: 200
+          - id: 7
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: 100
+              - id: 2
+                content: ハンバーグ
+                num: 300
+              - id: 3
+                content: 唐揚げ
+                num: 400
+              - id: 4
+                content: '******************************************************************'
+                num: 200
+          - id: 8
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: 100
+              - id: 2
+                content: ハンバーグ
+                num: 300
+              - id: 3
+                content: 唐揚げ
+                num: 400
+              - id: 4
+                content: '******************************************************************'
+                num: 200
+          - id: 9
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: 100
+              - id: 2
+                content: ハンバーグ
+                num: 300
+              - id: 3
+                content: 唐揚げ
+                num: 400
+              - id: 4
+                content: '******************************************************************'
+                num: 200
+      Mix:
+        posts:
+          - id: 1
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            voted: false
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: -1
+              - id: 2
+                content: ハンバーグ
+                num: -1
+              - id: 3
+                content: 唐揚げ
+                num: -1
+              - id: 4
+                content: '******************************************************************'
+                num: -1
+          - id: 2
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: 100
+              - id: 2
+                content: ハンバーグ
+                num: 300
+              - id: 3
+                content: 唐揚げ
+                num: 400
+              - id: 4
+                content: '******************************************************************'
+                num: 200
+          - id: 3
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: 100
+              - id: 2
+                content: ハンバーグ
+                num: 300
+              - id: 3
+                content: 唐揚げ
+                num: 400
+              - id: 4
+                content: '******************************************************************'
+                num: 200
+          - id: 4
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: -1
+              - id: 2
+                content: ハンバーグ
+                num: -1
+              - id: 3
+                content: 唐揚げ
+                num: -1
+              - id: 4
+                content: '******************************************************************'
+                num: -1
+          - id: 5
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: -1
+              - id: 2
+                content: ハンバーグ
+                num: -1
+              - id: 3
+                content: 唐揚げ
+                num: -1
+              - id: 4
+                content: '******************************************************************'
+                num: -1
+          - id: 6
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: 100
+              - id: 2
+                content: ハンバーグ
+                num: 300
+              - id: 3
+                content: 唐揚げ
+                num: 400
+              - id: 4
+                content: '******************************************************************'
+                num: 200
+          - id: 7
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: -1
+              - id: 2
+                content: ハンバーグ
+                num: -1
+              - id: 3
+                content: 唐揚げ
+                num: -1
+              - id: 4
+                content: '******************************************************************'
+                num: -1
+          - id: 8
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: 100
+              - id: 2
+                content: ハンバーグ
+                num: 300
+              - id: 3
+                content: 唐揚げ
+                num: 400
+              - id: 4
+                content: '******************************************************************'
+                num: 200
+          - id: 9
+            voted: false
+            text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+            total: 1000
+            options:
+              - id: 1
+                content: カレー
+                num: -1
+              - id: 2
+                content: ハンバーグ
+                num: -1
+              - id: 3
+                content: 唐揚げ
+                num: -1
+              - id: 4
+                content: '******************************************************************'
+                num: -1
+    description: ''
 securityDefinitions: {}
 tags:
   - name: posts
