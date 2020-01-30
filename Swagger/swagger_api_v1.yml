@@ -72,48 +72,9 @@ paths:
         '200':
           description: OK
           schema:
-            type: object
-            properties:
-              id:
-                type: integer
-              voted:
-                type: boolean
-                default: false
-              text:
-                type: string
-              total:
-                type: integer
-              options:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    content:
-                      type: string
-                    num:
-                      type:
-                        - integer
+            $ref: '#/definitions/Post'
           examples:
-            example-1:
-              id: 1
-              text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-              voted: true
-              total: 1000
-              options:
-                - id: 1
-                  content: カレー
-                  num: 100
-                - id: 2
-                  content: ハンバーグ
-                  num: 300
-                - id: 3
-                  content: 唐揚げ
-                  num: 400
-                - id: 4
-                  content: '******************************************************************'
-                  num: 200
+            $ref: '#/definitions/Post/x-examples'
       operationId: get-api-v1-posts-postId
       description: get post details
     post:
@@ -203,58 +164,9 @@ paths:
         '200':
           description: OK
           schema:
-            type: object
-            properties:
-              users:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    name:
-                      type: string
-                    userID:
-                      type: string
-                    text:
-                      type: string
-                    iconURL:
-                      type: string
-                    homeImageURL:
-                      type: string
+            $ref: '#/definitions/Users'
           examples:
-            example-1:
-              users:
-                - id: 1
-                  name: sumple_user_name
-                  usersID: sample_user_001
-                  text: text text text text text text text
-                  iconURL: 'http://example.com/iconURL'
-                  homeImageURL: 'http://example.com/homeImageURL'
-                - id: 2
-                  name: sumple_user_name
-                  usersID: sample_user_001
-                  text: text text text text text text text
-                  iconURL: 'http://example.com/iconURL'
-                  homeImageURL: 'http://example.com/homeImageURL'
-                - id: 3
-                  name: sumple_user_name
-                  usersID: sample_user_001
-                  text: text text text text text text text
-                  iconURL: 'http://example.com/iconURL'
-                  homeImageURL: 'http://example.com/homeImageURL'
-                - id: 4
-                  name: sumple_user_name
-                  usersID: sample_user_001
-                  text: text text text text text text text
-                  iconURL: 'http://example.com/iconURL'
-                  homeImageURL: 'http://example.com/homeImageURL'
-                - id: 5
-                  name: sumple_user_name
-                  usersID: sample_user_001
-                  text: text text text text text text text
-                  iconURL: 'http://example.com/iconURL'
-                  homeImageURL: 'http://example.com/homeImageURL'
+            $ref: '#/definitions/Users/x-examples'
       operationId: get-api-v1-users
       description: get users list
     post:
@@ -284,28 +196,9 @@ paths:
         '200':
           description: OK
           schema:
-            type: object
-            properties:
-              id:
-                type: integer
-              name:
-                type: string
-              userID:
-                type: string
-              text:
-                type: string
-              iconURL:
-                type: string
-              homeImageURL:
-                type: string
+            $ref: '#/definitions/User'
           examples:
-            example-1:
-              id: 1
-              name: sumple_user_name
-              usersID: sample_user_001
-              text: text text text text text text text
-              iconURL: 'http://example.com/iconURL'
-              homeImageURL: 'http://example.com/homeImageURL'
+            $ref: '#/definitions/User/x-examples'
       operationId: get-api-v1-users-userId
       description: get user details
     put:
@@ -470,51 +363,9 @@ paths:
         '200':
           description: OK
           schema:
-            type: object
-            properties:
-              users:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    userId:
-                      type: string
-                    text:
-                      type: string
-                    iconURL:
-                      type: string
-                    homeImageURL:
-                      type: string
+            $ref: '#/definitions/Users'
           examples:
-            example-1:
-              users:
-                - id: 1
-                  usersID: sample_user_001
-                  text: text text text text text text text
-                  iconURL: 'http://example.com/iconURL'
-                  homeImageURL: 'http://example.com/homeImageURL'
-                - id: 2
-                  usersID: sample_user_001
-                  text: text text text text text text text
-                  iconURL: 'http://example.com/iconURL'
-                  homeImageURL: 'http://example.com/homeImageURL'
-                - id: 3
-                  usersID: sample_user_001
-                  text: text text text text text text text
-                  iconURL: 'http://example.com/iconURL'
-                  homeImageURL: 'http://example.com/homeImageURL'
-                - id: 4
-                  usersID: sample_user_001
-                  text: text text text text text text text
-                  iconURL: 'http://example.com/iconURL'
-                  homeImageURL: 'http://example.com/homeImageURL'
-                - id: 5
-                  usersID: sample_user_001
-                  text: text text text text text text text
-                  iconURL: 'http://example.com/iconURL'
-                  homeImageURL: 'http://example.com/homeImageURL'
+            $ref: '#/definitions/Users/x-examples'
       operationId: get-api-v1-frendships-userId-following
       description: get following users
   '/api/v1/frendships/{userId}/followers':
@@ -531,86 +382,17 @@ paths:
         '200':
           description: OK
           schema:
-            type: object
-            properties:
-              users:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    userId:
-                      type: string
-                    text:
-                      type: string
-                    iconURL:
-                      type: string
-                    homeImageURL:
-                      type: string
+            $ref: '#/definitions/Users'
           examples:
-            example-1:
-              users:
-                - id: 1
-                  usersID: sample_user_001
-                  text: text text text text text text text
-                  iconURL: 'http://example.com/iconURL'
-                  homeImageURL: 'http://example.com/homeImageURL'
-                - id: 2
-                  usersID: sample_user_001
-                  text: text text text text text text text
-                  iconURL: 'http://example.com/iconURL'
-                  homeImageURL: 'http://example.com/homeImageURL'
-                - id: 3
-                  usersID: sample_user_001
-                  text: text text text text text text text
-                  iconURL: 'http://example.com/iconURL'
-                  homeImageURL: 'http://example.com/homeImageURL'
-                - id: 4
-                  usersID: sample_user_001
-                  text: text text text text text text text
-                  iconURL: 'http://example.com/iconURL'
-                  homeImageURL: 'http://example.com/homeImageURL'
-                - id: 5
-                  usersID: sample_user_001
-                  text: text text text text text text text
-                  iconURL: 'http://example.com/iconURL'
-                  homeImageURL: 'http://example.com/homeImageURL'
+            $ref: '#/definitions/Users/x-examples'
       operationId: get-api-v1-frendships-userId-followers
       description: get followers
 definitions:
   Posts:
     title: Posts
     type: object
-    properties:
-      posts:
-        type: array
-        items:
-          type: object
-          properties:
-            id:
-              type: integer
-            voted:
-              type: boolean
-              default: false
-            text:
-              type: string
-            total:
-              type: integer
-            options:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  content:
-                    type: string
-                  num:
-                    type:
-                      - integer
     x-examples:
-      ' Unvoted':
+      Unvoted:
         posts:
           - id: 1
             text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
@@ -1076,6 +858,144 @@ definitions:
                 content: '******************************************************************'
                 num: -1
     description: ''
+    properties:
+      posts:
+        type: array
+        items:
+          $ref: '#/definitions/Post'
+  User:
+    title: User
+    type: object
+    x-examples:
+      User:
+        UUID: UUID_string
+        usersID: sample_user_001
+        name: sumple_user_name
+        text: text text text text text text text
+        iconURL: 'http://example.com/iconURL'
+        homeImageURL: 'http://example.com/homeImageURL'
+        followers: 100
+        follow: 100
+        followed: true
+    properties:
+      UUID:
+        type: string
+      name:
+        type: string
+      userID:
+        type: string
+      text:
+        type: string
+      homeImageURL:
+        type: string
+      iconURL:
+        type: string
+      followers:
+        type: integer
+      follow:
+        type: integer
+      followed:
+        type: boolean
+  Post:
+    title: Post
+    type: object
+    properties:
+      id:
+        type: integer
+      voted:
+        type: boolean
+        default: false
+      text:
+        type: string
+      total:
+        type: integer
+      options:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            content:
+              type: string
+            num:
+              type:
+                - integer
+    x-examples:
+      Post:
+        id: 1
+        text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
+        voted: true
+        total: 1000
+        options:
+          - id: 1
+            content: カレー
+            num: 100
+          - id: 2
+            content: ハンバーグ
+            num: 300
+          - id: 3
+            content: 唐揚げ
+            num: 400
+          - id: 4
+            content: '******************************************************************'
+            num: 200
+  Users:
+    title: Users
+    type: object
+    properties:
+      users:
+        type: array
+        items:
+          $ref: '#/definitions/User'
+    x-examples:
+      Users:
+        users:
+          - UUID: UUID_string_001
+            usersID: sample_user_001
+            name: sumple_user_name
+            text: text text text text text text text
+            iconURL: 'http://example.com/iconURL'
+            homeImageURL: 'http://example.com/homeImageURL'
+            followers: 100
+            follow: 100
+            followed: true
+          - UUID: UUID_string_002
+            usersID: sample_user_002
+            name: sumple_user_name
+            text: text text text text text text text
+            iconURL: 'http://example.com/iconURL'
+            homeImageURL: 'http://example.com/homeImageURL'
+            followers: 200
+            follow: 200
+            followed: false
+          - UUID: UUID_string_003
+            usersID: sample_user_003
+            name: sumple_user_name
+            text: text text text text text text text
+            iconURL: 'http://example.com/iconURL'
+            homeImageURL: 'http://example.com/homeImageURL'
+            followers: 300
+            follow: 300
+            followed: false
+          - UUID: UUID_string_001
+            usersID: sample_user_001
+            name: sumple_user_name
+            text: text text text text text text text
+            iconURL: 'http://example.com/iconURL'
+            homeImageURL: 'http://example.com/homeImageURL'
+            followers: 400
+            follow: 400
+            followed: true
+          - UUID: UUID_string_004
+            usersID: sample_user_004
+            name: sumple_user_name
+            text: text text text text text text text
+            iconURL: 'http://example.com/iconURL'
+            homeImageURL: 'http://example.com/homeImageURL'
+            followers: 500
+            follow: 500
+            followed: true
 securityDefinitions: {}
 tags:
   - name: posts
