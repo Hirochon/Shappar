@@ -40,6 +40,8 @@ INSTALLED_APPS = [
 
     # AWS
     'django_ses',                       #AmazonSESとの連携アプリ
+    'storages',                         #AmazonS3との連携アプリ
+    'django_cleanup',                   #必要のない静的ファイルを自動消去アプリ
 
     # 3rd party apps
     'rest_framework',                   #RESTFrameworkアプリ
@@ -154,10 +156,22 @@ ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
 AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
 
-# Email settings
+# Amazon SES settings
 
 EMAIL_BACKEND = env('EMAIL_BACKEND')
 DEFAULT_FROM_EMAIL = SERVER_EMAIL = env('DEFAULT_FROM_EMAIL')
+
+# Amazon S3 settings
+
+AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+AWS_LOCATION = 'static'
+AWS_DEFAULT_ACL = None
+STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+STATICFILES_STORAGE = env('STATICFILES_STORAGE')
 
 
 ##################
