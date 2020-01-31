@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     search () {
-      console.log(this.query)
+      // console.log(this.query)
       this.axios.get('/api/v1/posts/public?q=' + this.query)
         .then((response) => {
           this.posts = response.data.posts
