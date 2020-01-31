@@ -1,6 +1,8 @@
+# backend
 db.sqlite3
 __pycache__/
 .env
+media/
 
 .DS_Store
 node_modules
