@@ -77,7 +77,7 @@ export default {
     this.axios.get('/api/v1/users/' + this.id)
       .then((response) => {
         this.user = response.data
-        console.log('userData : ' + response.status)
+        // console.log('userData : ' + response.status)
       })
     this.axios.get('/api/v1/users/' + this.id + '/posts')
       .then((response) => {
@@ -89,7 +89,7 @@ export default {
           }
         }
         this.posts = response.data.posts
-        console.log('postsData : ' + response.status)
+        // console.log('postsData : ' + response.status)
       })
     this.axios.get('/api/v1/users/' + this.id + '/voted')
       .then((response) => {
@@ -101,7 +101,7 @@ export default {
           }
         }
         this.voted = response.data.posts
-        console.log('votedData : ' + response.status)
+        // console.log('votedData : ' + response.status)
       })
   }
 }

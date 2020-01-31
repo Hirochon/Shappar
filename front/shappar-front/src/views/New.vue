@@ -57,7 +57,7 @@ export default {
         options: this.options
       })
         .then((response) => {
-          console.log(response)
+          // console.log(response)
           if (response.status === 200) alert('投稿完了！')
         })
       this.text = ''
