@@ -5,7 +5,7 @@ from django.core.validators import MinValueValidator,MaxValueValidator,MaxLength
 from django.db import models
 
 def get_iconimage_path(instance, filename):
-    return 'images/{0}/iconimage/{1}'.format(instance.user.id, filename)
+    return 'images/{0}/iconimage/{1}'.format(instance.id, filename)
 
 class CustomUser(AbstractUser):
     ''' 拡張ユーザーモデル '''
