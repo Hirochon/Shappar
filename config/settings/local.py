@@ -129,7 +129,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # Media Files
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 ###########################
@@ -174,6 +174,9 @@ AWS_DEFAULT_ACL = None
 # STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)          # CloudFront無しの場合
 STATIC_URL = 'https://%s/' % AWS_S3_CUSTOM_DOMAIN
 STATICFILES_STORAGE = env('STATICFILES_STORAGE')
+
+# Mediaファイルの設定
+DEFAULT_FILE_STORAGE = 'config.storage_backends.MediaStorage'
 
 
 ##################
