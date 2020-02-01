@@ -8,15 +8,11 @@ from allauth.account.utils import user_email, user_field
 
 
 class CustomAccountAdapter(DefaultAccountAdapter):
-    """
-    非ソーシャルアカウントユーザ用のアダプタクラス
-    """
+    """アカウントユーザのアダプタクラス"""
 
     def save_user(self, request, user, form, commit=True):
-        """
-        save_userをオーバライド
-        ユーザ保存時の処理を定義
-        """
+        """save_userをオーバライド→ユーザ保存時の処理を定義"""
+
         data = form.cleaned_data
         username = data.get('username')
         email = data.get('email')
@@ -25,10 +21,7 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         user.age = data.get('age')
         user.born_at = data.get('born_at')
 
-        """
-        django-allauth/allauth/account/utils.pyのuser_fieldを使用
-        setattr(user, field, fieldの値)でuserのプロパティに値を入れている。
-        """
+        # django-allauth/allauth/account/utils.pyのuser_fieldを使用
         user_field(user, 'username', username)
         user_email(user, email)
 
