@@ -5,6 +5,7 @@ boto3==1.10.45
 django-allauth==0.41.0
 django-ses==0.8.13
 django-storages==1.8
+django-cleanup==4.0.0
 pillow==6.2.1
 djangorestframework==3.11.0
 djangorestframework-simplejwt==4.4.0
