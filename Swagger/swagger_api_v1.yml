@@ -43,6 +43,11 @@ paths:
             $ref: '#/definitions/Posts/x-examples'
       operationId: get-api-v1-posts-public
       description: get public posts
+      parameters:
+        - type: string
+          in: query
+          name: q
+          description: 検索ワード
   /api/v1/posts/private:
     get:
       summary: Your GET endpoint
@@ -188,6 +193,7 @@ paths:
         name: userId
         in: path
         required: true
+        description: ユーザーが設定できるuserID
     get:
       summary: Your GET endpoint
       tags:
@@ -233,6 +239,7 @@ paths:
         name: userId
         in: path
         required: true
+        description: ユーザーが設定できるuserID
     put:
       summary: ''
       operationId: put-api-v1-users-userId-settings
@@ -272,6 +279,7 @@ paths:
         name: userId
         in: path
         required: true
+        description: ユーザーが設定できるuserID
     get:
       summary: Your GET endpoint
       tags:
@@ -291,6 +299,7 @@ paths:
         name: userId
         in: path
         required: true
+        description: ユーザーが設定できるuserID
     get:
       summary: Your GET endpoint
       tags:
@@ -349,12 +358,14 @@ paths:
         name: userId
         in: path
         required: true
+        description: ユーザーが設定できるuserID
   '/api/v1/frendships/{userId}/following':
     parameters:
       - type: string
         name: userId
         in: path
         required: true
+        description: ユーザーが設定できるuserID
     get:
       summary: Your GET endpoint
       tags:
@@ -374,6 +385,7 @@ paths:
         name: userId
         in: path
         required: true
+        description: ユーザーが設定できるuserID
     get:
       summary: Your GET endpoint
       tags:
