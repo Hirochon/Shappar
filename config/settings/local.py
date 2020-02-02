@@ -1,5 +1,6 @@
 import os
 import environ
+from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -24,12 +25,27 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts.apps.AccountsConfig',     #カスタムユーザ
+    
+    # カスタムユーザ
+    'accounts.apps.AccountsConfig',
+
+    # API application
+    'apiv1.apps.Apiv1Config',
+
+    # allauth
     'django.contrib.sites',             #allauthではサイトを識別するsiteフレームワークが必須なためインストール
     'allauth',                          #allauthアプリ
     'allauth.account',                  #allauthの基本的なログイン認証系
     'allauth.socialaccount',            #ソーシャル認証
+
+    # AWS
     'django_ses',                       #AmazonSESとの連携アプリ
+    'storages',                         #AmazonS3との連携アプリ
+    'django_cleanup',                   #必要のない静的ファイルを自動消去アプリ
+
+    # 3rd party apps
+    'rest_framework',                   #RESTFrameworkアプリ
+    'djoser',                           #エンドポイントを設定
 ]
 
 MIDDLEWARE = [
@@ -106,14 +122,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-STATIC_URL = '/static/'
+# STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 
 # Media Files
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 ###########################
@@ -140,10 +156,43 @@ ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
 AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
 
-# Email settings
+# Amazon SES settings
 
 EMAIL_BACKEND = env('EMAIL_BACKEND')
 DEFAULT_FROM_EMAIL = SERVER_EMAIL = env('DEFAULT_FROM_EMAIL')
+
+# Amazon S3 settings
+
+AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+# AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME        # CloudFront無しの場合
+AWS_S3_CUSTOM_DOMAIN = env('AWS_S3_CUSTOM_DOMAIN')
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+AWS_LOCATION = 'static'
+AWS_DEFAULT_ACL = None
+# STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)          # CloudFront無しの場合
+STATIC_URL = 'https://%s/' % AWS_S3_CUSTOM_DOMAIN
+STATICFILES_STORAGE = env('STATICFILES_STORAGE')
+
+# Mediaファイルの設定
+DEFAULT_FILE_STORAGE = 'config.storage_backends.MediaStorage'
+
+
+##################
+# REST Framework #
+##################
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
+    ]
+}
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES':('JWT',),
+    'ACCESS_TOKEN_LIFETIME':timedelta(minutes=30),
+}
 
 
 if DEBUG:
