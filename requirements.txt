@@ -1,4 +1,5 @@
 django==2.2.9
+gunicorn==20.0.4
 psycopg2-binary==2.8.4
 boto==2.49.0
 boto3==1.10.45
