@@ -62,6 +62,11 @@ paths:
             $ref: '#/definitions/Posts/x-examples'
       operationId: get-api-v1-posts-private
       description: get private posts
+      parameters:
+        - type: string
+          in: query
+          name: q
+          description: 検索キーワード
   '/api/v1/posts/{postId}':
     parameters:
       - type: integer
