@@ -1,7 +1,7 @@
 version: "3"
 services: 
     back:
-        build: .
+        build: "./"
         ports: 
             - "8000:8000"
         volumes:
@@ -19,9 +19,7 @@ services:
         volumes:
             - "dbdata:/var/lib/postgresql/data"
     nginx:
-        build:
-            context: .
-            dockerfile: Dockerfile_nginx
+        build: "./nginx/"
         ports:
             - "80:80"
         volumes:
