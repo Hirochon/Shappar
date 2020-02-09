@@ -11,7 +11,7 @@ class CustomAccountAdapter(DefaultAccountAdapter):
     """アカウントユーザのアダプタクラス"""
 
     def save_user(self, request, user, form, commit=True):
-        """save_userをオーバライド→ユーザ保存時の処理を定義"""
+        """allauthのsave_userを再定義→ユーザ保存時の処理を追加"""
 
         data = form.cleaned_data
         username = data.get('username')
