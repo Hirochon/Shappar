@@ -1,18 +1,32 @@
 version: "3"
 services: 
+    back:
+        build: "./"
+        ports: 
+            - "8000:8000"
+        volumes:
+            - "staticdata:/code/static/"
+        command: "gunicorn config.wsgi -b 0.0.0.0:8000"
+        depends_on: 
+            - db
     db:
-        image: postgres
+        image: postgres:12.1
         environment:
             - POSTGRES_USER
             - POSTGRES_PASSWORD
         ports:
             - "5432:5432"
-    back:
-        build: .
-        volumes: 
-            - .:/code
-        ports: 
-            - "8000:8000"
-        command: gunicorn config.wsgi -b 0.0.0.0:8000
+        volumes:
+            - "dbdata:/var/lib/postgresql/data"
+    nginx:
+        build: "./nginx/"
+        ports:
+            - "80:80"
+        volumes:
+            - "staticdata:/opt/apps/static/"
         depends_on: 
-            - db
+            - back
+
+volumes:
+    dbdata:
+    staticdata:
