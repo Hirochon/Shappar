@@ -5,6 +5,8 @@ from django.utils.translation import gettext_lazy as _
 from .models import CustomUser
 
 class CustomUserAdmin(UserAdmin):
+    """管理画面の表示する項目を設定"""
+
     list_display = ('usernonamae', 'id', 'username','email','age','sex','is_staff')
 
     fieldsets = (

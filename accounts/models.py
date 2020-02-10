@@ -8,7 +8,7 @@ def get_iconimage_path(instance, filename):
     return 'images/{0}/iconimage/{1}'.format(instance.id, filename)
 
 class CustomUser(AbstractUser):
-    ''' 拡張ユーザーモデル '''
+    """拡張ユーザーモデル"""
 
     class Meta(AbstractUser.Meta):
         db_table = 'custom_user'
