@@ -16,4 +16,4 @@ startapp:
 	docker-compose run --rm back python3 manage.py startapp $(folder)
 
 collectstatic:
-	docker-compose run --rm back python3 manage.py collectstatic
+	docker-compose run --rm back python3 manage.py collectstatic --noinput
