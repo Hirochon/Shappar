@@ -7,8 +7,8 @@ services:
         volumes:
             - "staticdata:/code/static/"
             - "./:/code/"
-        command: "gunicorn config.wsgi -b 0.0.0.0:8000"           # 本番環境
-        # command: "python3 manage.py runserver 0.0.0.0:8000"         # テスト環境
+        # command: "gunicorn config.wsgi -b 0.0.0.0:8000"           # 本番環境
+        command: "python3 manage.py runserver 0.0.0.0:8000"         # テスト環境
         depends_on: 
             - db
     db:
