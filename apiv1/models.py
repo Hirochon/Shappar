@@ -48,4 +48,10 @@ class Poll(models.Model):
         db_table = 'poll'
 
     post = models.OneToOneField(Post, verbose_name='投稿', on_delete=models.PROTECT, related_name='poll_post')
-    user = models.ManyToManyField(get_user_model(), verbose_name='投票者')
+    user = models.ForeignKey(get_user_model(), verbose_name='投票者', on_delete=models.PROTECT, related_name='poll_user')
+    voted = models.BooleanField(verbose_name='投稿したかどうか', default=False)
+    total = models.IntegerField(verbose_name='合計投票数', default=0)
+    num_1 = models.IntegerField(verbose_name='小計1', default=0)
+    num_2 = models.IntegerField(verbose_name='小計2', default=0)
+    num_3 = models.IntegerField(verbose_name='小計3', default=0)
+    num_4 = models.IntegerField(verbose_name='小計4', default=0)
