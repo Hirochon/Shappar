@@ -14,7 +14,7 @@ class MypageSerializer(serializers.ModelSerializer):
         model = Mypage
         fields = ['unique_id','user_id','name','introduction','iconimage','homeimage']
 
-class PostSerializer(serializer.ModelSerializer):
+class PostSerializer(serializers.ModelSerializer):
     """投稿用のシリアライザ"""
 
     user_id = serializers.ReadOnlyField(source='user.id')
