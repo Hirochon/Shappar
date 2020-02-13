@@ -2,17 +2,18 @@
   <div class="MyPage">
     <div class="Mypage__main">
       <div class="Mypage__image">
-        <img :src="user.homeImageURL" alt="">
+        <img :src="user.homeimage" alt="">
       </div>
       <div class="Mypage__icon">
-        <img :src="user.iconURL" alt="">
+        <img :src="user.iconimage" alt="">
       </div>
       <div class="Mypage__name">
-        <h1>{{user.name}}</h1>
-        <h2>{{user.usersID}}</h2>
+        <h1>{{user.user_id}}</h1>
+        <h2>{{user.unique_id}}</h2>
+        <h2>{{user.name}}</h2>
       </div>
       <div class="Mypage__text">
-        {{user.text}}
+        {{user.introduction}}
       </div>
     </div>
     <div class="PostSwitch">
@@ -66,7 +67,7 @@ export default {
   },
   data: function () {
     return {
-      id: 1,
+      id: 'syunsuke',
       isActive: 0,
       user: {},
       posts: [],

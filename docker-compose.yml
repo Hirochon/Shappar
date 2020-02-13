@@ -25,6 +25,7 @@ services:
         ports:
             - "80:80"
         volumes:
+            - "./static/:/opt/apps/static/"
             - "staticdata:/opt/apps/static/"
         depends_on: 
             - back
