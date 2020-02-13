@@ -2,6 +2,7 @@
   <div class="Public">
     <Search :query="query" @search="search()"></Search>
     <PostList :posts-data="posts"></PostList>
+    <NavBar></NavBar>
   </div>
 </template>
 
@@ -9,12 +10,14 @@
 // @ is an alias to /src
 import Search from '@/components/Search.vue'
 import PostList from '@/components/PostList.vue'
+import NavBar from '@/components/NavBar.vue'
 
 export default {
   name: 'public',
   components: {
     Search,
-    PostList
+    PostList,
+    NavBar
   },
   data: function () {
     return {

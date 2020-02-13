@@ -16,7 +16,11 @@ const routes = [
   },
   {
     path: '/',
-    component: Public
+    component: Public,
+    // metaっていうの作ってあげることで指定できた、正しいかどうかは調査中
+    meta: {
+      requiresAuth: true
+    }
   },
   // {
   //   path: '/Private',
@@ -24,11 +28,24 @@ const routes = [
   // },
   {
     path: '/New',
-    component: New
+    component: New,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/MyPage',
-    component: MyPage
+    component: MyPage,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    // pathにないやつ来たら強制送還！
+    path: '*',
+    meta: {
+      requiresAuth: true
+    }
   }
 ]
 
@@ -41,6 +58,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const isLoggedIn = store.getters['auth/isLoggedIn']
   const token = localStorage.getItem('access')
+  console.log(to)
   console.log('to.path=', to.path)
   console.log('isLoggedIn=', isLoggedIn)
 
@@ -74,7 +92,7 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     // ログインが不要な画面であればそのまま次へ
-    console.log('Go to public page.')
+    console.log('Go to path page.')
     next()
   }
 })

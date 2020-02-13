@@ -15,13 +15,18 @@
     <div class="New__submit" @click="releasePost">
       投稿する
     </div>
+    <NavBar></NavBar>
   </div>
 </template>
 
 <script>
+import NavBar from '@/components/NavBar.vue'
 
 export default {
   name: 'new',
+  components: {
+    NavBar
+  },
   data: function () {
     return {
       id: 0,
