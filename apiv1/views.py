@@ -10,7 +10,7 @@ class MypageAPIView(views.APIView):
     """マイページ用APIクラス"""
 
     def get(self, request, pk, *args, **kwargs):
-        """マイページモデルをGETメソッド"""
+        """マイページモデルの取得APIに対応するハンドラメソッド"""
 
         """エンドポイントをユーザIDによってマイページを取得する場合"""
         user = get_user_model().objects.get(username=pk)
@@ -20,4 +20,14 @@ class MypageAPIView(views.APIView):
         # mypage = get_object_or_404(Mypage, user_id=pk)
 
         serializer = MypageSerializer(instance=mypage)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+    def put(self, request, pk, *args, **kwargs):
+        """マイページモデルの更新APIに対応するハンドラメソッド"""
+
+        user = get_user_model().objects.get(username=pk)
+        mypage = get_object_or_404(Mypage, user_id=user.id)
+        serializer = MypageSerializer(instance=mypage, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(serializer.data, status.HTTP_200_OK)
