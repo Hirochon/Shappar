@@ -56,7 +56,20 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+
+########
+# CORS #
+########
+
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8080',
+    'http://127.0.0.1:8080:',
+)
+
 
 ROOT_URLCONF = 'config.urls'
 
@@ -123,7 +136,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 
 # STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 
 # Media Files
