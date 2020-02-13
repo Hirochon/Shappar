@@ -31,3 +31,11 @@ class MypageAPIView(views.APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status.HTTP_200_OK)
+
+# class PostAPIView(view.APIView):
+#     """投稿用APIクラス"""
+
+#     def post(self, request, *args, **kwargs):
+#         """投稿時の登録APIに対応するハンドラメソッド"""
+
+#         serializer = 
