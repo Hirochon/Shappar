@@ -9,7 +9,6 @@
       </div>
       <div class="Mypage__name">
         <h1>{{user.user_id}}</h1>
-        <h2>{{user.unique_id}}</h2>
         <h2>{{user.name}}</h2>
       </div>
       <div class="Mypage__text">
@@ -124,6 +123,11 @@ export default {
     width: 100%;
     height: 200px;
     background: #eee;
+    overflow: hidden;
+    img{
+      width: 100%;
+      object-fit: contain;
+    }
   }
   &__icon{
     width: 120px;
@@ -133,6 +137,11 @@ export default {
     left: calc(50% - 60px);
     top: 120px;
     background: #BFE4E2;
+    overflow: hidden;
+    img{
+      width: 100%;
+      // height: 100%;
+    }
   }
   &__name{
     margin-top: 60px;
@@ -144,16 +153,19 @@ export default {
 }
 .PostSwitch{
   display: flex;
+  justify-content: space-between;
   flex-wrap: wrap;
   width: 100%;
   height: 48px;
+  padding: 8px;
   background: #eee;
   &__button{
     background: #4180d7;
     opacity: 0.5;
-    width: 50%;
-    height: 48px;
-    line-height: 48px;
+    width: calc(50% - 8px);
+    height: 32px;
+    line-height: 32px;
+    border-radius: 8px;
     text-align: center;
     color: white;
     &.active{

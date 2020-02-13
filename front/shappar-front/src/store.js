@@ -58,6 +58,7 @@ const authModule = {
     reload (context) {
       return api.get('/api/v1/auth/users/me/')
         .then(response => {
+          console.log(response)
           const user = response.data
           // storeのユーザー情報を更新
           context.commit('set', { user: user })

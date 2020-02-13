@@ -1,7 +1,7 @@
 <template>
     <nav class="Nav-bar">
       <div class="Nav-bar__link">
-        <router-link to="/public">Public</router-link>
+        <router-link to="/">Public</router-link>
       </div>
       <!-- <div class="Nav-bar__link">
         <router-link to="/private">Private</router-link>
