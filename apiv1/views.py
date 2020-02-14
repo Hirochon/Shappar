@@ -3,7 +3,6 @@ from rest_framework import views, status
 from rest_framework.response import Response
 
 from django.contrib.auth import get_user_model
-from .models import Mypage
 from .serializers import MypageSerializer
 
 class MypageAPIView(views.APIView):
@@ -13,8 +12,7 @@ class MypageAPIView(views.APIView):
         """マイページモデルの取得APIに対応するハンドラメソッド"""
 
         """エンドポイントをユーザIDによってマイページを取得する場合"""
-        user = get_user_model().objects.get(username=pk)
-        mypage = get_object_or_404(Mypage, user_id=user.id)
+        mypage = get_object_or_404(get_user_model(), username=pk)
 
         # """エンドポイントをUUIDによってマイページを取得する場合"""
         # mypage = get_object_or_404(Mypage, user_id=pk)
@@ -25,8 +23,7 @@ class MypageAPIView(views.APIView):
     def put(self, request, pk, *args, **kwargs):
         """マイページモデルの更新APIに対応するハンドラメソッド"""
 
-        user = get_user_model().objects.get(username=pk)
-        mypage = get_object_or_404(Mypage, user_id=user.id)
+        mypage = get_object_or_404(get_user_model(), username=pk)
         serializer = MypageSerializer(instance=mypage, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()

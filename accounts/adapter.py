@@ -20,6 +20,7 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         user.sex = data.get('sex')
         user.age = data.get('age')
         user.born_at = data.get('born_at')
+        user.introduction = data.get('introduction')
 
         # django-allauth/allauth/account/utils.pyのuser_fieldを使用
         user_field(user, 'username', username)
