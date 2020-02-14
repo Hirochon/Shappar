@@ -11,6 +11,7 @@ class MyCustomSignupForm(SignupForm):
     sex = forms.ChoiceField(label='性別', required=True, choices=CustomUser.choice_site)
     age = forms.IntegerField(label='年齢', required=True, min_value=0, max_value=150)
     born_at = forms.DateField(label='生年月日', required=False, widget=forms.SelectDateWidget(years=range(1900,2021)))
+    introduction = forms.CharField(label='自己紹介', required=False, widget=forms.TextInput(attrs={'placeholder':'はじめまして。太郎です！'}))
 
     def save(self, request):
         """保存する動作はアダプタークラスへ"""
