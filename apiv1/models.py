@@ -5,22 +5,6 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator
 
-def get_homeimage_path(instance, filename):
-    return 'images/{0}/homeimage/{1}'.format(instance.user.id, filename)
-
-class Mypage(models.Model):
-    """マイページモデル"""
-
-    class Meta:
-        db_table = 'mypage'
-    
-    user = models.OneToOneField(get_user_model(), verbose_name='ユーザ', on_delete=models.CASCADE, related_name='mypage_user')
-    introduction = models.TextField(verbose_name='自己紹介', max_length=150, blank=True, null=True)
-    homeimage = models.ImageField(verbose_name='ホーム画像', blank=True, null=True, upload_to=get_homeimage_path)
-    
-    def __str__(self):
-        return self.user.usernonamae
-
 
 class Post(models.Model):
     """投稿モデル"""
