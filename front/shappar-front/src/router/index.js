@@ -35,7 +35,10 @@ const routes = [
   },
   {
     path: '/MyPage',
-    component: MyPage
+    component: MyPage,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     // pathにないやつ来たら強制送還！

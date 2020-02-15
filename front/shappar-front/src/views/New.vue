@@ -32,28 +32,40 @@ export default {
       id: 0,
       userId: '',
       text: '',
-      count: 1,
+      count: 2,
       options: [
         {
           id: 0,
           content: ''
+        },
+        {
+          id: 1,
+          comnfent: ''
         }
       ]
     }
   },
   methods: {
     addOption () {
-      this.options.push({
-        id: this.count++,
-        content: ''
-      })
+      if (this.count < 4) {
+        this.options.push({
+          id: this.count++,
+          content: ''
+        })
+      } else {
+        alert('これ以上作成できません')
+      }
     },
     deleteOption (id) {
-      for (let i = 0; i < this.count; i++) {
-        if (this.options[i].id === id) {
-          this.options.splice(i, 1)
-          break
+      if (this.count > 2) {
+        for (let i = 0; i < this.count; i++) {
+          if (this.options[i].id === id) {
+            this.options.splice(i, 1)
+            break
+          }
         }
+      } else {
+        alert('これ以上削除できません')
       }
     },
     releasePost () {
