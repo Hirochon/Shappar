@@ -5,6 +5,7 @@ import Public from '../views/Public.vue'
 import New from '../views/New.vue'
 import MyPage from '../views/MyPage.vue'
 import LoginPage from '../views/LoginPage'
+import UpdateUser from '../views/UpdateUser'
 import store from '../store'
 
 Vue.use(VueRouter)
@@ -36,6 +37,13 @@ const routes = [
   {
     path: '/MyPage',
     component: MyPage,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/settings',
+    component: UpdateUser,
     meta: {
       requiresAuth: true
     }
