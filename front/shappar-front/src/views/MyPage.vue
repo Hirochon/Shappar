@@ -7,6 +7,9 @@
       <div class="Mypage__icon">
         <img :src="user.iconimage" alt="">
       </div>
+      <div class="Mypage__settings">
+        <router-link to="/settings">編集</router-link>
+      </div>
       <div class="Mypage__name">
         <h1>{{user.user_id}}</h1>
         <h2>{{user.name}}</h2>
@@ -126,7 +129,8 @@ export default {
     overflow: hidden;
     img{
       width: 100%;
-      object-fit: contain;
+      height: 100%;
+      object-fit: cover;
     }
   }
   &__icon{
@@ -142,6 +146,18 @@ export default {
       width: 100%;
       // height: 100%;
     }
+  }
+  &__settings{
+    width: 100px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 12px;
+    background: white;
+    border: solid 2px #BFE4E2;
+    position: absolute;
+    right: 4px;
+    top: 208px;
   }
   &__name{
     margin-top: 60px;
