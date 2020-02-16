@@ -205,6 +205,7 @@ export default {
     font-size: 14px;
     color: #333;
     padding: 0 16px;
+    min-height: 32px;
   }
 }
 .PostSwitch{
