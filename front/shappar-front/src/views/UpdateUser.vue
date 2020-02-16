@@ -48,8 +48,9 @@ export default {
       params.append('introduction', this.introduction)
       params.append('iconimage', this.iconimage)
       params.append('homeimage', this.homeimage)
-      this.axios.put('/api/v1/users/' + this.before_user_id, params)
+      this.axios.put('/api/v1/users/' + this.before_user_id + '/', params)
         .then((response) => {
+          console.log(response)
           if (response.status === 200) {
             alert('更新完了！')
             this.user_id = ''
