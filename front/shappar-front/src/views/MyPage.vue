@@ -177,6 +177,11 @@ export default {
     position: absolute;
     right: 4px;
     top: 208px;
+    a{
+      display: block;
+      height: 20px;
+      line-height: 20px;
+    }
   }
   &__logout{
     width: 100px;
@@ -190,6 +195,7 @@ export default {
     color: red;
     left: 4px;
     top: 208px;
+    line-height: 20px;
   }
   &__name{
     margin: 60px 0 0;
