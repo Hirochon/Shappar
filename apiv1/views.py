@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 from django_filters import rest_framework as filters
 
 from django.contrib.auth import get_user_model
-from .models import Poll
+from .models import Poll, Post
 from .serializers import MypageSerializer, PostSerializer, PollSerializer
 
 class MypageAPIView(views.APIView):
@@ -52,12 +52,25 @@ class PostCreateAPIView(views.APIView):
         serializer.save()
         return Response(serializer.data, status.HTTP_201_CREATED)
 
-class PollFilter(filters.FilterSet):
-    """投票用フィルタクラス"""
+class PostFilter(filters.FilterSet):
+    """投稿表示用フィルタクラス"""
 
     class Meta:
-        model = Poll
+        model = Post
         fields = '__all__'
+
+class PollRetrieveAPIView(views.APIView):
+    """投票モデルの取得(一覧)クラス"""
+
+    def get(self, request, *args, **kwargs):
+        """投票モデルの取得(一覧)APIに対応するハンドラメソッド"""
+
+        # モデルオブジェクトをクエリ文字列を使ってフィルタリングした結果を取得
+        filterset = PostFilter(request.query_params, queryset=Post.objects.all())
+        if not filterset.is_valid():
+            raise ValidationError(filterset.errors)
+        serializer = PostSerializer(instance=filterset.qs, many=True)
+        return Response(serializer.data, status.HTTP_200_OK)
 
 class PollCreateAPIView(views.APIView):
     """投票モデルの登録APIクラス"""
@@ -69,16 +82,3 @@ class PollCreateAPIView(views.APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status.HTTP_201_CREATED)
-
-class PollRetrieveAPIView(views.APIView):
-    """投票モデルの取得(一覧)クラス"""
-
-    def get(self, request, *args, **kwargs):
-        """投票モデルの取得(一覧)APIに対応するハンドラメソッド"""
-
-        # モデルオブジェクトをクエリ文字列を使ってフィルタリングした結果を取得
-        filterset = PollFilter(request.query_params, queryset=Poll.objects.all())
-        if not filterset.is_valid():
-            raise ValidationError(filterset.errors)
-        serializer = PollSerializer(instance=filterset.qs, many=True)
-        return Response(serializer.data, status.HTTP_200_OK)
