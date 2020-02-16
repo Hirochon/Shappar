@@ -69,7 +69,7 @@ export default {
   },
   data: function () {
     return {
-      id: 'syunsuke',
+      user_id: this.$store.state.auth.username,
       isActive: 0,
       user: {},
       posts: [],
@@ -82,7 +82,7 @@ export default {
     }
   },
   created: function () {
-    this.axios.get('/api/v1/users/' + this.id)
+    this.axios.get('/api/v1/users/' + this.user_id)
       .then((response) => {
         this.user = response.data
         // console.log('userData : ' + response.status)

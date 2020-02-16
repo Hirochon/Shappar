@@ -26,6 +26,7 @@ input, button, textarea, select {
 #app{
   width: 100%;
   //height: 100%;
+  min-height: 100%;
   background: #BFE4E2;
   padding-bottom: 80px;
 }

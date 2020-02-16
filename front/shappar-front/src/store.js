@@ -40,7 +40,7 @@ const authModule = {
           localStorage.setItem('access', response.data.access)
           // ユーザー情報を取得してstoreのユーザー情報を更新
           return context.dispatch('reload')
-            .then(user => user)
+            .then(user => console.log(user))
         })
     },
     /**
@@ -58,7 +58,7 @@ const authModule = {
     reload (context) {
       return api.get('/api/v1/auth/users/me/')
         .then(response => {
-          console.log(response)
+          // console.log(response)
           const user = response.data
           // storeのユーザー情報を更新
           context.commit('set', { user: user })

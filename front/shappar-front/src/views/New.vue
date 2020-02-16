@@ -1,13 +1,13 @@
 <template>
   <div class="New">
     <h2 class="New__title">質問文</h2>
-    <textarea class="New__textarea" v-model="text" cols="30" rows="10"></textarea>
+    <textarea class="New__textarea" v-model="text" cols="30" rows="5"></textarea>
     <h2 class="New__title">選択肢</h2>
     <div class="New__add-option" @click="addOption">
       項目を追加する
     </div>
     <div class="New__options" v-for="option in options" :key="option.id">
-      <textarea class="New__textarea" cols="30" rows="10"></textarea>
+      <textarea class="New__textarea" cols="30" rows="3"></textarea>
       <div class="New__option__delete" @click="deleteOption(option.id)">
         項目を削除する
       </div>
@@ -61,6 +61,7 @@ export default {
         for (let i = 0; i < this.count; i++) {
           if (this.options[i].id === id) {
             this.options.splice(i, 1)
+            this.count--
             break
           }
         }
@@ -78,9 +79,14 @@ export default {
           if (response.status === 200) alert('投稿完了！')
         })
       this.text = ''
+      this.count = 2
       this.options = [
         {
           id: 0,
+          content: ''
+        },
+        {
+          id: 1,
           content: ''
         }
       ]
@@ -88,14 +94,14 @@ export default {
   },
   created: function () {
     this.id = 1
-    this.userId = 'sanple-user'
+    this.userId = this.$store.state.auth.username
   }
 }
 </script>
 
 <style lang="scss">
 .New{
-  padding: 64px 16px 0;
+  padding: 24px 16px 0;
   &__textarea{
     margin-top: 16px;
     padding: 8px;

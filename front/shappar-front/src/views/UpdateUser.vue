@@ -19,6 +19,7 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue'
+import store from '../store'
 
 export default {
   name: 'updateUser',
@@ -59,10 +60,16 @@ export default {
     }
   },
   created: function () {
-    this.before_user_id = 'syunsuke'
-    this.user_id = 'syunsuke'
-    this.name = ''
-    this.introduction = ''
+    // console.log(this.$store.state.auth.username)
+    // console.log(store.getters['auth/username'])
+    // var username = this.$store.state.auth.username
+    this.before_user_id = store.getters['auth/username']
+    this.user_id = this.before_user_id
+    this.axios.get('/api/v1/users/' + this.before_user_id)
+      .then((response) => {
+        this.name = response.data.name
+        this.introduction = response.data.introduction
+      })
   }
 }
 </script>
