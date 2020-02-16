@@ -5,13 +5,13 @@ services:
         ports: 
             - "8000:8000"
         volumes:
-            - "staticdata:/code/static/"
-            - "./:/code/"
-        # command: "gunicorn config.wsgi -b 0.0.0.0:8000"           # 本番環境
-        command: "python3 manage.py runserver 0.0.0.0:8000"         # テスト環境
+            - "./:/code/"                                       # プロジェクトのルートディレクトリからマウントを取る
+            - "staticdata:/code/static/"                        # volumesを用いたnginxとのコンテナ間のリソース共有
+        # command: "gunicorn config.wsgi -b 0.0.0.0:8000"       # 本番環境
+        command: "python3 manage.py runserver 0.0.0.0:8000"     # テスト環境
         depends_on: 
-            - db
-    db:
+            - db                                                # 2. docker-compose up時にdbから立ち上げる
+    db:                                                         # docker-compose up時に1.と2.からdb→back→nginxの順に立ち上げる
         image: postgres:12.1
         environment:
             - POSTGRES_USER
@@ -19,17 +19,19 @@ services:
         ports:
             - "5432:5432"
         volumes:
-            - "dbdata:/var/lib/postgresql/data"
+            - "dbdata:/var/lib/postgresql/data"                 # dbの永続化→dbdata
     nginx:
         build: "./nginx/"
         ports:
             - "80:80"
         volumes:
-            - "./static/:/opt/apps/static/"
-            - "staticdata:/opt/apps/static/"
+            - "./static/:/opt/apps/static/"                     # nginxコンテナにてホストのstaticからコンテナへマウント
+            - "staticdata:/opt/apps/static/"                    # volumesを用いたnginxとのコンテナ間のリソース共有
         depends_on: 
-            - back
+            - back                                              # 1. docker-compose up時にbackから立ち上げる
 
 volumes:
     dbdata:
+        driver: local
     staticdata:
+        driver: local
