@@ -4,7 +4,7 @@
     <input class="Update__input" v-model="name" type="text">
     <h2 class="Update__title">ユーザーID</h2>
     <input class="Update__input" v-model="user_id" type="text">
-    <h2 class="Update__title">コメント</h2>
+    <h2 class="Update__title">紹介文</h2>
     <textarea class="Update__input" v-model="introduction" cols="30" rows="5"></textarea>
     <h2 class="Update__title">アイコン</h2>
     <input class="Update__input" type="file" name="iconimage" @change="imageSelect(1, $event)">

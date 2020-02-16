@@ -1,5 +1,6 @@
 <template>
   <div class="MyPage">
+    <h1 class="Mypage__h1">{{user.user_id}} | Mypage</h1>
     <div class="Mypage__main">
       <div class="Mypage__image">
         <img :src="user.homeimage" alt="">
@@ -11,10 +12,10 @@
         <router-link to="/settings">編集</router-link>
       </div>
       <div class="Mypage__name">
-        <h1>{{user.user_id}}</h1>
-        <h2>{{user.name}}</h2>
+        <h2 class="Mypage__name">{{user.name}}</h2>
+        <h2 class="Mypage__user_id">{{user.user_id}}</h2>
       </div>
-      <div class="Mypage__text">
+      <div class="Mypage__introduction">
         {{user.introduction}}
       </div>
     </div>
@@ -25,6 +26,7 @@
       <div class="PostSwitch__button" @click="changeActive(1)" :class="{'active': isActive === 1}">
         過去の投票
       </div>
+      <div class="PostSwitch__bar" :style="{transform:tabBar}"></div>
     </div>
     <div class="PostList" v-if="isActive === 0">
       <div class="Post" v-for="post in posts" :key="post.id">
@@ -81,6 +83,11 @@ export default {
       this.isActive = num
     }
   },
+  computed: {
+    tabBar () {
+      return 'translateX(' + (100 * this.isActive) + '%)'
+    }
+  },
   created: function () {
     this.axios.get('/api/v1/users/' + this.user_id)
       .then((response) => {
@@ -118,6 +125,9 @@ export default {
 <style lang="scss">
 .Mypage{
   padding-bottom: 72px;
+  &__h1{
+    display: none;
+  }
   &__main{
     position: relative;
     background: white;
@@ -160,10 +170,18 @@ export default {
     top: 208px;
   }
   &__name{
-    margin-top: 60px;
-    padding: 0 16px;
+    margin: 60px 0 0;
+    text-align: center;
+    font-size: 24px;
   }
-  &__text{
+  &__user_id{
+    font-size: 14px;
+    text-align: center;
+    color: #666;
+  }
+  &__introduction{
+    font-size: 14px;
+    color: #333;
     padding: 0 16px;
   }
 }
@@ -173,20 +191,28 @@ export default {
   flex-wrap: wrap;
   width: 100%;
   height: 48px;
-  padding: 8px;
-  background: #eee;
+  background: white;
+  position: relative;
   &__button{
-    background: #4180d7;
+    // background: #4180d7;
     opacity: 0.5;
-    width: calc(50% - 8px);
-    height: 32px;
-    line-height: 32px;
-    border-radius: 8px;
+    width: 50%;
+    height: 48px;
+    line-height: 48px;
     text-align: center;
-    color: white;
+    color: #4180d7;
+    transition: .3s ease-in-out;
     &.active{
       opacity: 1;
     }
+  }
+  &__bar{
+    width: 50%;
+    height: 2px;
+    background: #4180d7;
+    position: absolute;
+    bottom: 0;
+    transition: .3s ease-in-out;
   }
 }
 </style>
