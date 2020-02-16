@@ -23,7 +23,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['post_id', 'unique_id', 'user_id', 'question', 'answer_1', 'answer_2', 'answer_3', 'answer_4']
+        fields = ['post_id', 'unique_id', 'user_id', 'question', 'answer_1', 'answer_2', 'answer_3', 'answer_4', 'created_at']
 
 
 class PollSerializer(serializers.ModelSerializer):
@@ -36,4 +36,4 @@ class PollSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Poll
-        fields = ['id', 'post_id', 'unique_id', 'user_id', 'iconimage', 'voted', 'total', 'select', 'num_1', 'num_2', 'num_3', 'num_4']
+        fields = ['id','post_id', 'unique_id', 'user_id', 'iconimage', 'voted', 'total', 'select', 'num_1', 'num_2', 'num_3', 'num_4']
