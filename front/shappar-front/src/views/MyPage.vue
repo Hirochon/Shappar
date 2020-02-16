@@ -11,6 +11,7 @@
       <div class="Mypage__settings">
         <router-link to="/settings">編集</router-link>
       </div>
+      <div class="Mypage__logout" @click="logout">ログアウト</div>
       <div class="Mypage__name">
         <h2 class="Mypage__name">{{user.name}}</h2>
         <h2 class="Mypage__user_id">{{user.user_id}}</h2>
@@ -81,6 +82,14 @@ export default {
   methods: {
     changeActive (num) {
       this.isActive = num
+    },
+    logout () {
+      var result = window.confirm('ログアウトしてよろしいですか？')
+      if (result) {
+        this.$store.dispatch('auth/logout')
+        this.$store.dispatch('message/setInfoMessage', { message: 'ログアウトしました' })
+        this.$router.replace('/login')
+      }
     }
   },
   computed: {
@@ -167,6 +176,19 @@ export default {
     border: solid 2px #BFE4E2;
     position: absolute;
     right: 4px;
+    top: 208px;
+  }
+  &__logout{
+    width: 100px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 12px;
+    background: white;
+    border: solid 2px red;
+    position: absolute;
+    color: red;
+    left: 4px;
     top: 208px;
   }
   &__name{
