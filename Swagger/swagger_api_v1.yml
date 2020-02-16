@@ -240,7 +240,7 @@ paths:
             $ref: '#/definitions/User/x-examples'
       operationId: get-api-v1-users-userId
       description: get user details
-    put:
+    patch:
       summary: ''
       operationId: put-api-v1-users-userId
       responses:
