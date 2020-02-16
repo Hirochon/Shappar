@@ -5,7 +5,7 @@
         <img :src="post.userIcon" alt="">
       </div>
       <div class="Post__text">
-        {{post.text}}
+        {{post.question}}
       </div>
       <div class="Post__container">
         <div class="Post__option" v-for="option in post.options" :key="option.id"
@@ -52,7 +52,7 @@ export default {
       for (let i = 0; i < j; i++) {
         if (options[i]) selectsArray[i] = options[i].id
       }
-      this.axios.post('/api/v1/posts/' + post.id, {
+      this.axios.post('/api/v1/posts/' + post.post_id, {
         selects: selectsArray
       }).then((response) => {
         post.voted = true
