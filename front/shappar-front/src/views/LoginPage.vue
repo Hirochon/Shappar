@@ -5,10 +5,9 @@
 
     <!-- メインエリア -->
     <main class="container">
-      <p class="h5 mb-4">ログイン</p>
       <b-form @submit.prevent="submitLogin">
         <div class="row form-group">
-          <label class="col-sm-3 col-form-label">ユーザー名</label>
+          <label class="col-sm-3 col-form-label">ユーザーID</label>
           <div class="col-sm-8">
             <b-form-input type="text" v-model="form.username" required/>
           </div>

@@ -5,6 +5,7 @@ import Public from '../views/Public.vue'
 import New from '../views/New.vue'
 import MyPage from '../views/MyPage.vue'
 import LoginPage from '../views/LoginPage'
+import UpdateUser from '../views/UpdateUser'
 import store from '../store'
 
 Vue.use(VueRouter)
@@ -16,7 +17,11 @@ const routes = [
   },
   {
     path: '/',
-    component: Public
+    component: Public,
+    // metaっていうの作ってあげることで指定できた、正しいかどうかは調査中
+    meta: {
+      requiresAuth: true
+    }
   },
   // {
   //   path: '/Private',
@@ -24,11 +29,31 @@ const routes = [
   // },
   {
     path: '/New',
-    component: New
+    component: New,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/MyPage',
-    component: MyPage
+    component: MyPage,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/settings',
+    component: UpdateUser,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    // pathにないやつ来たら強制送還！
+    path: '*',
+    meta: {
+      requiresAuth: true
+    }
   }
 ]
 
@@ -41,26 +66,27 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const isLoggedIn = store.getters['auth/isLoggedIn']
   const token = localStorage.getItem('access')
-  console.log('to.path=', to.path)
-  console.log('isLoggedIn=', isLoggedIn)
+  // console.log(to)
+  // console.log('to.path=', to.path)
+  // console.log('isLoggedIn=', isLoggedIn)
 
   // ログインが必要な画面に遷移しようとした場合
   if (to.matched.some(record => record.meta.requiresAuth)) {
     // ログインしている状態の場合
     if (isLoggedIn) {
-      console.log('User is already logged in. So, free to next.')
+      // console.log('User is already logged in. So, free to next.')
       next()
 
       // ログインしていない状態の場合
     } else {
       // まだ認証用トークンが残っていればユーザー情報を再取得
       if (token != null) {
-        console.log('User is not logged in. Trying to reload again.')
+        // console.log('User is not logged in. Trying to reload again.')
 
         store.dispatch('auth/reload')
           .then(() => {
             // 再取得できたらそのまま次へ
-            console.log('Succeeded to reload. So, free to next.')
+            // console.log('Succeeded to reload. So, free to next.')
             next()
           })
           .catch(() => {
@@ -74,7 +100,7 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     // ログインが不要な画面であればそのまま次へ
-    console.log('Go to public page.')
+    // console.log('Go to path page.')
     next()
   }
 })
@@ -83,7 +109,7 @@ router.beforeEach((to, from, next) => {
  * ログイン画面へ強制送還
  */
 function forceToLoginPage (to, from, next) {
-  console.log('Force user to login page.')
+  // console.log('Force user to login page.')
   next({
     path: '/login',
     // 遷移先のURLはクエリ文字列として付加
