@@ -32,6 +32,15 @@ class MypageAPIView(views.APIView):
         serializer.save()
         return Response(serializer.data, status.HTTP_200_OK)
 
+    def patch(self, request, pk, *args, **kwargs):
+        """マイページモデルの更新APIに対応するハンドラメソッド"""
+
+        mypage = get_object_or_404(get_user_model(), username=pk)
+        serializer = MypageSerializer(instance=mypage, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status.HTTP_200_OK)
+
 class PostCreateAPIView(views.APIView):
     """投稿用APIクラス"""
 
