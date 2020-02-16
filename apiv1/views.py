@@ -32,7 +32,7 @@ class MypageAPIView(views.APIView):
         serializer.save()
         return Response(serializer.data, status.HTTP_200_OK)
 
-class PostAPIView(views.APIView):
+class PostCreateAPIView(views.APIView):
     """投稿用APIクラス"""
 
     def post(self, request, *args, **kwargs):
@@ -50,10 +50,10 @@ class PollFilter(filters.FilterSet):
         model = Poll
         fields = '__all__'
 
-class PollListCreateAPIView(views.APIView):
+class PollCreateAPIView(views.APIView):
     """投票モデルの取得(一覧)・登録APIクラス"""
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, pk, qk, *args, **kwargs):
         """投票時の登録APIに対応するハンドラメソッド"""
 
         serializer = PollSerializer(data=request.data)
