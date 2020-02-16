@@ -42,8 +42,7 @@ export default {
   methods: {
     Select (post, option) {
       if (post.voted) return
-      if (post.isSelect === option.id) post.isSelect = 0
-      else post.isSelect = option.id
+      post.isSelect = option.id
       this.Submit(post, post.options)
     },
     Submit (post, options) {
