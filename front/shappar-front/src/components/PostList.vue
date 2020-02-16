@@ -2,7 +2,7 @@
   <div class="PostList">
     <div class="Post" v-for="post in postsData" :key="post.id">
       <div class="Post__icon">
-        <img :src="post.userIcon" alt="">
+        <img :src="post.iconimage" alt="">
       </div>
       <div class="Post__text">
         {{post.question}}
@@ -90,6 +90,11 @@ $main-color: #4180d7;
     left: calc(50% - 60px);
     top: -50px;
     box-shadow: 0 0 8px rgba(black, 0.16);
+    overflow: hidden;
+    img{
+      width: 100%;
+      object-fit: contain;
+    }
   }
   &__text{
     width: 100%;

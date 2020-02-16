@@ -36,8 +36,9 @@ export default {
   },
   created: function () {
     this.axios.get('/api/v1/posts/public')
-      .then((response) => {
+      .then(async (response) => {
         var posts = response.data
+        var iconimage = ''
         var i
         var j
         for (i = 0; i < posts.length; i++) {
@@ -52,6 +53,12 @@ export default {
             posts[i].options[j].selected = false
             posts[i].options[j].num = -1
           }
+          // 同期処理で画像を取得
+          await this.axios.get('/api/v1/users/' + posts[i].user_id)
+            .then((response) => {
+              iconimage = response.data.iconimage
+            })
+          posts[i].iconimage = iconimage
         }
         this.posts = posts
       })
