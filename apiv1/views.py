@@ -66,7 +66,7 @@ class PollRetrieveAPIView(views.APIView):
         """投票モデルの取得(一覧)APIに対応するハンドラメソッド"""
 
         # モデルオブジェクトをクエリ文字列を使ってフィルタリングした結果を取得
-        filterset = PostFilter(request.query_params, queryset=Post.objects.all())
+        filterset = PostFilter(request.query_params, queryset=Post.objects.all().order_by('-created_at'))
         if not filterset.is_valid():
             raise ValidationError(filterset.errors)
         serializer = PostSerializer(instance=filterset.qs, many=True)
