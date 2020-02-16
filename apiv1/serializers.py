@@ -18,12 +18,10 @@ class PostSerializer(serializers.ModelSerializer):
     """投稿用のシリアライザ"""
 
     post_id = serializers.ReadOnlyField(source='id')
-    unique_id = serializers.ReadOnlyField(source='user.id')
-    user_id = serializers.ReadOnlyField(source='user.username')
 
     class Meta:
         model = Post
-        fields = ['post_id', 'unique_id', 'user_id', 'question', 'answer_1', 'answer_2', 'answer_3', 'answer_4', 'created_at']
+        fields = ['post_id', 'user', 'question', 'answer_1', 'answer_2', 'answer_3', 'answer_4']
 
 
 class PollSerializer(serializers.ModelSerializer):

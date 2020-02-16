@@ -47,7 +47,16 @@ class PostCreateAPIView(views.APIView):
     def post(self, request, *args, **kwargs):
         """投稿時の登録APIに対応するハンドラメソッド"""
 
-        serializer = PostSerializer(data=request.data)
+        data = request.data
+        user = get_object_or_404(get_user_model(), id=data['unique_id'])
+        post = {}
+        post['user'] = user.id
+        post['question'] = data['question']
+        post['answer_1'] = data['answer_1']
+        post['answer_2'] = data['answer_2']
+        post['answer_3'] = data['answer_3']
+        post['answer_4'] = data['answer_4']
+        serializer = PostSerializer(data=post)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status.HTTP_201_CREATED)
