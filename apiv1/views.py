@@ -9,7 +9,7 @@ from .models import Poll
 from .serializers import MypageSerializer, PostSerializer, PollSerializer
 
 class MypageAPIView(views.APIView):
-    """マイページ用APIクラス"""
+    """マイページ用詳細・更新・一部更新APIクラス"""
 
     def get(self, request, pk, *args, **kwargs):
         """マイページモデルの取得APIに対応するハンドラメソッド"""
@@ -33,7 +33,7 @@ class MypageAPIView(views.APIView):
         return Response(serializer.data, status.HTTP_200_OK)
 
     def patch(self, request, pk, *args, **kwargs):
-        """マイページモデルの更新APIに対応するハンドラメソッド"""
+        """マイページモデルの一部更新APIに対応するハンドラメソッド"""
 
         mypage = get_object_or_404(get_user_model(), username=pk)
         serializer = MypageSerializer(instance=mypage, data=request.data, partial=True)
@@ -60,7 +60,7 @@ class PollFilter(filters.FilterSet):
         fields = '__all__'
 
 class PollCreateAPIView(views.APIView):
-    """投票モデルの取得(一覧)・登録APIクラス"""
+    """投票モデルの登録APIクラス"""
 
     def post(self, request, pk, qk, *args, **kwargs):
         """投票時の登録APIに対応するハンドラメソッド"""
@@ -70,8 +70,11 @@ class PollCreateAPIView(views.APIView):
         serializer.save()
         return Response(serializer.data, status.HTTP_201_CREATED)
 
+class PollRetrieveAPIView(views.APIView):
+    """投票モデルの取得(一覧)クラス"""
+
     def get(self, request, *args, **kwargs):
-        """投票モデルの取得(一覧)APIに対応する"""
+        """投票モデルの取得(一覧)APIに対応するハンドラメソッド"""
 
         # モデルオブジェクトをクエリ文字列を使ってフィルタリングした結果を取得
         filterset = PollFilter(request.query_params, queryset=Poll.objects.all())
