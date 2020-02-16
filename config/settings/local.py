@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # 3rd party apps
     'rest_framework',                   #RESTFrameworkアプリ
     'djoser',                           #エンドポイントを設定
+    'django_filters',                   #フィルタリング
 ]
 
 MIDDLEWARE = [
@@ -200,7 +201,8 @@ DEFAULT_FILE_STORAGE = 'config.storage_backends.MediaStorage'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES':[
         'rest_framework_simplejwt.authentication.JWTAuthentication'
-    ]
+    ],
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
 
 SIMPLE_JWT = {
