@@ -6,7 +6,7 @@ from django_filters import rest_framework as filters
 
 from django.contrib.auth import get_user_model
 from .models import Poll, Post
-from .serializers import MypageSerializer, PostSerializer, PollSerializer
+from .serializers import MypageSerializer, PostCreateSerializer, PostRetrieveSerializer, PollSerializer
 
 class MypageAPIView(views.APIView):
     """マイページ用詳細・更新・一部更新APIクラス"""
@@ -58,7 +58,7 @@ class PostCreateAPIView(views.APIView):
             post['answer_3'] = data['answer_3']
         if 'answer_4' in data:
             post['answer_4'] = data['answer_4']
-        serializer = PostSerializer(data=post)
+        serializer = PostCreateSerializer(data=post)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status.HTTP_201_CREATED)
@@ -70,17 +70,17 @@ class PostFilter(filters.FilterSet):
         model = Post
         fields = '__all__'
 
-class PollRetrieveAPIView(views.APIView):
-    """投票モデルの取得(一覧)クラス"""
+class PostRetrieveAPIView(views.APIView):
+    """投稿の取得(一覧)APIクラス"""
 
     def get(self, request, *args, **kwargs):
-        """投票モデルの取得(一覧)APIに対応するハンドラメソッド"""
+        """投稿の取得(一覧)APIに対応するハンドラメソッド"""
 
         # モデルオブジェクトをクエリ文字列を使ってフィルタリングした結果を取得
         filterset = PostFilter(request.query_params, queryset=Post.objects.all().order_by('-created_at'))
         if not filterset.is_valid():
             raise ValidationError(filterset.errors)
-        serializer = PostSerializer(instance=filterset.qs, many=True)
+        serializer = PostRetrieveSerializer(instance=filterset.qs, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
 
 class PollCreateAPIView(views.APIView):

@@ -14,16 +14,24 @@ class MypageSerializer(serializers.ModelSerializer):
         fields = ['unique_id', 'user_id', 'name', 'introduction', 'iconimage', 'homeimage']
 
 
-class PostSerializer(serializers.ModelSerializer):
+class PostCreateSerializer(serializers.ModelSerializer):
     """投稿用のシリアライザ"""
+
+    class Meta:
+        model = Post
+        fields = ['user', 'question', 'answer_1', 'answer_2', 'answer_3', 'answer_4']
+
+class PostRetrieveSerializer(serializers.ModelSerializer):
+    """投稿一覧取得のシリアライザ"""
 
     post_id = serializers.ReadOnlyField(source='id')
     user_id = serializers.ReadOnlyField(source='user.username')
+    iconimage = serializers.ImageField(source='user.iconimage')
     created_at = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S.%fZ')
 
     class Meta:
         model = Post
-        fields = ['post_id', 'user', 'user_id','question', 'answer_1', 'answer_2', 'answer_3', 'answer_4', 'created_at']
+        fields = ['post_id', 'user_id', 'iconimage', 'question', 'answer_1', 'answer_2', 'answer_3', 'answer_4', 'created_at']
 
 
 class PollSerializer(serializers.ModelSerializer):
