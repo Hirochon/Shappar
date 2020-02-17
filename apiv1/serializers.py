@@ -19,7 +19,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     post_id = serializers.ReadOnlyField(source='id')
     user_id = serializers.ReadOnlyField(source='user.username')
-    created_at = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%SZ')
+    created_at = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S.%fZ')
 
     class Meta:
         model = Post
