@@ -54,8 +54,10 @@ class PostCreateAPIView(views.APIView):
         post['question'] = data['question']
         post['answer_1'] = data['answer_1']
         post['answer_2'] = data['answer_2']
-        post['answer_3'] = data['answer_3']
-        post['answer_4'] = data['answer_4']
+        if 'answer_3' in data:
+            post['answer_3'] = data['answer_3']
+        if 'answer_4' in data:
+            post['answer_4'] = data['answer_4']
         serializer = PostSerializer(data=post)
         serializer.is_valid(raise_exception=True)
         serializer.save()
