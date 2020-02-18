@@ -19,15 +19,28 @@ class OptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Option
-        fields = ['select_num', 'answer', 'share_id']
+        fields = ['select_num', 'answer', 'votes']
+
+
+class OptionListSerializer(serializers.ListSerializer):
+    child = OptionSerializer()
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
     """投稿用シリアライザ"""
+    options = OptionListSerializer()
 
     class Meta:
         model = Post
-        fields = ['user', 'question','share_id']
+        fields = ['user', 'question', 'options']
+
+    def create(self, validate_data):
+        options = []
+        for option_data in validate_data.pop('options'):
+            options.append(Option.objects.create(**option_data))
+        post = super().create(validate_data)
+        post.options.set(options)
+        return post
 
 
 class PostListSerializer(serializers.ModelSerializer):
