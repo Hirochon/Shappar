@@ -1,16 +1,16 @@
 <template>
   <div class="New">
     <h2 class="New__title">質問文</h2>
-    <textarea class="New__textarea" v-model="text" cols="30" rows="5"></textarea>
+      <textarea class="New__textarea" v-model="question" cols="30" rows="5"></textarea>
     <h2 class="New__title">選択肢</h2>
     <div class="New__add-option" @click="addOption">
       項目を追加する
     </div>
     <div class="New__options" v-for="option in options" :key="option.id">
-      <textarea class="New__textarea" cols="30" rows="3"></textarea>
+      <textarea class="New__textarea" cols="30" rows="3" v-model="option.answer"></textarea>
       <div class="New__option__delete" @click="deleteOption(option.id)">
         項目を削除する
-      </div>
+        </div>
     </div>
     <div class="New__submit" @click="releasePost">
       投稿する
@@ -29,18 +29,18 @@ export default {
   },
   data: function () {
     return {
-      id: 0,
-      userId: '',
-      text: '',
+      unique_id: '',
+      user_id: '',
+      question: '',
       count: 2,
       options: [
         {
           id: 0,
-          content: ''
+          answer: ''
         },
         {
           id: 1,
-          comnfent: ''
+          answer: ''
         }
       ]
     }
@@ -70,31 +70,34 @@ export default {
       }
     },
     releasePost () {
-      this.axios.post('/api/v1/posts', {
-        text: this.text,
-        options: this.options
-      })
+      var params = new FormData()
+      params.append('unique_id', this.unique_id)
+      params.append('question', this.question)
+      for (let i = 0; i < this.options.length; i++) {
+        params.append('answer_' + (i + 1), this.options[i].answer)
+      }
+      this.axios.post('/api/v1/posts/', params)
         .then((response) => {
           // console.log(response)
           if (response.status === 200) alert('投稿完了！')
         })
-      this.text = ''
+      this.question = ''
       this.count = 2
       this.options = [
         {
           id: 0,
-          content: ''
+          answer: ''
         },
         {
           id: 1,
-          content: ''
+          answer: ''
         }
       ]
     }
   },
   created: function () {
-    this.id = 1
-    this.userId = this.$store.state.auth.username
+    this.unique_id = this.$store.state.auth.unique_id
+    this.user_id = this.$store.state.auth.username
   }
 }
 </script>

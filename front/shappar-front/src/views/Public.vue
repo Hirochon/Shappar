@@ -35,7 +35,7 @@ export default {
     }
   },
   created: function () {
-    this.axios.get('/api/v1/posts/public')
+    this.axios.get('/api/v1/posts/public/')
       .then(async (response) => {
         var posts = response.data
         var iconimage = ''
