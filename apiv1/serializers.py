@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import Post, Poll
+from .models import Post, Poll, Option
 
 class MypageSerializer(serializers.ModelSerializer):
     """マイページ用シリアライザ"""
@@ -14,24 +14,42 @@ class MypageSerializer(serializers.ModelSerializer):
         fields = ['unique_id', 'user_id', 'name', 'introduction', 'iconimage', 'homeimage']
 
 
-class PostSerializer(serializers.ModelSerializer):
-    """投稿用のシリアライザ"""
+class OptionSerializer(serializers.ModelSerializer):
+    """選択肢用シリアライザ"""
 
-    post_id = serializers.ReadOnlyField(source='id')
+    class Meta:
+        model = Option
+        fields = ['select_num', 'answer', 'share_id']
+
+
+class PostCreateSerializer(serializers.ModelSerializer):
+    """投稿用シリアライザ"""
 
     class Meta:
         model = Post
-        fields = ['post_id', 'user', 'question', 'answer_1', 'answer_2', 'answer_3', 'answer_4']
+        fields = ['user', 'question','share_id']
+
+
+class PostListSerializer(serializers.ModelSerializer):
+    """投稿一覧取得シリアライザ"""
+
+    post_id = serializers.ReadOnlyField(source='id')
+    user_id = serializers.ReadOnlyField(source='user.username')
+    iconimage = serializers.ImageField(source='user.iconimage')
+    created_at = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S.%fZ')
+
+    class Meta:
+        model = Post
+        fields = ['post_id', 'user_id', 'iconimage', 'question', 'answer_1', 'answer_2', 'answer_3', 'answer_4', 'created_at']
 
 
 class PollSerializer(serializers.ModelSerializer):
-    """投票用のシリアライザ"""
+    """投票用シリアライザ"""
 
     post_id = serializers.ReadOnlyField(source='post.id')
-    unique_id = serializers.ReadOnlyField(source='user.id')
     user_id = serializers.ReadOnlyField(source='user.username')
     iconimage = serializers.ImageField(source='user.iconimage')
 
     class Meta:
         model = Poll
-        fields = ['id','post_id', 'unique_id', 'user_id', 'iconimage', 'voted', 'total', 'select', 'num_1', 'num_2', 'num_3', 'num_4']
+        fields = ['id','post_id', 'unique_id', 'user_id', 'iconimage', 'voted']
