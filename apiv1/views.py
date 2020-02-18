@@ -83,9 +83,17 @@ class PostListAPIView(views.APIView):
         serializer = PostListSerializer(instance=filterset.qs, many=True, pk=pk)
         
         for datas in serializer.data:
-            if not datas["voted"]:
-                for data in datas["options"]:
-                    data["votes"] = -1
+            if not datas['voted']:
+                total = 0
+                for data in datas['options']:
+                    total += data['votes']
+                    data['votes'] = -1
+                datas['total'] = total
+            else:
+                total = 0
+                for data in datas['options']:
+                    total += data['votes']
+                datas['total'] = total
         return Response(serializer.data, status.HTTP_200_OK)
 
 class PollCreateAPIView(views.APIView):
