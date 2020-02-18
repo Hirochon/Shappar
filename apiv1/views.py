@@ -42,24 +42,6 @@ class MypageAPIView(views.APIView):
         serializer.save()
         return Response(serializer.data, status.HTTP_200_OK)
 
-class OptionList(views.APIView):
-    """選択肢生成クラス"""
-
-    def __init__(self, options):
-        self.options = options
-        self.share_id = uuid.uuid4()
-        self.flag = 0
-
-    def serialize(self):
-        """optionsの全ての要素に対してシリアライザを通す"""
-
-        for option in self.options:
-            option['share_id'] = self.share_id
-            serializer = OptionSerializer(data=option)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-
-        return self.share_id
 
 class PostCreateAPIView(views.APIView):
     """投稿用APIクラス"""
