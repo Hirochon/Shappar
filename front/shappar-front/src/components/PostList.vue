@@ -8,9 +8,9 @@
         {{post.question}}
       </div>
       <div class="Post__container">
-        <div class="Post__option" v-for="option in post.options" :key="option.id"
+        <div class="Post__option" v-for="option in post.options" :key="option.select_num"
         @click="Select(post,option);"
-        :class="{'active':post.isSelect === option.id}">
+        :class="{'active':post.isSelect === option.select_num}">
           {{option.content}}
         </div>
       </div>
@@ -19,9 +19,9 @@
           <div class="Post__divider"></div>
           <div class="Post__result__title">結果</div>
           <div class="Post__container">
-            <div class="Post__result__option" v-for="option in post.options" :key="option.id">
-              <div class="Post__result__bar" :style="{width: rate(option.num, post.total) + '%'}"></div>
-              <div class="Post__result__num">{{option.num}}</div>
+            <div class="Post__result__option" v-for="option in post.options" :key="option.select_num">
+              <div class="Post__result__bar" :style="{width: rate(option.votes, post.total) + '%'}"></div>
+              <div class="Post__result__num">{{option.votes}}</div>
             </div>
           </div>
         </div>
@@ -42,7 +42,7 @@ export default {
   methods: {
     Select (post, option) {
       if (post.voted) return
-      post.isSelect = option.id
+      post.isSelect = option.select_num
       this.Submit(post, post.options)
     },
     Submit (post, options) {
@@ -56,7 +56,7 @@ export default {
       }).then((response) => {
         post.voted = true
         for (let i = 0; i < j; i++) {
-          options[i].num = response.data.options[i].num
+          options[i].votes = response.data.options[i].votes
         }
       })
     },
