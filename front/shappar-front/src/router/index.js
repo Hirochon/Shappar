@@ -62,7 +62,10 @@ if (process.env.NODE_ENV === 'development') {
   routes.unshift({
     name: 'admin',
     path: '/admin',
-    component: Admin
+    component: Admin,
+    meta: {
+      requiresAuth: true
+    }
   })
 }
 
