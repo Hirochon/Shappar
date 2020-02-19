@@ -1,5 +1,5 @@
 {
-  "presets": [["env", { "modules": false }]],
+  "presets": [["@vue/cli-plugin-babel/preset", { "modules": false }]],
   "env": {
     "test": {
       "presets": [["env", { "targets": { "node": "current" } }]]
