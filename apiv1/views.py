@@ -9,8 +9,6 @@ from django.contrib.auth import get_user_model
 from .models import Poll, Post
 from .serializers import MypageSerializer, PostCreateSerializer, PostListSerializer, PollSerializer, OptionSerializer
 
-import uuid
-
 class MypageAPIView(views.APIView):
     """マイページ用詳細・更新・一部更新APIクラス"""
 
@@ -74,15 +72,10 @@ class PostCreateAPIView(views.APIView):
         if 10 < len(data['options']):
             return HttpResponseNotFound('<h1>Bad Request!</h1>')
 
-        # 同一投稿内で選択肢共通のUUID作成&シリアライズするクラスへ
-        options = OptionList(data['options'])
-        share_id = options.serialize()
-        del data['options']
-
         user = get_object_or_404(get_user_model(), id=data['unique_id'])
-        del data['unique_id']
         data['user'] = user.id
-        data['share_id'] = share_id
+        del data['unique_id']
+
         serializer = PostCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -98,14 +91,19 @@ class PostFilter(filters.FilterSet):
 class PostListAPIView(views.APIView):
     """投稿の取得(一覧)APIクラス"""
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, pk, *args, **kwargs):
         """投稿の取得(一覧)APIに対応するハンドラメソッド"""
 
         # モデルオブジェクトをクエリ文字列を使ってフィルタリングした結果を取得
         filterset = PostFilter(request.query_params, queryset=Post.objects.all().order_by('-created_at'))
         if not filterset.is_valid():
             raise ValidationError(filterset.errors)
-        serializer = PostListSerializer(instance=filterset.qs, many=True)
+        serializer = PostListSerializer(instance=filterset.qs, many=True, pk=pk)
+        
+        for datas in serializer.data:
+            if not datas["voted"]:
+                for data in datas["options"]:
+                    data["votes"] = -1
         return Response(serializer.data, status.HTTP_200_OK)
 
 class PollCreateAPIView(views.APIView):
