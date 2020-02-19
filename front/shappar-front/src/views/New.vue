@@ -6,9 +6,9 @@
     <div class="New__add-option" @click="addOption">
       項目を追加する
     </div>
-    <div class="New__options" v-for="option in options" :key="option.id">
+    <div class="New__options" v-for="option in options" :key="option.select_num">
       <textarea class="New__textarea" cols="30" rows="3" v-model="option.answer"></textarea>
-      <div class="New__option__delete" @click="deleteOption(option.id)">
+      <div class="New__option__delete" @click="deleteOption(option.select_num)">
         項目を削除する
         </div>
     </div>
@@ -35,11 +35,11 @@ export default {
       count: 2,
       options: [
         {
-          id: 0,
+          select_num: 0,
           answer: ''
         },
         {
-          id: 1,
+          select_num: 1,
           answer: ''
         }
       ]
@@ -47,19 +47,19 @@ export default {
   },
   methods: {
     addOption () {
-      if (this.count < 4) {
+      if (this.count < 10) {
         this.options.push({
-          id: this.count++,
+          select_num: this.count++,
           content: ''
         })
       } else {
         alert('これ以上作成できません')
       }
     },
-    deleteOption (id) {
+    deleteOption (selectNum) {
       if (this.count > 2) {
         for (let i = 0; i < this.count; i++) {
-          if (this.options[i].id === id) {
+          if (this.options[i].select_num === selectNum) {
             this.options.splice(i, 1)
             this.count--
             break
@@ -70,26 +70,30 @@ export default {
       }
     },
     releasePost () {
-      var params = new FormData()
-      params.append('unique_id', this.unique_id)
-      params.append('question', this.question)
-      for (let i = 0; i < this.options.length; i++) {
-        params.append('answer_' + (i + 1), this.options[i].answer)
-      }
-      this.axios.post('/api/v1/posts/', params)
+      // var params = new FormData()
+      // params.append('unique_id', this.unique_id)
+      // params.append('question', this.question)
+      // for (let i = 0; i < this.options.length; i++) {
+      //   params.append('answer_' + (i + 1), this.options[i].answer)
+      // }
+      this.axios.post('/api/v1/posts/', {
+        unique_id: this.unique_id,
+        question: this.question,
+        options: this.options
+      })
         .then((response) => {
           // console.log(response)
-          if (response.status === 200) alert('投稿完了！')
+          if (response.status === 201) alert('投稿完了！')
         })
       this.question = ''
       this.count = 2
       this.options = [
         {
-          id: 0,
+          select_num: 0,
           answer: ''
         },
         {
-          id: 1,
+          select_num: 1,
           answer: ''
         }
       ]
