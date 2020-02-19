@@ -19,7 +19,7 @@ class OptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Option
-        fields = ['select_num', 'answer', 'votes']
+        fields = ['select_num', 'answer', 'votes', 'share_id']
 
 
 class OptionListSerializer(serializers.ListSerializer):
@@ -32,13 +32,13 @@ class PostCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['user', 'question', 'options']
+        fields = ['user', 'question', 'options', 'share_id']
 
-    def create(self, validate_data):
+    def create(self, validated_data):
         options = []
-        for option_data in validate_data.pop('options'):
+        for option_data in validated_data.pop('options'):
             options.append(Option.objects.create(**option_data))
-        post = super().create(validate_data)
+        post = super().create(validated_data)
         post.options.set(options)
         return post
 
@@ -74,10 +74,6 @@ class PostListSerializer(serializers.ModelSerializer):
 class PollSerializer(serializers.ModelSerializer):
     """投票用シリアライザ"""
 
-    post_id = serializers.ReadOnlyField(source='post.id')
-    user_id = serializers.ReadOnlyField(source='user.username')
-    iconimage = serializers.ImageField(source='user.iconimage')
-
     class Meta:
         model = Poll
-        fields = ['id','post_id', 'unique_id', 'user_id', 'iconimage', 'voted']
+        fields = ['post','user']
