@@ -6,15 +6,16 @@ from .models import Post, Poll, Option
 class CustomOptionAdmin(admin.ModelAdmin):
     """Optionの管理画面の表示する項目を設定"""
 
-    list_display = ('answer', 'votes')
+    list_display = ('id', 'share_id','answer', 'votes')
+    readonly_fields = ('select_num', 'answer')
     fields = ('select_num', 'answer', 'votes')
 
 class CustomPostAdmin(admin.ModelAdmin):
-    """Optionの管理画面の表示する項目を設定"""
+    """Postの管理画面の表示する項目を設定"""
 
-    list_display = ('id', 'question', 'user')
-    readonly_fields = ('id','created_at')
-    fields = ('id', 'question', 'created_at')
+    list_display = ('id', 'question', 'user', 'share_id')
+    readonly_fields = ('id', 'share_id','created_at')
+    fields = ('id', 'question', 'share_id','created_at')
     
 
 admin.site.register(Option, CustomOptionAdmin)

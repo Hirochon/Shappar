@@ -6,6 +6,7 @@ urlpatterns = [
     path('users/<pk>/', MypageAPIView.as_view()),
     path('posts/', PostCreateAPIView.as_view()),
     path('posts/public/<pk>/', PostListAPIView.as_view()),
+    path('posts/<pk>/polls/', PollCreateAPIView.as_view()),
     path('auth/', include('djoser.urls.jwt')),
     path('auth/', include('djoser.urls')),
 ]
