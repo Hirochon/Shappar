@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Public from '../views/Public.vue'
-// import Private from '../views/Private.vue'
-import New from '../views/New.vue'
-import MyPage from '../views/MyPage.vue'
-import LoginPage from '../views/LoginPage'
-import UpdateUser from '../views/UpdateUser'
-import store from '../store'
+import Public from '@/views/Public.vue'
+// import Private from '@/views/Private.vue'
+import New from '@/views/New.vue'
+import MyPage from '@/views/MyPage.vue'
+import LoginPage from '@/views/LoginPage'
+import UpdateUser from '@/views/UpdateUser'
+import Admin from '@/views/Admin'
+import store from '@/store'
 
 Vue.use(VueRouter)
 
@@ -56,6 +57,14 @@ const routes = [
     }
   }
 ]
+
+if (process.env.NODE_ENV === 'development') {
+  routes.unshift({
+    name: 'admin',
+    path: '/admin',
+    component: Admin
+  })
+}
 
 const router = new VueRouter({
   mode: 'history',
