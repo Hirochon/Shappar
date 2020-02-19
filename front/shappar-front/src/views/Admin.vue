@@ -1,15 +1,14 @@
 <template>
   <div id="home-page">
-    <GlobalHeader/>
+    <GlobalHeader :pageName="pageName"/>
     <GlobalMessage/>
 
     <!-- メインエリア -->
     <main class="container">
-      <p class="h5 mb-4">Adminページ</p>
       <b-form @submit.prevent="createSampleUser">
         <div class="row text-center mt-5">
           <div class="col-sm-12">
-            <b-button type="submit" variant="primary"></b-button>
+            <b-button type="submit" variant="primary">ユーザー新規作成</b-button>
           </div>
         </div>
       </b-form>
@@ -22,6 +21,11 @@
 import GlobalHeader from '@/components/GlobalHeader.vue'
 import GlobalMessage from '@/components/GlobalMessage.vue'
 export default {
+  data: function () {
+    return {
+      pageName: 'Adminページ'
+    }
+  },
   components: {
     GlobalHeader,
     GlobalMessage

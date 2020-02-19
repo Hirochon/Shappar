@@ -1,6 +1,6 @@
 <template>
   <div id="login-page">
-    <GlobalHeader/>
+    <GlobalHeader :pageName="pageName"/>
     <GlobalMessage/>
 
     <!-- メインエリア -->
@@ -41,7 +41,8 @@ export default {
       form: {
         username: '',
         password: ''
-      }
+      },
+      pageName: 'ログインページ'
     }
   },
   methods: {
