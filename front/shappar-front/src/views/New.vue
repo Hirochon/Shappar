@@ -7,10 +7,10 @@
       項目を追加する
       <div class="New__num">{{count}}</div>
     </div>
-    <draggable :option="draggable_options">
-      <div class="New__options" v-for="(option, index) in options" :key="option.select_num">
+    <draggable v-model="options" :option="draggable_options">
+      <div class="New__options" v-for="(option, index) in options" :key="option.id">
         <textarea class="New__textarea" cols="30" rows="3" v-model="option.answer"></textarea>
-        <div class="New__option__delete" @click="deleteOption(index)">
+        <div class="New__option__delete" @click="deleteOption(option.id)">
           <font-awesome-icon icon="times"/>
         </div>
         <div class="New__option__index">{{index + 1}}</div>
@@ -44,9 +44,11 @@ export default {
       },
       options: [
         {
+          id: 0,
           answer: ''
         },
         {
+          id: 1,
           answer: ''
         }
       ]
@@ -56,9 +58,9 @@ export default {
     addOption () {
       if (this.count < 10) {
         this.options.push({
+          id: this.count++,
           answer: ''
         })
-        this.count++
       } else {
         alert('これ以上作成できません')
       }
@@ -91,9 +93,11 @@ export default {
       this.count = 2
       this.options = [
         {
+          id: 0,
           answer: ''
         },
         {
+          id: 1,
           answer: ''
         }
       ]
