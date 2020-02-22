@@ -46,6 +46,7 @@ export default {
         // var j
         for (i = 0; i < posts.length; i++) {
           posts[i].isSelect = -1
+          posts[i].view = 0
           // for (j = 0; j < posts[i].options.length; j++) {
           //   posts[i].options[j].id = j
           //   posts[i].options[j].selected = false
