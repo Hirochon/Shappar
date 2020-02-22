@@ -6,12 +6,14 @@
     <div class="New__add-option" @click="addOption">
       項目を追加する
     </div>
-    <div class="New__options" v-for="option in options" :key="option.select_num">
-      <textarea class="New__textarea" cols="30" rows="3" v-model="option.answer"></textarea>
-      <div class="New__option__delete" @click="deleteOption(option.select_num)">
-        項目を削除する
+    <draggable :option="draggable_options">
+      <div class="New__options" v-for="option in options" :key="option.select_num">
+        <textarea class="New__textarea" cols="30" rows="3" v-model="option.answer"></textarea>
+        <div class="New__option__delete" @click="deleteOption(option.select_num)">
+          項目を削除する
         </div>
-    </div>
+      </div>
+    </draggable>
     <div class="New__submit" @click="releasePost">
       投稿する
     </div>
@@ -21,11 +23,13 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue'
+import draggable from 'vuedraggable'
 
 export default {
   name: 'new',
   components: {
-    NavBar
+    NavBar,
+    draggable
   },
   data: function () {
     return {
@@ -33,6 +37,9 @@ export default {
       user_id: '',
       question: '',
       count: 2,
+      draggable_options: {
+        Animation: 200
+      },
       options: [
         {
           select_num: 0,
