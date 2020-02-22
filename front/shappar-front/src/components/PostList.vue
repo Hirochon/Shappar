@@ -11,7 +11,7 @@
         <div class="Post__option" v-for="option in post.options" :key="option.select_num"
         @click="Select(post,option);"
         :class="{'active':post.isSelect === option.select_num}">
-          {{option.content}}
+          {{option.answer}}
         </div>
       </div>
       <transition name="result">

@@ -12,7 +12,7 @@ class Option(models.Model):
         db_table = 'option'
 
     select_num = models.IntegerField(verbose_name='選択肢に対応する番号')
-    answer = models.CharField(verbose_name='選択肢', editable=False, max_length=16, validators=[MinLengthValidator(1)])
+    answer = models.CharField(verbose_name='選択肢', max_length=16, validators=[MinLengthValidator(1)])
     votes = models.IntegerField(verbose_name='投票数', default=0)
     share_id = models.UUIDField(verbose_name='選択肢共通ID')
 
