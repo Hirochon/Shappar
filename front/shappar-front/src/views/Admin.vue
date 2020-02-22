@@ -62,7 +62,7 @@ export default {
     createSamplePosts () {
       for (let i = 0; i < this.postNum; i++) {
         let random = Math.floor(Math.random(i) * 100) % 8 + 2
-        console.log('random:' + random)
+        // console.log('random:' + random)
         for (let j = 0; j < random; j++) {
           this.options[j] = {
             select_num: j,
@@ -76,7 +76,7 @@ export default {
         })
           .then((response) => {
             // console.log(response)
-            if (response.status === 201) console.log(i + 1)
+            // if (response.status === 201) console.log(i + 1)
           })
         // 初期化
         this.question = ''
