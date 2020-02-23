@@ -4,7 +4,13 @@
       <div class="Post__icon">
         <img :src="post.iconimage" alt="">
       </div>
-      <div class="Post__changer" v-if="post.voted" @click="changeView(post)"></div>
+      <div class="Post__reload" v-if="post.voted" @click="reload(post)"><font-awesome-icon icon="sync-alt"/></div>
+      <div class="Post__sort" v-if="post.voted" @click="optionsSort(post, post.options)">
+        <font-awesome-icon icon="list-ol" v-show="post.sort === 0"/>
+        <font-awesome-icon icon="sort-amount-down" v-show="post.sort === 1"/>
+        <font-awesome-icon icon="sort-amount-up" v-show="post.sort === 2"/>
+      </div>
+      <div class="Post__changer" v-if="post.voted" @click="changeView(post)"><font-awesome-icon icon="exchange-alt"/></div>
       <div class="Post__text">
         {{post.question}}
       </div>
@@ -16,7 +22,6 @@
           <div class="Post__result__num" v-show="post.view === 1">{{option.votes}}</div>
           <div class="Post__option__answer" v-show="post.view === 0">{{option.answer}}</div>
         </div>
-      <!-- <div class="Post__changer" v-if="post.voted" @click="changeView(post)"></div> -->
       </div>
       <!-- <transition name="result">
         <div v-if="post.voted">
@@ -43,6 +48,11 @@ export default {
       required: true
     }
   },
+  // data: function () {
+  //   return {
+  //     sort: 0
+  //   }
+  // },
   methods: {
     Select (post, option) {
       // if (post.voted) return
@@ -50,7 +60,7 @@ export default {
       this.Submit(post, post.options)
     },
     Submit (post, options) {
-      console.log(options)
+      // console.log(options)
       var selectsArray = []
       var j = options.length
       for (let i = 0; i < j; i++) {
@@ -77,6 +87,38 @@ export default {
     },
     changeView (post) {
       post.view = (post.view + 1) % 2
+    },
+    reload (post) {
+      this.axios.get('/api/v1/posts/' + post.post_id)
+        .then((response) => {
+          var j = post.options.length
+          for (let i = 0; i < j; i++) {
+            post.options[i].votes = response.data.options[i].votes
+          }
+        })
+    },
+    optionsSort (post, options) {
+      post.sort = (post.sort + 1) % 3
+      switch (post.sort) {
+        case 0:
+          return options.sort(function (a, b) {
+            if (a.select_num < b.select_num) return -1
+            if (a.select_num > b.select_num) return 1
+            return 0
+          })
+        case 1:
+          return options.sort(function (a, b) {
+            if (a.votes < b.votes) return 1
+            if (a.votes > b.votes) return -1
+            return 0
+          })
+        case 2:
+          return options.sort(function (a, b) {
+            if (a.votes < b.votes) return -1
+            if (a.votes > b.votes) return 1
+            return 0
+          })
+      }
     }
   }
 }
@@ -215,8 +257,35 @@ $option-height: 24px;
     height: 32px;
     border-radius: 50%;
     top: 16px;
+    right: 96px;
+    background: #ccc;
+    text-align: center;
+    line-height: 32px;
+    font-size: 20px;
+  }
+  &__sort{
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    top: 16px;
+    right: 56px;
+    background: #ccc;
+    text-align: center;
+    line-height: 32px;
+    font-size: 20px;
+  }
+  &__reload{
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    top: 16px;
     right: 16px;
-    background: #4180d7;
+    background: #ccc;
+    text-align: center;
+    line-height: 32px;
+    font-size: 20px;
   }
 }
 .result-enter-active,.result-leave-active{

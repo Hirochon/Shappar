@@ -13,9 +13,17 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 // Fontawesome
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSearch, faTags, faHome, faGlobe, faFileAlt, faTimes } from '@fortawesome/free-solid-svg-icons'
+import {
+  faSearch, faTags, faHome, faGlobe, faListOl, faSyncAlt,
+  faFileAlt, faTimes, faSortAmountUp, faSortAmountDown,
+  faExchangeAlt
+} from '@fortawesome/free-solid-svg-icons'
 
-library.add(faSearch, faTags, faHome, faGlobe, faFileAlt, faTimes)
+library.add(
+  faSearch, faTags, faHome, faGlobe, faListOl, faSyncAlt,
+  faFileAlt, faTimes, faSortAmountUp, faSortAmountDown,
+  faExchangeAlt
+)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(BootstrapVue)
