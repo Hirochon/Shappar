@@ -130,10 +130,11 @@ $main-color: #4180d7;
 $icon-size: 40px;
 $option-height: 24px;
 .PostList{
+  z-index: 10;
   padding: 16px;
 }
 .Post{
-  margin-top: 64px;
+  margin-bottom: 24px;
   padding: 16px;
   border-radius: 8px;
   background: #fff;

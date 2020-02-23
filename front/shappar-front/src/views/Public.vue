@@ -1,7 +1,9 @@
 <template>
   <div class="Public">
     <Search :query="query" @search="search()"></Search>
-    <PostList :posts-data="posts"></PostList>
+    <pull-to :top-load-method="refresh" :top-config="config" :wrapper-height="pullToHeight">
+      <PostList :posts-data="posts"></PostList>
+    </pull-to>
     <NavBar></NavBar>
   </div>
 </template>
@@ -11,20 +13,30 @@
 import Search from '@/components/Search.vue'
 import PostList from '@/components/PostList.vue'
 import NavBar from '@/components/NavBar.vue'
+// pull-to-reflesh  使えてはいるが挙動がおかしいところがある
+import PullTo from 'vue-pull-to'
 
 export default {
   name: 'public',
   components: {
     Search,
     PostList,
-    NavBar
+    NavBar,
+    PullTo
   },
   data: function () {
     return {
       unique_id: '',
       user_id: '',
       posts: [],
-      query: ''
+      query: '',
+      pullToHeight: (document.body.offsetHeight - 96) + 'px',
+      config: {
+        pullText: '↓',
+        triggerText: '読み込み',
+        loadingText: '更新中...',
+        doneText: 'OK'
+      }
     }
   },
   methods: {
@@ -34,6 +46,19 @@ export default {
         .then((response) => {
           this.posts = response.data.posts
         })
+    },
+    refresh (loaded) {
+      this.axios.get('/api/v1/posts/public/' + this.unique_id)
+        .then((response) => {
+          var posts = response.data
+          var i
+          for (i = 0; i < posts.length; i++) {
+            posts[i].isSelect = -1// これに関しては投票済みなら更新なしやな
+            posts[i].view = 0
+            posts[i].sort = 0
+          }
+        })
+      loaded('done')
     }
   },
   created: function () {
@@ -45,7 +70,7 @@ export default {
         var i
         // var j
         for (i = 0; i < posts.length; i++) {
-          posts[i].isSelect = -1
+          posts[i].isSelect = -1// これに関しては投票済みなら更新なしやな
           posts[i].view = 0
           posts[i].sort = 0
           // for (j = 0; j < posts[i].options.length; j++) {
@@ -63,5 +88,8 @@ export default {
 <style lang="scss">
 .Public{
   padding-top: 48px;
+}
+.action-block.action-block-top,.default-text{
+  z-index: 0;
 }
 </style>
