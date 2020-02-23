@@ -1,19 +1,20 @@
 <template>
   <div class="New">
     <h2 class="New__title">質問文</h2>
-      <textarea class="New__textarea" v-model="question" cols="30" rows="5"></textarea>
+      <textarea class="New__question" v-model="question" cols="30" rows="2"></textarea>
     <h2 class="New__title">選択肢</h2>
     <div class="New__add-option" @click="addOption">
       項目を追加する
-      <div class="New__num">{{count}}</div>
+      <div class="New__num">{{options.length}}</div>
     </div>
-    <draggable v-model="options" :option="draggable_options">
+    <draggable v-model="options" :options="draggable_options">
       <div class="New__options" v-for="(option, index) in options" :key="option.id">
         <textarea class="New__textarea" cols="30" rows="3" v-model="option.answer"></textarea>
-        <div class="New__option__delete" @click="deleteOption(option.id)">
+        <div class="New__option__delete" @click="deleteOption(index)">
           <font-awesome-icon icon="times"/>
         </div>
         <div class="New__option__index">{{index + 1}}</div>
+        <div class="New__option__handle"></div>
       </div>
     </draggable>
     <div class="New__submit" @click="releasePost">
@@ -40,7 +41,8 @@ export default {
       question: '',
       count: 2,
       draggable_options: {
-        Animation: 200
+        animation: 200,
+        handle: '.New__option__handle'
       },
       options: [
         {
@@ -56,7 +58,7 @@ export default {
   },
   methods: {
     addOption () {
-      if (this.count < 10) {
+      if (this.options.length < 10) {
         this.options.push({
           id: this.count++,
           answer: ''
@@ -66,9 +68,9 @@ export default {
       }
     },
     deleteOption (selectNum) {
-      if (this.count > 2) {
+      if (this.options.length > 2) {
         this.options.splice(selectNum, 1)
-        this.count--
+        // this.count--
       } else {
         alert('これ以上削除できません')
       }
@@ -114,18 +116,30 @@ export default {
 $delete-width: 24px;
 .New{
   padding: 24px 16px 0;
-  &__textarea{
+  &__question{
     margin-bottom: 16px;
     padding: 8px 16px;
     box-sizing: border-box;
     width: 100%;
+    height: 100px;
     background: white;
     resize: none;
     border-radius: 8px;
   }
+  &__textarea{
+    margin-bottom: 16px;
+    padding: 8px 16px;
+    box-sizing: border-box;
+    width: calc(100% - 40px);
+    height: 64px;
+    line-height: 24px;
+    background: white;
+    resize: none;
+    border-radius: 8px 0 0 8px;
+  }
   &__add-option{
     position: sticky;
-    top: 0;
+    top: 8px;
     margin-top: 16px;
     margin-bottom: 16px;
     width: 100%;
@@ -152,6 +166,7 @@ $delete-width: 24px;
   }
   &__options{
     position: relative;
+    display: flex;
   }
   &__option__delete{
     position: absolute;
@@ -165,6 +180,7 @@ $delete-width: 24px;
     color: white;
     text-align: center;
     background: red;
+    z-index: 10;
   }
   &__option__index{
     position: absolute;
@@ -178,6 +194,16 @@ $delete-width: 24px;
     color: white;
     text-align: center;
     background: #4180d7;
+  }
+  &__option__handle{
+    width: 40px;
+    height: 64px;
+    line-height: $delete-width;
+    font-size: 14px;
+    border-radius: 0 8px 8px 0;
+    color: black;
+    text-align: center;
+    background: #ccc;
   }
   &__submit{
     width: 100%;
