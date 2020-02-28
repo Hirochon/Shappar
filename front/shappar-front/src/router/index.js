@@ -52,6 +52,7 @@ const routes = [
   {
     // pathにないやつ来たら強制送還！
     path: '*',
+    redirect: '/',
     meta: {
       requiresAuth: true
     }
@@ -71,7 +72,7 @@ if (process.env.NODE_ENV === 'development') {
 
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
+  base: './',
   routes
 })
 
