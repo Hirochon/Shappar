@@ -48,7 +48,7 @@ export default {
         })
     },
     refresh (loaded) {
-      this.axios.get('/api/v1/posts/public/' + this.unique_id)
+      this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
         .then((response) => {
           var posts = response.data
           var i
