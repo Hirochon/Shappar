@@ -1,16 +1,16 @@
 <template>
     <nav class="Nav-bar">
       <div class="Nav-bar__link">
-        <router-link to="/">Public</router-link>
+        <router-link to="/"><font-awesome-icon icon="globe"/></router-link>
       </div>
       <!-- <div class="Nav-bar__link">
         <router-link to="/private">Private</router-link>
       </div> -->
       <div class="Nav-bar__link">
-        <router-link to="/new">New</router-link>
+        <router-link to="/new"><font-awesome-icon icon="file-alt"/></router-link>
       </div>
       <div class="Nav-bar__link">
-        <router-link to="/mypage">MyPage</router-link>
+        <router-link to="/mypage"><font-awesome-icon icon="home"/></router-link>
       </div>
     </nav>
 </template>
@@ -37,6 +37,11 @@
       width: 100%;
       text-align: center;
       text-decoration: none;
+      // color: #4180d7;
+      color: #666;
+      font-size: 24px;
+    }
+    .router-link-exact-active{
       color: #4180d7;
     }
   }

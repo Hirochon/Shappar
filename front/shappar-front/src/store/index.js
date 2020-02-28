@@ -9,19 +9,23 @@ const authModule = {
   strict: process.env.NODE_ENV !== 'production',
   namespaced: true,
   state: {
+    unique_id: '',
     username: '',
     isLoggedIn: false
   },
   getters: {
+    unique_id: state => state.unique_id,
     username: state => state.username,
     isLoggedIn: state => state.isLoggedIn
   },
   mutations: {
     set (state, payload) {
+      state.unique_id = payload.user.id
       state.username = payload.user.username
       state.isLoggedIn = true
     },
     clear (state) {
+      state.unique_id = ''
       state.username = ''
       state.isLoggedIn = false
     }

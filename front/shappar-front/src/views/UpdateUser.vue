@@ -43,18 +43,21 @@ export default {
     },
     updateUser () {
       var params = new FormData()
-      params.append('user_id', this.user_id)
-      params.append('name', this.name)
-      params.append('introduction', this.introduction)
-      params.append('iconimage', this.iconimage)
-      params.append('homeimage', this.homeimage)
-      this.axios.put('/api/v1/users/' + this.before_user_id, params)
+      if (this.user_id) params.append('user_id', this.user_id)
+      if (this.name) params.append('name', this.name)
+      if (this.introduction) params.append('introduction', this.introduction)
+      if (this.iconimage) params.append('iconimage', this.iconimage)
+      if (this.homeimage) params.append('homeimage', this.homeimage)
+      this.axios.put('/api/v1/users/' + this.before_user_id + '/', params)
         .then((response) => {
+          // console.log(response)
           if (response.status === 200) {
-            alert('更新完了！')
-            this.user_id = ''
-            this.name = ''
-            this.introduction = ''
+            // alert('更新完了！')
+            // this.user_id = ''
+            // this.name = ''
+            // this.introduction = ''
+            this.$store.dispatch('message/setInfoMessage', { message: '更新完了' })
+            this.$router.replace('/mypage')
           }
         })
     }
