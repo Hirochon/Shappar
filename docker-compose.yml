@@ -19,7 +19,7 @@ services:
         ports:
             - "5432:5432"
         volumes:
-            - "dbdata:/var/lib/postgresql/data"                 # dbの永続化→dbdata
+            - "dbdata:/var/lib/postgresql/data/"                 # dbの永続化→dbdata
     nginx:
         build: "./nginx/"
         ports:
