@@ -10,10 +10,25 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
-Vue.use(BootstrapVue)
+// Fontawesome
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import {
+  faSearch, faTags, faHome, faGlobe, faListOl, faSyncAlt,
+  faFileAlt, faTimes, faSortAmountUp, faSortAmountDown,
+  faExchangeAlt
+} from '@fortawesome/free-solid-svg-icons'
 
-Vue.config.productionTip = false
+library.add(
+  faSearch, faTags, faHome, faGlobe, faListOl, faSyncAlt,
+  faFileAlt, faTimes, faSortAmountUp, faSortAmountDown,
+  faExchangeAlt
+)
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+Vue.use(BootstrapVue)
 Vue.use(VueAxios, axios)
+Vue.config.productionTip = false
 
 new Vue({
   router,

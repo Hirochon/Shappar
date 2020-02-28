@@ -2,7 +2,7 @@
   <!-- ヘッダナビゲーション -->
   <div id="header">
     <b-navbar type="dark" variant="dark">
-      <a class="navbar-brand" href="/">ログインページ</a>
+      <div class="navbar-brand">{{pageName}}</div>
       <b-navbar-nav class="ml-auto" v-if="$route.meta.requiresAuth">
         <b-nav-item-dropdown right v-if="isLoggedIn">
           <template slot="button-content">{{ username }}</template>
@@ -16,6 +16,12 @@
 
 <script>
 export default {
+  props: {
+    pageName: {
+      type: String,
+      required: true
+    }
+  },
   computed: {
     username: function () {
       return this.$store.getters['auth/username']

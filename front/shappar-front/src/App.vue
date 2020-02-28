@@ -11,6 +11,7 @@ html,body{
   margin: 0;
   padding: 0;
   background: #BFE4E2;
+  overflow-x: hidden;
 }
 input, button, textarea, select {
     margin: 0;
