@@ -7,10 +7,20 @@ services:
         volumes:
             - "./:/code/"                                       # プロジェクトのルートディレクトリからマウントを取る
             - "staticdata:/code/static/"                        # volumesを用いたnginxとのコンテナ間のリソース共有
-        # command: "gunicorn config.wsgi -b 0.0.0.0:8000"       # 本番環境
-        command: "python3 manage.py runserver 0.0.0.0:8000"     # テスト環境
+        # 本番環境
+        # command: >
+        # bash -c "python3 manage.py makemigrations &&
+        # python3 manage.py migrate &&
+        # gunicorn config.wsgi -b 0.0.0.0:8000"
+        
+        # テスト環境
+        command: >
+            bash -c "python3 manage.py makemigrations &&
+            python3 manage.py migrate &&
+            python3 manage.py runserver 0.0.0.0:8000"
         depends_on: 
             - db                                                # 2. docker-compose up時にdbから立ち上げる
+
     db:                                                         # docker-compose up時に1.と2.からdb→back→nginxの順に立ち上げる
         image: postgres:12.1
         environment:
