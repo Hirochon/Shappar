@@ -69,11 +69,9 @@ export default {
       this.axios.post('/api/v1/posts/' + post.post_id + '/polls/', {
         unique_id: this.$store.state.auth.unique_id,
         option: {
-          select_num: post.isSelect
-        },
-        answer: [
-          options[post.select_num]
-        ]
+          select_num: post.isSelect,
+          answer: options[post.isSelect].answer
+        }
       })
         .then((response) => {
           post.voted = true
