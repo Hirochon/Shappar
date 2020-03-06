@@ -131,4 +131,7 @@ class PollCreateAPIView(views.APIView):
         serializer = PollSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status.HTTP_201_CREATED)
+        seri_response = serializer_option.data
+        del seri_response['share_id']
+        del seri_response['answer']
+        return Response(seri_response, status.HTTP_201_CREATED)
