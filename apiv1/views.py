@@ -123,6 +123,7 @@ class PollCreateAPIView(views.APIView):
                 data_option['votes'] = option.votes
                 data_option['share_id'] = option.share_id
                 data_option['id'] = option.id
+                data_option['answer'] = option.answer
                 break
         serializer_option = OptionSerializer(instance=Option.objects.get(id=data_option['id']) ,data=data_option)
         serializer_option.is_valid(raise_exception=True)
