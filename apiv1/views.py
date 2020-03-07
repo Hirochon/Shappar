@@ -117,6 +117,29 @@ class PostListAPIView(views.APIView):
                 datas['total'] = total
         return Response(serializer.data, status.HTTP_200_OK)
 
+class PostUpdateAPIView(views.APIView):
+    """投稿の情報更新APIクラス"""
+
+    def get(self, request, pk, sk, *args, **kwargs):
+        queryset = Post.objects.get(id=sk)
+        serializer = PostListSerializer(instance=queryset, pk=pk)
+
+        seri_data = serializer.data
+
+        if not seri_data['voted']:
+            total = 0
+            for data in seri_data['options']:
+                total += data['votes']
+                data['votes'] = -1
+            seri_data['total'] = total
+        else:
+            total = 0
+            for data in seri_data['options']:
+                total += data['votes']
+            seri_data['total'] = total
+        return Response(seri_data, status.HTTP_200_OK)
+
+
 class PollCreateAPIView(views.APIView):
     """投票モデルの登録APIクラス"""
 
