@@ -68,15 +68,13 @@ export default {
       .then(async (response) => {
         var posts = response.data
         var i
-        // var j
         for (i = 0; i < posts.length; i++) {
-          posts[i].isSelect = -1// これに関しては投票済みなら更新なしやな
+          if (!posts[i].voted) posts[i].isSelect = -1// これに関しては投票済みなら更新なしやな
           posts[i].view = 0
           posts[i].sort = 0
-          // for (j = 0; j < posts[i].options.length; j++) {
-          //   posts[i].options[j].id = j
-          //   posts[i].options[j].selected = false
-          // }
+          posts[i].options.sort(function (a, b) {
+            return a.select_num < b.select_num ? -1 : 1
+          })
         }
         this.posts = posts
       })
