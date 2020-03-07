@@ -2,13 +2,20 @@ from django.shortcuts import get_object_or_404
 from rest_framework import views, status
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from rest_framework.pagination import LimitOffsetPagination
 from django_filters import rest_framework as filters
 from django.http import HttpResponseNotFound
 import uuid
 
 from django.contrib.auth import get_user_model
 from .models import Poll, Post, Option
-from .serializers import MypageSerializer, PostCreateSerializer, PostListSerializer, PollSerializer, OptionSerializer
+from .serializers import (
+    MypageSerializer, 
+    PostCreateSerializer, 
+    PostListSerializer, 
+    PollSerializer, 
+    OptionSerializer,
+)
 
 class MypageAPIView(views.APIView):
     """マイページ用詳細・更新・一部更新APIクラス"""
@@ -83,11 +90,24 @@ class PostListAPIView(views.APIView):
         """投稿の取得(一覧)APIに対応するハンドラメソッド"""
 
         # モデルオブジェクトをクエリ文字列を使ってフィルタリングした結果を取得
-        filterset = PostFilter(request.query_params, queryset=Post.objects.all().order_by('-created_at'))
-        if not filterset.is_valid():
-            raise ValidationError(filterset.errors)
-        serializer = PostListSerializer(instance=filterset.qs, many=True, pk=pk)
-        
+        if 'q' in request.GET:
+            if 'pid' in request.GET:
+                post_basis = Post.objects.get(id=request.GET['pid'])
+                queryset = Post.objects.filter(created_at__lt=post_basis.created_at, question__contains=request.GET['q']).order_by('-created_at')[:10]
+            else:
+                queryset = Post.objects.filter(question__contains=request.GET['q']).order_by('-created_at')[:10]
+        elif 'pid' in request.GET:
+            post_basis = Post.objects.get(id=request.GET['pid'])
+            queryset = Post.objects.filter(created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
+        else:
+            queryset = Post.objects.all().order_by('-created_at')[:10]
+        # filterset = PostFilter(request.query_params, queryset=queryset)
+        # filterset = PostFilter(request.query_params, queryset=Post.objects.all().order_by('-created_at'))
+        # if not filterset.is_valid():
+        #     raise ValidationError(filterset.errors)
+        # serializer = PostListSerializer(instance=post_basis, many=True, pk=pk)
+        serializer = PostListSerializer(instance=queryset, many=True, pk=pk)
+
         for datas in serializer.data:
             if not datas['voted']:
                 total = 0
@@ -100,7 +120,34 @@ class PostListAPIView(views.APIView):
                 for data in datas['options']:
                     total += data['votes']
                 datas['total'] = total
-        return Response(serializer.data, status.HTTP_200_OK)
+        seri_datas = serializer.data
+        response = {}
+        response["posts"] = seri_datas
+        response["pid"] = queryset[9].id
+        return Response(response, status.HTTP_200_OK)
+
+class PostUpdateAPIView(views.APIView):
+    """投稿の情報更新APIクラス"""
+
+    def get(self, request, pk, sk, *args, **kwargs):
+        queryset = Post.objects.get(id=sk)
+        serializer = PostListSerializer(instance=queryset, pk=pk)
+
+        seri_data = serializer.data
+
+        if not seri_data['voted']:
+            total = 0
+            for data in seri_data['options']:
+                total += data['votes']
+                data['votes'] = -1
+            seri_data['total'] = total
+        else:
+            total = 0
+            for data in seri_data['options']:
+                total += data['votes']
+            seri_data['total'] = total
+        return Response(seri_data, status.HTTP_200_OK)
+
 
 class PollCreateAPIView(views.APIView):
     """投票モデルの登録APIクラス"""
@@ -131,7 +178,12 @@ class PollCreateAPIView(views.APIView):
         serializer = PollSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        seri_response = serializer_option.data
-        del seri_response['share_id']
-        del seri_response['answer']
-        return Response(seri_response, status.HTTP_201_CREATED)
+
+        response_share_id = serializer_option.data["share_id"]
+        response_serializer = OptionSerializer(instance=Option.objects.filter(share_id=response_share_id), many=True)
+
+        for response_data in response_serializer.data:
+            del response_data["answer"]
+            del response_data["share_id"]
+
+        return Response(response_serializer.data, status.HTTP_201_CREATED)
