@@ -2,13 +2,20 @@ from django.shortcuts import get_object_or_404
 from rest_framework import views, status
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from rest_framework.pagination import LimitOffsetPagination
 from django_filters import rest_framework as filters
 from django.http import HttpResponseNotFound
 import uuid
 
 from django.contrib.auth import get_user_model
 from .models import Poll, Post, Option
-from .serializers import MypageSerializer, PostCreateSerializer, PostListSerializer, PollSerializer, OptionSerializer
+from .serializers import (
+    MypageSerializer, 
+    PostCreateSerializer, 
+    PostListSerializer, 
+    PollSerializer, 
+    OptionSerializer,
+)
 
 class MypageAPIView(views.APIView):
     """マイページ用詳細・更新・一部更新APIクラス"""
@@ -83,11 +90,19 @@ class PostListAPIView(views.APIView):
         """投稿の取得(一覧)APIに対応するハンドラメソッド"""
 
         # モデルオブジェクトをクエリ文字列を使ってフィルタリングした結果を取得
-        filterset = PostFilter(request.query_params, queryset=Post.objects.all().order_by('-created_at'))
-        if not filterset.is_valid():
-            raise ValidationError(filterset.errors)
-        serializer = PostListSerializer(instance=filterset.qs, many=True, pk=pk)
-        
+        if 'pid' in request.GET:
+            post_basis = Post.objects.get(id=request.GET['pid'])
+            print(str(post_basis))
+            queryset = Post.objects.filter(created_at__lt=post_basis.created_at).order_by('-created_at')[:5]
+        else:
+            queryset = Post.objects.all().order_by('-created_at')[:5]
+        # filterset = PostFilter(request.query_params, queryset=queryset)
+        # filterset = PostFilter(request.query_params, queryset=Post.objects.all().order_by('-created_at'))
+        # if not filterset.is_valid():
+        #     raise ValidationError(filterset.errors)
+        # serializer = PostListSerializer(instance=post_basis, many=True, pk=pk)
+        serializer = PostListSerializer(instance=queryset, many=True, pk=pk)
+
         for datas in serializer.data:
             if not datas['voted']:
                 total = 0
