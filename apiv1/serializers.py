@@ -19,7 +19,7 @@ class OptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Option
-        fields = ['select_num', 'answer', 'votes', 'share_id']
+        fields = ['id','select_num', 'answer', 'votes', 'share_id']
 
 
 class OptionListSerializer(serializers.ListSerializer):
@@ -76,4 +76,4 @@ class PollSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Poll
-        fields = ['post','user']
+        fields = ['post','user','option']

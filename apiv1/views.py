@@ -74,6 +74,11 @@ class PostCreateAPIView(views.APIView):
         serializer = PostCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        for datas in serializer.data['options']:
+            del datas['id']
+            del datas['share_id']
+
         return Response(serializer.data, status.HTTP_201_CREATED)
 
 class PostFilter(filters.FilterSet):
@@ -89,7 +94,7 @@ class PostListAPIView(views.APIView):
     def get(self, request, pk, *args, **kwargs):
         """投稿の取得(一覧)APIに対応するハンドラメソッド"""
 
-        # モデルオブジェクトをクエリ文字列を使ってフィルタリングした結果を取得
+        # モデルオブジェクトをクエリ文字列を使ってフィルタリング
         if 'q' in request.GET:
             if 'pid' in request.GET:
                 post_basis = Post.objects.get(id=request.GET['pid'])
@@ -111,19 +116,25 @@ class PostListAPIView(views.APIView):
         for datas in serializer.data:
             if not datas['voted']:
                 total = 0
+                datas['selectes_num'] = -1
                 for data in datas['options']:
+                    del data['id']
+                    del data['share_id']
                     total += data['votes']
                     data['votes'] = -1
                 datas['total'] = total
             else:
                 total = 0
                 for data in datas['options']:
+                    datas['selected_num'] = Option.objects.get(id=data['id']).select_num
+                    del data['id']
+                    del data['share_id']
                     total += data['votes']
                 datas['total'] = total
         seri_datas = serializer.data
+
         response = {}
         response["posts"] = seri_datas
-        response["pid"] = queryset[9].id
         return Response(response, status.HTTP_200_OK)
 
 class PostUpdateAPIView(views.APIView):
@@ -137,13 +148,19 @@ class PostUpdateAPIView(views.APIView):
 
         if not seri_data['voted']:
             total = 0
+            seri_data["selectes_num"] = -1
             for data in seri_data['options']:
+                del data['id']
+                del data['share_id']
                 total += data['votes']
                 data['votes'] = -1
             seri_data['total'] = total
         else:
             total = 0
             for data in seri_data['options']:
+                seri_data["selected_num"] = Option.objects.get(id=data['id']).select_num
+                del data['id']
+                del data['share_id']
                 total += data['votes']
             seri_data['total'] = total
         return Response(seri_data, status.HTTP_200_OK)
@@ -169,7 +186,7 @@ class PollCreateAPIView(views.APIView):
                 option.votes += 1
                 data_option['votes'] = option.votes
                 data_option['share_id'] = option.share_id
-                data_option['id'] = option.id
+                data_option['id'] = data['option'] = option.id
                 data_option['answer'] = option.answer
                 break
         serializer_option = OptionSerializer(instance=Option.objects.get(id=data_option['id']) ,data=data_option)
@@ -185,5 +202,10 @@ class PollCreateAPIView(views.APIView):
         for response_data in response_serializer.data:
             del response_data["answer"]
             del response_data["share_id"]
+            del response_data["id"]
 
-        return Response(response_serializer.data, status.HTTP_201_CREATED)
+        response = {}
+        response["options"] = response_serializer.data
+        response["selected_num"] = data_option['select_num']
+
+        return Response(response, status.HTTP_201_CREATED)
