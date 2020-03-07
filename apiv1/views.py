@@ -178,4 +178,12 @@ class PollCreateAPIView(views.APIView):
         serializer = PollSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer_option.data, status.HTTP_201_CREATED)
+
+        response_share_id = serializer_option.data["share_id"]
+        response_serializer = OptionSerializer(instance=Option.objects.filter(share_id=response_share_id), many=True)
+
+        for response_data in response_serializer.data:
+            del response_data["answer"]
+            del response_data["share_id"]
+
+        return Response(response_serializer.data, status.HTTP_201_CREATED)
