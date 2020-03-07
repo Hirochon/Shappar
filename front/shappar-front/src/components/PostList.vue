@@ -36,11 +36,6 @@ export default {
       required: true
     }
   },
-  // data: function () {
-  //   return {
-  //     sort: 0
-  //   }
-  // },
   methods: {
     Select (post, option) {
       // if (post.voted) return

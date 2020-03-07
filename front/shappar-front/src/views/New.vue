@@ -35,12 +35,7 @@
 import draggable from 'vuedraggable'
 
 export default {
-  name: 'new',
-  // props: {
-  //   isOpen: {
-  //     type: Boolean
-  //   }
-  // },
+  name: 'New',
   components: {
     draggable
   },
@@ -123,12 +118,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/assets/common.scss';
 $delete-width: 24px;
-@mixin media-8-16{
-  @media screen and (min-width: 600px){
-    @content
-  }
-}
 .New{
   position: absolute;
   width: 100%;
@@ -271,7 +262,7 @@ $delete-width: 24px;
     // border-radius: 8px;
     color: white;
     text-align: center;
-    background: #62a7d0;
+    background: $color-sub;
     z-index: 100;
   }
   &__num{
@@ -285,7 +276,7 @@ $delete-width: 24px;
     border-radius: 50%;
     color: white;
     text-align: center;
-    background: #41be99;
+    background: $color-main;
   }
   &__submit{
     width: 100%;
@@ -294,7 +285,7 @@ $delete-width: 24px;
     // border-radius: 8px;
     color: white;
     text-align: center;
-    background: #41be99;
+    background: $color-main;
     // background: #17b8a3;
   }
 }
@@ -306,7 +297,7 @@ $delete-width: 24px;
   height: 64px;
   border-radius: 50%;
   color: white;
-  background: #41be99;
+  background: $color-main;
   box-shadow: 1px 1px 6px 1px rgba(0,0,0,0.2);
   line-height: 64px;
   text-align: center;
