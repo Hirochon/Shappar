@@ -8,9 +8,10 @@
 html,body{
   width: 100%;
   height: 100%;
-  margin: 0;
+  max-width: 700px;
+  margin: 0 auto;
   padding: 0;
-  background: #BFE4E2;
+  background: #eee;
   overflow-x: hidden;
 }
 input, button, textarea, select {
@@ -26,6 +27,7 @@ input, button, textarea, select {
 }
 #app{
   width: 100%;
+  max-width: 700px;
   //height: 100%;
   min-height: 100%;
   background: #eee;
