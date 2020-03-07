@@ -93,14 +93,14 @@ class PostListAPIView(views.APIView):
         if 'q' in request.GET:
             if 'pid' in request.GET:
                 post_basis = Post.objects.get(id=request.GET['pid'])
-                queryset = Post.objects.filter(created_at__lt=post_basis.created_at, question__contains=request.GET['q']).order_by('-created_at')[:5]
+                queryset = Post.objects.filter(created_at__lt=post_basis.created_at, question__contains=request.GET['q']).order_by('-created_at')[:10]
             else:
-                queryset = Post.objects.filter(question__contains=request.GET['q']).order_by('-created_at')[:5]
+                queryset = Post.objects.filter(question__contains=request.GET['q']).order_by('-created_at')[:10]
         elif 'pid' in request.GET:
             post_basis = Post.objects.get(id=request.GET['pid'])
-            queryset = Post.objects.filter(created_at__lt=post_basis.created_at).order_by('-created_at')[:5]
+            queryset = Post.objects.filter(created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
         else:
-            queryset = Post.objects.all().order_by('-created_at')[:5]
+            queryset = Post.objects.all().order_by('-created_at')[:10]
         # filterset = PostFilter(request.query_params, queryset=queryset)
         # filterset = PostFilter(request.query_params, queryset=Post.objects.all().order_by('-created_at'))
         # if not filterset.is_valid():
@@ -123,7 +123,7 @@ class PostListAPIView(views.APIView):
         seri_datas = serializer.data
         response = {}
         response["posts"] = seri_datas
-        response["pid"] = queryset[4].id
+        response["pid"] = queryset[9].id
         return Response(response, status.HTTP_200_OK)
 
 class PostUpdateAPIView(views.APIView):
