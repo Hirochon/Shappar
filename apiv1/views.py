@@ -90,9 +90,14 @@ class PostListAPIView(views.APIView):
         """投稿の取得(一覧)APIに対応するハンドラメソッド"""
 
         # モデルオブジェクトをクエリ文字列を使ってフィルタリングした結果を取得
-        if 'pid' in request.GET:
+        if 'q' in request.GET:
+            if 'pid' in request.GET:
+                post_basis = Post.objects.get(id=request.GET['pid'])
+                queryset = Post.objects.filter(created_at__lt=post_basis.created_at, question__contains=request.GET['q']).order_by('-created_at')[:5]
+            else:
+                queryset = Post.objects.filter(question__contains=request.GET['q']).order_by('-created_at')[:5]
+        elif 'pid' in request.GET:
             post_basis = Post.objects.get(id=request.GET['pid'])
-            print(str(post_basis))
             queryset = Post.objects.filter(created_at__lt=post_basis.created_at).order_by('-created_at')[:5]
         else:
             queryset = Post.objects.all().order_by('-created_at')[:5]
