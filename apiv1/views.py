@@ -116,7 +116,7 @@ class PostListAPIView(views.APIView):
         for datas in serializer.data:
             if not datas['voted']:
                 total = 0
-                datas['selectes_num'] = -1
+                datas['selected_num'] = -1
                 for data in datas['options']:
                     del data['id']
                     del data['share_id']
@@ -148,7 +148,7 @@ class PostUpdateAPIView(views.APIView):
 
         if not seri_data['voted']:
             total = 0
-            seri_data["selectes_num"] = -1
+            seri_data["selected_num"] = -1
             for data in seri_data['options']:
                 del data['id']
                 del data['share_id']
