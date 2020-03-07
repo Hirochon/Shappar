@@ -144,6 +144,7 @@ $delete-width: 24px;
     overflow-x: hidden;
     overflow-y: scroll;
     z-index: 100;
+    @include scrollbar;
   }
   &__header{
     width: 100%;
@@ -303,7 +304,7 @@ $delete-width: 24px;
   text-align: center;
   font-size: 24px;
   z-index: 10;
-  :hover{
+  &:hover{
     opacity: 0.5;
   }
 }
