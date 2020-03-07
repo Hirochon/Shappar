@@ -23,18 +23,6 @@
           <div class="Post__option__answer" v-show="post.view === 0">{{option.answer}}</div>
         </div>
       </div>
-      <!-- <transition name="result">
-        <div v-if="post.voted">
-          <div class="Post__divider"></div>
-          <div class="Post__result__title">結果</div>
-          <div class="Post__container">
-            <div class="Post__result__option" v-for="option in post.options" :key="option.select_num">
-              <div class="Post__result__bar" :style="{width: rate(option.votes, post.total) + '%'}"></div>
-              <div class="Post__result__num">{{option.votes}}</div>
-            </div>
-          </div>
-        </div>
-      </transition> -->
     </div>
   </div>
 </template>
@@ -286,11 +274,5 @@ $option-height: 24px;
     line-height: 32px;
     font-size: 20px;
   }
-}
-.result-enter-active,.result-leave-active{
-  transition: .3s ease-in-out;
-}
-.result-enter,.result-leave-to{
-  opacity: 0;
 }
 </style>

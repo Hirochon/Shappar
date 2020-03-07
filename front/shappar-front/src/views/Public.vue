@@ -4,7 +4,7 @@
     <pull-to :top-load-method="refresh" :top-config="config" :wrapper-height="pullToHeight">
       <PostList :posts-data="posts"></PostList>
     </pull-to>
-    <NavBar></NavBar>
+    <New/>
   </div>
 </template>
 
@@ -12,7 +12,7 @@
 // @ is an alias to /src
 import Search from '@/components/Search.vue'
 import PostList from '@/components/PostList.vue'
-import NavBar from '@/components/NavBar.vue'
+import New from '@/views/New.vue'
 // pull-to-reflesh  使えてはいるが挙動がおかしいところがある
 import PullTo from 'vue-pull-to'
 
@@ -21,8 +21,8 @@ export default {
   components: {
     Search,
     PostList,
-    NavBar,
-    PullTo
+    PullTo,
+    New
   },
   data: function () {
     return {
@@ -30,7 +30,7 @@ export default {
       user_id: '',
       posts: [],
       query: '',
-      pullToHeight: (document.body.offsetHeight - 96) + 'px',
+      pullToHeight: (document.body.offsetHeight - 48) + 'px',
       config: {
         pullText: '↓',
         triggerText: '読み込み',
@@ -88,6 +88,8 @@ export default {
 <style lang="scss">
 .Public{
   padding-top: 48px;
+  height: 100%;
+  box-sizing: content-box;
 }
 .action-block.action-block-top,.default-text{
   z-index: 0;

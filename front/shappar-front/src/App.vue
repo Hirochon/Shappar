@@ -28,7 +28,7 @@ input, button, textarea, select {
   width: 100%;
   //height: 100%;
   min-height: 100%;
-  background: #BFE4E2;
-  padding-bottom: 80px;
+  background: #eee;
+  // padding-bottom: 80px;
 }
 </style>
