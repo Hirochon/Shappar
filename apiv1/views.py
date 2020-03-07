@@ -120,7 +120,11 @@ class PostListAPIView(views.APIView):
                 for data in datas['options']:
                     total += data['votes']
                 datas['total'] = total
-        return Response(serializer.data, status.HTTP_200_OK)
+        seri_datas = serializer.data
+        response = {}
+        response["posts"] = seri_datas
+        response["pid"] = queryset[4].id
+        return Response(response, status.HTTP_200_OK)
 
 class PostUpdateAPIView(views.APIView):
     """投稿の情報更新APIクラス"""
@@ -174,7 +178,4 @@ class PollCreateAPIView(views.APIView):
         serializer = PollSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        seri_response = serializer_option.data
-        del seri_response['share_id']
-        del seri_response['answer']
-        return Response(seri_response, status.HTTP_201_CREATED)
+        return Response(serializer_option.data, status.HTTP_201_CREATED)
