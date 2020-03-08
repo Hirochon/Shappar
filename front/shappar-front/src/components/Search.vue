@@ -3,7 +3,7 @@
     <form action="" class="Search__form" @submit="getPost">
       <label for="text-box" class="Search__label">検索</label>
       <input type="text" id="text-box" class="Search__input" v-model="query">
-      <div class="Search__submit"><font-awesome-icon icon="search"/></div>
+      <div class="Search__submit"><font-awesome-icon icon="search" @click="getPost"/></div>
     </form>
   </div>
 </template>

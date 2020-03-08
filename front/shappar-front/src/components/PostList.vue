@@ -1,5 +1,5 @@
 <template>
-  <div class="PostList">
+  <div class="PostList" id="PostList">
     <div class="Post" v-for="post in posts" :key="post.post_id">
       <div class="Post__icon">
         <img :src="post.iconimage" :alt="post.user_id+'_icon'">
@@ -158,6 +158,7 @@ $option-height: 40px;
 .PostList{
   z-index: 10;
   padding: 48px 16px 16px;
+  // transition: .25s ease-in-out;
 }
 .Post{
   margin-bottom: 40px;

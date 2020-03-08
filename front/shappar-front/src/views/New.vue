@@ -291,7 +291,7 @@ $delete-width: 24px;
   }
 }
 .FAB{
-  position: absolute;
+  position: fixed;
   right: 16px;
   bottom: 48px;
   width: 64px;
