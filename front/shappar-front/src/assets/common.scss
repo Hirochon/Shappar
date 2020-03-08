@@ -1,0 +1,29 @@
+$color-main: #41be99;
+$color-sub: #62a7d0;
+@mixin media-8-16{
+  @media screen and (min-width: 600px){
+    @content
+  }
+};
+@mixin media-8-24{
+  @media screen and (min-width: 720px){
+    @content
+  }
+};
+@mixin media-12-24{
+  @media screen and (min-width: 840px){
+    @content
+  }
+};
+@mixin media-pc{
+  @media screen and (min-width: 1024px){
+    @content
+  }
+};
+@mixin scrollbar{
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display:none;
+  }
+}

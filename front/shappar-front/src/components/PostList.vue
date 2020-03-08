@@ -1,41 +1,34 @@
 <template>
   <div class="PostList">
-    <div class="Post" v-for="post in postsData" :key="post.id">
+    <div class="Post" v-for="post in posts" :key="post.post_id">
       <div class="Post__icon">
-        <img :src="post.iconimage" alt="">
+        <img :src="post.iconimage" :alt="post.user_id+'_icon'">
       </div>
-      <div class="Post__reload" v-if="post.voted" @click="reload(post)"><font-awesome-icon icon="sync-alt"/></div>
-      <div class="Post__sort" v-if="post.voted" @click="optionsSort(post, post.options)">
-        <font-awesome-icon icon="list-ol" v-show="post.sort === 0"/>
-        <font-awesome-icon icon="sort-amount-down" v-show="post.sort === 1"/>
-        <font-awesome-icon icon="sort-amount-up" v-show="post.sort === 2"/>
+      <div class="Post__buttons">
+        <div class="Post__sort" v-if="post.voted" @click="optionsSort(post, post.options)">
+          <font-awesome-icon icon="list-ol" v-show="post.sort === 0"/>
+          <font-awesome-icon icon="sort-amount-up" v-show="post.sort === 1"/>
+          <font-awesome-icon icon="sort-amount-down-alt" v-show="post.sort === 2"/>
+        </div>
+        <!-- <div class="Post__divider"></div> -->
+        <div class="Post__reload" v-if="post.voted" @click="refleshPost(post)"><font-awesome-icon icon="sync-alt"/></div>
       </div>
-      <div class="Post__changer" v-if="post.voted" @click="changeView(post)"><font-awesome-icon icon="exchange-alt"/></div>
+      <div class="Post__total">Total：{{post.total}}</div>
+      <!-- <div class="Post__changer" v-if="post.voted"><font-awesome-icon icon="exchange-alt"/></div> -->
       <div class="Post__text">
         {{post.question}}
       </div>
       <div class="Post__container">
         <div class="Post__option" v-for="option in post.options" :key="option.select_num"
         @click="Select(post,option);">
-          <div class="Post__option__border" v-show="post.isSelect === option.select_num"></div>
-          <div class="Post__result__bar" :style="{width: rate(option.votes, post.total) + '%'}"></div>
+          <!-- <div class="Post__option__border" v-show="post.isSelect === option.select_num"></div> -->
+          <div class="Post__result__bar" :style="{width: rate(option.votes, post.total) + '%'}" :class="{selected: post.selected_num === option.select_num}"></div>
           <div class="Post__result__num" v-show="post.view === 1">{{option.votes}}</div>
-          <div class="Post__option__answer" v-show="post.view === 0">{{option.answer}}</div>
+          <div class="Post__option__answer" v-show="post.view === 0">{{option.select_num + 1 + '. '}}{{option.answer}}</div>
         </div>
       </div>
-      <!-- <transition name="result">
-        <div v-if="post.voted">
-          <div class="Post__divider"></div>
-          <div class="Post__result__title">結果</div>
-          <div class="Post__container">
-            <div class="Post__result__option" v-for="option in post.options" :key="option.select_num">
-              <div class="Post__result__bar" :style="{width: rate(option.votes, post.total) + '%'}"></div>
-              <div class="Post__result__num">{{option.votes}}</div>
-            </div>
-          </div>
-        </div>
-      </transition> -->
     </div>
+    <div class="loadMore" @click="loadMore">Load More</div>
   </div>
 </template>
 
@@ -43,24 +36,31 @@
 export default {
   name: 'PostList',
   props: {
-    postsData: {
+    posts: {
       type: Array,
+      required: true
+    },
+    unique_id: {
+      type: String,
       required: true
     }
   },
-  // data: function () {
-  //   return {
-  //     sort: 0
-  //   }
-  // },
+  data () {
+    return {
+      nextPostId: '',
+      res: null
+    }
+  },
   methods: {
     Select (post, option) {
-      // if (post.voted) return
+      if (post.voted) {
+        this.changeView(post)
+        return
+      }
       post.isSelect = option.select_num
       this.Submit(post, post.options)
     },
     Submit (post, options) {
-      // console.log(options)
       var selectsArray = []
       var j = options.length
       for (let i = 0; i < j; i++) {
@@ -69,16 +69,23 @@ export default {
       this.axios.post('/api/v1/posts/' + post.post_id + '/polls/', {
         unique_id: this.$store.state.auth.unique_id,
         option: {
-          select_num: post.isSelect
-        },
-        answer: [
-          options[post.select_num]
-        ]
+          select_num: post.isSelect,
+          answer: options[post.isSelect].answer
+        }
       })
         .then((response) => {
           post.voted = true
+          // post.total++ // これでもいいかな？
+          post.total = 0
+          // post.selected_num
+          var updates = response.data.options.sort((a, b) => {
+            return a.select_num < b.select_num ? -1 : 1
+          })
           for (let i = 0; i < j; i++) {
-            options[i].votes = response.data.options[i].votes
+            // 各選択肢の投票数を更新
+            options[i].votes = updates[i].votes
+            // totalを更新
+            post.total += updates[i].votes
           }
         })
     },
@@ -88,13 +95,32 @@ export default {
     changeView (post) {
       post.view = (post.view + 1) % 2
     },
-    reload (post) {
-      this.axios.get('/api/v1/posts/' + post.post_id)
+    async refleshPost (post) {
+      var res
+      await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/' + post.post_id + '/')
         .then((response) => {
-          var j = post.options.length
-          for (let i = 0; i < j; i++) {
-            post.options[i].votes = response.data.options[i].votes
-          }
+          res = response.data
+        })
+      post.voted = res.voted
+      post.total = res.total
+      post.options = res.options.sort((a, b) => {
+        return a.select_num < b.select_num ? -1 : 1
+      })
+    },
+    loadMore () {
+      var nextPostId = this.posts[this.posts.length - 1].post_id
+      this.axios.get('/api/v1/posts/public/' + this.unique_id + '/?pid=' + nextPostId)
+        .then((response) => {
+          var posts = response.data.posts
+          this.nextPostId = response.data.pid
+          posts.forEach(item => {
+            item.view = 0
+            item.sort = 0
+            item.options.sort((a, b) => {
+              return a.select_num < b.select_num ? -1 : 1
+            })
+            this.posts.push(item)
+          })
         })
     },
     optionsSort (post, options) {
@@ -126,17 +152,17 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
-$main-color: #4180d7;
-$icon-size: 40px;
-$option-height: 24px;
+@import '@/assets/common.scss';
+$icon-size: 56px;
+$option-height: 40px;
 .PostList{
   z-index: 10;
-  padding: 16px;
+  padding: 48px 16px 16px;
 }
 .Post{
-  margin-bottom: 24px;
-  padding: 16px;
-  border-radius: 8px;
+  margin-bottom: 40px;
+  padding: 48px 16px 8px;
+  // border-radius: 8px;
   background: #fff;
   position: relative;
   box-shadow: 0 0 8px rgba(black, 0.16);
@@ -144,18 +170,35 @@ $option-height: 24px;
     width: $icon-size;
     height: $icon-size;
     border-radius: 50%;
-    background: greenyellow;
+    background: white;
     box-shadow: 0 0 8px rgba(black, 0.16);
     overflow: hidden;
+    position: absolute;
+    top: -24px;
+    left: calc(50% - 28px);
     img{
       width: 100%;
       object-fit: contain;
     }
   }
+  &__total{
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    height: 24px;
+    line-height: 20px;
+    padding: 0 8px;
+    border-radius: 12px;
+    background: white;
+    color: $color-main;
+    font-size: 14px;
+    border: solid 2px $color-main;
+    font-weight: bold;
+  }
   &__text{
     width: 100%;
     margin-bottom: 8px;
-    // padding-top: 64px;
+    padding: 0 8px;
   }
   &__submit{
     user-select: none;
@@ -166,7 +209,7 @@ $option-height: 24px;
     margin-top: 24px;
     line-height: 32px;
     text-align: center;
-    background: $main-color;
+    background: $color-main;
     border-radius: 8px;
     color: #fff;
     &.active{
@@ -177,28 +220,26 @@ $option-height: 24px;
   }
   &__container{
     width: 100%;
+    @include scrollbar;
   }
   &__option{
+    border-top: solid 1px #e9e9e9;
     width: 100%;
     position: relative;
+    height: auto;
     min-height: $option-height;
     line-height: $option-height;
     padding: 0 8px;
-    border-radius: 8px;
-    background: #eee;
+    // border-radius: 8px;
+    background: #fff;
     box-sizing: border-box;
     word-break: break-word;
-    box-shadow: 0 0 8px rgba(black, 0.24);
-    overflow: hidden;
-    &:not(:last-child){
-      margin-bottom: 16px;
+    // box-shadow: 0 0 8px rgba(black, 0.24);
+    // overflow: hidden;
+    &:last-child{
+      // margin-bottom: 16px;
+      // border-bottom: 0.5px solid #eee;
     }
-    // &.active{
-    //   width: calc(100% - 16px);
-    //   border: $main-color solid 1px;
-    //   box-sizing: content-box;
-    //   // color: white;
-    // }
     &__answer{
       position: absolute;
       line-height: $option-height;
@@ -210,7 +251,7 @@ $option-height: 24px;
       top: 0;
       left: 0;
       border-radius: 8px;
-      border: $main-color solid 2px;
+      // border: $color-main solid 2px;
     }
   }
   &__divider{
@@ -242,14 +283,17 @@ $option-height: 24px;
       line-height: $option-height;
     }
     &__bar{
-      background: #4180d7;
+      background: $color-sub;
       opacity: 0.5;
       height: $option-height;
       line-height: $option-height;
-      border-radius: 8px;
+      border-radius: 0 8px 8px 0;
       position: absolute;
       top: 0;
       left: 0;
+      &.selected{
+        background: $color-main;
+      }
     }
   }
   &__changer{
@@ -265,34 +309,66 @@ $option-height: 24px;
     font-size: 20px;
   }
   &__sort{
-    position: absolute;
+    // position: absolute;
     width: 32px;
     height: 32px;
-    border-radius: 50%;
-    top: 16px;
-    right: 56px;
-    background: #ccc;
+    // border-radius: 50%;
+    // top: 12px;
+    // right: 56px;
+    background: #fff;
     text-align: center;
     line-height: 32px;
     font-size: 20px;
+    // box-shadow: 0 0 8px rgba(black, 0.24);
+    // color: $color-main;
+      border-bottom: 0.5px solid #ccc;
   }
   &__reload{
-    position: absolute;
+    // position: absolute;
     width: 32px;
     height: 32px;
-    border-radius: 50%;
-    top: 16px;
-    right: 16px;
-    background: #ccc;
+    // border-radius: 50%;
+    // top: 12px;
+    // right: 16px;
+    background: #fff;
     text-align: center;
     line-height: 32px;
     font-size: 20px;
+    // color: $color-main;
+      border-bottom: 0.5px solid #ccc;
+  }
+  &__buttons{
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    display: flex;
+    justify-content: space-around;
+    height: 34px;
+    width: 80px;
+    // border: solid 1px #ccc;
+  }
+  &__divider{
+    width: 2px;
+    // position: absolute;
+    height: 32px;
+    // right: 50px;
+    // top: 0px;
+    background: black;
+    opacity: 0.2;
+    margin: 0;
   }
 }
-.result-enter-active,.result-leave-active{
-  transition: .3s ease-in-out;
+.loadMore{
+  position: fixed;
+  bottom: 0;
+  left:0;
+  width: 100%;
+  height: 32px;
+  line-height: 32px;
+  background: white;
+  text-align: center;
 }
-.result-enter,.result-leave-to{
-  opacity: 0;
+.scroll-container{
+  @include scrollbar;
 }
 </style>
