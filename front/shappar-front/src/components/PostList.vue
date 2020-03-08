@@ -162,7 +162,6 @@ $option-height: 40px;
 .Post{
   margin-bottom: 40px;
   padding: 48px 16px 8px;
-  // border-radius: 8px;
   background: #fff;
   position: relative;
   box-shadow: 0 0 8px rgba(black, 0.16);
@@ -178,7 +177,8 @@ $option-height: 40px;
     left: calc(50% - 28px);
     img{
       width: 100%;
-      object-fit: contain;
+      height: 100%;
+      object-fit: cover;
     }
   }
   &__total{
@@ -230,16 +230,9 @@ $option-height: 40px;
     min-height: $option-height;
     line-height: $option-height;
     padding: 0 8px;
-    // border-radius: 8px;
     background: #fff;
     box-sizing: border-box;
     word-break: break-word;
-    // box-shadow: 0 0 8px rgba(black, 0.24);
-    // overflow: hidden;
-    &:last-child{
-      // margin-bottom: 16px;
-      // border-bottom: 0.5px solid #eee;
-    }
     &__answer{
       position: absolute;
       line-height: $option-height;
@@ -251,7 +244,6 @@ $option-height: 40px;
       top: 0;
       left: 0;
       border-radius: 8px;
-      // border: $color-main solid 2px;
     }
   }
   &__divider{
@@ -279,7 +271,6 @@ $option-height: 40px;
     }
     &__num{
       position: absolute;
-      // padding-left: 8px;
       line-height: $option-height;
     }
     &__bar{
@@ -309,32 +300,21 @@ $option-height: 40px;
     font-size: 20px;
   }
   &__sort{
-    // position: absolute;
     width: 32px;
     height: 32px;
-    // border-radius: 50%;
-    // top: 12px;
-    // right: 56px;
     background: #fff;
     text-align: center;
     line-height: 32px;
     font-size: 20px;
-    // box-shadow: 0 0 8px rgba(black, 0.24);
-    // color: $color-main;
       border-bottom: 0.5px solid #ccc;
   }
   &__reload{
-    // position: absolute;
     width: 32px;
     height: 32px;
-    // border-radius: 50%;
-    // top: 12px;
-    // right: 16px;
     background: #fff;
     text-align: center;
     line-height: 32px;
     font-size: 20px;
-    // color: $color-main;
       border-bottom: 0.5px solid #ccc;
   }
   &__buttons{
@@ -345,14 +325,10 @@ $option-height: 40px;
     justify-content: space-around;
     height: 34px;
     width: 80px;
-    // border: solid 1px #ccc;
   }
   &__divider{
     width: 2px;
-    // position: absolute;
     height: 32px;
-    // right: 50px;
-    // top: 0px;
     background: black;
     opacity: 0.2;
     margin: 0;
