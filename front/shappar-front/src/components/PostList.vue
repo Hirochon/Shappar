@@ -270,7 +270,6 @@ $option-height: 40px;
       box-sizing: border-box;
     }
     &__num{
-      position: absolute;
       line-height: $option-height;
     }
     &__bar{
