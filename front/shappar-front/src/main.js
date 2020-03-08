@@ -15,13 +15,13 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faSearch, faTags, faHome, faGlobe, faListOl, faSyncAlt,
-  faFileAlt, faTimes, faSortAmountUp, faSortAmountDown,
+  faFileAlt, faTimes, faSortAmountUp, faSortAmountDownAlt,
   faExchangeAlt, faBars, faPlus
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
   faSearch, faTags, faHome, faGlobe, faListOl, faSyncAlt,
-  faFileAlt, faTimes, faSortAmountUp, faSortAmountDown,
+  faFileAlt, faTimes, faSortAmountUp, faSortAmountDownAlt,
   faExchangeAlt, faBars, faPlus
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)

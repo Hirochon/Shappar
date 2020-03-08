@@ -2,7 +2,7 @@
   <div class="Public">
     <Search :query="query" @search="search()"></Search>
     <pull-to :top-load-method="refresh" :top-config="config" :wrapper-height="pullToHeight">
-      <PostList :posts-data="posts"></PostList>
+      <PostList :posts="posts" :unique_id="unique_id"></PostList>
     </pull-to>
     <New/>
   </div>
@@ -33,30 +33,33 @@ export default {
       pullToHeight: (document.body.offsetHeight - 48) + 'px',
       config: {
         pullText: '↓',
-        triggerText: '読み込み',
-        loadingText: '更新中...',
-        doneText: 'OK'
+        triggerText: '',
+        loadingText: 'Loading...',
+        doneText: ''
       }
     }
   },
   methods: {
     search () {
       // console.log(this.query)
-      this.axios.get('/api/v1/posts/public?q=' + this.query)
+      this.axios.get('/api/v1/posts/public/' + this.unique_id + '/?q=' + this.query)
         .then((response) => {
           this.posts = response.data.posts
         })
     },
-    refresh (loaded) {
-      this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
+    async refresh (loaded) {
+      await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
         .then((response) => {
-          var posts = response.data
+          var posts = response.data.posts
           var i
           for (i = 0; i < posts.length; i++) {
-            posts[i].isSelect = -1// これに関しては投票済みなら更新なしやな
             posts[i].view = 0
             posts[i].sort = 0
+            posts[i].options.sort(function (a, b) {
+              return a.select_num < b.select_num ? -1 : 1
+            })
           }
+          this.posts = posts
         })
       loaded('done')
     }
@@ -64,12 +67,11 @@ export default {
   created: function () {
     this.unique_id = this.$store.state.auth.unique_id
     this.user_id = this.$store.state.auth.username
-    this.axios.get('/api/v1/posts/public/' + this.unique_id)
+    this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
       .then(async (response) => {
-        var posts = response.data
-        var i
-        for (i = 0; i < posts.length; i++) {
-          if (!posts[i].voted) posts[i].isSelect = -1// これに関しては投票済みなら更新なしやな
+        var posts = response.data.posts
+        var length = posts.length
+        for (let i = 0; i < length; i++) {
           posts[i].view = 0
           posts[i].sort = 0
           posts[i].options.sort(function (a, b) {

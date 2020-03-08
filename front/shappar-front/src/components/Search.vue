@@ -1,20 +1,19 @@
 <template>
   <div class="Search">
-    <form action="" class="Search__form">
+    <form action="" class="Search__form" @submit="getPost">
       <label for="text-box" class="Search__label">検索</label>
       <input type="text" id="text-box" class="Search__input" v-model="query">
-      <div class="Search__submit" @click="getPost"></div>
+      <div class="Search__submit"><font-awesome-icon icon="search"/></div>
     </form>
-    <div class="Search__filter"></div>
   </div>
 </template>
 
 <script>
 export default {
   name: 'Search',
-  data: function () {
-    return {
-      query: ''
+  props: {
+    query: {
+      type: String
     }
   },
   methods: {
@@ -28,16 +27,19 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
+@import '@/assets/common.scss';
 .Search{
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 8px;
+  left: 16px;
+  // border-radius: 16px;
   display: flex;
-  width: 100%;
+  width: calc(100% - 32px);
   justify-content: center;
   padding: 8px;
   box-sizing: border-box;
-  background: rgba(255,255,255,0.8);
+  box-shadow: 0 0 8px rgba(black, 0.16);
+  background: rgba(255,255,255,1);
   z-index: 100;
   &__form{
     position: relative;
@@ -47,7 +49,7 @@ export default {
     height: 32px;
     padding: 4px 8px;
     border-radius: 16px;
-    border: solid 2px black;
+    border: solid 2px $color-main;
     background: #fff;
   }
   &__label{
@@ -66,8 +68,12 @@ export default {
     height: 28px;
     border-radius: 50%;
     box-sizing: border-box;
-    border: solid 2px black;
+    // border: solid 2px black;
     cursor: pointer;
+    text-align: center;
+    line-height: 28px;
+    color: $color-main;
+    font-size: 18px;
   }
   &__filter{
     margin-left: 8px;
