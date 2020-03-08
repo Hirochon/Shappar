@@ -32,6 +32,7 @@ export default {
       posts: [],
       query: '',
       positionY: 0,
+      targetHeight: 0,
       searchShow: true,
       refreshConfig: {
         isStart: false,
@@ -39,12 +40,6 @@ export default {
         loading: false,
         startY: 0,
         diffY: 0
-      },
-      config: {
-        pullText: '↓',
-        triggerText: '',
-        loadingText: 'Loading...',
-        doneText: ''
       }
     }
   },
@@ -79,7 +74,7 @@ export default {
       }
       refConf.diffY = e.clientY - refConf.startY
       refConf.trigger = refConf.diffY > 75 // 下がった高さが75pxを来れたら発火
-      console.log(refConf.trigger)
+      // console.log(refConf.trigger)
       if (refConf.diffY > 0) {
         document.getElementById('PostList').style.transition = null
         document.getElementById('PostList').style.transform = 'translateY(' + refConf.diffY * 2 / 3 + 'px)'
@@ -99,7 +94,7 @@ export default {
       }
       refConf.isStart = false
       refConf.loading = true
-      console.log('refresh')
+      // console.log('refresh')
       await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
         .then((response) => {
           var posts = response.data.posts
@@ -121,19 +116,51 @@ export default {
       refConf.startY = 0
       refConf.diffY = 0
     },
-    onScroll () {
+    async loadMore () {
+      // console.log('targetHeight:' + this.targetHeight + ' :: scrollTop:' + this.scrollTop())
+      if (this.scrollTop() < this.targetHeight) return
+      if (this.targetHeight < 0) return
+      await (this.targetHeight = -1)// lockをかける
+      var nextPostId = this.posts[this.posts.length - 1].post_id
+      var targetId
+      await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/?pid=' + nextPostId)
+        .then((response) => {
+          var posts = response.data.posts
+          this.nextPostId = response.data.pid
+          posts.forEach(item => {
+            item.view = 0
+            item.sort = 0
+            item.options.sort((a, b) => {
+              return a.select_num < b.select_num ? -1 : 1
+            })
+            this.posts.push(item)
+            // console.log(posts[6].post_id)
+            targetId = posts.length === 10 ? posts[6].post_id : false
+          })
+        })
+      // console.log(this.targetHeight)
+      // console.log(targetId)
+      if (targetId) this.targetHeight = document.getElementById(targetId).offsetTop // 次の高さを計測
+    },
+    switchSearch () {
       var newY = this.scrollTop()
       this.searchShow = newY < this.positionY
       this.positionY = newY
+      // console.log('switchSearch')
+    },
+    scrollTriggers () {
+      this.switchSearch()
+      this.loadMore()
     },
     scrollTop () {
       return document.documentElement.scrollTop > 0 ? document.documentElement.scrollTop : document.body.scrollTop
     }
   },
-  created: function () {
+  created: async function () {
+    var targetId
     this.unique_id = this.$store.state.auth.unique_id
     this.user_id = this.$store.state.auth.username
-    this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
+    await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
       .then(async (response) => {
         var posts = response.data.posts
         var length = posts.length
@@ -145,9 +172,12 @@ export default {
           })
         }
         this.posts = posts
+        if (length === 10) targetId = posts[6].post_id
       })
     this.query = ''
-    window.addEventListener('scroll', this.onScroll)
+    this.targetHeight = document.getElementById(targetId).offsetTop
+    // console.log(this.targetHeight)
+    window.addEventListener('scroll', this.scrollTriggers)// searchのトリガー
   }
 }
 </script>
