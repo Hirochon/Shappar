@@ -234,7 +234,6 @@ $option-height: 40px;
     box-sizing: border-box;
     word-break: break-word;
     &__answer{
-      position: absolute;
       line-height: $option-height;
     }
     &__border{
