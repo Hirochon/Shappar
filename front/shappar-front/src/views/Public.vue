@@ -94,6 +94,7 @@ export default {
       }
       refConf.isStart = false
       refConf.loading = true
+      var targetId
       // console.log('refresh')
       await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
         .then((response) => {
@@ -107,7 +108,9 @@ export default {
             })
           }
           this.posts = posts
+          if (posts.length === 10) targetId = posts[6].post_id
         })
+      this.targetHeight = document.getElementById(targetId).offsetTop
       document.getElementById('PostList').style.transform = null
       this.query = ''
       refConf.isStart = false
