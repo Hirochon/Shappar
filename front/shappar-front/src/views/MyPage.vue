@@ -58,19 +58,16 @@
         </div>
       </div>
     </div>
-    <NavBar></NavBar>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import NavBar from '@/components/NavBar.vue'
 import GlobalMessage from '@/components/GlobalMessage.vue'
 
 export default {
   name: 'MyPage',
   components: {
-    NavBar,
     GlobalMessage
   },
   data: function () {
