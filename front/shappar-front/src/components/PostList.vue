@@ -21,7 +21,7 @@
       <div class="Post__container">
         <div class="Post__option" v-for="option in post.options" :key="option.select_num"
         @click="Select(post,option);">
-          <!-- <div class="Post__option__border" v-show="post.isSelect === option.select_num"></div> -->
+          <!-- <div class="Post__option__border" v-show="post.selected_num === option.select_num"></div> -->
           <div class="Post__result__bar" :style="{width: rate(option.votes, post.total) + '%'}" :class="{selected: post.selected_num === option.select_num}"></div>
           <div class="Post__result__num" v-show="post.view === 1">{{option.votes}}</div>
           <div class="Post__option__answer" v-show="post.view === 0">{{option.select_num + 1 + '. '}}{{option.answer}}</div>
@@ -55,7 +55,7 @@ export default {
         this.changeView(post)
         return
       }
-      post.isSelect = option.select_num
+      post.selected_num = option.select_num
       this.Submit(post, post.options)
     },
     Submit (post, options) {
@@ -67,8 +67,8 @@ export default {
       this.axios.post('/api/v1/posts/' + post.post_id + '/polls/', {
         unique_id: this.$store.state.auth.unique_id,
         option: {
-          select_num: post.isSelect,
-          answer: options[post.isSelect].answer
+          select_num: post.selected_num,
+          answer: options[post.selected_num].answer
         }
       })
         .then((response) => {
@@ -85,6 +85,7 @@ export default {
             // totalを更新
             post.total += updates[i].votes
           }
+          post.selected_num = response.data.selected_num
         })
     },
     rate (molec, denom) {

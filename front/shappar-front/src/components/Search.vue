@@ -1,10 +1,16 @@
 <template>
   <div class="Search">
+    <router-link to="/mypage" class="Search__icon">
+      <img :src="user.iconimage" alt="">
+    </router-link>
     <form action="" class="Search__form" @submit.prevent="getPost">
       <label for="text-box" class="Search__label">検索</label>
       <input type="text" id="text-box" class="Search__input" v-model="childQuery">
       <div class="Search__submit"><font-awesome-icon icon="search" @click="getPost"/></div>
     </form>
+    <router-link to="/mypage" class="Search__icon">
+      <img :src="user.iconimage" alt="">
+    </router-link>
   </div>
 </template>
 
@@ -18,7 +24,9 @@ export default {
   },
   data () {
     return {
-      childQuery: ''
+      childQuery: '',
+      user_id: '',
+      user: {}
     }
   },
   methods: {
@@ -26,6 +34,14 @@ export default {
       this.$parent.query = this.childQuery
       this.$emit('search')
     }
+  },
+  created () {
+    this.user_id = this.$store.state.auth.username
+    this.axios.get('/api/v1/users/' + this.user_id)
+      .then((response) => {
+        this.user = response.data
+        // console.log('userData : ' + response.status)
+      })
   }
 }
 </script>
@@ -40,7 +56,7 @@ export default {
   // border-radius: 16px;
   display: flex;
   width: calc(100% - 32px);
-  justify-content: center;
+  justify-content: space-between;
   padding: 8px;
   box-sizing: border-box;
   box-shadow: 0 0 8px rgba(black, 0.16);
@@ -56,6 +72,7 @@ export default {
     border-radius: 16px;
     border: solid 2px $color-main;
     background: #fff;
+    width: 60%;
   }
   &__label{
     display: none;
@@ -86,6 +103,21 @@ export default {
     width: 32px;
     border-radius: 50%;
     background: #eee;
+  }
+  &__icon{
+    display: block;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    left: calc(50% - 60px);
+    top: 120px;
+    background: #BFE4E2;
+    overflow: hidden;
+    img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 }
 </style>

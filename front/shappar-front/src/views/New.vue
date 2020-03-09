@@ -11,13 +11,13 @@
           <textarea class="New__question" v-model="question" cols="30" rows="2" placeholder="質問文"></textarea>
           <div class="Buttons__num">{{options.length}}</div>
         </div>
-        <draggable v-model="options" handle=".New__option__handle" @touchmove.stop>
+        <draggable v-model="options" handle=".New__option__handle" @touchmove.prevent.stop>
           <transition-group name="option">
             <div class="New__options" v-for="(option, index) in options" :key="option.id">
               <div class="New__option__container" :id="'option_'+option.id">
                 <textarea class="New__option" cols="30" rows="3" v-model="option.answer" :placeholder="index+1"
                   @touchstart="delTouchStart(index)"
-                  @touchmove.prevent="delTouchMove(option.id)"
+                  @touchmove="delTouchMove(option.id)"
                   @touchend.stop="delTouchEnd(option.id)"
                   ></textarea>
               <div class="New__option__handle"><font-awesome-icon icon="bars"/></div>
