@@ -5,29 +5,39 @@
         <div class="Top">
           <h2 class="New__header">
             <div class="New__close">
-              <font-awesome-icon icon="times" @click="isOpen = false"/>
+              <font-awesome-icon icon="times" @click.stop="$emit('switchNew')"/>
             </div>
             </h2>
           <textarea class="New__question" v-model="question" cols="30" rows="2" placeholder="質問文"></textarea>
           <div class="Buttons__num">{{options.length}}</div>
         </div>
-        <draggable v-model="options" handle=".New__option__handle">
-          <div class="New__options" v-for="(option, index) in options" :key="option.id">
-            <textarea class="New__option" cols="30" rows="3" v-model="option.answer" :placeholder="index+1"></textarea>
-            <div class="New__option__handle"><font-awesome-icon icon="bars"/></div>
-          </div>
+        <draggable v-model="options" handle=".New__option__handle" @touchmove.stop>
+          <transition-group name="option">
+            <div class="New__options" v-for="(option, index) in options" :key="option.id">
+              <div class="New__option__container" :id="'option_'+option.id">
+                <textarea class="New__option" cols="30" rows="3" v-model="option.answer" :placeholder="index+1"
+                  @touchstart="delTouchStart(index)"
+                  @touchmove.prevent="delTouchMove(option.id)"
+                  @touchend.stop="delTouchEnd(option.id)"
+                  ></textarea>
+              <div class="New__option__handle"><font-awesome-icon icon="bars"/></div>
+              </div>
+              <!-- <div class="New__option__delete"></div> -->
+              <div class="New__delete__behind" :class="{on:deleteConfig.trigger}"><font-awesome-icon icon="trash-alt"/></div>
+            </div>
+          </transition-group>
         </draggable>
         <div class="Buttons">
-          <div class="Buttons__add-option" @click="addOption">
+          <div class="Buttons__add-option" @click.stop="addOption">
             <font-awesome-icon icon="plus"/>
           </div>
-          <div class="Buttons__submit" @click="releasePost">
+          <div class="Buttons__submit" @click.stop="releasePost">
             サーブ
           </div>
         </div>
       </div>
     </transition>
-    <div class="FAB" @click="isOpen = true"><font-awesome-icon icon="plus"/></div>
+    <div class="FAB" @click="$emit('switchNew')"><font-awesome-icon icon="plus"/></div>
   </div>
 </template>
 
@@ -39,13 +49,18 @@ export default {
   components: {
     draggable
   },
+  props: {
+    isOpen: {
+      type: Boolean,
+      required: true
+    }
+  },
   data: function () {
     return {
       unique_id: '',
       user_id: '',
       question: '',
       count: 2,
-      isOpen: false,
       draggable_options: {
         animation: 200
       },
@@ -58,7 +73,14 @@ export default {
           id: 1,
           answer: ''
         }
-      ]
+      ],
+      deleteConfig: {
+        isStart: false,
+        trigger: false,
+        loading: false,
+        startX: 0,
+        diffX: 0
+      }
     }
   },
   methods: {
@@ -72,10 +94,40 @@ export default {
         alert('これ以上作成できません')
       }
     },
+    delTouchStart (index) {
+      var e = event.type === 'touchstart' ? event.changedTouches[0] : event
+      this.deleteConfig.isStart = true
+      this.deleteConfig.trigger = false
+      this.deleteConfig.startX = e.clientX
+      this.deleteConfig.index = index
+    },
+    delTouchMove (id) {
+      // touchイベントとその他のイベントの統合
+      var e = event.type === 'touchmove' ? event.changedTouches[0] : event
+      var delConf = this.deleteConfig
+      delConf.diffX = e.clientX - delConf.startX
+      delConf.trigger = delConf.diffX < -100 // 左に動いた距離が100pxを常時表示
+      // console.log(delConf.trigger)
+      // console.log(delConf.diffX)
+      if (delConf.diffX < 0) {
+        document.getElementById('option_' + id).style.transition = null
+        document.getElementById('option_' + id).style.transform = 'translateX(' + delConf.diffX + 'px)'
+      } else {
+        document.getElementById('option_' + id).style.transition = '.15s ease-in-out'
+        document.getElementById('option_' + id).style.transform = null
+      }
+    },
+    delTouchEnd (id) {
+      var delConf = this.deleteConfig
+      if (delConf.trigger) this.deleteOption(delConf.index)
+      document.getElementById('option_' + id).style.transition = '.15s ease-in-out'
+      document.getElementById('option_' + id).style.transform = null
+      delConf.isStart = false
+      delConf.trigger = false
+    },
     deleteOption (selectNum) {
       if (this.options.length > 2) {
         this.options.splice(selectNum, 1)
-        // this.count--
       } else {
         alert('これ以上削除できません')
       }
@@ -194,9 +246,11 @@ $delete-width: 24px;
   }
   &__options{
     position: relative;
+  }
+  &__option__container{
     display: flex;
   }
-  &__option__delete{
+  &__delete__button{
     position: absolute;
     top: -4px;
     right: -4px;
@@ -209,6 +263,24 @@ $delete-width: 24px;
     text-align: center;
     background: red;
     z-index: 10;
+  }
+  &__delete__behind{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    line-height: 64px;
+    background: red;
+    text-align: right;
+    padding: 0 14px;
+    z-index: -1;
+    font-size: 12px;
+    color: white;
+    &.on{
+      padding: 0 11px;
+      font-size: 20px;
+    }
   }
   &__option__index{
     position: absolute;
@@ -291,7 +363,7 @@ $delete-width: 24px;
   }
 }
 .FAB{
-  position: absolute;
+  position: fixed;
   right: 16px;
   bottom: 48px;
   width: 64px;
@@ -314,5 +386,12 @@ $delete-width: 24px;
 .container-enter,.container-leave-to{
   opacity: 0;
   transform: translateY(100%);
+}
+.option-enter-active,.option-leave-active{
+  transition: .3s ease-in-out;
+}
+.option-enter,.option-leave-to{
+  transform: translateX(-100%);
+  opacity: 0;
 }
 </style>

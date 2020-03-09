@@ -1,9 +1,9 @@
 <template>
   <div class="Search">
-    <form action="" class="Search__form" @submit="getPost">
+    <form action="" class="Search__form" @submit.prevent="getPost">
       <label for="text-box" class="Search__label">検索</label>
-      <input type="text" id="text-box" class="Search__input" v-model="query">
-      <div class="Search__submit"><font-awesome-icon icon="search"/></div>
+      <input type="text" id="text-box" class="Search__input" v-model="childQuery">
+      <div class="Search__submit"><font-awesome-icon icon="search" @click="getPost"/></div>
     </form>
   </div>
 </template>
@@ -16,9 +16,14 @@ export default {
       type: String
     }
   },
+  data () {
+    return {
+      childQuery: ''
+    }
+  },
   methods: {
     getPost () {
-      this.$parent.query = this.query
+      this.$parent.query = this.childQuery
       this.$emit('search')
     }
   }

@@ -1,6 +1,6 @@
 <template>
-  <div class="PostList">
-    <div class="Post" v-for="post in posts" :key="post.post_id">
+  <div class="PostList" id="PostList">
+    <div class="Post" v-for="post in posts" :key="post.post_id" :id="post.post_id">
       <div class="Post__icon">
         <img :src="post.iconimage" :alt="post.user_id+'_icon'">
       </div>
@@ -28,7 +28,6 @@
         </div>
       </div>
     </div>
-    <div class="loadMore" @click="loadMore">Load More</div>
   </div>
 </template>
 
@@ -47,7 +46,6 @@ export default {
   },
   data () {
     return {
-      nextPostId: '',
       res: null
     }
   },
@@ -269,7 +267,6 @@ $option-height: 40px;
       box-sizing: border-box;
     }
     &__num{
-      position: absolute;
       line-height: $option-height;
     }
     &__bar{
