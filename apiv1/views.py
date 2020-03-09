@@ -130,7 +130,8 @@ class PostListAPIView(views.APIView):
                     if len(flag) > 0:
                         datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
                     else:
-                        datas['selected_num'] = -1
+                        if not 'selected_num' in datas:
+                            datas['selected_num'] = -1
                     del data['id']
                     del data['share_id']
                     total += data['votes']
@@ -166,7 +167,8 @@ class PostUpdateAPIView(views.APIView):
                 if len(flag) > 0:
                     seri_data['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
                 else:
-                    seri_data['selected_num'] = -1
+                    if not 'selected_num' in seri_data:
+                        seri_data['selected_num'] = -1
                 del data['id']
                 del data['share_id']
                 total += data['votes']
