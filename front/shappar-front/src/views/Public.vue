@@ -60,6 +60,7 @@ export default {
           }
           this.posts = posts
         })
+      this.query = ''
     },
     refreshTrigger () {
       // touchイベントとその他のイベントの統合
