@@ -1,5 +1,5 @@
 <template>
-  <div class="Public" @touchmove.prevent="refreshTrigger" @touchend="refresh">
+  <div class="Public" @touchmove="refreshTrigger" @touchend="refresh">
     <transition name="search">
       <Search :query="query" @search="search()" v-show="searchShow"></Search>
     </transition>
@@ -8,7 +8,7 @@
       <font-awesome-icon icon="chevron-circle-down" :class="{'Pull-to__on': refreshConfig.trigger}" v-if="refreshConfig.isStart"/>
     </div>
     <PostList :posts="posts" :unique_id="unique_id"></PostList>
-    <New/>
+    <New @switchNew="switchNew()" :isOpen="isOpen"/>
   </div>
 </template>
 
@@ -31,6 +31,7 @@ export default {
       user_id: '',
       posts: [],
       query: '',
+      isOpen: false,
       positionY: 0,
       targetHeight: 0,
       searchShow: true,
@@ -64,7 +65,7 @@ export default {
       // touchイベントとその他のイベントの統合
       var e = event.type === 'touchmove' ? event.changedTouches[0] : event
       var refConf = this.refreshConfig
-      if (this.scrollTop() > 0) {
+      if (this.scrollTop() > 0 || this.isOpen) {
         refConf.isStart = false
         return
       }
@@ -157,6 +158,9 @@ export default {
     },
     scrollTop () {
       return document.documentElement.scrollTop > 0 ? document.documentElement.scrollTop : document.body.scrollTop
+    },
+    switchNew () {
+      this.isOpen = !this.isOpen
     }
   },
   created: async function () {
