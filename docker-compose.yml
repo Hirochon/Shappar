@@ -15,9 +15,9 @@ services:
         
         # テスト環境
         command: >
-            bash -c "python3 manage.py makemigrations &&
-            python3 manage.py migrate &&
-            python3 manage.py runserver 0.0.0.0:8000"
+            bash -c "python3 manage_local.py makemigrations &&
+            python3 manage_local.py migrate &&
+            python3 manage_local.py runserver 0.0.0.0:8000"
         depends_on: 
             - db                                                # 2. docker-compose up時にdbから立ち上げる
 
