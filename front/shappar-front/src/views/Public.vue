@@ -1,5 +1,5 @@
 <template>
-  <div class="Public" @touchmove="refreshTrigger" @touchend="refresh">
+  <div class="Public" @touchmove.prevent="refreshTrigger" @touchend="refresh">
     <transition name="search">
       <Search :query="query" @search="search()" v-show="searchShow"></Search>
     </transition>
