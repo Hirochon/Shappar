@@ -4,16 +4,18 @@
       <div class="Post__icon">
         <img :src="post.iconimage" :alt="post.user_id+'_icon'">
       </div>
-      <div class="Post__buttons">
-        <div class="Post__sort" v-if="post.voted" @click="optionsSort(post, post.options)">
-          <font-awesome-icon icon="list-ol" v-show="post.sort === 0"/>
-          <font-awesome-icon icon="sort-amount-up" v-show="post.sort === 1"/>
-          <font-awesome-icon icon="sort-amount-down-alt" v-show="post.sort === 2"/>
+      <div class="Post__top">
+        <div class="Post__total">Total：{{post.total}}</div>
+        <div class="Post__buttons" v-show="post.voted">
+          <div class="Post__sort" v-if="post.voted" @click="optionsSort(post, post.options)">
+            <font-awesome-icon icon="list-ol" v-show="post.sort === 0"/>
+            <font-awesome-icon icon="sort-amount-up" v-show="post.sort === 1"/>
+            <font-awesome-icon icon="sort-amount-down-alt" v-show="post.sort === 2"/>
+          </div>
+          <!-- <div class="Post__divider"></div> -->
+          <div class="Post__reload" v-if="post.voted" @click="refleshPost(post)"><font-awesome-icon icon="sync-alt"/></div>
         </div>
-        <!-- <div class="Post__divider"></div> -->
-        <div class="Post__reload" v-if="post.voted" @click="refleshPost(post)"><font-awesome-icon icon="sync-alt"/></div>
       </div>
-      <div class="Post__total">Total：{{post.total}}</div>
       <!-- <div class="Post__changer" v-if="post.voted"><font-awesome-icon icon="exchange-alt"/></div> -->
       <div class="Post__text">
         {{post.question}}
@@ -160,7 +162,7 @@ $option-height: 40px;
 }
 .Post{
   margin-bottom: 40px;
-  padding: 48px 16px 8px;
+  padding: 16px 16px 8px;
   background: #fff;
   position: relative;
   box-shadow: 0 0 8px rgba(black, 0.16);
@@ -179,20 +181,6 @@ $option-height: 40px;
       height: 100%;
       object-fit: cover;
     }
-  }
-  &__total{
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    height: 24px;
-    line-height: 20px;
-    padding: 0 8px;
-    border-radius: 12px;
-    background: white;
-    color: $color-main;
-    font-size: 14px;
-    border: solid 2px $color-main;
-    font-weight: bold;
   }
   &__text{
     width: 100%;
@@ -222,6 +210,7 @@ $option-height: 40px;
     @include scrollbar;
   }
   &__option{
+    cursor: pointer;
     border-top: solid 1px #e9e9e9;
     width: 100%;
     position: relative;
@@ -297,31 +286,69 @@ $option-height: 40px;
     font-size: 20px;
   }
   &__sort{
+    cursor: pointer;
     width: 32px;
     height: 32px;
     background: #fff;
     text-align: center;
     line-height: 32px;
     font-size: 20px;
-      border-bottom: 0.5px solid #ccc;
+    border-bottom: 0.5px solid #ccc;
+    transition: .3s ease-in-out;
+    &:hover{
+      border-bottom: solid 0.5px $color-main;
+      color: $color-main;
+    }
   }
   &__reload{
+    cursor: pointer;
     width: 32px;
     height: 32px;
     background: #fff;
     text-align: center;
     line-height: 32px;
     font-size: 20px;
-      border-bottom: 0.5px solid #ccc;
+    border-bottom: 0.5px solid #ccc;
+    transition: .3s ease-in-out;
+    &:hover{
+      border-bottom: solid 0.5px $color-main;
+      color: $color-main;
+      svg{
+        transition: .3s ease-in-out;
+        transform: rotate(180deg);
+      }
+    }
+  }
+  &__top{
+    width:100%;
+    height: 34px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &__total{
+    width: auto;
+    top: 16px;
+    left: 16px;
+    height: 24px;
+    line-height: 20px;
+    padding: 0 8px;
+    border-radius: 12px;
+    background: white;
+    color: $color-main;
+    font-size: 14px;
+    border: solid 2px $color-main;
+    font-weight: bold;
+    transition: .3s ease-in-out;
   }
   &__buttons{
-    position: absolute;
     right: 16px;
     top: 16px;
     display: flex;
     justify-content: space-around;
     height: 34px;
     width: 80px;
+    transition: .3s ease-in-out;
   }
   &__divider{
     width: 2px;

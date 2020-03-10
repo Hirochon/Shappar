@@ -138,6 +138,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/assets/common.scss';
 .Mypage{
   padding-bottom: 72px;
   &__h1{
@@ -169,7 +170,8 @@ export default {
     overflow: hidden;
     img{
       width: 100%;
-      // height: 100%;
+      height: 100%;
+      object-fit: cover;
     }
   }
   &__settings{

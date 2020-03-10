@@ -67,12 +67,12 @@ export default {
     display: flex;
     justify-content: center;
     box-sizing: border-box;
+    width: 70%;
     height: 32px;
-    padding: 4px 8px;
+    padding: 4px 12px;
     border-radius: 16px;
     border: solid 2px $color-main;
     background: #fff;
-    width: 60%;
   }
   &__label{
     display: none;
@@ -80,6 +80,7 @@ export default {
   &__input{
     margin-right: 24px;
     font-size: 16px;
+    width: 100%;
     // background: red;
   }
   &__submit{
@@ -96,6 +97,10 @@ export default {
     line-height: 28px;
     color: $color-main;
     font-size: 18px;
+    transition: .3s ease-in-out;
+    &:hover{
+      background: rgba($color-main,0.5);
+    }
   }
   &__filter{
     margin-left: 8px;
