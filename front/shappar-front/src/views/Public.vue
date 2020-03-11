@@ -46,12 +46,25 @@ export default {
     }
   },
   methods: {
-    search () {
-      this.axios.get('/api/v1/posts/public/' + this.unique_id + '/?q=' + this.query)
+    async loadMore () {
+      if (this.scrollTop() < this.targetHeight) return
+      if (this.targetHeight < 0) return
+      await (this.targetHeight = -1)// 読み込み中のスクロールで発火するのを避けるためにlockをかける
+      var nextPostId = this.posts[this.posts.length - 1].post_id
+      await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/?pid=' + nextPostId)
         .then((response) => {
-          this.initPosts(response.data.posts)
+          var posts = response.data.posts
+          posts.forEach(item => {
+            item.view = 0
+            item.sort = 0
+            item.options.sort((a, b) => {
+              return a.select_num < b.select_num ? -1 : 1
+            })
+          })
+          this.posts = this.posts.concat(posts)
+          this.targetId = posts.length === 10 ? posts[6].post_id : false
         })
-      this.query = ''
+      if (this.targetId) this.targetHeight = document.getElementById(this.targetId).offsetTop // 次の高さを計測
     },
     refreshTrigger () {
       // touchイベントとその他のイベントの統合
@@ -66,7 +79,7 @@ export default {
         refConf.startY = e.clientY
       }
       refConf.diffY = e.clientY - refConf.startY
-      refConf.trigger = refConf.diffY > 75 // 下がった高さが75pxを来れたら発火
+      refConf.trigger = refConf.diffY > 75 // 下がった高さが75pxを超えたら発火
       if (refConf.diffY > 0) {
         document.getElementById('PostList').style.transition = null
         document.getElementById('PostList').style.transform = 'translateY(' + refConf.diffY * 2 / 3 + 'px)'
@@ -86,45 +99,26 @@ export default {
       }
       refConf.isStart = false
       refConf.loading = true
+      this.query = ''
       await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
         .then((response) => {
           this.initPosts(response.data.posts)
         })
-      this.targetHeight = document.getElementById(this.targetId).offsetTop
       document.getElementById('PostList').style.transform = null
-      this.query = ''
       refConf.isStart = false
       refConf.trigger = false
       refConf.loading = false
       refConf.startY = 0
       refConf.diffY = 0
     },
-    async loadMore () {
-      // console.log('targetHeight:' + this.targetHeight + ' :: scrollTop:' + this.scrollTop())
-      if (this.scrollTop() < this.targetHeight) return
-      if (this.targetHeight < 0) return
-      await (this.targetHeight = -1)// lockをかける
-      var nextPostId = this.posts[this.posts.length - 1].post_id
-      await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/?pid=' + nextPostId)
+    async search () {
+      this.axios.get('/api/v1/posts/public/' + this.unique_id + '/?q=' + this.query)
         .then((response) => {
-          var posts = response.data.posts
-          this.nextPostId = response.data.pid
-          posts.forEach(item => {
-            item.view = 0
-            item.sort = 0
-            item.options.sort((a, b) => {
-              return a.select_num < b.select_num ? -1 : 1
-            })
-            this.posts.push(item)
-          })
-          this.targetId = posts.length === 10 ? posts[6].post_id : false
+          this.initPosts(response.data.posts)
         })
-      // console.log(this.targetHeight)
-      // console.log(targetId)
-      if (this.targetId) this.targetHeight = document.getElementById(this.targetId).offsetTop // 次の高さを計測
     },
-    initPosts (posts) {
-      posts.forEach(item => {
+    async initPosts (posts) {
+      await posts.forEach(item => {
         item.view = 0
         item.sort = 0
         item.options.sort((a, b) => {
@@ -132,7 +126,8 @@ export default {
         })
       })
       this.posts = posts
-      this.targetId = posts.length === 10 ? posts[6].post_id : false
+      await (this.targetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
+      if (this.targetId) this.targetHeight = document.getElementById(this.targetId).offsetTop // 次の高さを計測
     },
     switchSearch () {
       var newY = this.scrollTop()
@@ -153,22 +148,11 @@ export default {
   created: async function () {
     this.unique_id = this.$store.state.auth.unique_id
     this.user_id = this.$store.state.auth.username
+    this.query = ''
     await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
       .then(async (response) => {
-        var posts = response.data.posts
-        var length = posts.length
-        for (let i = 0; i < length; i++) {
-          posts[i].view = 0
-          posts[i].sort = 0
-          posts[i].options.sort(function (a, b) {
-            return a.select_num < b.select_num ? -1 : 1
-          })
-        }
-        this.posts = posts
-        this.targetId = posts.length === 10 ? posts[6].post_id : false
+        this.initPosts(response.data.posts)
       })
-    this.query = ''
-    this.targetHeight = document.getElementById(this.targetId).offsetTop
     window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
   }
 }
