@@ -34,6 +34,7 @@ export default {
       isOpen: false,
       positionY: 0,
       targetHeight: 0,
+      targetId: '',
       searchShow: true,
       refreshConfig: {
         isStart: false,
@@ -46,19 +47,9 @@ export default {
   },
   methods: {
     search () {
-      // console.log(this.query)
       this.axios.get('/api/v1/posts/public/' + this.unique_id + '/?q=' + this.query)
         .then((response) => {
-          var posts = response.data.posts
-          var length = posts.length
-          for (let i = 0; i < length; i++) {
-            posts[i].view = 0
-            posts[i].sort = 0
-            posts[i].options.sort(function (a, b) {
-              return a.select_num < b.select_num ? -1 : 1
-            })
-          }
-          this.posts = posts
+          this.initPosts(response.data.posts)
         })
       this.query = ''
     },
@@ -76,7 +67,6 @@ export default {
       }
       refConf.diffY = e.clientY - refConf.startY
       refConf.trigger = refConf.diffY > 75 // 下がった高さが75pxを来れたら発火
-      // console.log(refConf.trigger)
       if (refConf.diffY > 0) {
         document.getElementById('PostList').style.transition = null
         document.getElementById('PostList').style.transform = 'translateY(' + refConf.diffY * 2 / 3 + 'px)'
@@ -87,8 +77,8 @@ export default {
       }
     },
     async refresh (loaded) {
-      document.getElementById('PostList').style.transition = '.15s ease-in-out'
       var refConf = this.refreshConfig
+      document.getElementById('PostList').style.transition = '.15s ease-in-out'
       if (!refConf.trigger) {
         document.getElementById('PostList').style.transform = null
         refConf.isStart = false
@@ -96,23 +86,11 @@ export default {
       }
       refConf.isStart = false
       refConf.loading = true
-      var targetId
-      // console.log('refresh')
       await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
         .then((response) => {
-          var posts = response.data.posts
-          var i
-          for (i = 0; i < posts.length; i++) {
-            posts[i].view = 0
-            posts[i].sort = 0
-            posts[i].options.sort(function (a, b) {
-              return a.select_num < b.select_num ? -1 : 1
-            })
-          }
-          this.posts = posts
-          if (posts.length === 10) targetId = posts[6].post_id
+          this.initPosts(response.data.posts)
         })
-      this.targetHeight = document.getElementById(targetId).offsetTop
+      this.targetHeight = document.getElementById(this.targetId).offsetTop
       document.getElementById('PostList').style.transform = null
       this.query = ''
       refConf.isStart = false
@@ -127,7 +105,6 @@ export default {
       if (this.targetHeight < 0) return
       await (this.targetHeight = -1)// lockをかける
       var nextPostId = this.posts[this.posts.length - 1].post_id
-      var targetId
       await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/?pid=' + nextPostId)
         .then((response) => {
           var posts = response.data.posts
@@ -139,19 +116,28 @@ export default {
               return a.select_num < b.select_num ? -1 : 1
             })
             this.posts.push(item)
-            // console.log(posts[6].post_id)
-            targetId = posts.length === 10 ? posts[6].post_id : false
           })
+          this.targetId = posts.length === 10 ? posts[6].post_id : false
         })
       // console.log(this.targetHeight)
       // console.log(targetId)
-      if (targetId) this.targetHeight = document.getElementById(targetId).offsetTop // 次の高さを計測
+      if (this.targetId) this.targetHeight = document.getElementById(this.targetId).offsetTop // 次の高さを計測
+    },
+    initPosts (posts) {
+      posts.forEach(item => {
+        item.view = 0
+        item.sort = 0
+        item.options.sort((a, b) => {
+          return a.select_num < b.select_num ? -1 : 1
+        })
+      })
+      this.posts = posts
+      this.targetId = posts.length === 10 ? posts[6].post_id : false
     },
     switchSearch () {
       var newY = this.scrollTop()
       this.searchShow = newY < this.positionY
       this.positionY = newY
-      // console.log('switchSearch')
     },
     scrollTriggers () {
       this.switchSearch()
@@ -165,7 +151,6 @@ export default {
     }
   },
   created: async function () {
-    var targetId
     this.unique_id = this.$store.state.auth.unique_id
     this.user_id = this.$store.state.auth.username
     await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
@@ -180,12 +165,11 @@ export default {
           })
         }
         this.posts = posts
-        if (length === 10) targetId = posts[6].post_id
+        this.targetId = posts.length === 10 ? posts[6].post_id : false
       })
     this.query = ''
-    this.targetHeight = document.getElementById(targetId).offsetTop
-    // console.log(this.targetHeight)
-    window.addEventListener('scroll', this.scrollTriggers)// searchのトリガー
+    this.targetHeight = document.getElementById(this.targetId).offsetTop
+    window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
   }
 }
 </script>
