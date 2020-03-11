@@ -32,10 +32,10 @@ export default {
       posts: [],
       query: '',
       isOpen: false,
+      searchShow: true,
       positionY: 0,
       targetHeight: 0,
       targetId: '',
-      searchShow: true,
       refreshConfig: {
         isStart: false,
         trigger: false,
@@ -70,7 +70,7 @@ export default {
       // touchイベントとその他のイベントの統合
       var e = event.type === 'touchmove' ? event.changedTouches[0] : event
       var refConf = this.refreshConfig
-      if (this.scrollTop() > 0 || this.isOpen) {
+      if (this.scrollTop() > 0 || this.isOpen) { // 新規投稿画面使用時に発火しないため
         refConf.isStart = false
         return
       }
@@ -145,12 +145,12 @@ export default {
       this.isOpen = !this.isOpen
     }
   },
-  created: async function () {
+  created: function () {
     this.unique_id = this.$store.state.auth.unique_id
     this.user_id = this.$store.state.auth.username
     this.query = ''
-    await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
-      .then(async (response) => {
+    this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
+      .then((response) => {
         this.initPosts(response.data.posts)
       })
     window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加

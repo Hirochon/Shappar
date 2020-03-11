@@ -107,8 +107,6 @@ export default {
       var delConf = this.deleteConfig
       delConf.diffX = e.clientX - delConf.startX
       delConf.trigger = delConf.diffX < -100 // 左に動いた距離が100pxを常時表示
-      // console.log(delConf.trigger)
-      // console.log(delConf.diffX)
       if (delConf.diffX < 0) {
         document.getElementById('option_' + id).style.transition = null
         document.getElementById('option_' + id).style.transform = 'translateX(' + delConf.diffX + 'px)'
@@ -133,9 +131,6 @@ export default {
       }
     },
     releasePost () {
-      // var params = new FormData()
-      // params.append('unique_id', this.unique_id)
-      // params.append('question', this.question)
       for (let i = 0; i < this.options.length; i++) {
         this.options[i].select_num = i
       }
@@ -145,7 +140,6 @@ export default {
         options: this.options
       })
         .then((response) => {
-          // console.log(response)
           if (response.status === 201) alert('投稿完了！')
         })
       this.question = ''

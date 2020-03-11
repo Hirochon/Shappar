@@ -12,12 +12,10 @@
             <font-awesome-icon icon="sort-amount-up" v-show="post.sort === 1"/>
             <font-awesome-icon icon="sort-amount-down-alt" v-show="post.sort === 2"/>
           </div>
-          <!-- <div class="Post__divider"></div> -->
           <div class="Post__reload" v-if="post.voted" @click="refleshPost(post)"><font-awesome-icon icon="sync-alt"/></div>
         </div>
       </div>
-      <!-- <div class="Post__changer" v-if="post.voted"><font-awesome-icon icon="exchange-alt"/></div> -->
-      <div class="Post__text">
+      <div class="Post__question">
         {{post.question}}
       </div>
       <div class="Post__container">
@@ -77,7 +75,6 @@ export default {
           post.voted = true
           // post.total++ // これでもいいかな？
           post.total = 0
-          // post.selected_num
           var updates = response.data.options.sort((a, b) => {
             return a.select_num < b.select_num ? -1 : 1
           })
@@ -107,22 +104,6 @@ export default {
       post.options = res.options.sort((a, b) => {
         return a.select_num < b.select_num ? -1 : 1
       })
-    },
-    loadMore () {
-      var nextPostId = this.posts[this.posts.length - 1].post_id
-      this.axios.get('/api/v1/posts/public/' + this.unique_id + '/?pid=' + nextPostId)
-        .then((response) => {
-          var posts = response.data.posts
-          this.nextPostId = response.data.pid
-          posts.forEach(item => {
-            item.view = 0
-            item.sort = 0
-            item.options.sort((a, b) => {
-              return a.select_num < b.select_num ? -1 : 1
-            })
-            this.posts.push(item)
-          })
-        })
     },
     optionsSort (post, options) {
       post.sort = (post.sort + 1) % 3
@@ -182,108 +163,36 @@ $option-height: 40px;
       object-fit: cover;
     }
   }
-  &__text{
-    width: 100%;
-    margin-bottom: 8px;
-    padding: 0 8px;
+  &__top{
+    width:100%;
+    height: 34px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
-  &__submit{
-    user-select: none;
-    pointer-events: none;
-    opacity: 0.5;
-    width: 100%;
-    height: 32px;
-    margin-top: 24px;
-    line-height: 32px;
-    text-align: center;
-    background: $color-main;
-    border-radius: 8px;
-    color: #fff;
-    &.active{
-      pointer-events: auto;
-      cursor: pointer;
-      opacity: 1;
-    }
-  }
-  &__container{
-    width: 100%;
-    @include scrollbar;
-  }
-  &__option{
-    cursor: pointer;
-    border-top: solid 1px #e9e9e9;
-    width: 100%;
-    position: relative;
-    height: auto;
-    min-height: $option-height;
-    line-height: $option-height;
-    padding: 0 8px;
-    background: #fff;
-    box-sizing: border-box;
-    word-break: break-word;
-    &__answer{
-      line-height: $option-height;
-    }
-    &__border{
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      border-radius: 8px;
-    }
-  }
-  &__divider{
-    background: black;
-    width: 100%;
-    height: 2px;
-    margin: 16px 0 16px;
-  }
-  &__result{
-    &__title{
-      text-align: center;
-      line-height: 32px;
-      margin-bottom: 8px;
-      font-size: 24px;
-    }
-    &__option{
-      position: relative;
-      width: 100%;
-      background: #eee;
-      height: $option-height;
-      line-height: $option-height;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      box-sizing: border-box;
-    }
-    &__num{
-      line-height: $option-height;
-    }
-    &__bar{
-      background: $color-sub;
-      opacity: 0.5;
-      height: $option-height;
-      line-height: $option-height;
-      border-radius: 0 8px 8px 0;
-      position: absolute;
-      top: 0;
-      left: 0;
-      &.selected{
-        background: $color-main;
-      }
-    }
-  }
-  &__changer{
-    position: absolute;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+  &__total{
+    width: auto;
     top: 16px;
-    right: 96px;
-    background: #ccc;
-    text-align: center;
-    line-height: 32px;
-    font-size: 20px;
+    left: 16px;
+    height: 24px;
+    line-height: 20px;
+    padding: 0 8px;
+    border-radius: 12px;
+    background: white;
+    color: $color-main;
+    font-size: 14px;
+    border: solid 2px $color-main;
+    font-weight: bold;
+    transition: .3s ease-in-out;
+  }
+  &__buttons{
+    right: 16px;
+    top: 16px;
+    display: flex;
+    justify-content: space-around;
+    height: 34px;
+    width: 80px;
+    transition: .3s ease-in-out;
   }
   &__sort{
     cursor: pointer;
@@ -319,56 +228,56 @@ $option-height: 40px;
       }
     }
   }
-  &__top{
-    width:100%;
-    height: 34px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  &__total{
-    width: auto;
-    top: 16px;
-    left: 16px;
-    height: 24px;
-    line-height: 20px;
+  &__question{
+    width: 100%;
+    margin-bottom: 8px;
     padding: 0 8px;
-    border-radius: 12px;
-    background: white;
-    color: $color-main;
-    font-size: 14px;
-    border: solid 2px $color-main;
-    font-weight: bold;
-    transition: .3s ease-in-out;
   }
-  &__buttons{
-    right: 16px;
-    top: 16px;
-    display: flex;
-    justify-content: space-around;
-    height: 34px;
-    width: 80px;
-    transition: .3s ease-in-out;
+  &__container{
+    width: 100%;
+    @include scrollbar;
   }
-  &__divider{
-    width: 2px;
-    height: 32px;
-    background: black;
-    opacity: 0.2;
-    margin: 0;
+  &__option{
+    cursor: pointer;
+    border-top: solid 1px #e9e9e9;
+    width: 100%;
+    position: relative;
+    height: auto;
+    min-height: $option-height;
+    line-height: $option-height;
+    padding: 0 8px;
+    background: #fff;
+    box-sizing: border-box;
+    word-break: break-word;
+    &__answer{
+      line-height: $option-height;
+    }
+    &__border{
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      border-radius: 8px;
+    }
   }
-}
-.loadMore{
-  position: fixed;
-  bottom: 0;
-  left:0;
-  width: 100%;
-  height: 32px;
-  line-height: 32px;
-  background: white;
-  text-align: center;
-}
-.scroll-container{
-  @include scrollbar;
+  &__result{
+    &__num{
+      line-height: $option-height;
+    }
+    &__bar{
+      background: $color-sub;
+      opacity: 0.5;
+      height: $option-height;
+      line-height: $option-height;
+      border-radius: 0 8px 8px 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      &.selected{
+        background: $color-main;
+      }
+    }
+  }
 }
 </style>
