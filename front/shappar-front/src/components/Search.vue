@@ -50,12 +50,14 @@ export default {
 <style lang="scss">
 @import '@/assets/common.scss';
 .Search{
-  position: fixed;
+  // position: fixed;
+  position: absolute;
   top: 8px;
   left: 16px;
   // border-radius: 16px;
   display: flex;
   width: calc(100% - 32px);
+  max-width: 668px;
   justify-content: space-between;
   padding: 8px;
   box-sizing: border-box;
