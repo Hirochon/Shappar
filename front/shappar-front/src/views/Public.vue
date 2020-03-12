@@ -1,5 +1,5 @@
 <template>
-  <div class="Public" @touchmove="refreshTrigger" @touchend="refresh">
+  <div class="Public" @touchmove="pullToMove" @touchend="pullToEnd">
     <transition name="search">
       <Search :query="query" @search="search()" v-show="searchShow"></Search>
     </transition>
@@ -8,7 +8,7 @@
       <font-awesome-icon icon="chevron-circle-down" :class="{'Pull-to__on': refreshConfig.trigger}" v-if="refreshConfig.isStart"/>
     </div>
     <PostList :posts="posts" :unique_id="unique_id"></PostList>
-    <New @switchNew="switchNew()" :isOpen="isOpen"/>
+    <New @switchNew="switchNew()" @refresh="refresh" :isOpen="isOpen"/>
   </div>
 </template>
 
@@ -66,7 +66,7 @@ export default {
         })
       if (this.targetId) this.targetHeight = document.getElementById(this.targetId).offsetTop // 次の高さを計測
     },
-    refreshTrigger () {
+    pullToMove () {
       // touchイベントとその他のイベントの統合
       var e = event.type === 'touchmove' ? event.changedTouches[0] : event
       var refConf = this.refreshConfig
@@ -89,7 +89,7 @@ export default {
         document.getElementById('PostList').style.transform = null
       }
     },
-    async refresh (loaded) {
+    async pullToEnd (loaded) {
       var refConf = this.refreshConfig
       document.getElementById('PostList').style.transition = '.15s ease-in-out'
       if (!refConf.trigger) {
@@ -100,10 +100,8 @@ export default {
       refConf.isStart = false
       refConf.loading = true
       this.query = ''
-      await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
-        .then((response) => {
-          this.initPosts(response.data.posts)
-        })
+      console.log('before refresh')
+      await this.refresh()
       document.getElementById('PostList').style.transform = null
       refConf.isStart = false
       refConf.trigger = false
@@ -128,6 +126,12 @@ export default {
       this.posts = posts
       await (this.targetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
       if (this.targetId) this.targetHeight = document.getElementById(this.targetId).offsetTop // 次の高さを計測
+    },
+    async refresh () { // ここの非同期処理いるのか？
+      await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
+        .then((response) => {
+          this.initPosts(response.data.posts)
+        })
     },
     switchSearch () {
       var newY = this.scrollTop()

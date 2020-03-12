@@ -141,6 +141,8 @@ export default {
       })
         .then((response) => {
           if (response.status === 201) alert('投稿完了！')
+          this.$emit('switchNew')
+          this.$emit('refresh')
         })
       this.question = ''
       this.count = 2
