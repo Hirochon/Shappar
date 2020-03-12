@@ -6,7 +6,7 @@
         <div class="Top">
           <h2 class="Top__header">
             <div class="Top__close">
-              <font-awesome-icon icon="times" @click.stop="$emit('switchNew')"/>
+              <font-awesome-icon icon="times" @click.stop="closeNew()"/>
             </div>
             <div class="Top__data">
               <div class="Top__data__question" :class="{hasError:!question.isValid}">{{question.length}}/150</div>
@@ -47,7 +47,7 @@
         </div>
       </div>
     </transition>
-    <div class="New__FAB" @click="$emit('switchNew')"><font-awesome-icon icon="plus"/></div>
+    <div class="New__FAB" @click="openNew()"><font-awesome-icon icon="plus"/></div>
   </div>
 </template>
 
@@ -196,6 +196,30 @@ export default {
       option.length = option.answer.length
       option.isValid = (option.length > 0 && option.length <= 40)
       return option.isValid
+    },
+    openNew () {
+      this.$emit('switchNew')
+      var post = JSON.parse(localStorage.getItem('post'))
+      if (post === null) return
+      if (confirm('下書きがあります。使用しますか？')) {
+        this.question = post['question']
+        this.options = post['options']
+      } else {
+        localStorage.removeItem('post')
+      }
+    },
+    closeNew () {
+      this.$emit('switchNew')
+      if (confirm('下書きを保存しますか？')) {
+        var post = {
+          question: this.question,
+          options: this.options
+        }
+        var obj = JSON.stringify(post)
+        localStorage.setItem('post', obj)
+      } else {
+        localStorage.removeItem('post')
+      }
     }
   },
   computed: {
