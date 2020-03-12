@@ -100,7 +100,6 @@ export default {
       refConf.isStart = false
       refConf.loading = true
       this.query = ''
-      console.log('before refresh')
       await this.refresh()
       document.getElementById('PostList').style.transform = null
       refConf.isStart = false

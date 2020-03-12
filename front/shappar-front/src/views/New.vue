@@ -7,9 +7,16 @@
             <div class="New__close">
               <font-awesome-icon icon="times" @click.stop="$emit('switchNew')"/>
             </div>
-            </h2>
-          <textarea class="New__question" v-model="question" cols="30" rows="2" placeholder="質問文"></textarea>
-          <div class="Buttons__num">{{options.length}}</div>
+            <div class="Top__data">
+              <div class="Top__data__question" :class="{hasError:!question.isValid}">{{question.length}}/150</div>
+              <div class="Buttons__num">{{options.length}}</div>
+            </div>
+          </h2>
+          <textarea class="New__question"
+            v-model="question.text" cols="30" rows="2" placeholder="質問文"
+            @input="questionValidate()"
+            >
+          </textarea>
         </div>
         <draggable v-model="options" handle=".New__option__handle" @touchmove.prevent.stop>
           <transition-group name="option">
@@ -19,9 +26,11 @@
                   @touchstart="delTouchStart(index)"
                   @touchmove="delTouchMove(option.id)"
                   @touchend.stop="delTouchEnd(option.id)"
+                  @input="answerValidate(option)"
                   ></textarea>
-              <div class="New__option__handle"><font-awesome-icon icon="bars"/></div>
+                <div class="New__option__handle"><font-awesome-icon icon="bars"/></div>
               </div>
+              <div class="New__option__num" :class="{hasError:!option.isValid}">{{option.length}}/40</div>
               <!-- <div class="New__option__delete"></div> -->
               <div class="New__delete__behind" :class="{on:deleteConfig.trigger}"><font-awesome-icon icon="trash-alt"/></div>
             </div>
@@ -31,7 +40,7 @@
           <div class="Buttons__add-option" @click.stop="addOption">
             <font-awesome-icon icon="plus"/>
           </div>
-          <div class="Buttons__submit" @click.stop="releasePost">
+          <div class="Buttons__submit" @click.stop="servePost" :class="{hasError:!postValidate}">
             サーブ
           </div>
         </div>
@@ -59,21 +68,23 @@ export default {
     return {
       unique_id: '',
       user_id: '',
-      question: '',
-      count: 2,
+      question: {
+        text: '',
+        length: 0,
+        isValid: false
+      },
       draggable_options: {
         animation: 200
       },
+      count: 2,
       options: [
-        {
-          id: 0,
-          answer: ''
-        },
-        {
-          id: 1,
-          answer: ''
-        }
+        { id: 0, answer: '', length: 0, isValid: false },
+        { id: 1, answer: '', length: 0, isValid: false }
       ],
+      validPattern: {
+        question: /\d/,
+        options: ''
+      },
       deleteConfig: {
         isStart: false,
         trigger: false,
@@ -130,13 +141,18 @@ export default {
         alert('これ以上削除できません')
       }
     },
-    releasePost () {
+    servePost () {
+      // console.log('servePost')
+      if (!this.postValidate) return
       for (let i = 0; i < this.options.length; i++) {
         this.options[i].select_num = i
+        delete this.options[i].idk
+        delete this.options[i].length
+        delete this.options[i].isInvalid
       }
       this.axios.post('/api/v1/posts/', {
         unique_id: this.unique_id,
-        question: this.question,
+        question: this.question.text,
         options: this.options
       })
         .then((response) => {
@@ -147,15 +163,30 @@ export default {
       this.question = ''
       this.count = 2
       this.options = [
-        {
-          id: 0,
-          answer: ''
-        },
-        {
-          id: 1,
-          answer: ''
-        }
+        { id: 0, answer: '', length: 0, isInvalid: false },
+        { id: 1, answer: '', length: 0, isInvalid: false }
       ]
+    },
+    questionValidate () {
+      var question = this.question
+      question.length = question.text.length
+      question.isValid = (question.length > 0 && question.length <= 150)
+      return question.isValid
+    },
+    answerValidate (option) {
+      option.length = option.answer.length
+      option.isValid = (option.length > 0 && option.length <= 40)
+      return option.isValid
+    }
+  },
+  computed: {
+    postValidate () {
+      if (!this.question.isValid) return false
+      for (let item of this.options) {
+        if (!item.isValid) return false
+      }
+      // console.log('all clear')
+      return true
     }
   },
   created: function () {
@@ -195,8 +226,10 @@ $delete-width: 24px;
     @include scrollbar;
   }
   &__header{
+    display: flex;
+    justify-content: space-between;
     width: 100%;
-    height: 48px;
+    height: 49px;
     line-height: 48px;
     padding: 8px;
     margin: 0;
@@ -239,6 +272,22 @@ $delete-width: 24px;
     resize: none;
     // border-radius: 8px 0 0 8px;
     border-bottom: solid 1px #eee;
+    &__num{
+      position: absolute;
+      bottom: 8px;
+      right: 48px;
+      width: 80px;
+      height: 24px;
+      line-height: 24px;
+      font-size: 14px;
+      border-radius: 12px;
+      background: $color-sub;
+      color:#fff;
+      text-align: center;
+      &.hasError{
+        background: red;
+      }
+    }
   }
   &__options{
     position: relative;
@@ -312,6 +361,25 @@ $delete-width: 24px;
   background: white;
   z-index: 100;
   box-shadow: 1px 1px 6px 1px rgba(0,0,0,0.2);
+  &__data{
+    height: 100%;
+    padding: 4px 0;
+    display: flex;
+    &__question{
+      width: 80px;
+      height: 24px;
+      line-height: 24px;
+      font-size: 14px;
+      border-radius: 12px;
+      background: $color-sub;
+      color:#fff;
+      text-align: center;
+      margin-right: 8px;
+      &.hasError{
+        background: red;
+      }
+    }
+  }
 }
 .Buttons{
   width: 100%;
@@ -335,9 +403,6 @@ $delete-width: 24px;
     z-index: 100;
   }
   &__num{
-    position: absolute;
-    top: 12px;
-    right: 12px;
     width: $delete-width;
     height: $delete-width;
     line-height: $delete-width;
@@ -351,11 +416,12 @@ $delete-width: 24px;
     width: 100%;
     height: 48px;
     line-height: 48px;
-    // border-radius: 8px;
     color: white;
     text-align: center;
     background: $color-main;
-    // background: #17b8a3;
+    &.hasError{
+      opacity: 0.5;
+    }
   }
 }
 .FAB{
