@@ -202,8 +202,8 @@ export default {
       var post = JSON.parse(localStorage.getItem('post'))
       if (post === null) return
       if (confirm('下書きがあります。使用しますか？')) {
-        this.question = post['question']
-        this.options = post['options']
+        this.question = post.question
+        this.options = post.options
       } else {
         localStorage.removeItem('post')
       }
@@ -220,6 +220,15 @@ export default {
       } else {
         localStorage.removeItem('post')
       }
+      this.question = {
+        text: '',
+        length: 0,
+        isValid: false
+      }
+      this.options = [
+        { id: 0, answer: '', length: 0, isValid: false },
+        { id: 1, answer: '', length: 0, isValid: false }
+      ]
     }
   },
   computed: {
