@@ -1,6 +1,6 @@
 <template>
   <!-- メッセージエリア -->
-  <div id="messages">
+  <div id="messages" class="Message">
     <b-alert variant="danger" show v-show="message.error" class="mb-0">
       {{ message.error }}
     </b-alert>
@@ -23,3 +23,13 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.Message{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+</style>

@@ -1,5 +1,6 @@
 <template>
   <div class="New">
+    <GlobalMessage/>
     <transition name="container">
       <div class="New__container" v-if="isOpen">
         <div class="Top">
@@ -52,11 +53,13 @@
 
 <script>
 import draggable from 'vuedraggable'
+import GlobalMessage from '@/components/GlobalMessage.vue'
 
 export default {
   name: 'New',
   components: {
-    draggable
+    draggable,
+    GlobalMessage
   },
   props: {
     isOpen: {
@@ -148,9 +151,9 @@ export default {
       if (!this.postValidate) return
       for (let i = 0; i < this.options.length; i++) {
         this.options[i].select_num = i
-        delete this.options[i].idk
+        delete this.options[i].id
         delete this.options[i].length
-        delete this.options[i].isInvalid
+        delete this.options[i].isValid
       }
       this.axios.post('/api/v1/posts/', {
         unique_id: this.unique_id,
@@ -161,6 +164,20 @@ export default {
           if (response.status === 201) alert('投稿完了！')
           this.$emit('switchNew')
           this.$emit('refresh')
+        })
+        .catch((error) => {
+          // console.log(error.response)
+          var errMessage
+          switch (error.response.status) {
+            case 400:
+              errMessage = '無効なリクエストです。'
+          }
+          this.$store.dispatch('message/setErrorMessage', { message: errMessage })
+          setTimeout(() => {
+            this.$store.state.message.error = ''
+            this.$store.state.message.warnings = []
+            this.$store.state.message.info = ''
+          }, 2000)
         })
       this.question = ''
       this.count = 2
@@ -420,6 +437,7 @@ $delete-width: 24px;
   left: 0;
   z-index: 100;
   box-shadow: 0px -1px 6px 1px rgba(0,0,0,0.2);
+  background: white;
   &__add-option{
     position: sticky;
     top: 8px;
