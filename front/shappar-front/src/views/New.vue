@@ -3,16 +3,16 @@
     <transition name="container">
       <div class="New__container" v-if="isOpen">
         <div class="Top">
-          <h2 class="New__header">
-            <div class="New__close">
+          <h2 class="Top__header">
+            <div class="Top__close">
               <font-awesome-icon icon="times" @click.stop="$emit('switchNew')"/>
             </div>
             <div class="Top__data">
               <div class="Top__data__question" :class="{hasError:!question.isValid}">{{question.length}}/150</div>
-              <div class="Buttons__num">{{options.length}}</div>
+              <div class="Top__data__options">{{options.length}}</div>
             </div>
           </h2>
-          <textarea class="New__question"
+          <textarea class="Top__question"
             v-model="question.text" cols="30" rows="2" placeholder="質問文"
             @input="questionValidate()"
             >
@@ -46,7 +46,7 @@
         </div>
       </div>
     </transition>
-    <div class="FAB" @click="$emit('switchNew')"><font-awesome-icon icon="plus"/></div>
+    <div class="New__FAB" @click="$emit('switchNew')"><font-awesome-icon icon="plus"/></div>
   </div>
 </template>
 
@@ -99,7 +99,9 @@ export default {
       if (this.options.length < 10) {
         this.options.push({
           id: this.count++,
-          answer: ''
+          answer: '',
+          length: 0,
+          isValid: false
         })
       } else {
         alert('これ以上作成できません')
@@ -225,40 +227,22 @@ $delete-width: 24px;
     z-index: 100;
     @include scrollbar;
   }
-  &__header{
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    height: 49px;
-    line-height: 48px;
-    padding: 8px;
-    margin: 0;
-    border-bottom: solid 1px #ccc;
-    color: #888;
-  }
-  &__close{
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
-    text-align: center;
+  &__FAB{
+    position: fixed;
+    right: 16px;
+    bottom: 48px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
-    font-size: 20px;
+    color: white;
+    background: $color-main;
+    box-shadow: 1px 1px 6px 1px rgba(0,0,0,0.2);
+    line-height: 64px;
+    text-align: center;
+    font-size: 24px;
+    z-index: 10;
     &:hover{
-      background: rgba($color: #41be99, $alpha: 0.3)
-    }
-  }
-  &__question{
-    padding: 8px 16px;
-    box-sizing: border-box;
-    width: 100%;
-    height: 100px;
-    line-height: 1.6em;
-    background: #fff;
-    resize: none;
-    border-radius: 0;
-    &::placeholder{
-      padding: 8px 0;
-      line-height: 16px;
+      opacity: 0.5;
     }
   }
   &__option{
@@ -361,6 +345,28 @@ $delete-width: 24px;
   background: white;
   z-index: 100;
   box-shadow: 1px 1px 6px 1px rgba(0,0,0,0.2);
+  &__header{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 49px;
+    line-height: 48px;
+    padding: 8px;
+    margin: 0;
+    border-bottom: solid 1px #ccc;
+    color: #888;
+  }
+  &__close{
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 50%;
+    font-size: 20px;
+    &:hover{
+      background: rgba($color: #41be99, $alpha: 0.3)
+    }
+  }
   &__data{
     height: 100%;
     padding: 4px 0;
@@ -370,14 +376,38 @@ $delete-width: 24px;
       height: 24px;
       line-height: 24px;
       font-size: 14px;
+      margin-right: 16px;
       border-radius: 12px;
       background: $color-sub;
       color:#fff;
       text-align: center;
-      margin-right: 8px;
       &.hasError{
         background: red;
       }
+    }
+    &__options{
+      width: $delete-width;
+      height: $delete-width;
+      line-height: $delete-width;
+      font-size: 14px;
+      border-radius: 50%;
+      color: white;
+      text-align: center;
+      background: $color-main;
+    }
+  }
+  &__question{
+    padding: 8px 16px;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100px;
+    line-height: 1.6em;
+    background: #fff;
+    resize: none;
+    border-radius: 0;
+    &::placeholder{
+      padding: 8px 0;
+      line-height: 16px;
     }
   }
 }
@@ -402,16 +432,6 @@ $delete-width: 24px;
     background: $color-sub;
     z-index: 100;
   }
-  &__num{
-    width: $delete-width;
-    height: $delete-width;
-    line-height: $delete-width;
-    font-size: 14px;
-    border-radius: 50%;
-    color: white;
-    text-align: center;
-    background: $color-main;
-  }
   &__submit{
     width: 100%;
     height: 48px;
@@ -422,24 +442,6 @@ $delete-width: 24px;
     &.hasError{
       opacity: 0.5;
     }
-  }
-}
-.FAB{
-  position: fixed;
-  right: 16px;
-  bottom: 48px;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  color: white;
-  background: $color-main;
-  box-shadow: 1px 1px 6px 1px rgba(0,0,0,0.2);
-  line-height: 64px;
-  text-align: center;
-  font-size: 24px;
-  z-index: 10;
-  &:hover{
-    opacity: 0.5;
   }
 }
 .container-enter-active,.container-leave-active{
