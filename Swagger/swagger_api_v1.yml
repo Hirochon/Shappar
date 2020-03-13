@@ -307,13 +307,12 @@ paths:
       description: create new user
       tags:
         - users
-  '/api/v1/users/{userId}':
+  '/api/v1/users/{user_id}':
     parameters:
       - type: string
-        name: userId
+        name: user_id
         in: path
         required: true
-        description: ユーザーが設定できるuserID
     get:
       summary: Your GET endpoint
       tags:
@@ -719,15 +718,12 @@ definitions:
         introduction: text text text text text text text
         iconimage: 'http://example.com/iconURL'
         homeimage: 'http://example.com/homeImageURL'
-        followers: 100
-        follow: 100
-        followed: true
     properties:
       unique_id:
         type: string
-      name:
-        type: string
       user_id:
+        type: string
+      name:
         type: string
       introduction:
         type: string
@@ -735,12 +731,6 @@ definitions:
         type: string
       iconimage:
         type: string
-      followers:
-        type: integer
-      follow:
-        type: integer
-      followed:
-        type: boolean
   Post:
     title: Post
     type: object
