@@ -168,12 +168,15 @@ paths:
           in: query
           name: q
           description: 検索キーワード
-  '/api/v1/posts/{postId}':
+  '/api/v1/posts/{unique_id}/{post_d}':
     parameters:
-      - type: integer
-        name: postId
+      - type: string
+        name: unique_id
         in: path
-        description: postId is required
+        required: true
+      - type: string
+        name: post_d
+        in: path
         required: true
     get:
       summary: Your GET endpoint
@@ -214,70 +217,69 @@ paths:
       description: delete post or vote
       tags:
         - posts
-  '/api/v1/posts/{postId}/polls/{pollId}':
+  '/api/v1/posts/{postId}/polls':
     parameters:
       - type: string
         name: postId
-        in: path
-        required: true
-      - type: string
-        name: pollId
         in: path
         required: true
     post:
       summary: ''
       operationId: post-api-v1-posts-postId-polls-pollId
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           schema:
             type: object
             properties:
               id:
-                type: integer
-              voted:
-                type: boolean
-                default: false
-              text:
-                type: string
-              total:
-                type: integer
-              selected:
                 type: integer
               options:
                 type: array
                 items:
                   type: object
                   properties:
-                    id:
+                    select_num:
                       type: integer
-                    content:
-                      type: string
-                    num:
+                    votes:
                       type:
                         - integer
+              selected_num:
+                type: integer
           examples:
-            example-1:
-              id: 1
-              text: 今日の晩御飯のメニューで迷ってます。次のうち皆さんならどれがいいですか？
-              voted: true
-              total: 1000
+            201 Created:
               options:
-                - id: 1
-                  content: カレー
-                  num: 100
-                - id: 2
-                  content: ハンバーグ
-                  num: 300
-                - id: 3
-                  content: 唐揚げ
-                  num: 400
-                - id: 4
-                  content: '******************************************************************'
-                  num: 200
+                - select_num: 2
+                  votes: 0
+                - select_num: 3
+                  votes: 0
+                - select_num: 4
+                  votes: 0
+                - select_num: 1
+                  votes: 1
+              selected_num: 1
       description: vote post
       tags:
         - posts
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              unique_id:
+                type: string
+              option:
+                type: object
+                properties:
+                  select_num:
+                    type: integer
+          x-examples:
+            201 Created:
+              unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
+              option:
+                select_num: 1
+          description: ''
   /api/v1/users:
     get:
       summary: Your GET endpoint
