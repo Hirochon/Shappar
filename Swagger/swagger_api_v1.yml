@@ -19,12 +19,65 @@ paths:
       summary: ''
       operationId: post-api-posts
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           schema:
             type: object
+            properties:
+              user:
+                type: string
+              question:
+                type: string
+              options:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    select_num:
+                      type: integer
+                    answer:
+                      type: string
+                    votes:
+                      type: string
           examples:
-            example-1: {}
+            201 Created:
+              user: 86f455ff-5029-4207-9300-b9dea5fe9d37
+              question: question
+              options:
+                - select_num: 1
+                  answer: answer_1
+                  votes: 0
+                - select_num: 2
+                  answer: answer_2
+                  votes: 0
+                - select_num: 3
+                  answer: answer_3
+                  votes: 0
+                - select_num: 4
+                  answer: answer_4
+                  votes: 0
+              share_id: 2c904dae-b970-4df6-9e94-623e595a886d
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              question:
+                type: string
+              options:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    answer:
+                      type: string
+          examples:
+            400 Bad Request:
+              question:
+                - この項目は空にできません。
+              options:
+                - answer:
+                    - この項目は空にできません。
       description: new post
       parameters:
         - in: body
@@ -32,17 +85,70 @@ paths:
           schema:
             type: object
             properties:
-              text:
+              question:
                 type: string
               options:
                 type: array
                 items:
                   type: object
                   properties:
-                    id:
+                    select_num:
                       type: integer
-                    content:
+                    answer:
                       type: string
+          x-examples:
+            201 Created:
+              unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
+              question: question
+              options:
+                - select_num: 1
+                  answer: answer_1
+                - select_num: 2
+                  answer: answer_2
+                - select_num: 3
+                  answer: answer_3
+                - select_num: 4
+                  answer: answer_4
+            400 Bad Request:
+              unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
+              question: ''
+              options:
+                - select_num: 1
+                  answer: ''
+                - select_num: 2
+                  answer: ''
+          description: request body
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              question:
+                type: string
+              options:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    select_num:
+                      type: integer
+                    answer:
+                      type: string
+          x-examples:
+            201 Created:
+              unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
+              question: question
+              options:
+                - select_num: 1
+                  answer: answer_1
+                - select_num: 2
+                  answer: answer_2
+                - select_num: 3
+                  answer: answer_3
+                - select_num: 4
+                  answer: answer_4
+            example-2: {}
+          description: request body
       tags:
         - posts
   /api/v1/posts/public:
