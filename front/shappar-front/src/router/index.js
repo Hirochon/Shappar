@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Public from '../views/Public.vue'
-// import Private from '../views/Private.vue'
-import New from '../views/New.vue'
-import MyPage from '../views/MyPage.vue'
-import LoginPage from '../views/LoginPage'
-import UpdateUser from '../views/UpdateUser'
-import store from '../store'
+import Public from '@/views/Public.vue'
+// import Private from '@/views/Private.vue'
+import New from '@/views/New.vue'
+import MyPage from '@/views/MyPage.vue'
+import LoginPage from '@/views/LoginPage'
+import UpdateUser from '@/views/UpdateUser'
+import Admin from '@/views/Admin'
+import store from '@/store'
 
 Vue.use(VueRouter)
 
@@ -51,15 +52,27 @@ const routes = [
   {
     // pathにないやつ来たら強制送還！
     path: '*',
+    redirect: '/',
     meta: {
       requiresAuth: true
     }
   }
 ]
 
+if (process.env.NODE_ENV === 'development') {
+  routes.unshift({
+    name: 'admin',
+    path: '/admin',
+    component: Admin,
+    meta: {
+      requiresAuth: true
+    }
+  })
+}
+
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
+  base: './',
   routes
 })
 

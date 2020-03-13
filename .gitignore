@@ -1,6 +1,7 @@
 # backend
 db.sqlite3
 __pycache__/
+product.py
 .env
 media/
 

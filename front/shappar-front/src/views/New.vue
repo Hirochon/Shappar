@@ -1,144 +1,397 @@
 <template>
   <div class="New">
-    <h2 class="New__title">質問文</h2>
-    <textarea class="New__textarea" v-model="text" cols="30" rows="5"></textarea>
-    <h2 class="New__title">選択肢</h2>
-    <div class="New__add-option" @click="addOption">
-      項目を追加する
-    </div>
-    <div class="New__options" v-for="option in options" :key="option.id">
-      <textarea class="New__textarea" cols="30" rows="3"></textarea>
-      <div class="New__option__delete" @click="deleteOption(option.id)">
-        項目を削除する
+    <transition name="container">
+      <div class="New__container" v-if="isOpen">
+        <div class="Top">
+          <h2 class="New__header">
+            <div class="New__close">
+              <font-awesome-icon icon="times" @click.stop="$emit('switchNew')"/>
+            </div>
+            </h2>
+          <textarea class="New__question" v-model="question" cols="30" rows="2" placeholder="質問文"></textarea>
+          <div class="Buttons__num">{{options.length}}</div>
+        </div>
+        <draggable v-model="options" handle=".New__option__handle" @touchmove.prevent.stop>
+          <transition-group name="option">
+            <div class="New__options" v-for="(option, index) in options" :key="option.id">
+              <div class="New__option__container" :id="'option_'+option.id">
+                <textarea class="New__option" cols="30" rows="3" v-model="option.answer" :placeholder="index+1"
+                  @touchstart="delTouchStart(index)"
+                  @touchmove="delTouchMove(option.id)"
+                  @touchend.stop="delTouchEnd(option.id)"
+                  ></textarea>
+              <div class="New__option__handle"><font-awesome-icon icon="bars"/></div>
+              </div>
+              <!-- <div class="New__option__delete"></div> -->
+              <div class="New__delete__behind" :class="{on:deleteConfig.trigger}"><font-awesome-icon icon="trash-alt"/></div>
+            </div>
+          </transition-group>
+        </draggable>
+        <div class="Buttons">
+          <div class="Buttons__add-option" @click.stop="addOption">
+            <font-awesome-icon icon="plus"/>
+          </div>
+          <div class="Buttons__submit" @click.stop="releasePost">
+            サーブ
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="New__submit" @click="releasePost">
-      投稿する
-    </div>
-    <NavBar></NavBar>
+    </transition>
+    <div class="FAB" @click="$emit('switchNew')"><font-awesome-icon icon="plus"/></div>
   </div>
 </template>
 
 <script>
-import NavBar from '@/components/NavBar.vue'
+import draggable from 'vuedraggable'
 
 export default {
-  name: 'new',
+  name: 'New',
   components: {
-    NavBar
+    draggable
+  },
+  props: {
+    isOpen: {
+      type: Boolean,
+      required: true
+    }
   },
   data: function () {
     return {
-      id: 0,
-      userId: '',
-      text: '',
+      unique_id: '',
+      user_id: '',
+      question: '',
       count: 2,
+      draggable_options: {
+        animation: 200
+      },
       options: [
         {
           id: 0,
-          content: ''
+          answer: ''
         },
         {
           id: 1,
-          comnfent: ''
+          answer: ''
         }
-      ]
+      ],
+      deleteConfig: {
+        isStart: false,
+        trigger: false,
+        loading: false,
+        startX: 0,
+        diffX: 0
+      }
     }
   },
   methods: {
     addOption () {
-      if (this.count < 4) {
+      if (this.options.length < 10) {
         this.options.push({
           id: this.count++,
-          content: ''
+          answer: ''
         })
       } else {
         alert('これ以上作成できません')
       }
     },
-    deleteOption (id) {
-      if (this.count > 2) {
-        for (let i = 0; i < this.count; i++) {
-          if (this.options[i].id === id) {
-            this.options.splice(i, 1)
-            this.count--
-            break
-          }
-        }
+    delTouchStart (index) {
+      var e = event.type === 'touchstart' ? event.changedTouches[0] : event
+      this.deleteConfig.isStart = true
+      this.deleteConfig.trigger = false
+      this.deleteConfig.startX = e.clientX
+      this.deleteConfig.index = index
+    },
+    delTouchMove (id) {
+      // touchイベントとその他のイベントの統合
+      var e = event.type === 'touchmove' ? event.changedTouches[0] : event
+      var delConf = this.deleteConfig
+      delConf.diffX = e.clientX - delConf.startX
+      delConf.trigger = delConf.diffX < -100 // 左に動いた距離が100pxを常時表示
+      // console.log(delConf.trigger)
+      // console.log(delConf.diffX)
+      if (delConf.diffX < 0) {
+        document.getElementById('option_' + id).style.transition = null
+        document.getElementById('option_' + id).style.transform = 'translateX(' + delConf.diffX + 'px)'
+      } else {
+        document.getElementById('option_' + id).style.transition = '.15s ease-in-out'
+        document.getElementById('option_' + id).style.transform = null
+      }
+    },
+    delTouchEnd (id) {
+      var delConf = this.deleteConfig
+      if (delConf.trigger) this.deleteOption(delConf.index)
+      document.getElementById('option_' + id).style.transition = '.15s ease-in-out'
+      document.getElementById('option_' + id).style.transform = null
+      delConf.isStart = false
+      delConf.trigger = false
+    },
+    deleteOption (selectNum) {
+      if (this.options.length > 2) {
+        this.options.splice(selectNum, 1)
       } else {
         alert('これ以上削除できません')
       }
     },
     releasePost () {
-      this.axios.post('/api/v1/posts', {
-        text: this.text,
+      // var params = new FormData()
+      // params.append('unique_id', this.unique_id)
+      // params.append('question', this.question)
+      for (let i = 0; i < this.options.length; i++) {
+        this.options[i].select_num = i
+      }
+      this.axios.post('/api/v1/posts/', {
+        unique_id: this.unique_id,
+        question: this.question,
         options: this.options
       })
         .then((response) => {
           // console.log(response)
-          if (response.status === 200) alert('投稿完了！')
+          if (response.status === 201) alert('投稿完了！')
         })
-      this.text = ''
+      this.question = ''
       this.count = 2
       this.options = [
         {
           id: 0,
-          content: ''
+          answer: ''
         },
         {
           id: 1,
-          content: ''
+          answer: ''
         }
       ]
     }
   },
   created: function () {
-    this.id = 1
-    this.userId = this.$store.state.auth.username
+    this.unique_id = this.$store.state.auth.unique_id
+    this.user_id = this.$store.state.auth.username
   }
 }
 </script>
 
 <style lang="scss">
+@import '@/assets/common.scss';
+$delete-width: 24px;
 .New{
-  padding: 24px 16px 0;
-  &__textarea{
-    margin-top: 16px;
-    padding: 8px;
-    box-sizing: border-box;
-    width: 100%;
-    background: white;
-    resize: none;
-    border-radius: 8px;
+  position: absolute;
+  width: 100%;
+  // height: 100%;
+  // top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  &.active{
+    top:0;
   }
-  &__add-option{
-    margin-top: 16px;
+  &__container{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    // max-height: 100%;
+    // top: 100%;
+    padding: 164px 0px 64px;
+    background: white;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    z-index: 100;
+    @include scrollbar;
+  }
+  &__header{
     width: 100%;
     height: 48px;
     line-height: 48px;
-    border-radius: 8px;
+    padding: 8px;
+    margin: 0;
+    border-bottom: solid 1px #ccc;
+    color: #888;
+  }
+  &__close{
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 50%;
+    font-size: 20px;
+    &:hover{
+      background: rgba($color: #41be99, $alpha: 0.3)
+    }
+  }
+  &__question{
+    padding: 8px 16px;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100px;
+    line-height: 1.6em;
+    background: #fff;
+    resize: none;
+    border-radius: 0;
+    &::placeholder{
+      padding: 8px 0;
+      line-height: 16px;
+    }
+  }
+  &__option{
+    // margin-bottom: 16px;
+    padding: 8px 16px;
+    box-sizing: border-box;
+    width: calc(100% - 40px);
+    height: 64px;
+    line-height: 24px;
+    background: #fff;
+    resize: none;
+    // border-radius: 8px 0 0 8px;
+    border-bottom: solid 1px #eee;
+  }
+  &__options{
+    position: relative;
+  }
+  &__option__container{
+    display: flex;
+  }
+  &__delete__button{
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: $delete-width;
+    height: $delete-width;
+    line-height: $delete-width;
+    font-size: 14px;
+    border-radius: 50%;
+    color: white;
+    text-align: center;
+    background: red;
+    z-index: 10;
+  }
+  &__delete__behind{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    line-height: 64px;
+    background: red;
+    text-align: right;
+    padding: 0 14px;
+    z-index: -1;
+    font-size: 12px;
+    color: white;
+    &.on{
+      padding: 0 11px;
+      font-size: 20px;
+    }
+  }
+  &__option__index{
+    position: absolute;
+    top: calc(50% - 24px);
+    left: -12px;
+    width: $delete-width;
+    height: $delete-width;
+    line-height: $delete-width;
+    font-size: 14px;
+    border-radius: 50%;
     color: white;
     text-align: center;
     background: #4180d7;
   }
-  &__option__delete{
-    width: 100%;
-    height: 32px;
-    line-height: 32px;
-    color: white;
+  &__option__handle{
+    width: 40px;
+    height: 64px;
+    line-height: 64px;
+    font-size: 14px;
+    // border-radius: 0 8px 8px 0;
+    border-bottom: solid 1px #eee;
+    color: black;
     text-align: center;
-    background: red;
-    border-radius: 8px;
+    background: #ccc;
   }
-  &__submit{
-    margin-top: 16px;
+}
+.Top{
+  position: fixed;
+  top:0;
+  left: 0;
+  width: 100%;
+  height: 148px;
+  background: white;
+  z-index: 100;
+  box-shadow: 1px 1px 6px 1px rgba(0,0,0,0.2);
+}
+.Buttons{
+  width: 100%;
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  bottom:0;
+  left: 0;
+  z-index: 100;
+  box-shadow: 0px -1px 6px 1px rgba(0,0,0,0.2);
+  &__add-option{
+    position: sticky;
+    top: 8px;
     width: 100%;
     height: 48px;
     line-height: 48px;
-    border-radius: 8px;
+    // border-radius: 8px;
     color: white;
     text-align: center;
-    background: #41d761;
+    background: $color-sub;
+    z-index: 100;
   }
+  &__num{
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: $delete-width;
+    height: $delete-width;
+    line-height: $delete-width;
+    font-size: 14px;
+    border-radius: 50%;
+    color: white;
+    text-align: center;
+    background: $color-main;
+  }
+  &__submit{
+    width: 100%;
+    height: 48px;
+    line-height: 48px;
+    // border-radius: 8px;
+    color: white;
+    text-align: center;
+    background: $color-main;
+    // background: #17b8a3;
+  }
+}
+.FAB{
+  position: fixed;
+  right: 16px;
+  bottom: 48px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  color: white;
+  background: $color-main;
+  box-shadow: 1px 1px 6px 1px rgba(0,0,0,0.2);
+  line-height: 64px;
+  text-align: center;
+  font-size: 24px;
+  z-index: 10;
+  &:hover{
+    opacity: 0.5;
+  }
+}
+.container-enter-active,.container-leave-active{
+  transition: .3s ease-in-out;
+}
+.container-enter,.container-leave-to{
+  opacity: 0;
+  transform: translateY(100%);
+}
+.option-enter-active,.option-leave-active{
+  transition: .3s ease-in-out;
+}
+.option-enter,.option-leave-to{
+  transform: translateX(-100%);
+  opacity: 0;
 }
 </style>

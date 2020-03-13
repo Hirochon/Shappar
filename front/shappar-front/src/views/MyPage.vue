@@ -1,5 +1,6 @@
 <template>
   <div class="MyPage">
+    <GlobalMessage/>
     <h1 class="Mypage__h1">{{user.user_id}} | Mypage</h1>
     <div class="Mypage__main">
       <div class="Mypage__image">
@@ -57,22 +58,21 @@
         </div>
       </div>
     </div>
-    <NavBar></NavBar>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import NavBar from '@/components/NavBar.vue'
+import GlobalMessage from '@/components/GlobalMessage.vue'
 
 export default {
   name: 'MyPage',
   components: {
-    NavBar
+    GlobalMessage
   },
   data: function () {
     return {
-      user_id: this.$store.state.auth.username,
+      user_id: '',
       isActive: 0,
       user: {},
       posts: [],
@@ -98,12 +98,13 @@ export default {
     }
   },
   created: function () {
+    this.user_id = this.$store.state.auth.username
     this.axios.get('/api/v1/users/' + this.user_id)
       .then((response) => {
         this.user = response.data
         // console.log('userData : ' + response.status)
       })
-    this.axios.get('/api/v1/users/' + this.id + '/posts')
+    this.axios.get('/api/v1/users/' + this.user_id + '/posts')
       .then((response) => {
         var posts = response.data.posts
         for (let i = 0; i < posts.length; i++) {
@@ -115,7 +116,7 @@ export default {
         this.posts = response.data.posts
         // console.log('postsData : ' + response.status)
       })
-    this.axios.get('/api/v1/users/' + this.id + '/voted')
+    this.axios.get('/api/v1/users/' + this.user_id + '/voted')
       .then((response) => {
         var posts = response.data.posts
         for (let i = 0; i < posts.length; i++) {
@@ -127,6 +128,11 @@ export default {
         this.voted = response.data.posts
         // console.log('votedData : ' + response.status)
       })
+    setTimeout(() => {
+      this.$store.state.message.error = ''
+      this.$store.state.message.warnings = []
+      this.$store.state.message.info = ''
+    }, 3000)
   }
 }
 </script>
@@ -186,7 +192,7 @@ export default {
   &__logout{
     width: 100px;
     height: 24px;
-    line-height: 24px;
+    line-height: 20px;
     text-align: center;
     border-radius: 12px;
     background: white;
@@ -195,7 +201,6 @@ export default {
     color: red;
     left: 4px;
     top: 208px;
-    line-height: 20px;
   }
   &__name{
     margin: 60px 0 0;

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import Post, Poll
+from .models import Post, Poll, Option
 
 class MypageSerializer(serializers.ModelSerializer):
     """マイページ用シリアライザ"""
@@ -14,26 +14,66 @@ class MypageSerializer(serializers.ModelSerializer):
         fields = ['unique_id', 'user_id', 'name', 'introduction', 'iconimage', 'homeimage']
 
 
-class PostSerializer(serializers.ModelSerializer):
-    """投稿用のシリアライザ"""
+class OptionSerializer(serializers.ModelSerializer):
+    """選択肢用シリアライザ"""
 
-    post_id = serializers.ReadOnlyField(source='id')
-    unique_id = serializers.ReadOnlyField(source='user.id')
-    user_id = serializers.ReadOnlyField(source='user.username')
+    class Meta:
+        model = Option
+        fields = ['id','select_num', 'answer', 'votes', 'share_id']
+
+
+class OptionListSerializer(serializers.ListSerializer):
+    child = OptionSerializer()
+
+
+class PostCreateSerializer(serializers.ModelSerializer):
+    """投稿用シリアライザ"""
+    options = OptionListSerializer()
 
     class Meta:
         model = Post
-        fields = ['post_id', 'unique_id', 'user_id', 'question', 'answer_1', 'answer_2', 'answer_3', 'answer_4']
+        fields = ['user', 'question', 'options', 'share_id']
+
+    def create(self, validated_data):
+        options = []
+        for option_data in validated_data.pop('options'):
+            options.append(Option.objects.create(**option_data))
+        post = super().create(validated_data)
+        post.options.set(options)
+        return post
+
+
+class PostListSerializer(serializers.ModelSerializer):
+    """投稿一覧取得シリアライザ"""
+
+    def __init__(self, pk, instance):
+        super().__init__(instance)
+        self.pk = pk
+
+    post_id = serializers.ReadOnlyField(source='id')
+    user_id = serializers.ReadOnlyField(source='user.username')
+    iconimage = serializers.ImageField(source='user.iconimage')
+    created_at = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S.%fZ')
+
+    voted = serializers.SerializerMethodField()
+    options = OptionListSerializer()
+
+    class Meta:
+        model = Post
+        fields = ['post_id', 'user_id', 'iconimage', 'question', 'voted', 'options', 'created_at']
+
+    def get_voted(self, instance):
+        if Poll.objects.filter(user_id=self.pk,post_id=instance.id):
+            return True
+        if Post.objects.filter(user_id=self.pk,id=instance.id):
+            return True
+        else:
+            return False
 
 
 class PollSerializer(serializers.ModelSerializer):
-    """投票用のシリアライザ"""
-
-    post_id = serializers.ReadOnlyField(source='post.id')
-    unique_id = serializers.ReadOnlyField(source='user.id')
-    user_id = serializers.ReadOnlyField(source='user.username')
-    iconimage = serializers.ImageField(source='user.iconimage')
+    """投票用シリアライザ"""
 
     class Meta:
         model = Poll
-        fields = ['id', 'post_id', 'unique_id', 'user_id', 'iconimage', 'voted', 'total', 'select', 'num_1', 'num_2', 'num_3', 'num_4']
+        fields = ['post','user','option']

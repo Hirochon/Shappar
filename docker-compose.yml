@@ -1,16 +1,26 @@
 version: "3"
 services: 
-    back:
+    shappar-back:
         build: "./"
         ports: 
             - "8000:8000"
         volumes:
             - "./:/code/"                                       # プロジェクトのルートディレクトリからマウントを取る
             - "staticdata:/code/static/"                        # volumesを用いたnginxとのコンテナ間のリソース共有
-        # command: "gunicorn config.wsgi -b 0.0.0.0:8000"       # 本番環境
-        command: "python3 manage.py runserver 0.0.0.0:8000"     # テスト環境
+        # 本番環境
+        # command: >
+        # bash -c "python3 manage.py makemigrations &&
+        # python3 manage.py migrate &&
+        # gunicorn config.wsgi -b 0.0.0.0:8000"
+        
+        # テスト環境
+        command: >
+            bash -c "python3 manage_local.py makemigrations &&
+            python3 manage_local.py migrate &&
+            python3 manage_local.py runserver 0.0.0.0:8000"
         depends_on: 
             - db                                                # 2. docker-compose up時にdbから立ち上げる
+
     db:                                                         # docker-compose up時に1.と2.からdb→back→nginxの順に立ち上げる
         image: postgres:12.1
         environment:
@@ -19,7 +29,7 @@ services:
         ports:
             - "5432:5432"
         volumes:
-            - "dbdata:/var/lib/postgresql/data"                 # dbの永続化→dbdata
+            - "dbdata:/var/lib/postgresql/data/"                 # dbの永続化→dbdata
     nginx:
         build: "./nginx/"
         ports:
@@ -28,7 +38,7 @@ services:
             - "./static/:/opt/apps/static/"                     # nginxコンテナにてホストのstaticからコンテナへマウント
             - "staticdata:/opt/apps/static/"                    # volumesを用いたnginxとのコンテナ間のリソース共有
         depends_on: 
-            - back                                              # 1. docker-compose up時にbackから立ち上げる
+            - shappar-back                                      # 1. docker-compose up時にbackから立ち上げる
 
 volumes:
     dbdata:
