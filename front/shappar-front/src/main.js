@@ -17,14 +17,14 @@ import {
   faSearch, faTags, faHome, faGlobe, faListOl, faSyncAlt,
   faFileAlt, faTimes, faSortAmountUp, faSortAmountDownAlt,
   faExchangeAlt, faBars, faPlus, faSpinner, faChevronCircleDown,
-  faTrashAlt
+  faTrashAlt, faCamera
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
   faSearch, faTags, faHome, faGlobe, faListOl, faSyncAlt,
   faFileAlt, faTimes, faSortAmountUp, faSortAmountDownAlt,
   faExchangeAlt, faBars, faPlus, faSpinner, faChevronCircleDown,
-  faTrashAlt
+  faTrashAlt, faCamera
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

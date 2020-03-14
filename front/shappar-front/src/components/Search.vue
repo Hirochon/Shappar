@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import api from '@/services/api'
 export default {
   name: 'Search',
   props: {
@@ -37,7 +38,7 @@ export default {
   },
   created () {
     this.user_id = this.$store.state.auth.username
-    this.axios.get('/api/v1/users/' + this.user_id)
+    api.get('/api/v1/users/' + this.user_id)
       .then((response) => {
         this.user = response.data
       })
@@ -49,7 +50,7 @@ export default {
 <style lang="scss">
 @import '@/assets/common.scss';
 .Search{
-  position: absolute;
+  position: fixed;
   top: 8px;
   left: 16px;
   display: flex;

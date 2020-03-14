@@ -1,6 +1,5 @@
 <template>
   <div class="New">
-    <GlobalMessage/>
     <transition name="container">
       <div class="New__container" v-if="isOpen">
         <div class="Top">
@@ -53,13 +52,12 @@
 
 <script>
 import draggable from 'vuedraggable'
-import GlobalMessage from '@/components/GlobalMessage.vue'
 
+import api from '@/services/api'
 export default {
   name: 'New',
   components: {
-    draggable,
-    GlobalMessage
+    draggable
   },
   props: {
     isOpen: {
@@ -155,7 +153,7 @@ export default {
         delete this.options[i].length
         delete this.options[i].isValid
       }
-      this.axios.post('/api/v1/posts/', {
+      api.post('/api/v1/posts/', {
         unique_id: this.unique_id,
         question: this.question.text,
         options: this.options
@@ -278,6 +276,7 @@ $delete-width: 24px;
     @include scrollbar;
   }
   &__FAB{
+    cursor: pointer;
     position: fixed;
     right: 16px;
     bottom: 48px;
@@ -292,7 +291,7 @@ $delete-width: 24px;
     font-size: 24px;
     z-index: 10;
     &:hover{
-      opacity: 0.5;
+      opacity: 0.8;
     }
   }
   &__option{
@@ -407,15 +406,13 @@ $delete-width: 24px;
     color: #888;
   }
   &__close{
+    cursor: pointer;
     width: 32px;
     height: 32px;
     line-height: 32px;
     text-align: center;
     border-radius: 50%;
     font-size: 20px;
-    &:hover{
-      background: rgba($color: #41be99, $alpha: 0.3)
-    }
   }
   &__data{
     height: 100%;

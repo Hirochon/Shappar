@@ -33,6 +33,8 @@
 // import api from '@/services/api'
 import GlobalHeader from '@/components/GlobalHeader.vue'
 import GlobalMessage from '@/components/GlobalMessage.vue'
+
+import api from '@/services/api'
 export default {
   data: function () {
     return {
@@ -69,7 +71,7 @@ export default {
             answer: 'answer_' + j
           }
         }
-        this.axios.post('/api/v1/posts/', {
+        api.post('/api/v1/posts/', {
           unique_id: this.unique_id,
           question: 'question_' + i,
           options: this.options

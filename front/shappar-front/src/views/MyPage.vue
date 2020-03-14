@@ -65,6 +65,7 @@
 // @ is an alias to /src
 import GlobalMessage from '@/components/GlobalMessage.vue'
 
+import api from '@/services/api'
 export default {
   name: 'MyPage',
   components: {
@@ -99,12 +100,12 @@ export default {
   },
   created: function () {
     this.user_id = this.$store.state.auth.username
-    this.axios.get('/api/v1/users/' + this.user_id)
+    api.get('/api/v1/users/' + this.user_id)
       .then((response) => {
         this.user = response.data
         // console.log('userData : ' + response.status)
       })
-    this.axios.get('/api/v1/users/' + this.user_id + '/posts')
+    api.get('/api/v1/users/' + this.user_id + '/posts')
       .then((response) => {
         var posts = response.data.posts
         for (let i = 0; i < posts.length; i++) {
@@ -116,7 +117,7 @@ export default {
         this.posts = response.data.posts
         // console.log('postsData : ' + response.status)
       })
-    this.axios.get('/api/v1/users/' + this.user_id + '/voted')
+    api.get('/api/v1/users/' + this.user_id + '/voted')
       .then((response) => {
         var posts = response.data.posts
         for (let i = 0; i < posts.length; i++) {
@@ -128,11 +129,6 @@ export default {
         this.voted = response.data.posts
         // console.log('votedData : ' + response.status)
       })
-    setTimeout(() => {
-      this.$store.state.message.error = ''
-      this.$store.state.message.warnings = []
-      this.$store.state.message.info = ''
-    }, 3000)
   }
 }
 </script>
@@ -160,14 +156,15 @@ export default {
     }
   }
   &__icon{
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     position: absolute;
-    left: calc(50% - 60px);
-    top: 120px;
+    left: calc(50% - 50px);
+    top: 140px;
     background: #BFE4E2;
     overflow: hidden;
+    border: solid 3px white;
     img{
       width: 100%;
       height: 100%;

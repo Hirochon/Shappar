@@ -1,8 +1,6 @@
 <template>
   <div id="login-page">
     <GlobalHeader :pageName="pageName"/>
-    <GlobalMessage/>
-
     <!-- メインエリア -->
     <main class="container">
       <b-form @submit.prevent="submitLogin">
@@ -30,11 +28,9 @@
 
 <script>
 import GlobalHeader from '@/components/GlobalHeader.vue'
-import GlobalMessage from '@/components/GlobalMessage.vue'
 export default {
   components: {
-    GlobalHeader,
-    GlobalMessage
+    GlobalHeader
   },
   data () {
     return {
