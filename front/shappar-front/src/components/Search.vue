@@ -52,7 +52,7 @@ export default {
 .Search{
   position: fixed;
   top: 8px;
-  left: 16px;
+  margin-left: 16px;
   display: flex;
   width: calc(100% - 32px);
   max-width: 668px;

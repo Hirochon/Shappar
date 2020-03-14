@@ -73,7 +73,7 @@ export default {
       if (this.introduction) params.append('introduction', this.introduction)
       if (this.iconimage) params.append('iconimage', this.iconimage)
       if (this.homeimage) params.append('homeimage', this.homeimage)
-      api.put('/api/v1/users/' + this.before_user_id + '/', params)
+      api.patch('/api/v1/users/' + this.before_user_id + '', params)
         .then((response) => {
           if (response.status === 200) {
             this.$store.dispatch('message/setInfoMessage', { message: '更新完了' })
@@ -114,6 +114,10 @@ export default {
     font-size: 24px;
     color: white;
     z-index: 100;
+    cursor: pointer;
+    &:hover{
+      color: white;
+    }
   }
   &__image{
     position: relative;
@@ -138,6 +142,7 @@ export default {
       font-size: 20px;
       color: white;
       text-align: center;
+      cursor: pointer;
     }
   }
   &__icon{
@@ -167,6 +172,7 @@ export default {
       font-size: 20px;
       color: white;
       text-align: center;
+      cursor: pointer;
     }
   }
   &__file{
@@ -209,6 +215,7 @@ export default {
     color: white;
     text-align: center;
     background: $color-main;
+    cursor: pointer;
   }
 }
 </style>
