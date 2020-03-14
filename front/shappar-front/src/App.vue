@@ -7,6 +7,7 @@
 <style lang="scss">
 @import '@/assets/common.scss';
 html,body{
+  position: relative;
   width: 100%;
   max-width: 700px;
   margin: 0 auto;

@@ -4,18 +4,18 @@
       <div class="Post__icon">
         <img :src="post.iconimage" :alt="post.user_id+'_icon'">
       </div>
-      <div class="Post__buttons">
-        <div class="Post__sort" v-if="post.voted" @click="optionsSort(post, post.options)">
-          <font-awesome-icon icon="list-ol" v-show="post.sort === 0"/>
-          <font-awesome-icon icon="sort-amount-up" v-show="post.sort === 1"/>
-          <font-awesome-icon icon="sort-amount-down-alt" v-show="post.sort === 2"/>
+      <div class="Post__top">
+        <div class="Post__total">Total：{{post.total}}</div>
+        <div class="Post__buttons" v-show="post.voted">
+          <div class="Post__sort" v-if="post.voted" @click="optionsSort(post, post.options)">
+            <font-awesome-icon icon="list-ol" v-show="post.sort === 0"/>
+            <font-awesome-icon icon="sort-amount-up" v-show="post.sort === 1"/>
+            <font-awesome-icon icon="sort-amount-down-alt" v-show="post.sort === 2"/>
+          </div>
+          <div class="Post__reload" v-if="post.voted" @click="refleshPost(post)"><font-awesome-icon icon="sync-alt"/></div>
         </div>
-        <!-- <div class="Post__divider"></div> -->
-        <div class="Post__reload" v-if="post.voted" @click="refleshPost(post)"><font-awesome-icon icon="sync-alt"/></div>
       </div>
-      <div class="Post__total">Total：{{post.total}}</div>
-      <!-- <div class="Post__changer" v-if="post.voted"><font-awesome-icon icon="exchange-alt"/></div> -->
-      <div class="Post__text">
+      <div class="Post__question">
         {{post.question}}
       </div>
       <div class="Post__container">
@@ -75,7 +75,6 @@ export default {
           post.voted = true
           // post.total++ // これでもいいかな？
           post.total = 0
-          // post.selected_num
           var updates = response.data.options.sort((a, b) => {
             return a.select_num < b.select_num ? -1 : 1
           })
@@ -105,22 +104,6 @@ export default {
       post.options = res.options.sort((a, b) => {
         return a.select_num < b.select_num ? -1 : 1
       })
-    },
-    loadMore () {
-      var nextPostId = this.posts[this.posts.length - 1].post_id
-      this.axios.get('/api/v1/posts/public/' + this.unique_id + '/?pid=' + nextPostId)
-        .then((response) => {
-          var posts = response.data.posts
-          this.nextPostId = response.data.pid
-          posts.forEach(item => {
-            item.view = 0
-            item.sort = 0
-            item.options.sort((a, b) => {
-              return a.select_num < b.select_num ? -1 : 1
-            })
-            this.posts.push(item)
-          })
-        })
     },
     optionsSort (post, options) {
       post.sort = (post.sort + 1) % 3
@@ -160,7 +143,7 @@ $option-height: 40px;
 }
 .Post{
   margin-bottom: 40px;
-  padding: 48px 16px 8px;
+  padding: 16px 16px 8px;
   background: #fff;
   position: relative;
   box-shadow: 0 0 8px rgba(black, 0.16);
@@ -180,8 +163,15 @@ $option-height: 40px;
       object-fit: cover;
     }
   }
+  &__top{
+    width:100%;
+    height: 34px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
   &__total{
-    position: absolute;
+    width: auto;
     top: 16px;
     left: 16px;
     height: 24px;
@@ -193,35 +183,62 @@ $option-height: 40px;
     font-size: 14px;
     border: solid 2px $color-main;
     font-weight: bold;
+    transition: .3s ease-in-out;
   }
-  &__text{
+  &__buttons{
+    right: 16px;
+    top: 16px;
+    display: flex;
+    justify-content: space-around;
+    height: 34px;
+    width: 80px;
+    transition: .3s ease-in-out;
+  }
+  &__sort{
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    background: #fff;
+    text-align: center;
+    line-height: 32px;
+    font-size: 20px;
+    border-bottom: 0.5px solid #ccc;
+    transition: .3s ease-in-out;
+    &:hover{
+      border-bottom: solid 0.5px $color-main;
+      color: $color-main;
+    }
+  }
+  &__reload{
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    background: #fff;
+    text-align: center;
+    line-height: 32px;
+    font-size: 20px;
+    border-bottom: 0.5px solid #ccc;
+    transition: .3s ease-in-out;
+    &:hover{
+      border-bottom: solid 0.5px $color-main;
+      color: $color-main;
+      svg{
+        transition: .3s ease-in-out;
+        transform: rotate(180deg);
+      }
+    }
+  }
+  &__question{
     width: 100%;
     margin-bottom: 8px;
     padding: 0 8px;
-  }
-  &__submit{
-    user-select: none;
-    pointer-events: none;
-    opacity: 0.5;
-    width: 100%;
-    height: 32px;
-    margin-top: 24px;
-    line-height: 32px;
-    text-align: center;
-    background: $color-main;
-    border-radius: 8px;
-    color: #fff;
-    &.active{
-      pointer-events: auto;
-      cursor: pointer;
-      opacity: 1;
-    }
   }
   &__container{
     width: 100%;
     @include scrollbar;
   }
   &__option{
+    cursor: pointer;
     border-top: solid 1px #e9e9e9;
     width: 100%;
     position: relative;
@@ -244,29 +261,7 @@ $option-height: 40px;
       border-radius: 8px;
     }
   }
-  &__divider{
-    background: black;
-    width: 100%;
-    height: 2px;
-    margin: 16px 0 16px;
-  }
   &__result{
-    &__title{
-      text-align: center;
-      line-height: 32px;
-      margin-bottom: 8px;
-      font-size: 24px;
-    }
-    &__option{
-      position: relative;
-      width: 100%;
-      background: #eee;
-      height: $option-height;
-      line-height: $option-height;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      box-sizing: border-box;
-    }
     &__num{
       line-height: $option-height;
     }
@@ -284,64 +279,5 @@ $option-height: 40px;
       }
     }
   }
-  &__changer{
-    position: absolute;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    top: 16px;
-    right: 96px;
-    background: #ccc;
-    text-align: center;
-    line-height: 32px;
-    font-size: 20px;
-  }
-  &__sort{
-    width: 32px;
-    height: 32px;
-    background: #fff;
-    text-align: center;
-    line-height: 32px;
-    font-size: 20px;
-      border-bottom: 0.5px solid #ccc;
-  }
-  &__reload{
-    width: 32px;
-    height: 32px;
-    background: #fff;
-    text-align: center;
-    line-height: 32px;
-    font-size: 20px;
-      border-bottom: 0.5px solid #ccc;
-  }
-  &__buttons{
-    position: absolute;
-    right: 16px;
-    top: 16px;
-    display: flex;
-    justify-content: space-around;
-    height: 34px;
-    width: 80px;
-  }
-  &__divider{
-    width: 2px;
-    height: 32px;
-    background: black;
-    opacity: 0.2;
-    margin: 0;
-  }
-}
-.loadMore{
-  position: fixed;
-  bottom: 0;
-  left:0;
-  width: 100%;
-  height: 32px;
-  line-height: 32px;
-  background: white;
-  text-align: center;
-}
-.scroll-container{
-  @include scrollbar;
 }
 </style>

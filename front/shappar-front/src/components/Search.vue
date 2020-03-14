@@ -40,7 +40,6 @@ export default {
     this.axios.get('/api/v1/users/' + this.user_id)
       .then((response) => {
         this.user = response.data
-        // console.log('userData : ' + response.status)
       })
   }
 }
@@ -50,12 +49,12 @@ export default {
 <style lang="scss">
 @import '@/assets/common.scss';
 .Search{
-  position: fixed;
+  position: absolute;
   top: 8px;
   left: 16px;
-  // border-radius: 16px;
   display: flex;
   width: calc(100% - 32px);
+  max-width: 668px;
   justify-content: space-between;
   padding: 8px;
   box-sizing: border-box;
@@ -67,12 +66,12 @@ export default {
     display: flex;
     justify-content: center;
     box-sizing: border-box;
+    width: 70%;
     height: 32px;
-    padding: 4px 8px;
+    padding: 4px 12px;
     border-radius: 16px;
     border: solid 2px $color-main;
     background: #fff;
-    width: 60%;
   }
   &__label{
     display: none;
@@ -80,7 +79,7 @@ export default {
   &__input{
     margin-right: 24px;
     font-size: 16px;
-    // background: red;
+    width: 100%;
   }
   &__submit{
     position: absolute;
@@ -90,12 +89,15 @@ export default {
     height: 28px;
     border-radius: 50%;
     box-sizing: border-box;
-    // border: solid 2px black;
     cursor: pointer;
     text-align: center;
     line-height: 28px;
     color: $color-main;
     font-size: 18px;
+    transition: .3s ease-in-out;
+    &:hover{
+      background: rgba($color-main,0.5);
+    }
   }
   &__filter{
     margin-left: 8px;
