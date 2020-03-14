@@ -50,6 +50,99 @@ class MypageAPIView(views.APIView):
         serializer.save()
         return Response(serializer.data, status.HTTP_200_OK)
 
+class MypagePostedListAPIView(views.APIView):
+    """マイページでの自分の投稿取得(一覧)"""
+
+    def get(self, request, pk, *args, **kwargs):
+        """自分の投稿取得(一覧)"""
+
+        sk = get_user_model().objects.get(username=pk).id
+
+        # 自身の投稿のみフィルタリング
+        if 'pid' in request.GET:
+            post_basis = Post.objects.get(id=request.GET['pid'])
+            querysets = Post.objects.filter(user_id=sk, created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
+        else:
+            querysets = Post.objects.filter(user_id=sk).order_by('-created_at')[:10]
+
+        serializer = PostListSerializer(instance=querysets, many=True, pk=sk)
+
+        for datas in serializer.data:
+            if not datas['voted']:
+                total = 0
+                datas['selected_num'] = -1
+                for data in datas['options']:
+                    del data['id']
+                    del data['share_id']
+                    total += data['votes']
+                    data['votes'] = -1
+                datas['total'] = total
+            else:
+                total = 0
+                for data in datas['options']:
+                    flag = Poll.objects.filter(user_id=sk,option_id=data['id'])
+                    if len(flag) > 0:
+                        datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
+                    else:
+                        if not 'selected_num' in datas:
+                            datas['selected_num'] = -1
+                    del data['id']
+                    del data['share_id']
+                    total += data['votes']
+                datas['total'] = total
+        seri_datas = serializer.data
+
+        response = {}
+        response["posts"] = seri_datas
+        return Response(response, status.HTTP_200_OK)
+
+
+class MypageVotedListAPIView(views.APIView):
+    """マイページでの自分の投票取得(一覧)"""
+
+    def get(self, request, pk, *args, **kwargs):
+        """自分の投票取得(一覧)"""
+
+        sk = get_user_model().objects.get(username=pk).id
+
+        # 自身の投票のみフィルタリング
+        if 'pid' in request.GET:
+            post_basis = Post.objects.get(id=request.GET['pid'])
+            querysets = Post.objects.filter(poll_post__user__id=sk, created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
+        else:
+            querysets = Post.objects.filter(poll_post__user__id=sk).order_by('-created_at')[:10]
+
+        serializer = PostListSerializer(instance=querysets, many=True, pk=sk)
+
+        for datas in serializer.data:
+            if not datas['voted']:
+                total = 0
+                datas['selected_num'] = -1
+                for data in datas['options']:
+                    del data['id']
+                    del data['share_id']
+                    total += data['votes']
+                    data['votes'] = -1
+                datas['total'] = total
+            else:
+                total = 0
+                for data in datas['options']:
+                    flag = Poll.objects.filter(user_id=sk,option_id=data['id'])
+                    if len(flag) > 0:
+                        datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
+                    else:
+                        if not 'selected_num' in datas:
+                            datas['selected_num'] = -1
+                    del data['id']
+                    del data['share_id']
+                    total += data['votes']
+                datas['total'] = total
+        seri_datas = serializer.data
+
+        response = {}
+        response["posts"] = seri_datas
+        return Response(response, status.HTTP_200_OK)
+
 
 class PostCreateAPIView(views.APIView):
     """投稿用APIクラス"""
