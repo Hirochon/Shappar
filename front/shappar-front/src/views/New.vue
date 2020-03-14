@@ -244,6 +244,11 @@ export default {
   created: function () {
     this.unique_id = this.$store.state.auth.unique_id
     this.user_id = this.$store.state.auth.username
+    setTimeout(() => {
+      this.$store.state.message.error = ''
+      this.$store.state.message.warnings = []
+      this.$store.state.message.info = ''
+    }, 2000)
   }
 }
 </script>
@@ -278,6 +283,7 @@ $delete-width: 24px;
     @include scrollbar;
   }
   &__FAB{
+    cursor: pointer;
     position: fixed;
     right: 16px;
     bottom: 48px;
@@ -292,7 +298,7 @@ $delete-width: 24px;
     font-size: 24px;
     z-index: 10;
     &:hover{
-      opacity: 0.5;
+      opacity: 0.8;
     }
   }
   &__option{
@@ -407,15 +413,13 @@ $delete-width: 24px;
     color: #888;
   }
   &__close{
+    cursor: pointer;
     width: 32px;
     height: 32px;
     line-height: 32px;
     text-align: center;
     border-radius: 50%;
     font-size: 20px;
-    &:hover{
-      background: rgba($color: #41be99, $alpha: 0.3)
-    }
   }
   &__data{
     height: 100%;
