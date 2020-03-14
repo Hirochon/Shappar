@@ -73,10 +73,11 @@ export default {
       if (this.introduction) params.append('introduction', this.introduction)
       if (this.iconimage) params.append('iconimage', this.iconimage)
       if (this.homeimage) params.append('homeimage', this.homeimage)
-      api.patch('/api/v1/users/' + this.before_user_id + '', params)
-        .then((response) => {
+      api.patch('/api/v1/users/' + this.before_user_id + '/', params)
+        .then(async (response) => {
           if (response.status === 200) {
             this.$store.dispatch('message/setInfoMessage', { message: '更新完了' })
+            await this.$store.dispatch('auth/reload')// ここで一度更新してないとユーザーIDを変更した際にエラーが出る
             this.$router.replace('/mypage')
           }
         })
@@ -85,7 +86,7 @@ export default {
   created: function () {
     this.before_user_id = store.getters['auth/username']
     this.user_id = this.before_user_id
-    api.get('/api/v1/users/' + this.before_user_id)
+    api.get('/api/v1/users/' + this.before_user_id + '/')
       .then((response) => {
         this.name = response.data.name
         this.introduction = response.data.introduction

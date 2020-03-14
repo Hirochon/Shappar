@@ -171,11 +171,6 @@ export default {
               errMessage = '無効なリクエストです。'
           }
           this.$store.dispatch('message/setErrorMessage', { message: errMessage })
-          setTimeout(() => {
-            this.$store.state.message.error = ''
-            this.$store.state.message.warnings = []
-            this.$store.state.message.info = ''
-          }, 2000)
         })
       this.question = ''
       this.count = 2
