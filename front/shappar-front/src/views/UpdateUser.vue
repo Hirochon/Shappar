@@ -1,5 +1,6 @@
 <template>
   <div class="Update">
+    <GlobalMessage/>
     <router-link class="Update__close" to="/mypage"><font-awesome-icon icon="times"/></router-link>
     <div class="Update__image">
       <img :src="beforeHomeImage" alt="" id="homeimage">
@@ -25,10 +26,13 @@
 
 <script>
 import store from '../store'
+import GlobalMessage from '@/components/GlobalMessage.vue'
 
+import api from '@/services/api'
 export default {
   name: 'updateUser',
   components: {
+    GlobalMessage
   },
   data: function () {
     return {
@@ -69,7 +73,7 @@ export default {
       if (this.introduction) params.append('introduction', this.introduction)
       if (this.iconimage) params.append('iconimage', this.iconimage)
       if (this.homeimage) params.append('homeimage', this.homeimage)
-      this.axios.put('/api/v1/users/' + this.before_user_id + '/', params)
+      api.put('/api/v1/users/' + this.before_user_id + '/', params)
         .then((response) => {
           if (response.status === 200) {
             this.$store.dispatch('message/setInfoMessage', { message: '更新完了' })
@@ -81,7 +85,7 @@ export default {
   created: function () {
     this.before_user_id = store.getters['auth/username']
     this.user_id = this.before_user_id
-    this.axios.get('/api/v1/users/' + this.before_user_id)
+    api.get('/api/v1/users/' + this.before_user_id)
       .then((response) => {
         this.name = response.data.name
         this.introduction = response.data.introduction

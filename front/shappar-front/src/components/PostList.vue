@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import api from '@/services/api'
 export default {
   name: 'PostList',
   props: {
@@ -64,7 +65,7 @@ export default {
       for (let i = 0; i < j; i++) {
         if (options[i]) selectsArray[i] = options[i].select_num
       }
-      this.axios.post('/api/v1/posts/' + post.post_id + '/polls/', {
+      api.post('/api/v1/posts/' + post.post_id + '/polls/', {
         unique_id: this.$store.state.auth.unique_id,
         option: {
           select_num: post.selected_num,
@@ -95,7 +96,7 @@ export default {
     },
     async refleshPost (post) {
       var res
-      await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/' + post.post_id + '/')
+      await api.get('/api/v1/posts/public/' + this.unique_id + '/' + post.post_id + '/')
         .then((response) => {
           res = response.data
         })

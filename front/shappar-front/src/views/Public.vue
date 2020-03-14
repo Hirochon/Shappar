@@ -1,5 +1,6 @@
 <template>
   <div class="Public" @touchmove="pullToMove" @touchend="pullToEnd">
+    <GlobalMessage/>
     <transition name="search">
       <Search :query="query" @search="search()" v-show="searchShow"></Search>
     </transition>
@@ -17,13 +18,16 @@
 import Search from '@/components/Search.vue'
 import PostList from '@/components/PostList.vue'
 import New from '@/views/New.vue'
+import GlobalMessage from '@/components/GlobalMessage.vue'
 
+import api from '@/services/api'
 export default {
   name: 'public',
   components: {
     Search,
     PostList,
-    New
+    New,
+    GlobalMessage
   },
   data: function () {
     return {
@@ -51,7 +55,7 @@ export default {
       if (this.targetHeight < 0) return
       await (this.targetHeight = -1)// 読み込み中のスクロールで発火するのを避けるためにlockをかける
       var nextPostId = this.posts[this.posts.length - 1].post_id
-      await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/?pid=' + nextPostId)
+      await api.get('/api/v1/posts/public/' + this.unique_id + '/?pid=' + nextPostId)
         .then((response) => {
           var posts = response.data.posts
           posts.forEach(item => {
@@ -109,7 +113,7 @@ export default {
       refConf.diffY = 0
     },
     async search () {
-      this.axios.get('/api/v1/posts/public/' + this.unique_id + '/?q=' + this.query)
+      api.get('/api/v1/posts/public/' + this.unique_id + '/?q=' + this.query)
         .then((response) => {
           this.initPosts(response.data.posts)
         })
@@ -127,7 +131,7 @@ export default {
       if (this.targetId) this.targetHeight = document.getElementById(this.targetId).offsetTop // 次の高さを計測
     },
     async refresh () { // ここの非同期処理いるのか？
-      await this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
+      await api.get('/api/v1/posts/public/' + this.unique_id + '/')
         .then((response) => {
           this.initPosts(response.data.posts)
         })
@@ -152,7 +156,7 @@ export default {
     this.unique_id = this.$store.state.auth.unique_id
     this.user_id = this.$store.state.auth.username
     this.query = ''
-    this.axios.get('/api/v1/posts/public/' + this.unique_id + '/')
+    api.get('/api/v1/posts/public/' + this.unique_id + '/')
       .then((response) => {
         this.initPosts(response.data.posts)
       })

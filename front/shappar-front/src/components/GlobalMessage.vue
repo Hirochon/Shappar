@@ -20,6 +20,11 @@ export default {
     message: function () {
       return this.$store.state.message
     }
+  },
+  created () {
+    setTimeout(() => {
+      this.$store.dispatch('message/clearMessages')
+    }, 1500)
   }
 }
 </script>
@@ -31,5 +36,6 @@ export default {
   left: 0;
   width: 100%;
   z-index: 1000;
+  transition: .3s ease-in-out;
 }
 </style>

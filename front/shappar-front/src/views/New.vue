@@ -1,6 +1,5 @@
 <template>
   <div class="New">
-    <GlobalMessage/>
     <transition name="container">
       <div class="New__container" v-if="isOpen">
         <div class="Top">
@@ -53,13 +52,12 @@
 
 <script>
 import draggable from 'vuedraggable'
-import GlobalMessage from '@/components/GlobalMessage.vue'
 
+import api from '@/services/api'
 export default {
   name: 'New',
   components: {
-    draggable,
-    GlobalMessage
+    draggable
   },
   props: {
     isOpen: {
@@ -155,7 +153,7 @@ export default {
         delete this.options[i].length
         delete this.options[i].isValid
       }
-      this.axios.post('/api/v1/posts/', {
+      api.post('/api/v1/posts/', {
         unique_id: this.unique_id,
         question: this.question.text,
         options: this.options
@@ -244,11 +242,6 @@ export default {
   created: function () {
     this.unique_id = this.$store.state.auth.unique_id
     this.user_id = this.$store.state.auth.username
-    setTimeout(() => {
-      this.$store.state.message.error = ''
-      this.$store.state.message.warnings = []
-      this.$store.state.message.info = ''
-    }, 2000)
   }
 }
 </script>
