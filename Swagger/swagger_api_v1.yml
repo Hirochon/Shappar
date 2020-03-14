@@ -168,14 +168,14 @@ paths:
           in: query
           name: q
           description: 検索キーワード
-  '/api/v1/posts/{unique_id}/{post_d}':
+  '/api/v1/posts/{unique_id}/{post_id}':
     parameters:
       - type: string
         name: unique_id
         in: path
         required: true
       - type: string
-        name: post_d
+        name: post_id
         in: path
         required: true
     get:
@@ -217,10 +217,10 @@ paths:
       description: delete post or vote
       tags:
         - posts
-  '/api/v1/posts/{postId}/polls':
+  '/api/v1/posts/{post_id}/polls':
     parameters:
       - type: string
-        name: postId
+        name: post_id
         in: path
         required: true
     post:
@@ -369,13 +369,12 @@ paths:
       description: delete user
       tags:
         - users
-  '/api/v1/users/{userId}/settings':
+  '/api/v1/users/{user_id}/settings':
     parameters:
       - type: string
-        name: userId
+        name: user_id
         in: path
         required: true
-        description: ユーザーが設定できるuserID
     put:
       summary: ''
       operationId: put-api-v1-users-userId-settings
@@ -409,13 +408,12 @@ paths:
       description: get user settings
       tags:
         - users
-  '/api/v1/users/{userId}/posts':
+  '/api/v1/users/{user_id}/posted':
     parameters:
       - type: string
-        name: userId
+        name: user_id
         in: path
         required: true
-        description: ユーザーが設定できるuserID
     get:
       summary: Your GET endpoint
       tags:
@@ -429,13 +427,12 @@ paths:
             $ref: '#/definitions/Posts/x-examples'
       operationId: get-api-v1-users-userId-posts
       description: get user posted posts
-  '/api/v1/users/{userId}/voted':
+  '/api/v1/users/{user_id}/voted':
     parameters:
       - type: string
-        name: userId
+        name: user_id
         in: path
         required: true
-        description: ユーザーが設定できるuserID
     get:
       summary: Your GET endpoint
       tags:
