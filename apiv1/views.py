@@ -15,6 +15,7 @@ from .serializers import (
     PostListSerializer, 
     PollSerializer, 
     OptionSerializer,
+    PostDetailSerializer,
 )
 
 class MypageAPIView(views.APIView):
@@ -49,6 +50,7 @@ class MypageAPIView(views.APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status.HTTP_200_OK)
+
 
 class MypagePostedListAPIView(views.APIView):
     """マイページでの自分の投稿取得(一覧)"""
@@ -223,6 +225,73 @@ class PostListAPIView(views.APIView):
         response = {}
         response["posts"] = seri_datas
         return Response(response, status.HTTP_200_OK)
+
+
+class PostDetailDeleteAPIView(views.APIView):
+    """投稿の詳細情報取得&消去APIクラス"""
+
+    def get(self, request, pk, *args, **kwargs):
+        users = get_user_model().objects.filter(poll_user__post__id=pk)
+        serializer = PostDetailSerializer(instance=users, many=True)
+
+        response = {}
+        response['voted_sex'] = {'女性':0,'男性':0,'その他':0,'無回答':0}
+        response['voted_age'] = {'10代未満':0,"10代":0,"20代":0,"30代":0,"40代":0,"50代":0,"60代以上":0}
+        response['voted_month'] = {"1月":0,"2月":0,"3月":0,"4月":0,"5月":0,"6月":0,"7月":0,"8月":0,"9月":0,"10月":0,"11月":0,"12月":0}
+
+        for data in serializer.data:
+            
+            if data['sex'] == '0':
+                response['voted_sex']['女性'] += 1
+            elif data['sex'] == '1':
+                response['voted_sex']['男性'] += 1
+            elif data['sex'] == '2':
+                response['voted_sex']['その他'] += 1
+            elif data['sex'] == '3':
+                response['voted_sex']['無回答'] += 1
+
+            if data['age'] < 10:
+                response['voted_age']['10代未満'] += 1
+            elif data['age'] < 20:
+                response['voted_age']['10代'] += 1
+            elif data['age'] < 30:
+                response['voted_age']['20代'] += 1
+            elif data['age'] < 40:
+                response['voted_age']['30代'] += 1
+            elif data['age'] < 50:
+                response['voted_age']['40代'] += 1
+            elif data['age'] < 60:
+                response['voted_age']['50代'] += 1
+            else:
+                response['voted_age']['60代以上'] += 1
+            
+            if data['born_at'][5:7] == '01':
+                response['voted_month']['1月'] += 1
+            elif data['born_at'][5:7] == '02':
+                response['voted_month']['2月'] += 1
+            elif data['born_at'][5:7] == '03':
+                response['voted_month']['3月'] += 1
+            elif data['born_at'][5:7] == '04':
+                response['voted_month']['4月'] += 1
+            elif data['born_at'][5:7] == '05':
+                response['voted_month']['5月'] += 1
+            elif data['born_at'][5:7] == '06':
+                response['voted_month']['6月'] += 1
+            elif data['born_at'][5:7] == '07':
+                response['voted_month']['7月'] += 1
+            elif data['born_at'][5:7] == '08':
+                response['voted_month']['8月'] += 1
+            elif data['born_at'][5:7] == '09':
+                response['voted_month']['9月'] += 1
+            elif data['born_at'][5:7] == '10':
+                response['voted_month']['10月'] += 1
+            elif data['born_at'][5:7] == '11':
+                response['voted_month']['11月'] += 1
+            elif data['born_at'][5:7] == '12':
+                response['voted_month']['12月'] += 1
+
+        return Response(response, status.HTTP_200_OK)
+
 
 class PostUpdateAPIView(views.APIView):
     """投稿の情報更新APIクラス"""
