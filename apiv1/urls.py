@@ -7,6 +7,7 @@ from .views import (
     PostCreateAPIView,
     PostListAPIView,
     PostUpdateAPIView,
+    PostDetailDeleteAPIView,
 )
 
 app_name = 'apiv1'
@@ -17,6 +18,7 @@ urlpatterns = [
     path('posts/', PostCreateAPIView.as_view()),
     path('posts/public/<pk>/', PostListAPIView.as_view()),
     path('posts/public/<pk>/<sk>/', PostUpdateAPIView.as_view()),
+    path('posts/<pk>/', PostDetailDeleteAPIView.as_view()),
     path('posts/<pk>/polls/', PollCreateAPIView.as_view()),
     path('auth/', include('djoser.urls.jwt')),
     path('auth/', include('djoser.urls')),
