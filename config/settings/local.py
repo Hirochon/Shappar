@@ -150,6 +150,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Authentication(allauth) #
 ###########################
 
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "[Shappar(しゃぱー)]"
 SITE_ID = 1     #サイトの識別ID
 LOGIN_REDIRECT_URL = 'home'         #ログイン後のリダイレクト先
 LOGOUT_REDIRECT_URL = '/accounts/login/'    #ログアウト後のリダイレクト先
