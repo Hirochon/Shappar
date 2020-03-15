@@ -238,9 +238,12 @@ class PostDetailDeleteAPIView(views.APIView):
         response['voted_sex'] = {'女性':0,'男性':0,'その他':0,'無回答':0}
         response['voted_age'] = {'10代未満':0,"10代":0,"20代":0,"30代":0,"40代":0,"50代":0,"60代以上":0}
         response['voted_month'] = {"1月":0,"2月":0,"3月":0,"4月":0,"5月":0,"6月":0,"7月":0,"8月":0,"9月":0,"10月":0,"11月":0,"12月":0}
+        response['total'] = 0
 
         for data in serializer.data:
             
+            response['total'] += 1
+
             if data['sex'] == '0':
                 response['voted_sex']['女性'] += 1
             elif data['sex'] == '1':
