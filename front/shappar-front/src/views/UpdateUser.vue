@@ -12,13 +12,22 @@
       <label class="Update__icon__mask" for="icon_file"><font-awesome-icon icon="camera"/></label>
       <input class="Update__file" id="icon_file" type="file" name="iconimage" @change="imageSelect(1, $event)">
     </div>
-    <label class="Update__title" for="user_name">ユーザー名</label>
-    <input class="Update__input" id="user_name" v-model="name" type="text" placeholder="ユーザー名">
-    <label class="Update__title" for="user_id">ユーザーID</label>
-    <input class="Update__input" id="user_id" v-model="user_id" type="text" placeholder="ユーザーID">
-    <label class="Update__title" for="introduction">紹介文</label>
-    <textarea class="Update__introduction" id="introduction" v-model="introduction" cols="30" rows="5" placeholder="紹介文"></textarea>
-    <div class="Update__submit" @click="updateUser()">
+    <label class="Update__title" for="user_name">
+      ユーザー名
+      <span class="Update__num" :class="{hasError:!name.isValid}">{{name.length}}/18</span>
+    </label>
+    <input class="Update__input" id="user_name" v-model="name.value" type="text" placeholder="ユーザー名" @input="Validate(name,1,18)">
+    <label class="Update__title" for="user_id">
+      ユーザーID
+      <span class="Update__num" :class="{hasError:!user_id.isValid}">{{user_id.length}}/18</span>
+    </label>
+    <input class="Update__input" id="user_id" v-model="user_id.value" type="text" placeholder="ユーザーID" @input="Validate(user_id,1,18)">
+    <label class="Update__title" for="introduction">
+      紹介文
+      <span class="Update__num" :class="{hasError:!introduction.isValid}">{{introduction.length}}/150</span>
+    </label>
+    <textarea class="Update__introduction" id="introduction" v-model="introduction.value" cols="30" rows="5" placeholder="紹介文" @input="Validate(introduction,0,150)"></textarea>
+    <div class="Update__submit" @click="updateUser()" :class="{hasError:!allValidate}">
       保存する
     </div>
   </div>
@@ -37,9 +46,21 @@ export default {
   data: function () {
     return {
       before_user_id: '',
-      user_id: '',
-      name: '',
-      introduction: '',
+      user_id: {
+        value: '',
+        length: 0,
+        isValid: false
+      },
+      name: {
+        value: '',
+        length: 0,
+        isValid: false
+      },
+      introduction: {
+        value: '',
+        length: 0,
+        isValid: false
+      },
       iconimage: null,
       homeimage: null,
       beforeHomeImage: null,
@@ -68,9 +89,10 @@ export default {
     },
     updateUser () {
       var params = new FormData()
-      if (this.user_id) params.append('user_id', this.user_id)
-      if (this.name) params.append('name', this.name)
-      if (this.introduction) params.append('introduction', this.introduction)
+      if (!this.allValidate) return
+      if (this.user_id.value) params.append('user_id', this.user_id.value)
+      if (this.name.value) params.append('name', this.name.value)
+      params.append('introduction', this.introduction.value)
       if (this.iconimage) params.append('iconimage', this.iconimage)
       if (this.homeimage) params.append('homeimage', this.homeimage)
       api.patch('/api/v1/users/' + this.before_user_id + '/', params)
@@ -81,17 +103,35 @@ export default {
             this.$router.replace('/mypage')
           }
         })
+    },
+    Validate (option, min, max) {
+      option.length = option.value.length
+      option.isValid = (option.length >= min && option.length <= max)
+      return option.isValid
     }
   },
-  created: function () {
+  computed: {
+    allValidate () {
+      if (!this.user_id.isValid) return false
+      if (!this.name.isValid) return false
+      if (!this.introduction.isValid) return false
+      return true
+    }
+  },
+  mounted: function () {
     this.before_user_id = store.getters['auth/username']
-    this.user_id = this.before_user_id
+    this.user_id.value = this.before_user_id
     api.get('/api/v1/users/' + this.before_user_id + '/')
       .then((response) => {
-        this.name = response.data.name
-        this.introduction = response.data.introduction
+        this.name.value = response.data.name
+        this.introduction.value = response.data.introduction
         this.beforeHomeImage = response.data.homeimage
         this.beforeIconImage = response.data.iconimage
+      })
+      .then(() => {
+        this.name.isValid = this.Validate(this.name, 1, 18)
+        this.user_id.isValid = this.Validate(this.user_id, 1, 18)
+        this.introduction.isValid = this.Validate(this.introduction, 0, 150)
       })
   }
 }
@@ -192,7 +232,8 @@ export default {
     display: none;
   }
   &__title{
-    display: block;
+    display: flex;
+    justify-content: space-between;
     width: 100%;
     height: 20px;
     line-height: 12px;
@@ -200,6 +241,23 @@ export default {
     padding: 4px 16px;
     font-size: 12px;
     color: #999;
+  }
+  &__num{
+    // position: absolute;
+    // bottom: 8px;
+    // right: 48px;
+    display: inline-block;
+    width: 60px;
+    height: 12px;
+    line-height: 12px;
+    font-size: 12px;
+    border-radius: 6px;
+    background: $color-main;
+    color:#fff;
+    text-align: center;
+    &.hasError{
+      background: red;
+    }
   }
   &__input{
     // margin-bottom: 16px;
@@ -229,6 +287,9 @@ export default {
     text-align: center;
     background: $color-main;
     cursor: pointer;
+    &.hasError{
+      opacity: 0.5;
+    }
   }
 }
 </style>
