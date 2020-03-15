@@ -244,9 +244,9 @@ class PostDetailDeleteAPIView(views.APIView):
         serializer = PostDetailSerializer(instance=users, many=True)
 
         response = {}
-        response['voted_sex'] = {'女性':0,'男性':0,'その他':0,'無回答':0}
-        response['voted_age'] = {'10代未満':0,"10代":0,"20代":0,"30代":0,"40代":0,"50代":0,"60代以上":0}
-        response['voted_month'] = {"1月":0,"2月":0,"3月":0,"4月":0,"5月":0,"6月":0,"7月":0,"8月":0,"9月":0,"10月":0,"11月":0,"12月":0}
+        response['voted_sex'] = {'woman':0,'man':0,'others':0,'null':0}
+        response['voted_age'] = {'0-10':0,"10-20":0,"20-30":0,"30-40":0,"40-50":0,"50-60":0,"60-":0}
+        response['voted_month'] = {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0}
         response['total'] = 0
 
         for data in serializer.data:
@@ -254,53 +254,53 @@ class PostDetailDeleteAPIView(views.APIView):
             response['total'] += 1
 
             if data['sex'] == '0':
-                response['voted_sex']['女性'] += 1
+                response['voted_sex']['woman'] += 1
             elif data['sex'] == '1':
-                response['voted_sex']['男性'] += 1
+                response['voted_sex']['man'] += 1
             elif data['sex'] == '2':
-                response['voted_sex']['その他'] += 1
+                response['voted_sex']['others'] += 1
             elif data['sex'] == '3':
-                response['voted_sex']['無回答'] += 1
+                response['voted_sex']['null'] += 1
 
             if data['age'] < 10:
-                response['voted_age']['10代未満'] += 1
+                response['voted_age']['0-10'] += 1
             elif data['age'] < 20:
-                response['voted_age']['10代'] += 1
-            elif data['age'] < 30:
-                response['voted_age']['20代'] += 1
+                response['voted_age']['10-20'] += 1
+            elif data['age'] < 30-40:
+                response['voted_age']['20-30'] += 1
             elif data['age'] < 40:
-                response['voted_age']['30代'] += 1
+                response['voted_age']['30-40'] += 1
             elif data['age'] < 50:
-                response['voted_age']['40代'] += 1
+                response['voted_age']['40-50'] += 1
             elif data['age'] < 60:
-                response['voted_age']['50代'] += 1
+                response['voted_age']['50-60'] += 1
             else:
-                response['voted_age']['60代以上'] += 1
+                response['voted_age']['60-'] += 1
             
             if data['born_at'][5:7] == '01':
-                response['voted_month']['1月'] += 1
+                response['voted_month']['1'] += 1
             elif data['born_at'][5:7] == '02':
-                response['voted_month']['2月'] += 1
+                response['voted_month']['2'] += 1
             elif data['born_at'][5:7] == '03':
-                response['voted_month']['3月'] += 1
+                response['voted_month']['3'] += 1
             elif data['born_at'][5:7] == '04':
-                response['voted_month']['4月'] += 1
+                response['voted_month']['4'] += 1
             elif data['born_at'][5:7] == '05':
-                response['voted_month']['5月'] += 1
+                response['voted_month']['5'] += 1
             elif data['born_at'][5:7] == '06':
-                response['voted_month']['6月'] += 1
+                response['voted_month']['6'] += 1
             elif data['born_at'][5:7] == '07':
-                response['voted_month']['7月'] += 1
+                response['voted_month']['7'] += 1
             elif data['born_at'][5:7] == '08':
-                response['voted_month']['8月'] += 1
+                response['voted_month']['8'] += 1
             elif data['born_at'][5:7] == '09':
-                response['voted_month']['9月'] += 1
+                response['voted_month']['9'] += 1
             elif data['born_at'][5:7] == '10':
-                response['voted_month']['10月'] += 1
+                response['voted_month']['10'] += 1
             elif data['born_at'][5:7] == '11':
-                response['voted_month']['11月'] += 1
+                response['voted_month']['11'] += 1
             elif data['born_at'][5:7] == '12':
-                response['voted_month']['12月'] += 1
+                response['voted_month']['12'] += 1
 
         return Response(response, status.HTTP_200_OK)
 
