@@ -174,12 +174,6 @@ class PostCreateAPIView(views.APIView):
 
         return Response(serializer.data, status.HTTP_201_CREATED)
 
-class PostFilter(filters.FilterSet):
-    """投稿表示用フィルタクラス"""
-
-    class Meta:
-        model = Post
-        fields = '__all__'
 
 class PostListAPIView(views.APIView):
     """投稿の取得(一覧)APIクラス"""
@@ -199,11 +193,6 @@ class PostListAPIView(views.APIView):
             queryset = Post.objects.filter(created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
         else:
             queryset = Post.objects.all().order_by('-created_at')[:10]
-        # filterset = PostFilter(request.query_params, queryset=queryset)
-        # filterset = PostFilter(request.query_params, queryset=Post.objects.all().order_by('-created_at'))
-        # if not filterset.is_valid():
-        #     raise ValidationError(filterset.errors)
-        # serializer = PostListSerializer(instance=post_basis, many=True, pk=pk)
         serializer = PostListSerializer(instance=queryset, many=True, pk=pk)
 
         for datas in serializer.data:
