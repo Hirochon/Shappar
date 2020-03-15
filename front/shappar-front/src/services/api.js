@@ -58,7 +58,6 @@ api.interceptors.response.use(function (response) {
     store.dispatch('message/setErrorMessage', { message: message })
   }
   setTimeout(() => {
-    console.log('api message/clearMessages')
     store.dispatch('message/clearMessages')
   }, 1500)
   return Promise.reject(error)

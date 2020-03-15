@@ -200,6 +200,7 @@ export default {
       }
     }
     svg{
+      margin: 0 auto;
       font-size: 24px;
       display: block;
     }

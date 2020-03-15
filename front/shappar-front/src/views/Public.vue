@@ -1,15 +1,15 @@
 <template>
   <div class="Public" @touchmove="pullToMove" @touchend="pullToEnd">
     <GlobalMessage/>
+    <New @switchNew="switchNew()" @refresh="refresh" :isOpen="isOpen"/>
     <transition name="search">
-      <Search :query="query" @search="search()" v-show="searchShow"></Search>
+      <Search :query="query" @search="search()" v-show="searchShow && !isOpen"></Search>
     </transition>
     <div class="Pull-to" id="Pull-to">
       <font-awesome-icon icon="spinner" class="Pull-to__rotate" v-if="refreshConfig.loading"/>
       <font-awesome-icon icon="chevron-circle-down" :class="{'Pull-to__on': refreshConfig.trigger}" v-if="refreshConfig.isStart"/>
     </div>
     <PostList :posts="posts" :unique_id="unique_id"></PostList>
-    <New @switchNew="switchNew()" @refresh="refresh" :isOpen="isOpen"/>
   </div>
 </template>
 
