@@ -70,6 +70,13 @@ class PostListSerializer(serializers.ModelSerializer):
         else:
             return False
 
+class PostDetailSerializer(serializers.ModelSerializer):
+    """投票済みユーザーの情報取得シリアライザ"""
+
+    class Meta:
+        model = get_user_model()
+        fields = ['sex','age','born_at']
+
 
 class PollSerializer(serializers.ModelSerializer):
     """投票用シリアライザ"""
