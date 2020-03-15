@@ -121,6 +121,157 @@ paths:
           description: request body
       tags:
         - posts
+  '/api/v1/posts/{post_id}':
+    parameters:
+      - type: string
+        name: post_id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - posts
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              voted_sex:
+                type: object
+                properties:
+                  woman:
+                    type: integer
+                  man:
+                    type: integer
+                  others:
+                    type: integer
+                  'null':
+                    type: integer
+              voted_age:
+                type: object
+                properties:
+                  0-10:
+                    type: integer
+                  10-20:
+                    type: integer
+                  20-30:
+                    type: integer
+                  30-40:
+                    type: integer
+                  40-50:
+                    type: integer
+                  50-60:
+                    type: integer
+                  60-:
+                    type: integer
+              voted_month:
+                type: object
+                properties:
+                  '1':
+                    type: integer
+                  '2':
+                    type: integer
+                  '3':
+                    type: integer
+                  '4':
+                    type: integer
+                  '5':
+                    type: integer
+                  '6':
+                    type: integer
+                  '7':
+                    type: integer
+                  '8':
+                    type: integer
+                  '9':
+                    type: integer
+                  '10':
+                    type: integer
+                  '11':
+                    type: integer
+                  '12':
+                    type: integer
+              total:
+                type: integer
+          examples:
+            200 OK: {}
+      operationId: get-api-v1-posts-post_id
+      description: get post details
+    delete:
+      summary: ''
+      operationId: delete-api-v1-posts-post_id
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+      description: delete post
+      tags:
+        - posts
+  '/api/v1/posts/{post_id}/polls':
+    parameters:
+      - type: string
+        name: post_id
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-api-v1-posts-postId-polls-pollId
+      responses:
+        '201':
+          description: Created
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              options:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    select_num:
+                      type: integer
+                    votes:
+                      type:
+                        - integer
+              selected_num:
+                type: integer
+          examples:
+            201 Created:
+              options:
+                - select_num: 2
+                  votes: 0
+                - select_num: 3
+                  votes: 0
+                - select_num: 4
+                  votes: 0
+                - select_num: 1
+                  votes: 1
+              selected_num: 1
+      description: vote post
+      tags:
+        - posts
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              unique_id:
+                type: string
+              option:
+                type: object
+                properties:
+                  select_num:
+                    type: integer
+          x-examples:
+            201 Created:
+              unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
+              option:
+                select_num: 1
+          description: ''
   '/api/v1/posts/public/{unique_id}':
     get:
       summary: Your GET endpoint
@@ -217,69 +368,6 @@ paths:
       description: delete post or vote
       tags:
         - posts
-  '/api/v1/posts/{post_id}/polls':
-    parameters:
-      - type: string
-        name: post_id
-        in: path
-        required: true
-    post:
-      summary: ''
-      operationId: post-api-v1-posts-postId-polls-pollId
-      responses:
-        '201':
-          description: Created
-          schema:
-            type: object
-            properties:
-              id:
-                type: integer
-              options:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    select_num:
-                      type: integer
-                    votes:
-                      type:
-                        - integer
-              selected_num:
-                type: integer
-          examples:
-            201 Created:
-              options:
-                - select_num: 2
-                  votes: 0
-                - select_num: 3
-                  votes: 0
-                - select_num: 4
-                  votes: 0
-                - select_num: 1
-                  votes: 1
-              selected_num: 1
-      description: vote post
-      tags:
-        - posts
-      parameters:
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties:
-              unique_id:
-                type: string
-              option:
-                type: object
-                properties:
-                  select_num:
-                    type: integer
-          x-examples:
-            201 Created:
-              unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
-              option:
-                select_num: 1
-          description: ''
   /api/v1/users:
     get:
       summary: Your GET endpoint
