@@ -109,15 +109,18 @@ export default {
     left: 0;
     width: 48px;
     height: 48px;
-    line-height: 48px;
+    padding: 12px;
     background: none;
-    text-align: center;
-    font-size: 24px;
     color: white;
     z-index: 100;
     cursor: pointer;
     &:hover{
       color: white;
+    }
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 24px;
     }
   }
   &__image{
@@ -137,13 +140,17 @@ export default {
       top: 0;
       left: 0;
       width: 100%;
-      height: 100%;
-      line-height: 200px;
+      height: 200px;
+      padding: 90px 0;
+      margin: 0;
       background: rgba(0,0,0,0.5);
-      font-size: 20px;
       color: white;
-      text-align: center;
       cursor: pointer;
+      svg{
+        display: block;
+        margin: 0 auto;
+        font-size: 20px;
+      }
     }
   }
   &__icon{
@@ -166,14 +173,19 @@ export default {
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      line-height: 100px;
+      width: 94px;
+      height: 94px;
+      padding: 37px 0;
+      margin: 0;
       background: rgba(0,0,0,0.5);
-      font-size: 20px;
       color: white;
       text-align: center;
       cursor: pointer;
+      svg{
+        display: block;
+        margin: 0 auto;
+        font-size: 20px;
+      }
     }
   }
   &__file{

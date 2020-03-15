@@ -199,12 +199,15 @@ $option-height: 40px;
     cursor: pointer;
     width: 32px;
     height: 32px;
+    padding: 6px;
     background: #fff;
-    text-align: center;
-    line-height: 32px;
-    font-size: 20px;
     border-bottom: 0.5px solid #ccc;
     transition: .3s ease-in-out;
+    svg{
+      display: block;
+      font-size: 20px;
+      margin: 0 auto;
+    }
     &:hover{
       border-bottom: solid 0.5px $color-main;
       color: $color-main;
@@ -214,12 +217,15 @@ $option-height: 40px;
     cursor: pointer;
     width: 32px;
     height: 32px;
+    padding: 6px;
     background: #fff;
-    text-align: center;
-    line-height: 32px;
-    font-size: 20px;
     border-bottom: 0.5px solid #ccc;
     transition: .3s ease-in-out;
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 20px;
+    }
     &:hover{
       border-bottom: solid 0.5px $color-main;
       color: $color-main;

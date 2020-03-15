@@ -239,7 +239,6 @@ export default {
   &__settings{
     width: 24px;
     height: 24px;
-    text-align: center;
     background: white;
     // border: solid 2px #BFE4E2;
     position: absolute;
@@ -248,12 +247,16 @@ export default {
     a{
       display: block;
       height: 24px;
-      line-height: 24px;
+      padding: 2px 0;
       color: $color-main;
-      font-size: 20px;
       &:hover{
         color: $color-main;
       }
+    }
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 20px;
     }
   }
   &__name{

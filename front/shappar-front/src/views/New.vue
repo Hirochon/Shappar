@@ -309,7 +309,7 @@ $delete-width: 24px;
       line-height: 24px;
       font-size: 14px;
       border-radius: 12px;
-      background: $color-sub;
+      background: $color-main;
       color:#fff;
       text-align: center;
       &.hasError{
@@ -342,17 +342,23 @@ $delete-width: 24px;
     top: 0;
     right: 0;
     width: 100%;
-    height: 100%;
-    line-height: 64px;
+    height: 64px;
+    padding: 26px 0;
+    padding-left: calc(100% - 40px);
     background: red;
-    text-align: right;
-    padding: 0 14px;
     z-index: -1;
-    font-size: 12px;
     color: white;
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 12px;
+    }
     &.on{
-      padding: 0 11px;
-      font-size: 20px;
+      padding: 22px 0;
+      padding-left: calc(100% - 40px);
+      svg{
+        font-size: 20px;
+      }
     }
   }
   &__option__index{
@@ -366,18 +372,20 @@ $delete-width: 24px;
     border-radius: 50%;
     color: white;
     text-align: center;
-    background: #4180d7;
+    background: $color-main;
   }
   &__option__handle{
     width: 40px;
     height: 64px;
-    line-height: 64px;
-    font-size: 14px;
-    // border-radius: 0 8px 8px 0;
+    padding: 25px 0;
     border-bottom: solid 1px #eee;
     color: black;
-    text-align: center;
     background: #ccc;
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 14px;
+    }
   }
 }
 .Top{
@@ -404,10 +412,13 @@ $delete-width: 24px;
     cursor: pointer;
     width: 32px;
     height: 32px;
-    line-height: 32px;
-    text-align: center;
+    padding: 6px;
     border-radius: 50%;
-    font-size: 20px;
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 20px;
+    }
   }
   &__data{
     height: 100%;
@@ -420,7 +431,7 @@ $delete-width: 24px;
       font-size: 14px;
       margin-right: 16px;
       border-radius: 12px;
-      background: $color-sub;
+      background: $color-main;
       color:#fff;
       text-align: center;
       &.hasError{
@@ -435,7 +446,7 @@ $delete-width: 24px;
       border-radius: 50%;
       color: white;
       text-align: center;
-      background: $color-main;
+      background: $color-sub;
     }
   }
   &__question{
@@ -468,12 +479,15 @@ $delete-width: 24px;
     top: 8px;
     width: 100%;
     height: 48px;
-    line-height: 48px;
-    // border-radius: 8px;
+    padding: 16px;
     color: white;
-    text-align: center;
     background: $color-sub;
     z-index: 100;
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 16px;
+    }
   }
   &__submit{
     width: 100%;

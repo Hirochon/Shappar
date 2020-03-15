@@ -176,9 +176,12 @@ export default {
   top: 10px;
   width: 100%;
   height: 50px;
-  line-height: 50px;
-  text-align: center;
-  font-size: 20px;
+  padding: 15px 0;
+  svg{
+    display: block;
+    margin: 0 auto;
+    font-size: 20px;
+  }
   &__on{
     transform: rotate(180deg);
     transition: .3s;
