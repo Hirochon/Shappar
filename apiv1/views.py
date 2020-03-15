@@ -228,9 +228,18 @@ class PostListAPIView(views.APIView):
 
 
 class PostDetailDeleteAPIView(views.APIView):
-    """投稿の詳細情報取得&消去APIクラス"""
+    """投稿の詳細取得&削除APIクラス"""
+
+    def delete(self, request, pk, *args, **kwargs):
+        """投稿の削除APIに対応するハンドラメソッド"""
+        
+        post = Post.objects.get(id=pk)
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get(self, request, pk, *args, **kwargs):
+        """投稿の詳細取得APIに対応するハンドラメソッド"""
+
         users = get_user_model().objects.filter(poll_user__post__id=pk)
         serializer = PostDetailSerializer(instance=users, many=True)
 
