@@ -1,23 +1,29 @@
 <template>
   <div class="Search">
-    <router-link to="/mypage" class="Search__icon">
-      <img :src="user.iconimage" alt="">
-    </router-link>
+    <DrawerMenu :user="user"/>
     <form action="" class="Search__form" @submit.prevent="getPost">
       <label for="text-box" class="Search__label">検索</label>
       <input type="text" id="text-box" class="Search__input" v-model="childQuery">
       <div class="Search__submit"><font-awesome-icon icon="search" @click="getPost"/></div>
     </form>
-    <router-link to="/mypage" class="Search__icon">
-      <img :src="user.iconimage" alt="">
-    </router-link>
+    <div class="Search__button">
+      <font-awesome-icon icon="ellipsis-h" @click="isMenuOpen = !isMenuOpen"/>
+      <div class="Search__menu" :class="{on: isMenuOpen}">
+        <div class="Search__menu__item"><router-link to="/settings">設定</router-link></div>
+        <div class="Search__menu__item logout" @click="logout()">ログアウト</div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import api from '@/services/api'
+import DrawerMenu from '@/components/DrawerMenu.vue'
 export default {
   name: 'Search',
+  components: {
+    DrawerMenu
+  },
   props: {
     query: {
       type: String
@@ -27,13 +33,22 @@ export default {
     return {
       childQuery: '',
       user_id: '',
-      user: {}
+      user: {},
+      isMenuOpen: false
     }
   },
   methods: {
     getPost () {
       this.$parent.query = this.childQuery
       this.$emit('search')
+    },
+    logout () {
+      var result = window.confirm('ログアウトしてよろしいですか？')
+      if (result) {
+        this.$store.dispatch('auth/logout')
+        this.$store.dispatch('message/setInfoMessage', { message: 'ログアウトしました' })
+        this.$router.replace('/login')
+      }
     }
   },
   created () {
@@ -112,14 +127,54 @@ export default {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    left: calc(50% - 60px);
-    top: 120px;
-    background: #BFE4E2;
+    background: $color-main;
+    color: white;
     overflow: hidden;
     img{
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+  }
+  &__button{
+    position: relative;
+    display: block;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    border-radius: 50%;
+    background: $color-main;
+    color: white;
+    img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    svg{
+      font-size: 24px;
+      display: block;
+    }
+  }
+  &__menu{
+    display: none;
+    position: absolute;
+    top: 40px;
+    right: -8px;
+    width: 100px;
+    background: #ccc;
+    border-radius: 0 0 3px 3px;
+    transition: .3s ease-in-out;
+    &.on{
+      display: block;
+    }
+    &__item{
+      height: 24px;
+      line-height: 24px;
+      text-align: center;
+      font-size: 14px;
+      &.logout{
+        color: red;
+      }
     }
   }
 }

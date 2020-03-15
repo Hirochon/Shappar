@@ -144,10 +144,10 @@ export default {
       return 'translateX(' + (100 * this.isActive) + '%)'
     }
   },
-  created: function () {
+  created () {
     this.unique_id = this.$store.state.auth.unique_id
     this.user_id = this.$store.state.auth.username
-    api.get('/api/v1/users/' + this.user_id)
+    api.get('/api/v1/users/' + this.user_id + '/')
       .then((response) => {
         this.user = response.data
       })
@@ -166,6 +166,9 @@ export default {
         if (this.votedTargetId) this.votedTargetHeight = document.getElementById(this.votedTargetId).offsetTop // 次の高さを計測
       })
     window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
+  },
+  destroyed () {
+    window.removeEventListener('scroll', this.scrollTriggers)
   }
 }
 </script>
@@ -197,6 +200,7 @@ export default {
       }
     }
     svg{
+      margin: 0 auto;
       font-size: 24px;
       display: block;
     }
@@ -223,7 +227,7 @@ export default {
     position: absolute;
     left: calc(50% - 50px);
     top: 140px;
-    background: #BFE4E2;
+    background: $color-main;
     overflow: hidden;
     border: solid 3px white;
     img{
