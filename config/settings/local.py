@@ -68,7 +68,7 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:8080',
-    'http://127.0.0.1:8080:',
+    'http://127.0.0.1:8080',
 )
 
 
@@ -136,14 +136,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-# STATIC_URL = '/static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 
 # Media Files
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 ###########################
@@ -188,12 +187,12 @@ AWS_S3_OBJECT_PARAMETERS = {
 }
 AWS_LOCATION = 'static'
 AWS_DEFAULT_ACL = None
-STATIC_URL = 'https://%s/' % AWS_S3_CUSTOM_DOMAIN
-STATICFILES_STORAGE = env('STATICFILES_STORAGE')
+STATIC_ROOT = 'https://%s/static/' % AWS_S3_CUSTOM_DOMAIN
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Mediaファイルの設定
+MEDIA_ROOT = 'https://%s/media/' % AWS_S3_CUSTOM_DOMAIN
 DEFAULT_FILE_STORAGE = 'config.storage_backends.MediaStorage'
-
 
 ##################
 # REST Framework #
