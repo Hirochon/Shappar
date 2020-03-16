@@ -1,9 +1,9 @@
 version: 2.1
 description: "Djangoサーバーの起動とマイグレーション＆自動デプロイ"
 
-# orbs:
-#     aws-ecr: circleci/aws-ecr@6.7.0
-#     aws-ecs: circleci/aws-ecs@1.1.0
+orbs:
+    aws-ecr: circleci/aws-ecr@6.7.1
+    aws-ecs: circleci/aws-ecs@1.1.0
 
 executors:
     build-test:
@@ -77,8 +77,48 @@ workflows:
     version: 2
     shappar-flow:
         jobs:
-        - shappar-build-test:
-            filters:
-                branches:
-                    ignore:
-                        - master
+            - shappar-build-test:
+                filters:
+                    branches:
+                        ignore: master
+    back-deploy:
+        jobs:
+            - aws-ecr/build-and-push-image:
+                account-url: AWS_ECR_ACCOUNT_URL
+                region: AWS_REGION
+                aws-access-key-id: AWS_ACCESS_KEY_ID
+                aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+                create-repo: true
+                repo: shappar-back
+                tag: "${CIRCLE_SHA2}"
+                filters:
+                    branches:
+                        only: master
+            - aws-ecs/deploy-service-update:
+                requires: 
+                    - aws-ecr/build-and-push-image
+                family: '${MY_APP_PREFIX}-task'
+                cluster-name: '${MY_APP_PREFIX}-cluster-v2'
+                service-name: '${MY_APP_PREFIX}-service-v2'
+                container-image-name-updates: 'container=shappar-back,tag=${CIRCLE_SHA2}'
+    nginx-deploy:
+        jobs:
+            - aws-ecr/build-and-push-image:
+                account-url: AWS_ECR_ACCOUNT_URL
+                region: AWS_REGION
+                aws-access-key-id: AWS_ACCESS_KEY_ID
+                aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+                create-repo: true
+                path: ./nginx/
+                repo: shappar-nginx
+                tag: "${CIRCLE_SHA2}"
+                filters:
+                    branches:
+                        only: master
+            - aws-ecs/deploy-service-update:
+                requires: 
+                    - aws-ecr/build-and-push-image
+                family: '${MY_APP_PREFIX}-task'
+                cluster-name: '${MY_APP_PREFIX}-cluster-v2'
+                service-name: '${MY_APP_PREFIX}-service-v2'
+                container-image-name-updates: 'container=shappar-nginx,tag=${CIRCLE_SHA2}'
