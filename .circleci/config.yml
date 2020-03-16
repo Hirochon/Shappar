@@ -76,5 +76,5 @@ workflows:
         - shappar-build-test:
             filters:
                 branches:
-                    only:
-                        - circleci
+                    ignore:
+                        - master
