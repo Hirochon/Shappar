@@ -91,7 +91,7 @@ workflows:
                 create-repo: true
                 path: ./nginx/
                 repo: shappar-back
-                tag: '${CIRCLE_SHA1}'
+                tag: "${CIRCLE_SHA1}"
                 filters:
                     branches:
                         only: master
@@ -111,7 +111,7 @@ workflows:
                 aws-secret-access-key: AWS_SECRET_ACCESS_KEY
                 create-repo: true
                 repo: shappar-nginx
-                tag: '${CIRCLE_SHA2}'
+                tag: "${CIRCLE_SHA2}"
                 filters:
                     branches:
                         only: master
