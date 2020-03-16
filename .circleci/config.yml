@@ -55,8 +55,8 @@ commands:
         - run:
             name: Start db migrations
             command: |
-                python3 manage.py makemigrations
-                python3 manage.py migrate
+                python3 manage.py makemigrations --settings=config.settings.circleci
+                python3 manage.py migrate --settings=config.settings.circleci
 
 jobs:
   shappar-build-test:
