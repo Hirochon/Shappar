@@ -1,5 +1,6 @@
 import os
 import environ
+from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -24,12 +25,28 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts.apps.AccountsConfig',     #カスタムユーザ
+    
+    # カスタムユーザ
+    'accounts.apps.AccountsConfig',
+
+    # API application
+    'apiv1.apps.Apiv1Config',
+
+    # allauth
     'django.contrib.sites',             #allauthではサイトを識別するsiteフレームワークが必須なためインストール
     'allauth',                          #allauthアプリ
     'allauth.account',                  #allauthの基本的なログイン認証系
     'allauth.socialaccount',            #ソーシャル認証
+
+    # AWS
     'django_ses',                       #AmazonSESとの連携アプリ
+    'storages',                         #AmazonS3との連携アプリ
+    'django_cleanup',                   #必要のない静的ファイルを自動消去アプリ
+
+    # 3rd party apps
+    'rest_framework',                   #RESTFrameworkアプリ
+    'djoser',                           #エンドポイントを設定
+    'django_filters',                   #フィルタリング
 ]
 
 MIDDLEWARE = [
@@ -40,7 +57,20 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+
+########
+# CORS #
+########
+
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8080',
+    'http://127.0.0.1:8080',
+)
+
 
 ROOT_URLCONF = 'config.urls'
 
@@ -63,7 +93,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi_local.application'
 
 
 DATABASES = {
@@ -113,13 +143,13 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # Media Files
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
 
 
 ###########################
 # Authentication(allauth) #
 ###########################
 
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "[Shappar(しゃぱー)]"
 SITE_ID = 1     #サイトの識別ID
 LOGIN_REDIRECT_URL = 'home'         #ログイン後のリダイレクト先
 LOGOUT_REDIRECT_URL = '/accounts/login/'    #ログアウト後のリダイレクト先
@@ -140,10 +170,45 @@ ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
 AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
 
-# Email settings
+# Amazon SES settings
 
 EMAIL_BACKEND = env('EMAIL_BACKEND')
 DEFAULT_FROM_EMAIL = SERVER_EMAIL = env('DEFAULT_FROM_EMAIL')
+
+# Amazon S3 settings
+
+# AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME        # CloudFront無しの場合
+# STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)          # CloudFront無しの場合
+
+AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_CUSTOM_DOMAIN = env('AWS_S3_CUSTOM_DOMAIN')
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+AWS_LOCATION = 'static'
+AWS_DEFAULT_ACL = None
+STATIC_ROOT = 'https://%s/static/' % AWS_S3_CUSTOM_DOMAIN
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# Mediaファイルの設定
+MEDIA_ROOT = 'https://%s/media/' % AWS_S3_CUSTOM_DOMAIN
+DEFAULT_FILE_STORAGE = 'config.storage_backends.MediaStorage'
+
+##################
+# REST Framework #
+##################
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
+    ],
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+}
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES':('JWT',),
+    'ACCESS_TOKEN_LIFETIME':timedelta(minutes=180),
+}
 
 
 if DEBUG:

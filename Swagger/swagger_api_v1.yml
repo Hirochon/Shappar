@@ -1,0 +1,938 @@
+swagger: '2.0'
+info:
+  title: shappar
+  version: '1.0'
+  contact:
+    name: Fujiya
+  description: shappar api
+host: 'localhost:3000'
+schemes:
+  - http
+  - https
+produces:
+  - application/json
+consumes:
+  - application/json
+paths:
+  /api/v1/posts:
+    post:
+      summary: ''
+      operationId: post-api-posts
+      responses:
+        '201':
+          description: Created
+          schema:
+            type: object
+            properties:
+              user:
+                type: string
+              question:
+                type: string
+              options:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    select_num:
+                      type: integer
+                    answer:
+                      type: string
+                    votes:
+                      type: string
+          examples:
+            201 Created:
+              user: 86f455ff-5029-4207-9300-b9dea5fe9d37
+              question: question
+              options:
+                - select_num: 1
+                  answer: answer_1
+                  votes: 0
+                - select_num: 2
+                  answer: answer_2
+                  votes: 0
+                - select_num: 3
+                  answer: answer_3
+                  votes: 0
+                - select_num: 4
+                  answer: answer_4
+                  votes: 0
+              share_id: 2c904dae-b970-4df6-9e94-623e595a886d
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              question:
+                type: string
+              options:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    answer:
+                      type: string
+          examples:
+            400 Bad Request:
+              question:
+                - この項目は空にできません。
+              options:
+                - answer:
+                    - この項目は空にできません。
+      description: new post
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              question:
+                type: string
+              options:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    select_num:
+                      type: integer
+                    answer:
+                      type: string
+          x-examples:
+            201 Created:
+              unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
+              question: question
+              options:
+                - select_num: 1
+                  answer: answer_1
+                - select_num: 2
+                  answer: answer_2
+                - select_num: 3
+                  answer: answer_3
+                - select_num: 4
+                  answer: answer_4
+            400 Bad Request:
+              unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
+              question: ''
+              options:
+                - select_num: 1
+                  answer: ''
+                - select_num: 2
+                  answer: ''
+            example-2: {}
+          description: request body
+      tags:
+        - posts
+  '/api/v1/posts/{post_id}':
+    parameters:
+      - type: string
+        name: post_id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - posts
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              voted_sex:
+                type: object
+                properties:
+                  woman:
+                    type: integer
+                  man:
+                    type: integer
+                  others:
+                    type: integer
+                  'null':
+                    type: integer
+              voted_age:
+                type: object
+                properties:
+                  0-10:
+                    type: integer
+                  10-20:
+                    type: integer
+                  20-30:
+                    type: integer
+                  30-40:
+                    type: integer
+                  40-50:
+                    type: integer
+                  50-60:
+                    type: integer
+                  60-:
+                    type: integer
+              voted_month:
+                type: object
+                properties:
+                  '1':
+                    type: integer
+                  '2':
+                    type: integer
+                  '3':
+                    type: integer
+                  '4':
+                    type: integer
+                  '5':
+                    type: integer
+                  '6':
+                    type: integer
+                  '7':
+                    type: integer
+                  '8':
+                    type: integer
+                  '9':
+                    type: integer
+                  '10':
+                    type: integer
+                  '11':
+                    type: integer
+                  '12':
+                    type: integer
+              total:
+                type: integer
+          examples:
+            200 OK: {}
+      operationId: get-api-v1-posts-post_id
+      description: get post details
+    delete:
+      summary: ''
+      operationId: delete-api-v1-posts-post_id
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+      description: delete post
+      tags:
+        - posts
+  '/api/v1/posts/{post_id}/polls':
+    parameters:
+      - type: string
+        name: post_id
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-api-v1-posts-postId-polls-pollId
+      responses:
+        '201':
+          description: Created
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              options:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    select_num:
+                      type: integer
+                    votes:
+                      type:
+                        - integer
+              selected_num:
+                type: integer
+          examples:
+            201 Created:
+              options:
+                - select_num: 2
+                  votes: 0
+                - select_num: 3
+                  votes: 0
+                - select_num: 4
+                  votes: 0
+                - select_num: 1
+                  votes: 1
+              selected_num: 1
+      description: vote post
+      tags:
+        - posts
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              unique_id:
+                type: string
+              option:
+                type: object
+                properties:
+                  select_num:
+                    type: integer
+          x-examples:
+            201 Created:
+              unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
+              option:
+                select_num: 1
+          description: ''
+  '/api/v1/posts/public/{unique_id}':
+    get:
+      summary: Your GET endpoint
+      tags:
+        - posts
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Posts'
+          examples:
+            $ref: '#/definitions/Posts/x-examples'
+      operationId: get-api-v1-posts-public
+      description: get public posts
+      parameters:
+        - type: string
+          in: query
+          name: q
+          description: 検索ワード
+        - type: string
+          in: query
+          name: pid
+          description: 追加読み込みの基準
+    parameters:
+      - type: string
+        name: unique_id
+        in: path
+        required: true
+  /api/v1/posts/private:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - posts
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Posts'
+          examples:
+            $ref: '#/definitions/Posts/x-examples'
+      operationId: get-api-v1-posts-private
+      description: get private posts
+      parameters:
+        - type: string
+          in: query
+          name: q
+          description: 検索キーワード
+  '/api/v1/posts/{unique_id}/{post_id}':
+    parameters:
+      - type: string
+        name: unique_id
+        in: path
+        required: true
+      - type: string
+        name: post_id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - posts
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Post'
+          examples:
+            $ref: '#/definitions/Post/x-examples'
+      operationId: get-api-v1-posts-postId
+      description: get post details
+    put:
+      summary: ''
+      operationId: put-api-v1-posts-postId
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            example-1: {}
+      description: update post proparty or vote details
+      tags:
+        - posts
+    delete:
+      summary: ''
+      operationId: delete-api-v1-posts-postId
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            example-1: {}
+      description: delete post or vote
+      tags:
+        - posts
+  /api/v1/users:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Users'
+          examples:
+            $ref: '#/definitions/Users/x-examples'
+      operationId: get-api-v1-users
+      description: get users list
+    post:
+      summary: ''
+      operationId: post-api-v1-users
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            example-1: {}
+      description: create new user
+      tags:
+        - users
+  '/api/v1/users/{user_id}':
+    parameters:
+      - type: string
+        name: user_id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+          examples:
+            $ref: '#/definitions/User/x-examples'
+      operationId: get-api-v1-users-userId
+      description: get user details
+    patch:
+      summary: ''
+      operationId: put-api-v1-users-userId
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            example-1: {}
+      description: user detail update
+      tags:
+        - users
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              user_id:
+                type: string
+              name:
+                type: string
+              introduction:
+                type: string
+              homeimage:
+                type: string
+              iconimage:
+                type: string
+          description: update user infomation
+    delete:
+      summary: ''
+      operationId: delete-api-v1-users-userId
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            example-1: {}
+      description: delete user
+      tags:
+        - users
+  '/api/v1/users/{user_id}/settings':
+    parameters:
+      - type: string
+        name: user_id
+        in: path
+        required: true
+    put:
+      summary: ''
+      operationId: put-api-v1-users-userId-settings
+      responses:
+        '200':
+          description: OK
+          examples:
+            example-1: {}
+          schema:
+            type: object
+      tags:
+        - users
+      description: update user settings
+    get:
+      summary: ''
+      operationId: get-api-v1-users-userId-settings
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              push:
+                type: boolean
+              darkmode:
+                type: boolean
+          examples:
+            example-1:
+              push: true
+              darkmode: false
+      description: get user settings
+      tags:
+        - users
+  '/api/v1/users/{user_id}/posted':
+    parameters:
+      - type: string
+        name: user_id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Posts'
+          examples:
+            $ref: '#/definitions/Posts/x-examples'
+      operationId: get-api-v1-users-userId-posts
+      description: get user posted posts
+  '/api/v1/users/{user_id}/voted':
+    parameters:
+      - type: string
+        name: user_id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - users
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Posts'
+          examples:
+            $ref: '#/definitions/Posts/x-examples'
+      operationId: get-api-v1-users-userId-voted
+      description: user voted posts
+  '/api/v1/friendships/{userId}':
+    post:
+      summary: ''
+      operationId: post-api-v1-friendships
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            example-1: {}
+      tags:
+        - friendships
+      description: create friendships
+    put:
+      summary: ''
+      operationId: put-api-v1-friendships
+      responses:
+        '200':
+          description: OK
+          examples:
+            example-1: {}
+          schema:
+            type: object
+      tags:
+        - friendships
+      description: update friendship
+    delete:
+      summary: ''
+      operationId: delete-api-v1-friendships
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+          examples:
+            example-1: {}
+      tags:
+        - friendships
+      description: delete friendship
+    parameters:
+      - type: string
+        name: userId
+        in: path
+        required: true
+        description: ユーザーが設定できるuserID
+  '/api/v1/frendships/{userId}/following':
+    parameters:
+      - type: string
+        name: userId
+        in: path
+        required: true
+        description: ユーザーが設定できるuserID
+    get:
+      summary: Your GET endpoint
+      tags:
+        - friendships
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Users'
+          examples:
+            $ref: '#/definitions/Users/x-examples'
+      operationId: get-api-v1-frendships-userId-following
+      description: get following users
+  '/api/v1/frendships/{userId}/followers':
+    parameters:
+      - type: string
+        name: userId
+        in: path
+        required: true
+        description: ユーザーが設定できるuserID
+    get:
+      summary: Your GET endpoint
+      tags:
+        - friendships
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Users'
+          examples:
+            $ref: '#/definitions/Users/x-examples'
+      operationId: get-api-v1-frendships-userId-followers
+      description: get followers
+definitions:
+  Posts:
+    title: Posts
+    type: object
+    x-examples:
+      example-1:
+        posts:
+          - post_id: 67bf28ab-f884-44ca-b752-c2c7251acc0d
+            user_id: user_id
+            iconimage: icon_url
+            question: a
+            voted: true
+            options:
+              - select_num: 1
+                answer: a
+                votes: 0
+            created_at: '2020-03-13T17:55:17.891461Z'
+            selected_num: -1
+            total: 0
+          - post_id: 2001a2db-4822-4c6f-a4ed-5e5a7be7b92d
+            user_id: user_id
+            iconimage: icon_url
+            question: question
+            voted: true
+            options:
+              - select_num: 1
+                answer: answer_1
+                votes: 0
+              - select_num: 2
+                answer: answer_2
+                votes: 0
+              - select_num: 3
+                answer: answer_3
+                votes: 0
+              - select_num: 4
+                answer: answer_4
+                votes: 0
+            created_at: '2020-03-13T17:40:19.553968Z'
+            selected_num: -1
+            total: 0
+          - post_id: 63c5b7f9-f56a-43ad-a695-44f05c642077
+            user_id: user_id
+            iconimage: icon_url
+            question: question
+            voted: true
+            options:
+              - select_num: 1
+                answer: kirito
+                votes: 0
+              - select_num: 2
+                answer: kirito
+                votes: 0
+              - select_num: 3
+                answer: kirito
+                votes: 0
+              - select_num: 4
+                answer: kirito
+                votes: 0
+            created_at: '2020-03-13T17:30:11.554054Z'
+            selected_num: -1
+            total: 0
+          - post_id: 24ef1774-1736-4144-9bca-44f20b0a2cb0
+            user_id: user_id
+            iconimage: icon_url
+            question: aaaaaaaa
+            voted: false
+            options:
+              - select_num: 0
+                answer: aaa
+                votes: -1
+              - select_num: 1
+                answer: aaaaa
+                votes: -1
+            created_at: '2020-03-13T02:01:39.338914Z'
+            selected_num: -1
+            total: 0
+          - post_id: 9330901b-d3c0-4124-b20a-a9c8a2947eb4
+            user_id: user_id
+            iconimage: icon_url
+            question: a
+            voted: false
+            options:
+              - select_num: 0
+                answer: a
+                votes: -1
+              - select_num: 1
+                answer: a
+                votes: -1
+            created_at: '2020-03-13T01:26:55.137217Z'
+            selected_num: -1
+            total: 0
+          - post_id: c167024e-e6af-4c0f-8801-c676ff4b9188
+            user_id: user_id
+            iconimage: icon_url
+            question: aaa
+            voted: false
+            options:
+              - select_num: 0
+                answer: aaa
+                votes: -1
+              - select_num: 1
+                answer: aaa
+                votes: -1
+            created_at: '2020-03-12T23:13:51.137237Z'
+            selected_num: -1
+            total: 0
+          - post_id: d585c607-406e-4cbe-957a-ead618ed7030
+            user_id: user_id
+            iconimage: icon_url
+            question: aaaaaaaaaaaaaa
+            voted: false
+            options:
+              - select_num: 0
+                answer: aaaaaaaaaa
+                votes: -1
+              - select_num: 1
+                answer: aaaaaaaaaaaa
+                votes: -1
+            created_at: '2020-03-12T22:56:06.112986Z'
+            selected_num: -1
+            total: 0
+          - post_id: 6bd42c66-fe71-4f96-8914-9284ab805e95
+            user_id: user_id
+            iconimage: icon_url
+            question: いいい
+            voted: false
+            options:
+              - select_num: 0
+                answer: いいい
+                votes: -1
+              - select_num: 1
+                answer: いいい
+                votes: -1
+            created_at: '2020-03-12T22:04:26.748594Z'
+            selected_num: -1
+            total: 0
+          - post_id: d3e10edc-4137-4178-b82a-f0561ffbb8ca
+            user_id: user_id
+            iconimage: icon_url
+            question: あああ
+            voted: false
+            options:
+              - select_num: 0
+                answer: あああ
+                votes: -1
+              - select_num: 1
+                answer: あああ
+                votes: -1
+            created_at: '2020-03-12T22:02:26.179814Z'
+            selected_num: -1
+            total: 0
+          - post_id: 2c84f4bf-2034-4b90-9b74-59a6b6cc0e81
+            user_id: user_id
+            iconimage: icon_url
+            question: もう一回やるで！
+            voted: false
+            options:
+              - select_num: 0
+                answer: もう聞かんといて...
+                votes: -1
+              - select_num: 1
+                answer: 別にええで！
+                votes: -1
+            created_at: '2020-03-12T22:01:28.697258Z'
+            selected_num: -1
+            total: 0
+    description: ''
+    properties:
+      posts:
+        type: array
+        items:
+          $ref: '#/definitions/Post'
+  User:
+    title: User
+    type: object
+    x-examples:
+      User:
+        unique_id: UUID_string
+        user_id: sample_user_001
+        name: sumple_user_name
+        introduction: text text text text text text text
+        iconimage: 'http://example.com/iconURL'
+        homeimage: 'http://example.com/homeImageURL'
+    properties:
+      unique_id:
+        type: string
+      user_id:
+        type: string
+      name:
+        type: string
+      introduction:
+        type: string
+      homeImage:
+        type: string
+      iconimage:
+        type: string
+  Post:
+    title: Post
+    type: object
+    x-examples:
+      Post:
+        post_id: 67bf28ab-f884-44ca-b752-c2c7251acc0d
+        user_id: user_id
+        iconimage: icon_url
+        question: a
+        voted: true
+        options:
+          - select_num: 1
+            answer: a
+            votes: 0
+          - select_num: 2
+            answer: a
+            votes: 0
+        created_at: '2020-03-13T17:55:17.891461Z'
+        selected_num: -1
+        total: 0
+    properties:
+      post_id:
+        type: string
+      user_id:
+        type: string
+        default: false
+      iconimage:
+        type: string
+      question:
+        type: string
+      voted:
+        type: boolean
+      options:
+        type: array
+        items:
+          type: object
+          properties:
+            select_num:
+              type: integer
+            answer:
+              type: string
+            votes:
+              type:
+                - integer
+      created_at:
+        type: string
+      selected_num:
+        type: integer
+      total:
+        type: integer
+  Users:
+    title: Users
+    type: object
+    properties:
+      users:
+        type: array
+        items:
+          $ref: '#/definitions/User'
+    x-examples:
+      Users:
+        users:
+          - unique_id: UUID_string
+            user_id: sample_user_001
+            name: sumple_user_name
+            introduction: text text text text text text text
+            iconimage: 'http://example.com/iconURL'
+            homeimage: 'http://example.com/homeImageURL'
+            followers: 100
+            follow: 100
+            followed: true
+          - unique_id: UUID_string
+            user_id: sample_user_001
+            name: sumple_user_name
+            introduction: text text text text text text text
+            iconimage: 'http://example.com/iconURL'
+            homeimage: 'http://example.com/homeImageURL'
+            followers: 100
+            follow: 100
+            followed: true
+          - unique_id: UUID_string
+            user_id: sample_user_001
+            name: sumple_user_name
+            introduction: text text text text text text text
+            iconimage: 'http://example.com/iconURL'
+            homeimage: 'http://example.com/homeImageURL'
+            followers: 100
+            follow: 100
+            followed: true
+          - unique_id: UUID_string
+            user_id: sample_user_001
+            name: sumple_user_name
+            introduction: text text text text text text text
+            iconimage: 'http://example.com/iconURL'
+            homeimage: 'http://example.com/homeImageURL'
+            followers: 100
+            follow: 100
+            followed: true
+          - unique_id: UUID_string
+            user_id: sample_user_001
+            name: sumple_user_name
+            introduction: text text text text text text text
+            iconimage: 'http://example.com/iconURL'
+            homeimage: 'http://example.com/homeImageURL'
+            followers: 100
+            follow: 100
+            followed: true
+          - unique_id: UUID_string
+            user_id: sample_user_001
+            name: sumple_user_name
+            introduction: text text text text text text text
+            iconimage: 'http://example.com/iconURL'
+            homeimage: 'http://example.com/homeImageURL'
+            followers: 100
+            follow: 100
+            followed: true
+securityDefinitions: {}
+tags:
+  - name: posts
+  - name: users
+  - name: friendships
