@@ -13,6 +13,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 // Fontawesome
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
+
 import {
   faSearch, faTags, faHome, faGlobe, faListOl, faSyncAlt,
   faFileAlt, faTimes, faSortAmountUp, faSortAmountDownAlt,
@@ -20,6 +21,8 @@ import {
   faTrashAlt, faCamera, faEdit, faReply, faArrowAltCircleLeft,
   faEllipsisH
 } from '@fortawesome/free-solid-svg-icons'
+
+import './registerServiceWorker'
 
 library.add(
   faSearch, faTags, faHome, faGlobe, faListOl, faSyncAlt,
