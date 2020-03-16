@@ -91,7 +91,7 @@ workflows:
                 create-repo: true
                 path: ./nginx/
                 repo: shappar-back
-                tag: "${CIRCLE_SHA1}"
+                tag: "${CIRCLE_SHA2}"
                 filters:
                     branches:
                         only: master
@@ -101,7 +101,7 @@ workflows:
                 family: '${MY_APP_PREFIX}-task'
                 cluster-name: '${MY_APP_PREFIX}-cluster-v2'
                 service-name: '${MY_APP_PREFIX}-service-v2'
-                container-image-name-updates: 'container=shappar-back,tag=${CIRCLE_SHA1}'
+                container-image-name-updates: 'container=shappar-back,tag=${CIRCLE_SHA2}'
     nginx-deploy:
         jobs:
             - aws-ecr/build-and-push-image:
