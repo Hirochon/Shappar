@@ -77,44 +77,46 @@ workflows:
     version: 2
     shappar-flow:
         jobs:
-        - shappar-build-test:
-            filters:
-                branches:
-                    ignore: master
+            - shappar-build-test:
+                filters:
+                    branches:
+                        ignore: master
     back-deploy:
-        - aws-ecr/build-and-push-image:
-            account-url: "${AWS_ECR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-            region: AWS_REGION
-            aws-access-key-id: AWS_ACCESS_KEY_ID
-            aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-            create-repo: true
-            path: ./nginx/
-            repo: "${MY_APP_PREFIX}-back"
-            tag: CIRCLE_SHA1
-            filters:
-                branches:
-                    only: master
-        - aws-ecs/deploy-service-update:
-            requires: aws-ecr/build-and-push-image
-            family: "${MY_APP_PREFIX}-task"
-            cluster-name: "${MY_APP_PREFIX}-cluster-v2"
-            service-name: "${MY_APP_PREFIX}-service-v2"
-            container-image-name-updates: "container=${MY_APP_PREFIX}-back,tag=${CIRCLE_SHA1}"
+        jobs:
+            - aws-ecr/build-and-push-image:
+                account-url: "${AWS_ECR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+                region: AWS_REGION
+                aws-access-key-id: AWS_ACCESS_KEY_ID
+                aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+                create-repo: true
+                path: ./nginx/
+                repo: "${MY_APP_PREFIX}-back"
+                tag: CIRCLE_SHA1
+                filters:
+                    branches:
+                        only: master
+            - aws-ecs/deploy-service-update:
+                requires: aws-ecr/build-and-push-image
+                family: "${MY_APP_PREFIX}-task"
+                cluster-name: "${MY_APP_PREFIX}-cluster-v2"
+                service-name: "${MY_APP_PREFIX}-service-v2"
+                container-image-name-updates: "container=${MY_APP_PREFIX}-back,tag=${CIRCLE_SHA1}"
     nginx-deploy:
-        - aws-ecr/build-and-push-image:
-            account-url: "${AWS_ECR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-            region: AWS_REGION
-            aws-access-key-id: AWS_ACCESS_KEY_ID
-            aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-            create-repo: true
-            repo: "${MY_APP_PREFIX}-nginx"
-            tag: CIRCLE_SHA2
-            filters:
-                branches:
-                    only: master
-        - aws-ecs/deploy-service-update:
-            requires: aws-ecr/build-and-push-image
-            family: "${MY_APP_PREFIX}-task"
-            cluster-name: "${MY_APP_PREFIX}-cluster-v2"
-            service-name: "${MY_APP_PREFIX}-service-v2"
-            container-image-name-updates: "container=${MY_APP_PREFIX}-nginx,tag=${CIRCLE_SHA2}"
+        jobs:
+            - aws-ecr/build-and-push-image:
+                account-url: "${AWS_ECR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+                region: AWS_REGION
+                aws-access-key-id: AWS_ACCESS_KEY_ID
+                aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+                create-repo: true
+                repo: "${MY_APP_PREFIX}-nginx"
+                tag: CIRCLE_SHA2
+                filters:
+                    branches:
+                        only: master
+            - aws-ecs/deploy-service-update:
+                requires: aws-ecr/build-and-push-image
+                family: "${MY_APP_PREFIX}-task"
+                cluster-name: "${MY_APP_PREFIX}-cluster-v2"
+                service-name: "${MY_APP_PREFIX}-service-v2"
+                container-image-name-updates: "container=${MY_APP_PREFIX}-nginx,tag=${CIRCLE_SHA2}"
