@@ -1,0 +1,80 @@
+version: 2.1
+description: "Djangoサーバーの起動とマイグレーションを確認"
+
+executors:
+    build-test:
+        working_directory: ~/Shappar
+        docker:
+            - image: circleci/python:3.8.1
+              environment:
+                PYTHONDONTWRITEBYTECODE: 1
+                PYTHONUNBUFFERED: 1
+                TZ: Asia/Tokyo
+            - image: circleci/postgres:12.1
+              environment:
+                POSTGRES_USER: postgres
+                POSTGRES_PASSWORD: postgres
+                TZ: Asia/Tokyo
+
+commands:
+    chown_python_package:
+        description: "PipInstallするpackage達の権限をcircleciに変更する"
+        steps:
+        - run:
+            name: Change Owner Python Package Directory
+            command: |
+                sudo chown -R circleci:circleci /usr/local/bin
+                sudo chown -R circleci:circleci /usr/local/lib/python3.8/site-packages
+    restore_python_package:
+        description: "PipInstallしていたpackage群のキャッシュを読み込む"
+        steps:
+        - restore_cache:
+            name: Restore Python Package
+            keys:
+            - shappar-v2-{{ checksum "requirements.txt" }}
+            - shappar-v1
+    run_pip_install:
+        description: "requirements.txtを元にPipInstallする"
+        steps:
+        - run:
+            name: Start pip install
+            command: |
+                pip install -r requirements.txt
+    save_python_package:
+        description: "PipInstallしたpackage群をキャッシュする"
+        steps:
+        - save_cache:
+            name: Save Python Package
+            key: shappar-v2-{{ checksum "requirements.txt" }}
+            paths:
+            - /usr/local/bin
+            - /usr/local/lib/python3.8/site-packages
+    db_migrations:
+        description: "テスト実行用DBのマイグレーションを行う"
+        steps:
+        - run:
+            name: Start db migrations
+            command: |
+                python3 manage.py makemigrations
+                python3 manage.py migrate
+
+jobs:
+  shappar-build-test:
+    executor: build-test
+    steps:
+      - checkout
+      - chown_python_package
+      - restore_python_package
+      - run_pip_install
+      - save_python_package
+      - db_migrations
+
+workflows:
+    version: 2
+    shappar-flow:
+        jobs:
+        - shappar-build-test:
+            filters:
+                branches:
+                    ignore:
+                        - master
