@@ -103,14 +103,17 @@ export default {
     right: 4px;
     width: 28px;
     height: 28px;
+    padding: 5px;
     border-radius: 50%;
     box-sizing: border-box;
     cursor: pointer;
-    text-align: center;
-    line-height: 28px;
     color: $color-main;
-    font-size: 18px;
     transition: .3s ease-in-out;
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 18px;
+    }
     &:hover{
       background: rgba($color-main,0.5);
     }
@@ -151,8 +154,9 @@ export default {
       object-fit: cover;
     }
     svg{
-      font-size: 24px;
       display: block;
+      margin: 0 auto;
+      font-size: 24px;
     }
   }
   &__menu{
