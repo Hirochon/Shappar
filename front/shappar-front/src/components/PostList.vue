@@ -110,6 +110,8 @@ export default {
     },
     deletePost (post, index) {
       if (!confirm('この投稿を削除しますか？')) return
+      // 送信前にも確認
+      if (this.$store.state.auth.username !== post.user_id) return
       // apiにリクエスト
       api.delete('/api/v1/posts/' + post.post_id + '/')
         .then((response) => {
@@ -120,6 +122,7 @@ export default {
             // indexで削除した投稿だけ配列から除こうとしたが
             // 自動更新の高さが変わるので一旦リロードする方針に変更する
             // this.posts.splice(index, 1)
+            this.$emit('reload')
           }
         }).catch((error) => {
           console.log(error)

@@ -9,7 +9,7 @@
       <font-awesome-icon icon="spinner" class="Pull-to__rotate" v-if="refreshConfig.loading"/>
       <font-awesome-icon icon="chevron-circle-down" :class="{'Pull-to__on': refreshConfig.trigger}" v-if="refreshConfig.isStart"/>
     </div>
-    <PostList :posts="posts" :unique_id="unique_id"></PostList>
+    <PostList :posts="posts" :unique_id="unique_id" @reload="refresh()"></PostList>
   </div>
 </template>
 
