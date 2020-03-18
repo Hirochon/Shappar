@@ -3,6 +3,7 @@ from rest_framework import views, status
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import IsAuthenticated
 from django_filters import rest_framework as filters
 from django.http import HttpResponseNotFound
 import uuid
@@ -18,23 +19,26 @@ from .serializers import (
     PostDetailSerializer,
 )
 
+def Response_unauthorized():
+    return Response({"detail":"権限がありません"},status.HTTP_401_UNAUTHORIZED)
+
 class MypageAPIView(views.APIView):
     """マイページ用詳細・更新・一部更新APIクラス"""
+
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk, *args, **kwargs):
         """マイページモデルの取得APIに対応するハンドラメソッド"""
 
-        """エンドポイントをユーザIDによってマイページを取得する場合"""
         mypage = get_object_or_404(get_user_model(), username=pk)
-
-        # """エンドポイントをUUIDによってマイページを取得する場合"""
-        # mypage = get_object_or_404(Mypage, user_id=pk)
-
         serializer = MypageSerializer(instance=mypage)
         return Response(serializer.data, status.HTTP_200_OK)
 
     def put(self, request, pk, *args, **kwargs):
         """マイページモデルの更新APIに対応するハンドラメソッド"""
+
+        if request.user.username != pk:
+            return Response_unauthorized()
 
         mypage = get_object_or_404(get_user_model(), username=pk)
         serializer = MypageSerializer(instance=mypage, data=request.data)
@@ -45,6 +49,9 @@ class MypageAPIView(views.APIView):
     def patch(self, request, pk, *args, **kwargs):
         """マイページモデルの一部更新APIに対応するハンドラメソッド"""
 
+        if request.user.username != pk:
+            return Response_unauthorized()
+
         mypage = get_object_or_404(get_user_model(), username=pk)
         serializer = MypageSerializer(instance=mypage, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -54,6 +61,8 @@ class MypageAPIView(views.APIView):
 
 class MypagePostedListAPIView(views.APIView):
     """マイページでの自分の投稿取得(一覧)"""
+
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk, *args, **kwargs):
         """自分の投稿取得(一覧)"""
@@ -102,6 +111,8 @@ class MypagePostedListAPIView(views.APIView):
 class MypageVotedListAPIView(views.APIView):
     """マイページでの自分の投票取得(一覧)"""
 
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, pk, *args, **kwargs):
         """自分の投票取得(一覧)"""
 
@@ -149,6 +160,8 @@ class MypageVotedListAPIView(views.APIView):
 class PostCreateAPIView(views.APIView):
     """投稿用APIクラス"""
 
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, *args, **kwargs):
         """投稿時の登録APIに対応するハンドラメソッド"""
 
@@ -179,6 +192,8 @@ class PostCreateAPIView(views.APIView):
 
 class PostListAPIView(views.APIView):
     """投稿の取得(一覧)APIクラス"""
+
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk, *args, **kwargs):
         """投稿の取得(一覧)APIに対応するハンドラメソッド"""
@@ -229,6 +244,8 @@ class PostListAPIView(views.APIView):
 
 class PostDetailDeleteAPIView(views.APIView):
     """投稿の詳細取得&削除APIクラス"""
+
+    permission_classes = [IsAuthenticated]
 
     def delete(self, request, pk, *args, **kwargs):
         """投稿の削除APIに対応するハンドラメソッド"""
@@ -308,6 +325,8 @@ class PostDetailDeleteAPIView(views.APIView):
 class PostUpdateAPIView(views.APIView):
     """投稿の情報更新APIクラス"""
 
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, pk, sk, *args, **kwargs):
         queryset = Post.objects.get(id=sk)
         serializer = PostListSerializer(instance=queryset, pk=pk)
@@ -341,6 +360,8 @@ class PostUpdateAPIView(views.APIView):
 
 class PollCreateAPIView(views.APIView):
     """投票モデルの登録APIクラス"""
+
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, pk, *args, **kwargs):
         """投票時の登録APIに対応するハンドラメソッド"""
