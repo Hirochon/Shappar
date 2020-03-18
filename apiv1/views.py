@@ -166,16 +166,16 @@ class PostCreateAPIView(views.APIView):
         data = request.data
 
         if 10 < len(data['options']):
-            return HttpResponseNotFound('<h1>Bad Request!</h1>')
+            return Response({"options":[{"answer":"回答は10個以下にしてください。"}]},status.HTTP_400_BAD_REQUEST)
+        elif 2 > len(data['options']):
+            return Response({"options":[{"answer":"回答は2個以上にしてください。"}]},status.HTTP_400_BAD_REQUEST)
 
         share_uuid = uuid.uuid4()
         data['share_id'] = share_uuid
         for datas in data['options']:
             datas['share_id'] = share_uuid
 
-        user = get_object_or_404(get_user_model(), id=data['unique_id'])
-        data['user'] = user.id
-        del data['unique_id']
+        data['user'] = request.user.id
 
         serializer = PostCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
