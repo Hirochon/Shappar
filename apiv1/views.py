@@ -63,6 +63,9 @@ class MypagePostedListAPIView(views.APIView):
     def get(self, request, pk, *args, **kwargs):
         """自分の投稿取得(一覧)"""
 
+        if request.user.username != pk:
+            return Response({}, status.HTTP_204_NO_CONTENT)
+        
         sk = get_user_model().objects.get(username=pk).id
 
         # 自身の投稿のみフィルタリング
@@ -109,6 +112,9 @@ class MypageVotedListAPIView(views.APIView):
 
     def get(self, request, pk, *args, **kwargs):
         """自分の投票取得(一覧)"""
+
+        if request.user.username != pk:
+            return Response({}, status.HTTP_204_NO_CONTENT)
 
         sk = get_user_model().objects.get(username=pk).id
 
