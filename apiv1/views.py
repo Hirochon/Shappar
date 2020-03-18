@@ -62,6 +62,8 @@ class MypageAPIView(views.APIView):
 class MypagePostedListAPIView(views.APIView):
     """マイページでの自分の投稿取得(一覧)"""
 
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, pk, *args, **kwargs):
         """自分の投稿取得(一覧)"""
 
@@ -108,6 +110,8 @@ class MypagePostedListAPIView(views.APIView):
 
 class MypageVotedListAPIView(views.APIView):
     """マイページでの自分の投票取得(一覧)"""
+
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk, *args, **kwargs):
         """自分の投票取得(一覧)"""
@@ -156,6 +160,8 @@ class MypageVotedListAPIView(views.APIView):
 class PostCreateAPIView(views.APIView):
     """投稿用APIクラス"""
 
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, *args, **kwargs):
         """投稿時の登録APIに対応するハンドラメソッド"""
 
@@ -186,6 +192,8 @@ class PostCreateAPIView(views.APIView):
 
 class PostListAPIView(views.APIView):
     """投稿の取得(一覧)APIクラス"""
+
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk, *args, **kwargs):
         """投稿の取得(一覧)APIに対応するハンドラメソッド"""
@@ -236,6 +244,8 @@ class PostListAPIView(views.APIView):
 
 class PostDetailDeleteAPIView(views.APIView):
     """投稿の詳細取得&削除APIクラス"""
+
+    permission_classes = [IsAuthenticated]
 
     def delete(self, request, pk, *args, **kwargs):
         """投稿の削除APIに対応するハンドラメソッド"""
@@ -315,6 +325,8 @@ class PostDetailDeleteAPIView(views.APIView):
 class PostUpdateAPIView(views.APIView):
     """投稿の情報更新APIクラス"""
 
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, pk, sk, *args, **kwargs):
         queryset = Post.objects.get(id=sk)
         serializer = PostListSerializer(instance=queryset, pk=pk)
@@ -348,6 +360,8 @@ class PostUpdateAPIView(views.APIView):
 
 class PollCreateAPIView(views.APIView):
     """投票モデルの登録APIクラス"""
+
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, pk, *args, **kwargs):
         """投票時の登録APIに対応するハンドラメソッド"""
