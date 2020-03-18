@@ -197,13 +197,17 @@ class PostListAPIView(views.APIView):
         # モデルオブジェクトをクエリ文字列を使ってフィルタリング
         if 'q' in request.GET:
             if 'pid' in request.GET:
-                post_basis = Post.objects.get(id=request.GET['pid'])
-                queryset = Post.objects.filter(created_at__lt=post_basis.created_at, question__contains=request.GET['q']).order_by('-created_at')[:10]
+                post_basis = Post.objects.filter(id=request.GET['pid'])
+                if len(post_basis) == 0:
+                    return Response({"detail":"存在しないpost_idです。"},status.HTTP_404_NOT_FOUND)
+                queryset = Post.objects.filter(created_at__lt=post_basis[0].created_at, question__contains=request.GET['q']).order_by('-created_at')[:10]
             else:
                 queryset = Post.objects.filter(question__contains=request.GET['q']).order_by('-created_at')[:10]
         elif 'pid' in request.GET:
-            post_basis = Post.objects.get(id=request.GET['pid'])
-            queryset = Post.objects.filter(created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
+            post_basis = Post.objects.filter(id=request.GET['pid'])
+            if len(post_basis) == 0:
+                return Response({"detail":"存在しないpost_idです。"},status.HTTP_404_NOT_FOUND)
+            queryset = Post.objects.filter(created_at__lt=post_basis[0].created_at).order_by('-created_at')[:10]
         else:
             queryset = Post.objects.all().order_by('-created_at')[:10]
 
