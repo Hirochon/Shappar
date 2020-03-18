@@ -29,14 +29,20 @@
           <div class="Post__option__answer" v-show="post.view === 0">{{option.select_num + 1 + '. '}}{{option.answer}}</div>
         </div>
       </div>
+      <div class="Post__details" @click="switchDetails(post.post_id)" v-if="post.voted">詳細を見る</div>
     </div>
+    <PostDetails @switchDetails="switchDetails('')" :post_id="detailsPostId" v-if="isDetailsOpen"/>
   </div>
 </template>
 
 <script>
+import PostDetails from '@/views/PostDetails'
 import api from '@/services/api'
 export default {
   name: 'PostList',
+  components: {
+    PostDetails
+  },
   props: {
     posts: {
       type: Array,
@@ -49,7 +55,9 @@ export default {
   },
   data () {
     return {
-      res: null
+      res: null,
+      isDetailsOpen: false,
+      detailsPostId: ''
     }
   },
   methods: {
@@ -150,6 +158,10 @@ export default {
             return 0
           })
       }
+    },
+    switchDetails (id) {
+      this.detailsPostId = id
+      this.isDetailsOpen = !this.isDetailsOpen
     }
   }
 }

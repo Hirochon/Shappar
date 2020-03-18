@@ -1,5 +1,10 @@
 <template>
   <div class="PostDetails">
+      <h2 class="Top__header"><!-- ここのヘッダーはコンポーネント化できる？ -->
+        <div class="Top__close">
+          <font-awesome-icon icon="times" @click.stop="closeDetails()"/>
+        </div>
+      </h2>
   </div>
 </template>
 
@@ -24,6 +29,9 @@ export default {
         .then((response) => {
           this.data = response.data
         })
+    },
+    closeDetails () {
+      this.$emit('switchDetails')
     }
   }
 }
@@ -33,7 +41,12 @@ export default {
 <style lang="scss">
 @import '@/assets/common.scss';
 .PostDetails{
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
+  background: white;
+  z-index: 100;
 }
 </style>
