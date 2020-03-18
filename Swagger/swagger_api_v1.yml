@@ -195,9 +195,36 @@ paths:
               total:
                 type: integer
           examples:
-            200 OK: {}
-      operationId: get-api-v1-posts-post_id
+            200 OK:
+              voted_sex:
+                woman: 4
+                others: 1
+                man: 6
+                'null': 0
+              voted_age:
+                0-10: 0
+                10-20: 5
+                20-30: 4
+                30-40: 1
+                40-50: 0
+                50-60: 1
+                60-: 0
+              voted_month:
+                '1': 0
+                '2': 2
+                '3': 1
+                '4': 0
+                '5': 0
+                '6': 2
+                '7': 1
+                '8': 0
+                '9': 1
+                '10': 1
+                '11': 2
+                '12': 1
+              total: 11
       description: get post details
+      operationId: get-api-v1-posts-post_id
     delete:
       summary: ''
       operationId: delete-api-v1-posts-post_id

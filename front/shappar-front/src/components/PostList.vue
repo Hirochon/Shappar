@@ -7,7 +7,7 @@
       <div class="Post__top">
         <div class="Post__total">Total：{{post.total}}</div>
         <div class="Post__buttons" v-show="post.voted">
-          <div class="Post__sort" v-if="post.user_id === $store.state.auth.username" @click="deletePost(post, index)"><font-awesome-icon icon="ellipsis-h"/></div>
+          <div class="Post__sort" v-if="post.user_id === $store.state.auth.username" @click="deletePost(post, index)"><font-awesome-icon icon="trash-alt"/></div>
           <div class="Post__sort" v-if="post.voted" @click="optionsSort(post, post.options)">
             <font-awesome-icon icon="list-ol" v-show="post.sort === 0"/>
             <font-awesome-icon icon="sort-amount-up" v-show="post.sort === 1"/>
