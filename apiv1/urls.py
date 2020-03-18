@@ -16,7 +16,7 @@ urlpatterns = [
     path('users/<pk>/posted/', MypagePostedListAPIView.as_view()),
     path('users/<pk>/voted/', MypageVotedListAPIView.as_view()),
     path('posts/', PostCreateAPIView.as_view()),
-    path('posts/public/<pk>/', PostListAPIView.as_view()),
+    path('posts/public/', PostListAPIView.as_view()),
     path('posts/public/<pk>/<sk>/', PostUpdateAPIView.as_view()),
     path('posts/<pk>/', PostDetailDeleteAPIView.as_view()),
     path('posts/<pk>/polls/', PollCreateAPIView.as_view()),
