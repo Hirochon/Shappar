@@ -68,7 +68,7 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     'https://shappar.site:8080',
-    'https://shappar.site:8080',
+    'https://shappar.site:80',
 )
 
 
@@ -187,12 +187,13 @@ AWS_S3_OBJECT_PARAMETERS = {
 }
 AWS_LOCATION = 'static'
 AWS_DEFAULT_ACL = None
-STATIC_ROOT = 'https://%s/static/' % AWS_S3_CUSTOM_DOMAIN
+STATIC_ROOT = 'https://%s/static/' % S3_CUSTOM_DOMAIN
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Mediaファイルの設定
-MEDIA_ROOT = 'https://%s/media/' % AWS_S3_CUSTOM_DOMAIN
+MEDIA_ROOT = 'https://%s/media/' % S3_CUSTOM_DOMAIN
 DEFAULT_FILE_STORAGE = 'config.storage_backends.MediaStorage'
+
 
 ##################
 # REST Framework #
