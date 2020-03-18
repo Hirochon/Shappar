@@ -99,6 +99,7 @@ const messageModule = {
       }
     },
     clear (state) {
+      // console.log('in clear')
       state.error = ''
       state.warnings = []
       state.info = ''
@@ -109,27 +110,40 @@ const messageModule = {
      * エラーメッセージ表示
      */
     setErrorMessage (context, payload) {
-      context.commit('clear')
+      // context.commit('clear')
       context.commit('set', { 'error': payload.message })
+      setTimeout(() => {
+        context.dispatch('clearMessages')
+        // console.log('in setErrorMessage')
+      }, 1500)
     },
     /**
      * 警告メッセージ（複数）表示
      */
     setWarningMessages (context, payload) {
-      context.commit('clear')
+      // context.commit('clear')
       context.commit('set', { 'warnings': payload.messages })
+      setTimeout(() => {
+        context.dispatch('clearMessages')
+        // console.log('in setWarningMessages')
+      }, 1500)
     },
     /**
      * インフォメーションメッセージ表示
      */
     setInfoMessage (context, payload) {
-      context.commit('clear')
+      // context.commit('clear')
       context.commit('set', { 'info': payload.message })
+      setTimeout(() => {
+        context.dispatch('clearMessages')
+        // console.log('in setInfoMessage')
+      }, 1500)
     },
     /**
      * 全メッセージ削除
      */
     clearMessages (context) {
+      // console.log('in clearMessages')
       context.commit('clear')
     }
   }

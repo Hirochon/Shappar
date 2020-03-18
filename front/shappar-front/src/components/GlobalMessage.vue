@@ -22,9 +22,9 @@ export default {
     }
   },
   created () {
-    setTimeout(() => {
-      this.$store.dispatch('message/clearMessages')
-    }, 1500)
+    // setTimeout(() => {
+    //   this.$store.dispatch('message/clearMessages')
+    // }, 1500)
   }
 }
 </script>
