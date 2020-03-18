@@ -187,7 +187,9 @@ class PostCreateAPIView(views.APIView):
 class PostListAPIView(views.APIView):
     """投稿の取得(一覧)APIクラス"""
 
-    def get(self, request, pk, *args, **kwargs):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
         """投稿の取得(一覧)APIに対応するハンドラメソッド"""
 
         # モデルオブジェクトをクエリ文字列を使ってフィルタリング
@@ -202,7 +204,9 @@ class PostListAPIView(views.APIView):
             queryset = Post.objects.filter(created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
         else:
             queryset = Post.objects.all().order_by('-created_at')[:10]
-        serializer = PostListSerializer(instance=queryset, many=True, pk=pk)
+
+        unique_id = request.user.id
+        serializer = PostListSerializer(instance=queryset, many=True, pk=unique_id)
 
         for datas in serializer.data:
             if not datas['voted']:
@@ -217,7 +221,7 @@ class PostListAPIView(views.APIView):
             else:
                 total = 0
                 for data in datas['options']:
-                    flag = Poll.objects.filter(user_id=pk,option_id=data['id'])
+                    flag = Poll.objects.filter(user_id=unique_id,option_id=data['id'])
                     if len(flag) > 0:
                         datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
                     else:
