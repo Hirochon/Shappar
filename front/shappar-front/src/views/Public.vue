@@ -138,8 +138,18 @@ export default {
     },
     switchSearch () {
       var newY = this.scrollTop()
-      this.searchShow = newY < this.positionY
-      this.positionY = newY
+      // 上に行く際は表示・下に行く際は行き始めてから50px超えたら
+      if (newY < this.positionY) {
+        this.searchShow = true
+        this.positionY = newY
+      }
+      if (!this.searchShow) {
+        this.positionY = newY
+        // console.log('set newY')
+      } else if (newY > this.positionY + 50) {
+        this.searchShow = false
+        // console.log('set false')
+      }
     },
     scrollTriggers () {
       this.switchSearch()
