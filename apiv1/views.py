@@ -3,6 +3,7 @@ from rest_framework import views, status
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import IsAuthenticated
 from django_filters import rest_framework as filters
 from django.http import HttpResponseNotFound
 import uuid
@@ -18,23 +19,26 @@ from .serializers import (
     PostDetailSerializer,
 )
 
+def Response_unauthorized():
+    return Response({"detail":"権限がありません"},status.HTTP_401_UNAUTHORIZED)
+
 class MypageAPIView(views.APIView):
     """マイページ用詳細・更新・一部更新APIクラス"""
+
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk, *args, **kwargs):
         """マイページモデルの取得APIに対応するハンドラメソッド"""
 
-        """エンドポイントをユーザIDによってマイページを取得する場合"""
         mypage = get_object_or_404(get_user_model(), username=pk)
-
-        # """エンドポイントをUUIDによってマイページを取得する場合"""
-        # mypage = get_object_or_404(Mypage, user_id=pk)
-
         serializer = MypageSerializer(instance=mypage)
         return Response(serializer.data, status.HTTP_200_OK)
 
     def put(self, request, pk, *args, **kwargs):
         """マイページモデルの更新APIに対応するハンドラメソッド"""
+
+        if request.user.username != pk:
+            return Response_unauthorized()
 
         mypage = get_object_or_404(get_user_model(), username=pk)
         serializer = MypageSerializer(instance=mypage, data=request.data)
@@ -44,6 +48,9 @@ class MypageAPIView(views.APIView):
 
     def patch(self, request, pk, *args, **kwargs):
         """マイページモデルの一部更新APIに対応するハンドラメソッド"""
+
+        if request.user.username != pk:
+            return Response_unauthorized()
 
         mypage = get_object_or_404(get_user_model(), username=pk)
         serializer = MypageSerializer(instance=mypage, data=request.data, partial=True)
