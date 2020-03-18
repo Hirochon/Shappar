@@ -20,7 +20,7 @@ from .serializers import (
 )
 
 def Response_unauthorized():
-    return Response({"detail":"権限がありません"},status.HTTP_401_UNAUTHORIZED)
+    return Response({"detail":"権限がありません。"},status.HTTP_401_UNAUTHORIZED)
 
 class MypageAPIView(views.APIView):
     """マイページ用詳細・更新・一部更新APIクラス"""
@@ -250,7 +250,15 @@ class PostDetailDeleteAPIView(views.APIView):
     def delete(self, request, pk, *args, **kwargs):
         """投稿の削除APIに対応するハンドラメソッド"""
         
-        post = Post.objects.get(id=pk)
+        user_id = request.user.id
+        post = Post.objects.filter(id=pk)
+
+        if len(post) == 0:
+            return Response({"detail":"存在しないpost_idです。"},status.HTTP_404_NOT_FOUND)
+
+        if post[0].user_id != user_id:
+            return Response_unauthorized()
+        
         post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
