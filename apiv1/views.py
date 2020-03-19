@@ -341,9 +341,15 @@ class PostDetailDeleteAPIView(views.APIView):
 class PostUpdateAPIView(views.APIView):
     """投稿の情報更新APIクラス"""
 
-    def get(self, request, pk, sk, *args, **kwargs):
-        queryset = Post.objects.get(id=sk)
-        serializer = PostListSerializer(instance=queryset, pk=pk)
+    def get(self, request, pk, *args, **kwargs):
+
+        queryset = Post.objects.filter(id=pk)
+
+        if len(queryset) == 0:
+            return Response_post_notfound()
+
+        user = request.user
+        serializer = PostListSerializer(instance=queryset[0], pk=user.id)
 
         seri_data = serializer.data
 
@@ -359,7 +365,7 @@ class PostUpdateAPIView(views.APIView):
         else:
             total = 0
             for data in seri_data['options']:
-                flag = Poll.objects.filter(user_id=pk,option_id=data['id'])
+                flag = Poll.objects.filter(user_id=user.id,option_id=data['id'])
                 if len(flag) > 0:
                     seri_data['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
                 else:
