@@ -86,16 +86,16 @@ class PollSerializer(serializers.ModelSerializer):
         fields = ['post','user','option']
 
     def validate(self, data):
-        """同ユーザーの同投稿への複数投票を阻止バリデーションメソッド"""
+        """同じ投稿への複数投票&投稿本人の投票阻止バリデーションメソッド"""
         user = data.get('user')
         post = data.get('post')
 
         poll = Poll.objects.filter(user_id=user.id,post_id=post.id)
         if len(poll) > 0:
-            raise serializers.ValidationError("同ユーザーの投稿への投票は一度のみです。")
+            raise serializers.ValidationError("同じ投稿への投票は一度のみです。")
 
         post = Post.objects.filter(id=post.id,user_id=user.id)
         if len(post) > 0:
-            raise serializers.ValidationError("自身が投稿した投稿への投票はできません。")
+            raise serializers.ValidationError("投稿した本人は投票はできません。")
         
         return data
