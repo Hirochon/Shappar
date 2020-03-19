@@ -179,6 +179,7 @@ class PostCreateAPIView(views.APIView):
             datas['share_id'] = share_uuid
 
         data['user'] = request.user.id
+        # data['user'] = data['unique_id']
 
         serializer = PostCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -339,9 +340,10 @@ class PostDetailDeleteAPIView(views.APIView):
 
 
 class PostUpdateAPIView(views.APIView):
-    """投稿の情報更新APIクラス"""
+    """投票モデルの投稿の投票結果取得APIクラス"""
 
     def get(self, request, pk, *args, **kwargs):
+        """投稿の投票結果取得APIに対応するハンドラメソッド"""
 
         queryset = Post.objects.filter(id=pk)
 
@@ -384,15 +386,21 @@ class PollCreateAPIView(views.APIView):
     def post(self, request, pk, *args, **kwargs):
         """投票時の登録APIに対応するハンドラメソッド"""
 
+        post = Post.objects.filter(id=pk)
+
+        if len(post) == 0:
+            return Response_post_notfound()
+
         data = request.data
-        data['post'] = pk
-        data['user'] = data['unique_id']
-        del data['unique_id']
+        data['post'] = post[0].id
+
+        data['user'] = request.user.id
+        # data['user'] = data['unique_id']
+        # del data['unique_id']
 
         data_option = data['option']
         del data['option']
-        post = Post.objects.get(id=data['post'])
-        options = Option.objects.filter(share_id=post.share_id)
+        options = Option.objects.filter(share_id=post[0].share_id)
         for option in options:
             if option.select_num == data_option['select_num']:
                 option.votes += 1
