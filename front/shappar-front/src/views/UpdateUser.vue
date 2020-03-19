@@ -1,7 +1,7 @@
 <template>
   <div class="Update">
     <GlobalMessage/>
-    <router-link class="Update__close" to="/mypage"><font-awesome-icon icon="times"/></router-link>
+    <router-link class="Update__close" :to="'/mypage/'+ before_user_id + '/'"><font-awesome-icon icon="times"/></router-link>
     <div class="Update__image">
       <img :src="beforeHomeImage" alt="" id="homeimage">
       <label class="Update__image__mask" for="home_file"><font-awesome-icon icon="camera"/></label>
@@ -100,7 +100,7 @@ export default {
           if (response.status === 200) {
             this.$store.dispatch('message/setInfoMessage', { message: '更新完了' })
             await this.$store.dispatch('auth/reload')// ここで一度更新してないとユーザーIDを変更した際にエラーが出る
-            this.$router.replace('/mypage')
+            this.$router.replace('/mypage/' + store.getters['auth/username'])
           }
         })
     },

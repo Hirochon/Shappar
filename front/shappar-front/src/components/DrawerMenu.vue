@@ -13,7 +13,7 @@
           <div class="Drawer__close" @click="isOpen = false"><font-awesome-icon icon="times"/></div>
         </div>
         <div class="Drawer__wrapper">
-          <router-link class="Drawer__icon" to="/mypage">
+          <router-link class="Drawer__icon" :to="'/mypage/'+ user.user_id + '/'">
             <img :src="user.iconimage" alt="">
           </router-link>
         </div>

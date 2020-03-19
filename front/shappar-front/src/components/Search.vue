@@ -53,7 +53,7 @@ export default {
   },
   created () {
     this.user_id = this.$store.state.auth.username
-    api.get('/api/v1/users/' + this.user_id)
+    api.get('/api/v1/users/' + this.user_id + '/')
       .then((response) => {
         this.user = response.data
       })

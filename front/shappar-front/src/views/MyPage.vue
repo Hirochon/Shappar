@@ -22,7 +22,7 @@
         {{user.introduction}}
       </div>
     </div>
-    <div class="PostSwitch">
+    <div class="PostSwitch" v-if="my_id === traget_id">
       <div class="PostSwitch__button" @click="changeActive(0)" :class="{'active': isActive === 0}">
         過去の投稿
       </div>
@@ -55,7 +55,8 @@ export default {
   data: function () {
     return {
       unique_id: '',
-      user_id: '',
+      my_id: '',
+      traget_id: '',
       isActive: 0,
       user: {},
       postedTargetId: '',
@@ -96,7 +97,7 @@ export default {
       if (this.postedTargetHeight < 0) return
       await (this.postedTargetHeight = -1)// 読み込み中のスクロールで発火するのを避けるためにlockをかける
       var nextPostId = this.posted[this.posted.length - 1].post_id
-      await api.get('/api/v1/users/' + this.user_id + '/posted/?pid=' + nextPostId)
+      await api.get('/api/v1/users/' + this.my_id + '/posted/?pid=' + nextPostId)
         .then((response) => {
           var posts = response.data.posts
           posts.forEach(item => {
@@ -116,7 +117,7 @@ export default {
       if (this.votedTargetHeight < 0) return
       await (this.votedTargetHeight = -1)// 読み込み中のスクロールで発火するのを避けるためにlockをかける
       var nextPostId = this.voted[this.voted.length - 1].post_id
-      await api.get('/api/v1/users/' + this.user_id + '/voted/?pid=' + nextPostId)
+      await api.get('/api/v1/users/' + this.my_id + '/voted/?pid=' + nextPostId)
         .then((response) => {
           var posts = response.data.posts
           posts.forEach(item => {
@@ -146,25 +147,28 @@ export default {
   },
   created () {
     this.unique_id = this.$store.state.auth.unique_id
-    this.user_id = this.$store.state.auth.username
-    api.get('/api/v1/users/' + this.user_id + '/')
+    this.my_id = this.$store.state.auth.username
+    this.traget_id = this.$route.params.user_id
+    api.get('/api/v1/users/' + this.traget_id + '/')
       .then((response) => {
         this.user = response.data
       })
-    api.get('/api/v1/users/' + this.user_id + '/posted/')
-      .then(async (response) => {
-        var posts = response.data.posts
-        await this.initPosts(true, posts)
-        await (this.postedTargetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
-        if (this.postedTargetId) this.postedTargetHeight = document.getElementById(this.postedTargetId).offsetTop // 次の高さを計測
-      })
-    api.get('/api/v1/users/' + this.user_id + '/voted/')
-      .then(async (response) => {
-        var posts = response.data.posts
-        await this.initPosts(false, response.data.posts)
-        await (this.votedTargetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
-        if (this.votedTargetId) this.votedTargetHeight = document.getElementById(this.votedTargetId).offsetTop // 次の高さを計測
-      })
+    if (this.my_id === this.traget_id) {
+      api.get('/api/v1/users/' + this.traget_id + '/posted/')
+        .then(async (response) => {
+          var posts = response.data.posts
+          await this.initPosts(true, posts)
+          await (this.postedTargetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
+          if (this.postedTargetId) this.postedTargetHeight = document.getElementById(this.postedTargetId).offsetTop // 次の高さを計測
+        })
+      api.get('/api/v1/users/' + this.traget_id + '/voted/')
+        .then(async (response) => {
+          var posts = response.data.posts
+          await this.initPosts(false, response.data.posts)
+          await (this.votedTargetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
+          if (this.votedTargetId) this.votedTargetHeight = document.getElementById(this.votedTargetId).offsetTop // 次の高さを計測
+        })
+    }
     window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
   },
   destroyed () {

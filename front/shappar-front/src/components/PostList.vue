@@ -1,9 +1,9 @@
 <template>
   <div class="PostList" id="PostList">
     <div class="Post" v-for="(post, index) in posts" :key="post.post_id" :id="post.post_id">
-      <div class="Post__icon">
+      <router-link class="Post__icon" :to="'/mypage/'+ post.user_id + '/'">
         <img :src="post.iconimage" :alt="post.user_id+'_icon'">
-      </div>
+      </router-link>
       <div class="Post__top">
         <div class="Post__total">Total：{{post.total}}</div>
         <div class="Post__buttons" v-show="post.voted">
