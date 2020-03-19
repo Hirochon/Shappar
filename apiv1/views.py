@@ -259,11 +259,16 @@ class PostDetailDeleteAPIView(views.APIView):
         if post[0].user_id != user_id:
             return Response_unauthorized()
         
-        post.delete()
+        post[0].delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get(self, request, pk, *args, **kwargs):
         """投稿の詳細取得APIに対応するハンドラメソッド"""
+
+        post = Post.objects.filter(id=pk)
+
+        if len(post) == 0:
+            return Response({"detail":"存在しないpost_idです。"},status.HTTP_404_NOT_FOUND)
 
         users = get_user_model().objects.filter(poll_user__post__id=pk)
         serializer = PostDetailSerializer(instance=users, many=True)
