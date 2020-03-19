@@ -1,48 +1,7 @@
 <template>
   <div class="PostDetails" @click.stop="closeDetails()" @touchmove.prevent.stop @touchstart.stop>
     <div class="PostDetails__container" id="PostDetails__area" @click.stop>
-      <!-- <h2 class="Top__header">
-        <div class="Top__close">
-          <font-awesome-icon icon="times" @click.stop="closeDetails()"/>
-        </div>
-      </h2> -->
-      <!-- <div class="Pie-chart__area">
-        <svg class="Pie-char__main"
-          :width="maxR" :height="maxR" viewBox="-100 -100 200 200"
-          @click.stop="isActiveText = 1 - isActiveText"
-          >
-          <path
-            v-for="(item, index) in isActiveData" :key="item.id"
-            :d="pieChartPath(total, item.num, index)"
-            :fill="fillCalc(index)"
-            :style="{transform: 'rotate(' + calcDeg(isActiveData, index) + 'deg)'}"/>
-          <g v-show="(item.num / total) > 0.05"
-            v-for="(item, index) in isActiveData" :key="item.id + 'id'">
-            <text
-              v-show="isActiveText === 0"
-              :x="calcX(index, item, isActiveData)" :y="calcY(index, item, isActiveData)"
-              fill="#444" font-size="14"
-              >
-              <tspan>{{item.id}}</tspan>
-              <tspan :x="calcX(index, item, isActiveData)" :y="calcY(index, item, isActiveData)+14">
-                {{item.num+' 票'}}
-              </tspan>
-            </text>
-            <text
-              v-show="isActiveText === 1"
-              :x="calcX(index, item, isActiveData)" :y="calcY(index, item, isActiveData)"
-              fill="#444" font-size="14"
-              >
-              <tspan>{{Math.floor(item.num / total * 100)+'%'}}</tspan>
-              <tspan :x="calcX(index, item, isActiveData)" :y="calcY(index, item, isActiveData)+14">
-                {{'（' + item.num + ' 票）'}}
-              </tspan>
-            </text>
-          </g>
-        </svg>
-        <div class="Pie-chart__inner"></div>
-      </div> -->
-      <doughnutChart :chartData="isActiveChartData" @click.stop></doughnutChart>
+      <doughnutChart class="PostDetails__chart" :chartData="isActiveChartData" @click.stop></doughnutChart>
       <div class="PostDetails__switch">
         <div class="PostDetails__button" @click.stop="isActive = 0" :class="{active: isActive === 0}">
           <font-awesome-icon icon="venus-mars"/>
@@ -98,14 +57,8 @@ export default {
           this.total = data.total
           for (let key in data.voted_sex) {
             // console.log(key)
-            let num = data.voted_sex[key]
-            let deg = num / this.total
-            let pie = Math.PI * 2 * deg
             this.voted_sex.push({
-              id: key,
-              num: data.voted_sex[key],
-              deg: deg * 360,
-              pie: pie
+              num: data.voted_sex[key]
             })
           }
           this.voted_sex[0].id = '女性'
@@ -114,28 +67,18 @@ export default {
           this.voted_sex[3].id = '未回答'
           for (let key in data.voted_age) {
             // console.log(key)
-            let num = data.voted_age[key]
-            let deg = num / this.total
-            let pie = Math.PI * 2 * deg
             this.voted_age.push({
               id: key[0] * 10 + '代',
-              num: num,
-              deg: deg * 360,
-              pie: pie
+              num: data.voted_age[key]
             })
           }
           this.voted_age[0].id = '10歳未満'
           this.voted_age[6].id += '以降'
           for (let key in data.voted_month) {
             // console.log(key)
-            let num = data.voted_month[key]
-            let deg = num / this.total
-            let pie = Math.PI * 2 * num / this.total
             this.voted_month.push({
               id: key + '月',
-              num: data.voted_month[key],
-              deg: deg * 360,
-              pie: pie
+              num: data.voted_month[key]
             })
           }
           this.voted_sex = this.voted_sex.sort((a, b) => {
@@ -157,92 +100,6 @@ export default {
     },
     closeDetails () {
       this.$emit('switchDetails')
-    },
-    fillCalc (index) {
-      switch (index) {
-        case 11:
-          return '#41BE99'
-        case 10:
-          return '#26A69A'
-        case 9:
-          return '#26C6DA'
-        case 8:
-          return '#29B6F6'
-        case 7:
-          return '#42A5F5'
-        case 6:
-          return '#5C6BC0'
-        case 5:
-          return '#7E57C2'
-        case 4:
-          return '#AB47BC'
-        case 3:
-          return '#EC407A'
-        case 2:
-          return '#ef5350'
-        case 1:
-          return '#FF7043'
-        case 0:
-          return '#FFA726'
-      }
-    },
-    pieChartPath (denom, molecule) {
-      var d = 'M0,0 ' // 中心から
-      d += 'L0,-100 ' // スタート位置
-      d += 'A100,100 0 ' // x半径,y半径 時計回り
-      var deg = molecule / denom * 2
-      var pie = Math.PI * deg
-      if (deg === 2) d += '0,0 '
-      else if (deg % 2 <= 1) d += '0,1 '// 一周したらリセットするために余りを使う
-      else d += '1,1 '
-      d += 100 * Math.sin(pie)
-      d += ','
-      d += -100 * Math.cos(pie)
-      d += 'z'
-      return d
-    },
-    calcDeg (list, index) {
-      var deg = 0
-      for (let i = 0; i < index; i++) {
-        deg += list[i].deg
-      }
-      return deg
-    },
-    calcX (index, item, list) {
-      // svg font のx,yはボックスの左下
-      var deg = this.calcDeg(list, index)
-      deg += (item.deg / 2)
-      var pie = Math.PI * deg / 180
-      return Math.sin(pie) * this.maxR / 4 - 20
-    },
-    calcY (index, item, list) {
-      var deg = this.calcDeg(list, index)
-      deg += (item.deg / 2)
-      var pie = Math.PI * deg / 180
-      return -Math.cos(pie) * this.maxR / 4 + 12
-    },
-    optionsSort (post, options) {
-      post.sort = (post.sort + 1) % 3
-      switch (post.sort) {
-        case 0:
-          return options.sort(function (a, b) {
-            if (a.select_num < b.select_num) return -1
-            if (a.select_num > b.select_num) return 1
-            return 0
-          })
-        case 1:
-          return options.sort(function (a, b) {
-            if (a.votes < b.votes) return 1
-            if (a.votes > b.votes) return -1
-            return 0
-          })
-        case 2:
-          return options.sort(function (a, b) {
-            if (a.votes < b.votes) return -1
-            if (a.votes > b.votes) return 1
-            return 0
-          })
-      }
     },
     dataNum (data) {
       var num = []
@@ -283,24 +140,6 @@ export default {
       return false
     },
     isActiveChartData () {
-      // return {
-      //   labels: [this.getRandomInt(), this.getRandomInt()],
-      //   datasets: [
-      //     {
-      //       label: 'Data One',
-      //       backgroundColor: '#f87979',
-      //       borderColor: '#f87979',
-      //       data: [this.getRandomInt(), this.getRandomInt()],
-      //       fill: false
-      //     }, {
-      //       label: 'Data Two',
-      //       backgroundColor: '#007979',
-      //       borderColor: '#007979',
-      //       data: [this.getRandomInt(), this.getRandomInt()],
-      //       fill: false
-      //     }
-      //   ]
-      // }
       return {
         labels: this.isActivelabels,
         datasets: [{
@@ -319,21 +158,7 @@ export default {
             '#26A69A',
             '#66BB6A'
           ],
-          borderColor: [
-            '#FFA726',
-            '#FF7043',
-            '#ef5350',
-            '#EC407A',
-            '#AB47BC',
-            '#7E57C2',
-            '#5C6BC0',
-            '#42A5F5',
-            '#29B6F6',
-            '#26C6DA',
-            '#26A69A',
-            '#66BB6A'
-          ],
-          borderWidth: 1
+          borderWidth: 0
         }]
       }
     }
@@ -368,10 +193,19 @@ export default {
   overflow: scroll;
   &__container{
     width: 100%;
-    height: 400px;
+    max-height: 700px;
     // background: white;
   }
+  &__chart{
+    max-width: 700px;
+    margin: 0 auto;
+    & > canvas{
+      max-width: 700px;
+    }
+  }
   &__switch{
+    max-width: 700px;
+    margin: 0 auto;
     margin-top: 24px;
     padding: 0 16px;
     display: flex;

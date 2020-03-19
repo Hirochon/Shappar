@@ -66,7 +66,7 @@ export default {
     Select (post, option) {
       if (post.voted) {
         this.changeView(post)
-        // return
+        return
       }
       post.selected_num = option.select_num
       this.Submit(post, post.options)
@@ -324,7 +324,8 @@ $option-height: 40px;
     }
   }
   &__details{
-    width: 300px;
+    cursor: pointer;
+    max-width: 300px;
     height: 32px;
     line-height: 32px;
     margin: 0 auto;

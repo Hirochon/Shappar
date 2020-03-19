@@ -10,18 +10,35 @@ export default {
     }
   },
   mounted () {
-    console.log('mounted at')
+    // console.log('mounted at')
     this.renderChart(this.chartData, {
       legend: {
-        display: true, // 凡例の削除 → 全てのグラフ
         labels: {
           fontColor: 'white'
-        },
-        tooltips: {
-          mode: 'index'
         }
       },
-      responsive: true
+      tooltips: {
+        // enabled: false
+        // position: 'average'
+        callbacks: {
+          title: function (tooltipItem, data) {
+            return ''
+          },
+          afterBody (tooltipItem, data) {
+            var total = 0
+            // console.log(data.datasets[0].data)
+            // console.log(tooltipItem)
+            // console.log(data.datasets[0].data[tooltipItem[0].index])
+            data.datasets[0].data.forEach(item => {
+              total += item
+            })
+            // console.log(total)
+            // console.log(data.datasets[0].data[tooltipItem[0].index] / total * 100)
+            return Math.floor(data.datasets[0].data[tooltipItem[0].index] / total * 100) + '%'
+          }
+        }
+      }
+      // responsive: true
     })
   }
 }
