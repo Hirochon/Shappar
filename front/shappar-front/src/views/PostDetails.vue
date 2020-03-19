@@ -1,41 +1,44 @@
 <template>
-  <div class="PostDetails" id="PostDetails">
-      <h2 class="Top__header"><!-- ここのヘッダーはコンポーネント化できる？ -->
+  <div class="PostDetails" @click.stop="closeDetails()">
+    <div class="PostDetails__container" id="PostDetails__area">
+      <!-- <h2 class="Top__header">
         <div class="Top__close">
           <font-awesome-icon icon="times" @click.stop="closeDetails()"/>
         </div>
-      </h2>
-      <svg class="Details__area"></svg>
+      </h2> -->
       <div class="Pie-chart__area">
-          <svg class="Pie-char__main" :width="maxR" :height="maxR" viewBox="-100 -100 200 200">
-              <path :d="pieChartPath(100,num)" fill="#74B0FF" />
-              <path
-                v-for="(item, index) in voted_sex" :key="item.id"
-                :d="pieChartPath(total, item.num, index)"
-                :fill="fillCalc(index)"
-                :style="{transform: 'rotate(' + calcDeg(voted_sex, index) + 'deg)'}"/>
-          </svg>
-          <svg class="Pie-char__main" :width="maxR" :height="maxR" viewBox="-100 -100 200 200">
-              <path :d="pieChartPath(100,num)" fill="#74B0FF" />
-              <path
-                v-for="(item, index) in voted_age" :key="item.id"
-                :d="pieChartPath(total, item.num, index)"
-                :fill="fillCalc(index)"
-                :style="{transform: 'rotate(' + calcDeg(voted_age, index) + 'deg)'}"/>
-          </svg>
-          <svg class="Pie-char__main" :width="maxR" :height="maxR" viewBox="-100 -100 200 200">
-              <path :d="pieChartPath(100,num)" fill="#74B0FF" />
-              <path
-                v-for="(item, index) in voted_month" :key="item.id"
-                :d="pieChartPath(total, item.num, index)"
-                :fill="fillCalc(index)"
-                :style="{transform: 'rotate(' + calcDeg(voted_month, index) + 'deg)'}"/>
-          </svg>
-          <div class="Pie-chart__inner">
-          </div>
+        <svg class="Pie-char__main" :width="maxR" :height="maxR" viewBox="-100 -100 200 200" v-if="isActive === 0">
+            <path :d="pieChartPath(100,num)" fill="#74B0FF" />
+            <path
+              v-for="(item, index) in voted_sex" :key="item.id"
+              :d="pieChartPath(total, item.num, index)"
+              :fill="fillCalc(index)"
+              :style="{transform: 'rotate(' + calcDeg(voted_sex, index) + 'deg)'}"/>
+        </svg>
+        <svg class="Pie-char__main" :width="maxR" :height="maxR" viewBox="-100 -100 200 200" v-if="isActive === 1">
+            <path :d="pieChartPath(100,num)" fill="#74B0FF" />
+            <path
+              v-for="(item, index) in voted_age" :key="item.id"
+              :d="pieChartPath(total, item.num, index)"
+              :fill="fillCalc(index)"
+              :style="{transform: 'rotate(' + calcDeg(voted_age, index) + 'deg)'}"/>
+        </svg>
+        <svg class="Pie-char__main" :width="maxR" :height="maxR" viewBox="-100 -100 200 200" v-if="isActive === 2">
+            <path :d="pieChartPath(100,num)" fill="#74B0FF" />
+            <path
+              v-for="(item, index) in voted_month" :key="item.id"
+              :d="pieChartPath(total, item.num, index)"
+              :fill="fillCalc(index)"
+              :style="{transform: 'rotate(' + calcDeg(voted_month, index) + 'deg)'}"/>
+        </svg>
+        <div class="Pie-chart__inner"></div>
       </div>
-      <input type="num" v-model="num">
-      <input type="button" value="click" @click="num += 10">
+      <div class="PostDetails__switch">
+        <div class="PostDetails__button" @click.stop="isActive = 0" :class="{active: isActive === 0}">性別</div>
+        <div class="PostDetails__button" @click.stop="isActive = 1" :class="{active: isActive === 1}">年齢</div>
+        <div class="PostDetails__button" @click.stop="isActive = 2" :class="{active: isActive === 2}">誕生月</div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -58,7 +61,8 @@ export default {
       num: 0,
       width: 0,
       height: 0,
-      maxR: 0
+      maxR: 0,
+      isActive: 0
     }
   },
   methods: {
@@ -171,7 +175,7 @@ export default {
     this.getPostData()
   },
   mounted () {
-    var area = document.getElementById('PostDetails')
+    var area = document.getElementById('PostDetails__area')
     this.width = area.clientWidth
     this.height = area.clientHeight
     this.maxR = this.width > this.height ? this.height : this.width
@@ -186,10 +190,34 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 100%;
-  background: white;
+  background: rgba(black, .6);
   z-index: 100;
   overflow: scroll;
+  &__container{
+    width: 80%;
+    height: 400px;
+    // background: white;
+  }
+  &__switch{
+    display: flex;
+    width: 100%;
+    background: white;
+  }
+  &__button{
+    width: 100%;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    background: $color-main;
+    opacity: 0.5;
+    &.active{
+      opacity: 1;
+    }
+  }
 }
 </style>
