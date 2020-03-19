@@ -22,6 +22,9 @@ from .serializers import (
 def Response_unauthorized():
     return Response({"detail":"権限がありません。"},status.HTTP_401_UNAUTHORIZED)
 
+def Response_post_notfound():
+    return Response({"detail":"存在しないpost_idです。"},status.HTTP_404_NOT_FOUND)
+
 class MypageAPIView(views.APIView):
     """マイページ用詳細・更新・一部更新APIクラス"""
 
@@ -199,14 +202,14 @@ class PostListAPIView(views.APIView):
             if 'pid' in request.GET:
                 post_basis = Post.objects.filter(id=request.GET['pid'])
                 if len(post_basis) == 0:
-                    return Response({"detail":"存在しないpost_idです。"},status.HTTP_404_NOT_FOUND)
+                    return Response_post_notfound()
                 queryset = Post.objects.filter(created_at__lt=post_basis[0].created_at, question__contains=request.GET['q']).order_by('-created_at')[:10]
             else:
                 queryset = Post.objects.filter(question__contains=request.GET['q']).order_by('-created_at')[:10]
         elif 'pid' in request.GET:
             post_basis = Post.objects.filter(id=request.GET['pid'])
             if len(post_basis) == 0:
-                return Response({"detail":"存在しないpost_idです。"},status.HTTP_404_NOT_FOUND)
+                return Response_post_notfound()
             queryset = Post.objects.filter(created_at__lt=post_basis[0].created_at).order_by('-created_at')[:10]
         else:
             queryset = Post.objects.all().order_by('-created_at')[:10]
@@ -254,7 +257,7 @@ class PostDetailDeleteAPIView(views.APIView):
         post = Post.objects.filter(id=pk)
 
         if len(post) == 0:
-            return Response({"detail":"存在しないpost_idです。"},status.HTTP_404_NOT_FOUND)
+            return Response_post_notfound()
 
         if post[0].user_id != user_id:
             return Response_unauthorized()
@@ -268,7 +271,7 @@ class PostDetailDeleteAPIView(views.APIView):
         post = Post.objects.filter(id=pk)
 
         if len(post) == 0:
-            return Response({"detail":"存在しないpost_idです。"},status.HTTP_404_NOT_FOUND)
+            return Response_post_notfound()
 
         users = get_user_model().objects.filter(poll_user__post__id=pk)
         serializer = PostDetailSerializer(instance=users, many=True)
