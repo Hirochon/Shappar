@@ -7,29 +7,19 @@
         </div>
       </h2> -->
       <div class="Pie-chart__area">
-        <svg class="Pie-char__main" :width="maxR" :height="maxR" viewBox="-100 -100 200 200" v-if="isActive === 0">
-            <path :d="pieChartPath(100,num)" fill="#74B0FF" />
+        <svg class="Pie-char__main" :width="maxR" :height="maxR" viewBox="-100 -100 200 200">
             <path
-              v-for="(item, index) in voted_sex" :key="item.id"
+              v-for="(item, index) in isActiveData" :key="item.id"
               :d="pieChartPath(total, item.num, index)"
               :fill="fillCalc(index)"
-              :style="{transform: 'rotate(' + calcDeg(voted_sex, index) + 'deg)'}"/>
-        </svg>
-        <svg class="Pie-char__main" :width="maxR" :height="maxR" viewBox="-100 -100 200 200" v-if="isActive === 1">
-            <path :d="pieChartPath(100,num)" fill="#74B0FF" />
-            <path
-              v-for="(item, index) in voted_age" :key="item.id"
-              :d="pieChartPath(total, item.num, index)"
-              :fill="fillCalc(index)"
-              :style="{transform: 'rotate(' + calcDeg(voted_age, index) + 'deg)'}"/>
-        </svg>
-        <svg class="Pie-char__main" :width="maxR" :height="maxR" viewBox="-100 -100 200 200" v-if="isActive === 2">
-            <path :d="pieChartPath(100,num)" fill="#74B0FF" />
-            <path
-              v-for="(item, index) in voted_month" :key="item.id"
-              :d="pieChartPath(total, item.num, index)"
-              :fill="fillCalc(index)"
-              :style="{transform: 'rotate(' + calcDeg(voted_month, index) + 'deg)'}"/>
+              :style="{transform: 'rotate(' + calcDeg(isActiveData, index) + 'deg)'}"/>
+            <text
+              v-show="item.num > 0"
+              v-for="(item, index) in isActiveData" :key="item.id + 'id'"
+              :x="calcX(index, item, isActiveData)" :y="calcY(index, item, isActiveData)"
+              >
+              {{item.id}}
+            </text>
         </svg>
         <div class="Pie-chart__inner"></div>
       </div>
@@ -157,9 +147,9 @@ export default {
       if (deg === 2) d += '0,0 '
       else if (deg % 2 <= 1) d += '0,1 '// 一周したらリセットするために余りを使う
       else d += '1,1 '
-      d += 100 * Math.sin(pie) // y
+      d += 100 * Math.sin(pie)
       d += ','
-      d += -100 * Math.cos(pie) // x
+      d += -100 * Math.cos(pie)
       d += 'z'
       return d
     },
@@ -169,6 +159,32 @@ export default {
         deg += list[i].deg
       }
       return deg
+    },
+    calcX (index, item, list) {
+      // svg font のx,yはボックスの左下
+      var deg = this.calcDeg(list, index)
+      deg += (item.deg / 2)
+      var pie = Math.PI * deg / 180
+      return Math.sin(pie) * this.maxR / 4 - 20
+    },
+    calcY (index, item, list) {
+      var deg = this.calcDeg(list, index)
+      deg += (item.deg / 2)
+      var pie = Math.PI * deg / 180
+      return -Math.cos(pie) * this.maxR / 4 + 12
+    }
+  },
+  computed: {
+    isActiveData () {
+      switch (this.isActive) {
+        case 0:
+          return this.voted_sex
+        case 1:
+          return this.voted_age
+        case 2:
+          return this.voted_month
+      }
+      return false
     }
   },
   created () {
