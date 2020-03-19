@@ -64,7 +64,7 @@ export default {
     Select (post, option) {
       if (post.voted) {
         this.changeView(post)
-        return
+        // return
       }
       post.selected_num = option.select_num
       this.Submit(post, post.options)
