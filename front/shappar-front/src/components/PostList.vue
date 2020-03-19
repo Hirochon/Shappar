@@ -29,7 +29,9 @@
           <div class="Post__option__answer" v-show="post.view === 0">{{option.select_num + 1 + '. '}}{{option.answer}}</div>
         </div>
       </div>
-      <div class="Post__details" @click="switchDetails(post.post_id)" v-if="post.voted">詳細を見る</div>
+      <div class="Post__details" @click="switchDetails(post.post_id)" v-if="post.voted">
+        <font-awesome-icon icon="chart-line"/>
+      </div>
     </div>
     <PostDetails @switchDetails="switchDetails('')" :post_id="detailsPostId" v-if="isDetailsOpen"/>
   </div>
@@ -319,6 +321,25 @@ $option-height: 40px;
       &.selected{
         background: $color-main;
       }
+    }
+  }
+  &__details{
+    width: 300px;
+    height: 32px;
+    line-height: 32px;
+    margin: 0 auto;
+    margin-top: 12px;
+    text-align: right;
+    border: solid 2px $color-main;
+    padding: 2px 0;
+    background: $color-main;
+    border-radius: 3px;
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 24px;
+      color: white;
+      // color: $color-main;
     }
   }
 }

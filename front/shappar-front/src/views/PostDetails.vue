@@ -1,41 +1,75 @@
 <template>
-  <div class="PostDetails" @click.stop="closeDetails()">
-    <div class="PostDetails__container" id="PostDetails__area">
+  <div class="PostDetails" @click.stop="closeDetails()" @touchmove.prevent.stop @touchstart.stop>
+    <div class="PostDetails__container" id="PostDetails__area" @click.stop>
       <!-- <h2 class="Top__header">
         <div class="Top__close">
           <font-awesome-icon icon="times" @click.stop="closeDetails()"/>
         </div>
       </h2> -->
-      <div class="Pie-chart__area">
-        <svg class="Pie-char__main" :width="maxR" :height="maxR" viewBox="-100 -100 200 200">
-            <path
-              v-for="(item, index) in isActiveData" :key="item.id"
-              :d="pieChartPath(total, item.num, index)"
-              :fill="fillCalc(index)"
-              :style="{transform: 'rotate(' + calcDeg(isActiveData, index) + 'deg)'}"/>
+      <!-- <div class="Pie-chart__area">
+        <svg class="Pie-char__main"
+          :width="maxR" :height="maxR" viewBox="-100 -100 200 200"
+          @click.stop="isActiveText = 1 - isActiveText"
+          >
+          <path
+            v-for="(item, index) in isActiveData" :key="item.id"
+            :d="pieChartPath(total, item.num, index)"
+            :fill="fillCalc(index)"
+            :style="{transform: 'rotate(' + calcDeg(isActiveData, index) + 'deg)'}"/>
+          <g v-show="(item.num / total) > 0.05"
+            v-for="(item, index) in isActiveData" :key="item.id + 'id'">
             <text
-              v-show="item.num > 0"
-              v-for="(item, index) in isActiveData" :key="item.id + 'id'"
+              v-show="isActiveText === 0"
               :x="calcX(index, item, isActiveData)" :y="calcY(index, item, isActiveData)"
+              fill="#444" font-size="14"
               >
-              {{item.id}}
+              <tspan>{{item.id}}</tspan>
+              <tspan :x="calcX(index, item, isActiveData)" :y="calcY(index, item, isActiveData)+14">
+                {{item.num+' 票'}}
+              </tspan>
             </text>
+            <text
+              v-show="isActiveText === 1"
+              :x="calcX(index, item, isActiveData)" :y="calcY(index, item, isActiveData)"
+              fill="#444" font-size="14"
+              >
+              <tspan>{{Math.floor(item.num / total * 100)+'%'}}</tspan>
+              <tspan :x="calcX(index, item, isActiveData)" :y="calcY(index, item, isActiveData)+14">
+                {{'（' + item.num + ' 票）'}}
+              </tspan>
+            </text>
+          </g>
         </svg>
         <div class="Pie-chart__inner"></div>
-      </div>
+      </div> -->
+      <doughnutChart :chartData="isActiveChartData" @click.stop></doughnutChart>
       <div class="PostDetails__switch">
-        <div class="PostDetails__button" @click.stop="isActive = 0" :class="{active: isActive === 0}">性別</div>
-        <div class="PostDetails__button" @click.stop="isActive = 1" :class="{active: isActive === 1}">年齢</div>
-        <div class="PostDetails__button" @click.stop="isActive = 2" :class="{active: isActive === 2}">誕生月</div>
+        <div class="PostDetails__button" @click.stop="isActive = 0" :class="{active: isActive === 0}">
+          <font-awesome-icon icon="venus-mars"/>
+        </div>
+        <div class="PostDetails__button" @click.stop="isActive = 1" :class="{active: isActive === 1}">
+          age
+        </div>
+        <div class="PostDetails__button" @click.stop="isActive = 2" :class="{active: isActive === 2}">
+          <font-awesome-icon icon="birthday-cake"/>
+        </div>
       </div>
+    </div>
+    <div class="PostDetails__button">
+      <font-awesome-icon icon="times" @click.stop="closeDetails()"/>
     </div>
   </div>
 </template>
 
 <script>
 import api from '@/services/api'
+import doughnutChart from '@/components/DoughnutChart.vue'
+// import GlobalMessage from '@/components/GlobalMessage.vue'
 export default {
   name: 'PostDetails',
+  components: {
+    doughnutChart
+  },
   props: {
     post_id: {
       type: String,
@@ -52,7 +86,8 @@ export default {
       width: 0,
       height: 0,
       maxR: 0,
-      isActive: 0
+      isActive: 0,
+      isActiveText: 0
     }
   },
   methods: {
@@ -103,6 +138,21 @@ export default {
               pie: pie
             })
           }
+          this.voted_sex = this.voted_sex.sort((a, b) => {
+            if (a.num < b.num) return 1
+            if (a.num > b.num) return -1
+            return 0
+          })
+          this.voted_age = this.voted_age.sort((a, b) => {
+            if (a.num < b.num) return 1
+            if (a.num > b.num) return -1
+            return 0
+          })
+          this.voted_month = this.voted_month.sort((a, b) => {
+            if (a.num < b.num) return 1
+            if (a.num > b.num) return -1
+            return 0
+          })
         })
     },
     closeDetails () {
@@ -110,32 +160,30 @@ export default {
     },
     fillCalc (index) {
       switch (index) {
-        case 0:
-          return '#ff00ff'
-        case 1:
-          return '#ffff00'
-        case 2:
-          return '#ff0000'
-        case 3:
-          return '#0000ff'
-        case 4:
-          return '#00ffff'
-        case 5:
-          return '#9000ff'
-        case 6:
-          return '#0000ff'
-        case 7:
-          return '#0000ff'
-        case 8:
-          return '#0000ff'
-        case 9:
-          return '#0000ff'
-        case 10:
-          return '#0000ff'
         case 11:
-          return '#0000ff'
-        case 12:
-          return '#0000ff'
+          return '#41BE99'
+        case 10:
+          return '#26A69A'
+        case 9:
+          return '#26C6DA'
+        case 8:
+          return '#29B6F6'
+        case 7:
+          return '#42A5F5'
+        case 6:
+          return '#5C6BC0'
+        case 5:
+          return '#7E57C2'
+        case 4:
+          return '#AB47BC'
+        case 3:
+          return '#EC407A'
+        case 2:
+          return '#ef5350'
+        case 1:
+          return '#FF7043'
+        case 0:
+          return '#FFA726'
       }
     },
     pieChartPath (denom, molecule) {
@@ -172,19 +220,122 @@ export default {
       deg += (item.deg / 2)
       var pie = Math.PI * deg / 180
       return -Math.cos(pie) * this.maxR / 4 + 12
+    },
+    optionsSort (post, options) {
+      post.sort = (post.sort + 1) % 3
+      switch (post.sort) {
+        case 0:
+          return options.sort(function (a, b) {
+            if (a.select_num < b.select_num) return -1
+            if (a.select_num > b.select_num) return 1
+            return 0
+          })
+        case 1:
+          return options.sort(function (a, b) {
+            if (a.votes < b.votes) return 1
+            if (a.votes > b.votes) return -1
+            return 0
+          })
+        case 2:
+          return options.sort(function (a, b) {
+            if (a.votes < b.votes) return -1
+            if (a.votes > b.votes) return 1
+            return 0
+          })
+      }
+    },
+    dataNum (data) {
+      var num = []
+      data.forEach(item => {
+        num.push(item.num)
+      })
+      return num
+    },
+    dataLabels (data) {
+      var labels = []
+      data.forEach(item => {
+        labels.push(item.id)
+      })
+      return labels
     }
   },
   computed: {
     isActiveData () {
       switch (this.isActive) {
         case 0:
-          return this.voted_sex
+          return this.dataNum(this.voted_sex)
         case 1:
-          return this.voted_age
+          return this.dataNum(this.voted_age)
         case 2:
-          return this.voted_month
+          return this.dataNum(this.voted_month)
       }
       return false
+    },
+    isActivelabels () {
+      switch (this.isActive) {
+        case 0:
+          return this.dataLabels(this.voted_sex)
+        case 1:
+          return this.dataLabels(this.voted_age)
+        case 2:
+          return this.dataLabels(this.voted_month)
+      }
+      return false
+    },
+    isActiveChartData () {
+      // return {
+      //   labels: [this.getRandomInt(), this.getRandomInt()],
+      //   datasets: [
+      //     {
+      //       label: 'Data One',
+      //       backgroundColor: '#f87979',
+      //       borderColor: '#f87979',
+      //       data: [this.getRandomInt(), this.getRandomInt()],
+      //       fill: false
+      //     }, {
+      //       label: 'Data Two',
+      //       backgroundColor: '#007979',
+      //       borderColor: '#007979',
+      //       data: [this.getRandomInt(), this.getRandomInt()],
+      //       fill: false
+      //     }
+      //   ]
+      // }
+      return {
+        labels: this.isActivelabels,
+        datasets: [{
+          data: this.isActiveData,
+          backgroundColor: [
+            '#FFA726',
+            '#FF7043',
+            '#ef5350',
+            '#EC407A',
+            '#AB47BC',
+            '#7E57C2',
+            '#5C6BC0',
+            '#42A5F5',
+            '#29B6F6',
+            '#26C6DA',
+            '#26A69A',
+            '#66BB6A'
+          ],
+          borderColor: [
+            '#FFA726',
+            '#FF7043',
+            '#ef5350',
+            '#EC407A',
+            '#AB47BC',
+            '#7E57C2',
+            '#5C6BC0',
+            '#42A5F5',
+            '#29B6F6',
+            '#26C6DA',
+            '#26A69A',
+            '#66BB6A'
+          ],
+          borderWidth: 1
+        }]
+      }
     }
   },
   created () {
@@ -209,30 +360,47 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
   width: 100%;
   height: 100%;
   background: rgba(black, .6);
   z-index: 100;
   overflow: scroll;
   &__container{
-    width: 80%;
+    width: 100%;
     height: 400px;
     // background: white;
   }
   &__switch{
+    margin-top: 24px;
+    padding: 0 16px;
     display: flex;
+    justify-content: space-evenly;
     width: 100%;
-    background: white;
+    // background: white;
+    border-radius: 3px;
+    overflow: hidden;
   }
   &__button{
-    width: 100%;
-    height: 32px;
-    line-height: 32px;
+    cursor: pointer;
+    width: 48px;
+    height: 48px;
+    line-height: 24px;
+    padding: 12px 8px;
+    background: #a1dfcc;
+    border-radius: 3px;
     text-align: center;
-    background: $color-main;
-    opacity: 0.5;
+    font-weight: bold;
+    letter-spacing: -3px;
+    font-size: 24px;
+    // font-family: ;
     &.active{
-      opacity: 1;
+      background: $color-main;
+    }
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 24px;
     }
   }
 }
