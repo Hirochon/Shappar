@@ -19,7 +19,8 @@ import {
   faFileAlt, faTimes, faSortAmountUp, faSortAmountDownAlt,
   faExchangeAlt, faBars, faPlus, faSpinner, faChevronCircleDown,
   faTrashAlt, faCamera, faEdit, faReply, faArrowAltCircleLeft,
-  faEllipsisH, faVenusMars, faBirthdayCake, faChartLine
+  faEllipsisH, faVenusMars, faBirthdayCake, faChartLine, faClipboardCheck,
+  faClipboardList
 } from '@fortawesome/free-solid-svg-icons'
 
 import './registerServiceWorker'
@@ -29,7 +30,8 @@ library.add(
   faFileAlt, faTimes, faSortAmountUp, faSortAmountDownAlt,
   faExchangeAlt, faBars, faPlus, faSpinner, faChevronCircleDown,
   faTrashAlt, faCamera, faEdit, faReply, faArrowAltCircleLeft,
-  faEllipsisH, faVenusMars, faBirthdayCake, faChartLine
+  faEllipsisH, faVenusMars, faBirthdayCake, faChartLine, faClipboardCheck,
+  faClipboardList
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

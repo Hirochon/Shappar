@@ -24,10 +24,10 @@
     </div>
     <div class="PostSwitch" v-if="my_id === traget_id">
       <div class="PostSwitch__button" @click="changeActive(0)" :class="{'active': isActive === 0}">
-        過去の投稿
+        <font-awesome-icon icon="clipboard-list"/>
       </div>
       <div class="PostSwitch__button" @click="changeActive(1)" :class="{'active': isActive === 1}">
-        過去の投票
+        <font-awesome-icon icon="clipboard-check"/>
       </div>
       <div class="PostSwitch__bar" :style="{transform:tabBar}"></div>
     </div>
@@ -231,7 +231,7 @@ export default {
     position: absolute;
     left: calc(50% - 50px);
     top: 140px;
-    background: $color-main;
+    background: white;
     overflow: hidden;
     border: solid 3px white;
     img{
@@ -295,17 +295,20 @@ export default {
   background: white;
   position: relative;
   &__button{
-    // background: #4180d7;
     opacity: 0.5;
     width: 50%;
     height: 48px;
-    line-height: 48px;
-    text-align: center;
+    padding: 12px 0;
     color: $color-main;
     transition: .3s ease-in-out;
     cursor: pointer;
     &.active{
       opacity: 1;
+    }
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 24px;
     }
   }
   &__bar{

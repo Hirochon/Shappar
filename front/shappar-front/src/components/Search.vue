@@ -146,7 +146,7 @@ export default {
     height: 32px;
     padding: 4px;
     border-radius: 50%;
-    background: $color-main;
+    background: white;
     color: white;
     img{
       width: 100%;

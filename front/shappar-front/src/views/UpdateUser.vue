@@ -201,7 +201,7 @@ export default {
     position: absolute;
     left: calc(50% - 50px);
     top: 140px;
-    background: #BFE4E2;
+    background: white;
     overflow: hidden;
     border: solid 3px white;
     img{

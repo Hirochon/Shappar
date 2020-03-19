@@ -72,7 +72,7 @@ export default {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: $color-main;
+    background: white;
     color: white;
     overflow: hidden;
     img{
@@ -133,7 +133,7 @@ export default {
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background: $color-main;
+    background: white;
     color: white;
     overflow: hidden;
     img{
