@@ -1,12 +1,13 @@
 <template>
   <div class="PostList" id="PostList">
-    <div class="Post" v-for="post in posts" :key="post.post_id" :id="post.post_id">
+    <div class="Post" v-for="(post, index) in posts" :key="post.post_id" :id="post.post_id">
       <div class="Post__icon">
         <img :src="post.iconimage" :alt="post.user_id+'_icon'">
       </div>
       <div class="Post__top">
         <div class="Post__total">Total：{{post.total}}</div>
         <div class="Post__buttons" v-show="post.voted">
+          <div class="Post__sort" v-if="post.user_id === $store.state.auth.username" @click="deletePost(post, index)"><font-awesome-icon icon="trash-alt"/></div>
           <div class="Post__sort" v-if="post.voted" @click="optionsSort(post, post.options)">
             <font-awesome-icon icon="list-ol" v-show="post.sort === 0"/>
             <font-awesome-icon icon="sort-amount-up" v-show="post.sort === 1"/>
@@ -20,21 +21,30 @@
       </div>
       <div class="Post__container">
         <div class="Post__option" v-for="option in post.options" :key="option.select_num"
-        @click="Select(post,option);">
+          @click="Select(post,option);"
+          >
           <!-- <div class="Post__option__border" v-show="post.selected_num === option.select_num"></div> -->
           <div class="Post__result__bar" :style="{width: rate(option.votes, post.total) + '%'}" :class="{selected: post.selected_num === option.select_num}"></div>
           <div class="Post__result__num" v-show="post.view === 1">{{option.votes}}</div>
           <div class="Post__option__answer" v-show="post.view === 0">{{option.select_num + 1 + '. '}}{{option.answer}}</div>
         </div>
       </div>
+      <div class="Post__details" @click="switchDetails(post.post_id)" v-if="post.voted">
+        <font-awesome-icon icon="chart-line"/>
+      </div>
     </div>
+    <PostDetails @switchDetails="switchDetails('')" :post_id="detailsPostId" v-if="isDetailsOpen"/>
   </div>
 </template>
 
 <script>
+import PostDetails from '@/views/PostDetails'
 import api from '@/services/api'
 export default {
   name: 'PostList',
+  components: {
+    PostDetails
+  },
   props: {
     posts: {
       type: Array,
@@ -47,7 +57,9 @@ export default {
   },
   data () {
     return {
-      res: null
+      res: null,
+      isDetailsOpen: false,
+      detailsPostId: ''
     }
   },
   methods: {
@@ -106,6 +118,26 @@ export default {
         return a.select_num < b.select_num ? -1 : 1
       })
     },
+    deletePost (post, index) {
+      if (!confirm('この投稿を削除しますか？')) return
+      // 送信前にも確認
+      if (this.$store.state.auth.username !== post.user_id) return
+      // apiにリクエスト
+      api.delete('/api/v1/posts/' + post.post_id + '/')
+        .then((response) => {
+          // 成功したらリストから削除と通知
+          if (response.status === 204) {
+            // console.log('before set message')
+            this.$store.dispatch('message/setInfoMessage', { message: '削除しました' })
+            // indexで削除した投稿だけ配列から除こうとしたが
+            // 自動更新の高さが変わるので一旦リロードする方針に変更する
+            // this.posts.splice(index, 1)
+            this.$emit('reload')
+          }
+        }).catch((error) => {
+          console.log(error)
+        })
+    },
     optionsSort (post, options) {
       post.sort = (post.sort + 1) % 3
       switch (post.sort) {
@@ -128,6 +160,10 @@ export default {
             return 0
           })
       }
+    },
+    switchDetails (id) {
+      this.detailsPostId = id
+      this.isDetailsOpen = !this.isDetailsOpen
     }
   }
 }
@@ -148,6 +184,7 @@ $option-height: 40px;
   background: #fff;
   position: relative;
   box-shadow: 0 0 8px rgba(black, 0.16);
+  transition: .3s ease-in-out;
   &__icon{
     width: $icon-size;
     height: $icon-size;
@@ -192,7 +229,7 @@ $option-height: 40px;
     display: flex;
     justify-content: space-around;
     height: 34px;
-    width: 80px;
+    // width: 80px;
     transition: .3s ease-in-out;
   }
   &__sort{
@@ -284,6 +321,26 @@ $option-height: 40px;
       &.selected{
         background: $color-main;
       }
+    }
+  }
+  &__details{
+    cursor: pointer;
+    max-width: 300px;
+    height: 32px;
+    line-height: 32px;
+    margin: 0 auto;
+    margin-top: 12px;
+    text-align: right;
+    border: solid 2px $color-main;
+    padding: 2px 0;
+    background: $color-main;
+    border-radius: 3px;
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 24px;
+      color: white;
+      // color: $color-main;
     }
   }
 }

@@ -8,10 +8,10 @@
     </form>
     <div class="Search__button">
       <font-awesome-icon icon="ellipsis-h" @click="isMenuOpen = !isMenuOpen"/>
-      <div class="Search__menu" :class="{on: isMenuOpen}">
+      <!-- <div class="Search__menu" :class="{on: isMenuOpen}">
         <div class="Search__menu__item"><router-link to="/settings">設定</router-link></div>
         <div class="Search__menu__item logout" @click="logout()">ログアウト</div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
