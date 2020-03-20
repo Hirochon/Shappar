@@ -24,7 +24,7 @@ class TestPostCreateAPIView(APITestCase):
             born_at='1998-08-10',
         )
 
-    def test_post_create_success(self):
+    def test_post_create_options_2_success(self):
         """投稿モデルの登録APIへのPOSTリクエスト(正常系)"""
 
         # ログイン(JWT認証)
@@ -68,6 +68,58 @@ class TestPostCreateAPIView(APITestCase):
         expected_json_dict = {}
 
         self.assertJSONEqual(response.content, expected_json_dict)
+
+    
+    def test_post_create_options_10_success(self):
+        """投稿モデルの登録APIへのPOSTリクエスト(正常系)"""
+
+        # ログイン(JWT認証)
+        token = str(RefreshToken.for_user(self.user).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        # APIリクエストを実行
+        params = {
+            "question":"あなたの推しメンは？",
+            "options":[{
+                "select_num":1,
+                "answer":"齋藤飛鳥"
+            },{
+                "select_num":2,
+                "answer":"北野日奈子"
+            },{
+                "select_num":3,
+                "answer":"柿崎芽実"
+            },{
+                "select_num":4,
+                "answer":"金村美玖"
+            },{
+                "select_num":5,
+                "answer":"星野みなみ"
+            },{
+                "select_num":6,
+                "answer":"東村芽依"
+            },{
+                "select_num":7,
+                "answer":"河田陽菜"
+            },{
+                "select_num":8,
+                "answer":"山下美月"
+            },{
+                "select_num":9,
+                "answer":"与田祐希"
+            },{
+                "select_num":10,
+                "answer":"渡辺みりあ"
+            }]
+        }
+        response = self.client.post(self.TARGET_URL, params, format='json')
+
+        self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(response.status_code, 201)
+
+        expected_json_dict = {}
+        self.assertJSONEqual(response.content, expected_json_dict)
+
 
     def test_post_create_unauthorized(self):
         """投稿モデルの登録APIへのPOSTリクエスト(異常系:リクエストのヘッダーにトークンが乗っていない時)"""
