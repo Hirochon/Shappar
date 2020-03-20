@@ -42,8 +42,7 @@ commands:
         steps:
             - run:
                 name: Start pip install
-                command: |
-                    pip install -r requirements.txt
+                command: pip install -r requirements.txt
     save_python_package:
         description: "PipInstallしたpackage群をキャッシュする"
         steps:
@@ -61,6 +60,12 @@ commands:
                 command: |
                     python3 manage.py makemigrations --settings=config.settings.circleci
                     python3 manage.py migrate --settings=config.settings.circleci
+    run_test:
+        description: "テストを実行"
+        steps:
+            - run:
+                name: Start running test
+                command: python3 manage.py test --settings=config.settings.circleci
 
 jobs:
     shappar-build-test:
@@ -72,10 +77,11 @@ jobs:
             - run_pip_install
             - save_python_package
             - db_migrations
+            - run_test
 
 workflows:
     version: 2
-    shappar-flow:
+    test:
         jobs:
             - shappar-build-test:
                 filters:
