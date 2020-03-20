@@ -20,18 +20,18 @@
         </div>
         <draggable v-model="options" handle=".New__option__handle" @touchmove.prevent.stop>
           <transition-group name="option">
-            <div class="New__options" v-for="(option, index) in options" :key="option.id">
-              <div class="New__option__container" :id="'option_'+option.id">
-                <textarea class="New__option" cols="30" rows="3" v-model="option.answer" :placeholder="index+1"
+            <div class="New__option__container" v-for="(option, index) in options" :key="option.id">
+              <div class="New__option__wrapper" :id="'option_'+option.id">
+                <textarea class="New__option__text" cols="30" rows="3" v-model="option.answer" :placeholder="index+1"
                   @touchstart="delTouchStart(index)"
                   @touchmove="delTouchMove(option.id)"
                   @touchend.stop="delTouchEnd(option.id)"
                   @input="answerValidate(option)"
-                  ></textarea>
+                  >
+                </textarea>
                 <div class="New__option__handle"><font-awesome-icon icon="bars"/></div>
+                <div class="New__option__num" :class="{hasError:!option.isValid}">{{option.length}}/40</div>
               </div>
-              <div class="New__option__num" :class="{hasError:!option.isValid}">{{option.length}}/40</div>
-              <!-- <div class="New__option__delete"></div> -->
               <div class="New__delete__behind" :class="{on:deleteConfig.trigger}"><font-awesome-icon icon="trash-alt"/></div>
             </div>
           </transition-group>
@@ -41,7 +41,7 @@
             <font-awesome-icon icon="plus"/>
           </div>
           <div class="Buttons__submit" @click.stop="servePost" :class="{hasError:!postValidate}">
-            サーブ
+            <font-awesome-icon icon="paper-plane"/>
           </div>
         </div>
       </div>
@@ -72,15 +72,15 @@ export default {
       question: {
         text: '',
         length: 0,
-        isValid: false
+        isValid: true
       },
       draggable_options: {
         animation: 200
       },
       count: 2,
       options: [
-        { id: 0, answer: '', length: 0, isValid: false },
-        { id: 1, answer: '', length: 0, isValid: false }
+        { id: 0, answer: '', length: 0, isValid: true },
+        { id: 1, answer: '', length: 0, isValid: true }
       ],
       validPattern: {
         question: /\d/,
@@ -102,7 +102,7 @@ export default {
           id: this.count++,
           answer: '',
           length: 0,
-          isValid: false
+          isValid: true
         })
       } else {
         alert('これ以上作成できません')
@@ -147,16 +147,20 @@ export default {
     servePost () {
       // console.log('servePost')
       if (!this.postValidate) return
-      for (let i = 0; i < this.options.length; i++) {
-        this.options[i].select_num = i
-        delete this.options[i].id
-        delete this.options[i].length
-        delete this.options[i].isValid
+      var serveOptions = []
+      var count = 0
+      for (let item of this.options) {
+        if (item.answer === '') continue
+        item.select_num = count++
+        delete item.id
+        delete item.length
+        delete item.isValid
+        serveOptions.push(item)
       }
       api.post('/api/v1/posts/', {
         unique_id: this.unique_id,
         question: this.question.text,
-        options: this.options
+        options: serveOptions
       })
         .then((response) => {
           if (response.status === 201) alert('投稿完了！')
@@ -172,22 +176,26 @@ export default {
           }
           this.$store.dispatch('message/setErrorMessage', { message: errMessage })
         })
-      this.question = ''
+      this.question = {
+        text: '',
+        length: 0,
+        isValid: true
+      }
       this.count = 2
       this.options = [
-        { id: 0, answer: '', length: 0, isInvalid: false },
-        { id: 1, answer: '', length: 0, isInvalid: false }
+        { id: 0, answer: '', length: 0, isValid: true },
+        { id: 1, answer: '', length: 0, isValid: true }
       ]
     },
     questionValidate () {
       var question = this.question
       question.length = question.text.length
-      question.isValid = (question.length > 0 && question.length <= 150)
+      question.isValid = question.length <= 150
       return question.isValid
     },
     answerValidate (option) {
       option.length = option.answer.length
-      option.isValid = (option.length > 0 && option.length <= 40)
+      option.isValid = option.length <= 40
       return option.isValid
     },
     openNew () {
@@ -203,6 +211,7 @@ export default {
     },
     closeNew () {
       this.$emit('switchNew')
+      if (this.isEmpty()) return localStorage.removeItem('post')
       if (confirm('下書きを保存しますか？')) {
         var post = {
           question: this.question,
@@ -216,34 +225,46 @@ export default {
       this.question = {
         text: '',
         length: 0,
-        isValid: false
+        isValid: true
       }
       this.options = [
-        { id: 0, answer: '', length: 0, isValid: false },
-        { id: 1, answer: '', length: 0, isValid: false }
+        { id: 0, answer: '', length: 0, isValid: true },
+        { id: 1, answer: '', length: 0, isValid: true }
       ]
+    },
+    isEmpty () {
+      if (this.question.text !== '') return false
+      for (let item of this.options) {
+        if (item.answer !== '') return false
+      }
+      return true
     }
   },
   computed: {
     postValidate () {
+      var count = 0
       if (!this.question.isValid) return false
+      if (this.question.text === '') return false
       for (let item of this.options) {
-        if (!item.isValid) return false
+        if (item.answer !== '' && item.isValid) count++
       }
-      // console.log('all clear')
+      if (count < 2) return false
       return true
     }
   },
   created: function () {
     this.unique_id = this.$store.state.auth.unique_id
     this.user_id = this.$store.state.auth.username
+    this.question.isValid = this.questionValidate()
+    this.options.forEach(item => {
+      item.isValid = this.answerValidate(item)
+    })
   }
 }
 </script>
 
 <style lang="scss">
 @import '@/assets/common.scss';
-$delete-width: 24px;
 .New{
   position: absolute;
   width: 100%;
@@ -290,101 +311,81 @@ $delete-width: 24px;
     }
   }
   &__option{
-    // margin-bottom: 16px;
-    padding: 8px 16px;
-    box-sizing: border-box;
-    width: calc(100% - 40px);
-    height: 64px;
-    line-height: 24px;
-    background: #fff;
-    resize: none;
-    // border-radius: 8px 0 0 8px;
-    border-bottom: solid 1px #eee;
+    &__container{
+      position: relative;
+      display: flex;
+      border-bottom: solid 1px #eee;
+      height: 96px;
+    }
+    &__wrapper{
+      width: 100%;
+      display: flex;
+      background: white;
+    }
+    &__text{
+      padding: 0 16px;
+      box-sizing: border-box;
+      width: calc(100% - 40px);
+      height: 64px;
+      line-height: 24px;
+      background: #fff;
+      resize: none;
+      overflow: hidden;
+    }
+    &__handle{
+      width: 40px;
+      min-height:96px;
+      padding: 42px 0;
+      border-bottom: solid 1px #eee;
+      color: black;
+      background: #ccc;
+      box-sizing: border-box;
+      svg{
+        display: block;
+        margin: 0 auto;
+        font-size: 14px;
+      }
+    }
     &__num{
       position: absolute;
-      bottom: 8px;
+      bottom: 4px;
       right: 48px;
       width: 80px;
       height: 24px;
       line-height: 24px;
       font-size: 14px;
-      border-radius: 12px;
-      background: $color-main;
-      color:#fff;
+      // border-radius: 12px;
+      // background: $color-main;
+      color:$color-main;
       text-align: center;
       &.hasError{
-        background: red;
+        color: red;
       }
     }
-  }
-  &__options{
-    position: relative;
-  }
-  &__option__container{
-    display: flex;
-  }
-  &__delete__button{
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    width: $delete-width;
-    height: $delete-width;
-    line-height: $delete-width;
-    font-size: 14px;
-    border-radius: 50%;
-    color: white;
-    text-align: center;
-    background: red;
-    z-index: 10;
   }
   &__delete__behind{
     position: absolute;
     top: 0;
     right: 0;
     width: 100%;
-    height: 64px;
-    padding: 26px 0;
+    height: 96px;
+    padding: 42px 0;
     padding-left: calc(100% - 40px);
     background: red;
     z-index: -1;
     color: white;
+    border-bottom: solid 1px #eee;
     svg{
       display: block;
       margin: 0 auto;
       font-size: 12px;
     }
     &.on{
-      padding: 22px 0;
+      padding: 38px 0;
       padding-left: calc(100% - 40px);
       svg{
         font-size: 20px;
       }
-    }
-  }
-  &__option__index{
-    position: absolute;
-    top: calc(50% - 24px);
-    left: -12px;
-    width: $delete-width;
-    height: $delete-width;
-    line-height: $delete-width;
-    font-size: 14px;
-    border-radius: 50%;
-    color: white;
-    text-align: center;
-    background: $color-main;
-  }
-  &__option__handle{
-    width: 40px;
-    height: 64px;
-    padding: 25px 0;
-    border-bottom: solid 1px #eee;
-    color: black;
-    background: #ccc;
-    svg{
-      display: block;
-      margin: 0 auto;
-      font-size: 14px;
     }
   }
 }
@@ -439,9 +440,9 @@ $delete-width: 24px;
       }
     }
     &__options{
-      width: $delete-width;
-      height: $delete-width;
-      line-height: $delete-width;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
       font-size: 14px;
       border-radius: 50%;
       color: white;
@@ -466,23 +467,17 @@ $delete-width: 24px;
 }
 .Buttons{
   width: 100%;
-  position: fixed;
   display: flex;
   justify-content: space-between;
-  bottom:0;
-  left: 0;
   z-index: 100;
   box-shadow: 0px -1px 6px 1px rgba(0,0,0,0.2);
   background: white;
   &__add-option{
-    position: sticky;
-    top: 8px;
     width: 100%;
     height: 48px;
     padding: 16px;
     color: white;
     background: $color-sub;
-    z-index: 100;
     svg{
       display: block;
       margin: 0 auto;
@@ -492,12 +487,16 @@ $delete-width: 24px;
   &__submit{
     width: 100%;
     height: 48px;
-    line-height: 48px;
+    padding: 16px;
     color: white;
-    text-align: center;
     background: $color-main;
     &.hasError{
       opacity: 0.5;
+    }
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 16px;
     }
   }
 }
