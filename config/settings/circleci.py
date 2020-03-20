@@ -123,14 +123,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-STATIC_URL = '/static/'
+STATIC_URL = 'https://%s/static/' % env('AWS_S3_CUSTOM_DOMAIN')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = 'https://%s/static/' % env('AWS_S3_CUSTOM_DOMAIN')
 
 
 # Media Files
 
-MEDIA_URL = '/media/'
+MEDIA_URL = 'https://%s/media/' % env('AWS_S3_CUSTOM_DOMAIN')
 MEDIA_ROOT = 'https://%s/media/' % env('AWS_S3_CUSTOM_DOMAIN')
 
 ###########################
