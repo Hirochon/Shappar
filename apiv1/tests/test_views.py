@@ -4,6 +4,83 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.contrib.auth import get_user_model
 from apiv1.models import Poll, Post, Option
+from config.settings import local
+
+class TestMypageAPIView(APITestCase):
+    """MypageAPIViewのテストクラス"""
+
+    TARGET_URL_WITH_PK = '/api/v1/users/{}/'
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user1 = get_user_model().objects.create_user(
+            email='user1@example.com',
+            username='user1',
+            password='secret',
+            usernonamae='サンプル1',
+            sex='0',
+            age=21,
+            born_at='1998-08-10',
+        )
+        cls.user2 = get_user_model().objects.create_user(
+            email='user2@example.com',
+            username='user2',
+            password='secret',
+            usernonamae='サンプル2',
+            sex='1',
+            age=19,
+            born_at='2001-12-02',
+        )
+    
+    def test_get_own_mypage_success(self):
+        """ユーザーモデルの詳細取得APIへのGETリクエスト(正常系)"""
+
+        # ログイン(JWT認証)
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        # APIリクエストを実行
+        response = self.client.get(self.TARGET_URL_WITH_PK.format('user1'))
+
+        # ユーザモデルを取得
+        user1 = get_user_model().objects.get(username='user1')
+        # データベースの状態を検証
+        self.assertEqual(get_user_model().objects.count(), 2)
+        # レスポンスの内容を検証
+        self.assertEqual(response.status_code, 200)
+        expected_json_dict = {
+            'user_id':user1.username,
+            'name':user1.usernonamae,
+            'introduction':user1.introduction,
+            'iconimage':local.MEDIA_ROOT + str(user1.iconimage),
+            'homeimage':local.MEDIA_ROOT + str(user1.homeimage),
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_patch_own_mypage_success(self):
+        """ユーザーモデルの一部更新APIへのPATCHリクエスト(正常系)"""
+
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        params = {
+            'name':'サンプルさん',
+            'introduction':'どーも。サンプルさんだよ〜！'
+        }
+        response = self.client.patch(self.TARGET_URL_WITH_PK.format('user1'), params, format='json')
+
+        user1 = get_user_model().objects.get(username='user1')
+        self.assertEqual(get_user_model().objects.count(), 2)
+        self.assertEqual(response.status_code, 200)
+        expected_json_dict = {
+            'user_id':user1.username,
+            'name':user1.usernonamae,
+            'introduction':user1.introduction,
+            'iconimage':local.MEDIA_ROOT + str(user1.iconimage),
+            'homeimage':local.MEDIA_ROOT + str(user1.homeimage),
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
 
 
 class TestPostCreateAPIView(APITestCase):
@@ -69,7 +146,6 @@ class TestPostCreateAPIView(APITestCase):
 
         self.assertJSONEqual(response.content, expected_json_dict)
 
-    
     def test_post_create_options_10_success(self):
         """投稿モデルの登録APIへのPOSTリクエスト(正常系)"""
 
@@ -120,7 +196,6 @@ class TestPostCreateAPIView(APITestCase):
         expected_json_dict = {}
         self.assertJSONEqual(response.content, expected_json_dict)
 
-
     def test_post_create_unauthorized(self):
         """投稿モデルの登録APIへのPOSTリクエスト(異常系:リクエストのヘッダーにトークンが乗っていない時)"""
 
@@ -146,7 +221,6 @@ class TestPostCreateAPIView(APITestCase):
             "detail": "認証情報が含まれていません。"
         }
         self.assertJSONEqual(response.content, expected_json_dict)
-
     
     def test_post_create_options_1_bad_request(self):
         """投稿モデルの登録APIへのPOSTリクエスト(異常系:リクエストのoptionsリストが2個未満の時)"""
