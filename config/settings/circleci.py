@@ -127,16 +127,16 @@ USE_TZ = True
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # STATIC_ROOT = 'https://d3ms402csqm2a0.cloudfront.net/static/'
 
-MEDIA_URL = 'https://%s/media/' % AWS_S3_CUSTOM_DOMAIN
-MEDIA_ROOT = 'https://%s/media/' % AWS_S3_CUSTOM_DOMAIN
+MEDIA_URL = 'https://%s/media/' % env('AWS_S3_CUSTOM_DOMAIN')
+MEDIA_ROOT = 'https://%s/media/' % env('AWS_S3_CUSTOM_DOMAIN')
 
 # Media Files
 
 # # MEDIA_URL = 'https://d3ms402csqm2a0.cloudfront.net/media/'
 # MEDIA_ROOT = 'https://d3ms402csqm2a0.cloudfront.net/media/'
 
-MEDIA_URL = 'https://%s/media/' % AWS_S3_CUSTOM_DOMAIN
-MEDIA_ROOT = 'https://%s/media/' % AWS_S3_CUSTOM_DOMAIN
+MEDIA_URL = 'https://%s/media/' % env('AWS_S3_CUSTOM_DOMAIN')
+MEDIA_ROOT = 'https://%s/media/' % env('AWS_S3_CUSTOM_DOMAIN')
 
 ###########################
 # Authentication(allauth) #
