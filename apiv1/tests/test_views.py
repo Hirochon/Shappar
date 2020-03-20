@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from apiv1.models import Poll, Post, Option
 from config.settings import local
 
+# (正常系)2methods,(異常系)4methods,(合計)6methods.
 class TestMypageAPIView(APITestCase):
     """MypageAPIViewのテストクラス"""
 
@@ -82,7 +83,75 @@ class TestMypageAPIView(APITestCase):
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
+    def test_get_mypage_unauthorized(self):
+        """ユーザーモデルの詳細取得APIへのGETリクエスト(異常系:リクエストのヘッダーにトークンが乗っていない時)"""
 
+        # あえてJWT認証によるログインをしない。
+        # APIリクエストを実行
+        response = self.client.get(self.TARGET_URL_WITH_PK.format('user1'))
+
+        # レスポンスの内容を検証
+        self.assertEqual(response.status_code, 401)
+        expected_json_dict = {
+            "detail": "認証情報が含まれていません。"
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_patch_other_mypage_unauthorized(self):
+        """ユーザーモデルの一部更新APIへのPATCHリクエスト(異常系:リクエストしたユーザーとエンドポイントのユーザーが異なる時)"""
+        
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        params = {
+            'name':'サンプルさん',
+            'introduction':'どーも。サンプルさんだよ〜！'
+        }
+        # JWT認証とは異なるユーザーIDを代入
+        response = self.client.patch(self.TARGET_URL_WITH_PK.format('user2'), params, format='json')
+
+        self.assertEqual(response.status_code, 401)
+        expected_json_dict = {
+            "detail":"権限がありません。"
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_get_own_mypage_not_found(self):
+        """ユーザーモデルの詳細取得APIへのGETリクエスト(異常系:エンドポイントのユーザーIDが存在しない時)"""
+
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        # 存在しないユーザーIDを代入
+        response = self.client.get(self.TARGET_URL_WITH_PK.format('user3'))
+
+        self.assertEqual(response.status_code, 404)
+        expected_json_dict = {
+            "detail": "見つかりませんでした。"
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_patch_own_mypage_not_found(self):
+        """ユーザーモデルの詳細取得APIへのPATCHリクエスト(異常系:エンドポイントのユーザーIDが存在しない時)"""
+
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        params = {
+            'name':'サンプルさん',
+            'introduction':'どーも。サンプルさんだよ〜！'
+        }
+        # 存在しないユーザーIDを代入
+        response = self.client.patch(self.TARGET_URL_WITH_PK.format('user3'), params, format='json')
+
+        self.assertEqual(response.status_code, 404)
+        expected_json_dict = {
+            "detail": "見つかりませんでした。"
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+
+# (正常系)2methods,(異常系)3methods,(合計)5methods
 class TestPostCreateAPIView(APITestCase):
     """PostCreateAPIViewのテストクラス"""
 
@@ -250,11 +319,9 @@ class TestPostCreateAPIView(APITestCase):
     def test_post_create_options_11_bad_request(self):
         """投稿モデルの登録APIへのPOSTリクエスト(異常系:リクエストのoptionsリストが10個以下ではなかった時)"""
 
-        # ログイン(JWT認証)
         token = str(RefreshToken.for_user(self.user).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
-        # APIリクエストを実行
         params = {
             "question":"あなたの推しメンは？",
             "options":[{
