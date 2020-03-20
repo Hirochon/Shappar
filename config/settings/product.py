@@ -7,7 +7,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 
 # 環境変数を設定
 env = environ.Env(DEBUG=(bool,False),ALLOWED_HOSTS=(list,[]))
-env.read_env(os.path.join(BASE_DIR,'.env'))
 
 SECRET_KEY = env('SECRET_KEY')
 
