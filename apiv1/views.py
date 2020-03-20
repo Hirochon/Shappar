@@ -33,31 +33,39 @@ class MypageAPIView(views.APIView):
 
         mypage = get_object_or_404(get_user_model(), username=pk)
         serializer = MypageSerializer(instance=mypage)
-        return Response(serializer.data, status.HTTP_200_OK)
+        response = serializer.data
+        del response['unique_id']
+        return Response(response, status.HTTP_200_OK)
 
     def put(self, request, pk, *args, **kwargs):
         """マイページモデルの更新APIに対応するハンドラメソッド"""
 
+        mypage = get_object_or_404(get_user_model(), username=pk)
+
         if request.user.username != pk:
             return Response_unauthorized()
 
-        mypage = get_object_or_404(get_user_model(), username=pk)
         serializer = MypageSerializer(instance=mypage, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status.HTTP_200_OK)
+        response = serializer.data
+        del response['unique_id']
+        return Response(response, status.HTTP_200_OK)
 
     def patch(self, request, pk, *args, **kwargs):
         """マイページモデルの一部更新APIに対応するハンドラメソッド"""
 
+        mypage = get_object_or_404(get_user_model(), username=pk)
+
         if request.user.username != pk:
             return Response_unauthorized()
 
-        mypage = get_object_or_404(get_user_model(), username=pk)
         serializer = MypageSerializer(instance=mypage, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status.HTTP_200_OK)
+        response = serializer.data
+        del response['unique_id']
+        return Response(response, status.HTTP_200_OK)
 
 
 class MypagePostedListAPIView(views.APIView):

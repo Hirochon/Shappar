@@ -1,11 +1,14 @@
 import os
 from datetime import timedelta
+import environ
+
+env = environ.Env(DEBUG=(bool,False),ALLOWED_HOSTS=(list,[]))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 SECRET_KEY = 'ts*b*i0^-8+m@%6151^ko6=a6o0s7om^!*#1)$^fc0fehnj*m2'
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 
@@ -120,15 +123,15 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-STATIC_URL = '/static/'
+STATIC_URL = 'https://%s/static/' % env('AWS_S3_CUSTOM_DOMAIN')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = 'https://d3ms402csqm2a0.cloudfront.net/static/'
+STATIC_ROOT = 'https://%s/static/' % env('AWS_S3_CUSTOM_DOMAIN')
+
 
 # Media Files
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = 'https://d3ms402csqm2a0.cloudfront.net/media/'
-
+MEDIA_URL = 'https://%s/media/' % env('AWS_S3_CUSTOM_DOMAIN')
+MEDIA_ROOT = 'https://%s/media/' % env('AWS_S3_CUSTOM_DOMAIN')
 
 ###########################
 # Authentication(allauth) #
