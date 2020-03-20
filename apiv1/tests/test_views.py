@@ -54,8 +54,8 @@ class TestMypageAPIView(APITestCase):
             'user_id':user1.username,
             'name':user1.usernonamae,
             'introduction':user1.introduction,
-            'iconimage':circleci.MEDIA_ROOT + str(user1.iconimage),
-            'homeimage':circleci.MEDIA_ROOT + str(user1.homeimage),
+            'iconimage':circleci.MEDIA_URL + str(user1.iconimage),
+            'homeimage':circleci.MEDIA_URL + str(user1.homeimage),
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -78,8 +78,8 @@ class TestMypageAPIView(APITestCase):
             'user_id':user1.username,
             'name':user1.usernonamae,
             'introduction':user1.introduction,
-            'iconimage':circleci.MEDIA_ROOT + str(user1.iconimage),
-            'homeimage':circleci.MEDIA_ROOT + str(user1.homeimage),
+            'iconimage':circleci.MEDIA_URL + str(user1.iconimage),
+            'homeimage':circleci.MEDIA_URL + str(user1.homeimage),
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
