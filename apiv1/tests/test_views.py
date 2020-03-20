@@ -4,6 +4,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.contrib.auth import get_user_model
 from apiv1.models import Poll, Post, Option
+from config.settings import circleci
 
 # (正常系)2methods,(異常系)4methods,(合計)6methods.
 class TestMypageAPIView(APITestCase):
@@ -53,8 +54,8 @@ class TestMypageAPIView(APITestCase):
             'user_id':user1.username,
             'name':user1.usernonamae,
             'introduction':user1.introduction,
-            'iconimage':'https://d3ms402csqm2a0.cloudfront.net/media/' + str(user1.iconimage),
-            'homeimage':'https://d3ms402csqm2a0.cloudfront.net/media/' + str(user1.homeimage),
+            'iconimage':circleci.MEDIA_ROOT + str(user1.iconimage),
+            'homeimage':circleci.MEDIA_ROOT + str(user1.homeimage),
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -77,8 +78,8 @@ class TestMypageAPIView(APITestCase):
             'user_id':user1.username,
             'name':user1.usernonamae,
             'introduction':user1.introduction,
-            'iconimage':'https://d3ms402csqm2a0.cloudfront.net/media/' + str(user1.iconimage),
-            'homeimage':'https://d3ms402csqm2a0.cloudfront.net/media/' + str(user1.homeimage),
+            'iconimage':circleci.MEDIA_ROOT + str(user1.iconimage),
+            'homeimage':circleci.MEDIA_ROOT + str(user1.homeimage),
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
