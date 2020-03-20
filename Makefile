@@ -17,3 +17,6 @@ startapp:
 
 collectstatic:
 	docker-compose run --rm shappar-back python3 manage.py collectstatic --noinput --settings=config.settings.local
+
+test:
+	docker-compose run --rm shappar-back python3 manage.py test --settings=config.settings.local

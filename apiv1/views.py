@@ -185,11 +185,15 @@ class PostCreateAPIView(views.APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        for datas in serializer.data['options']:
-            del datas['id']
-            del datas['share_id']
+        # response = serializer.data
+        # del response['user']
+        # del response['share_id']
 
-        return Response(serializer.data, status.HTTP_201_CREATED)
+        # for datas in response['options']:
+        #     del datas['id']
+        #     del datas['share_id']
+
+        return Response({}, status.HTTP_201_CREATED)
 
 
 class PostListAPIView(views.APIView):
