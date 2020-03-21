@@ -455,3 +455,41 @@ class TestPollCreateAPIView(APITestCase):
             'selected_num':Poll.objects.get().option.select_num
         }
         self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_post_poll_other_selectnum_not_found(self):
+        """投票モデルの登録APIへのPOSTリクエスト(異常系:他人の投稿に投票したが選択肢が存在しない時)"""
+
+        # 投稿用のユーザーがログイン
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        params = {
+            'question':'あなたの推しメンは？',
+            'options':[{
+                'select_num':0,
+                'answer':'齋藤飛鳥'
+            },{
+                'select_num':1,
+                'answer':'北野日奈子'
+            }]
+        }
+        self.client.post('/api/v1/posts/', params, format='json')
+        
+        token = str(RefreshToken.for_user(self.user2).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        post = Post.objects.get()
+        params = {
+            'option':{
+                'select_num':2
+            }
+        }
+        response = self.client.post(self.TARGET_URL_WITH_PK.format(post.id), params, format='json')
+
+        self.assertEqual(Poll.objects.count(), 0)
+        self.assertEqual(response.status_code, 404)
+
+        expected_json_dict = {
+            "detail":"存在しない選択肢です。"
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
