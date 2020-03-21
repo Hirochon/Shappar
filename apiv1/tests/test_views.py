@@ -1,3 +1,4 @@
+import uuid
 from django.utils.timezone import localtime
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -54,8 +55,8 @@ class TestMypageAPIView(APITestCase):
             'user_id':user1.username,
             'name':user1.usernonamae,
             'introduction':user1.introduction,
-            'iconimage':circleci.MEDIA_ROOT + str(user1.iconimage),
-            'homeimage':circleci.MEDIA_ROOT + str(user1.homeimage),
+            'iconimage':circleci.MEDIA_URL + str(user1.iconimage),
+            'homeimage':circleci.MEDIA_URL + str(user1.homeimage),
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -78,8 +79,8 @@ class TestMypageAPIView(APITestCase):
             'user_id':user1.username,
             'name':user1.usernonamae,
             'introduction':user1.introduction,
-            'iconimage':circleci.MEDIA_ROOT + str(user1.iconimage),
-            'homeimage':circleci.MEDIA_ROOT + str(user1.homeimage),
+            'iconimage':circleci.MEDIA_URL + str(user1.iconimage),
+            'homeimage':circleci.MEDIA_URL + str(user1.homeimage),
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -116,7 +117,7 @@ class TestMypageAPIView(APITestCase):
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
-    def test_get_own_mypage_not_found(self):
+    def test_get_mypage_not_found(self):
         """ユーザーモデルの詳細取得APIへのGETリクエスト(異常系:エンドポイントのユーザーIDが存在しない時)"""
 
         token = str(RefreshToken.for_user(self.user1).access_token)
@@ -131,7 +132,7 @@ class TestMypageAPIView(APITestCase):
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
-    def test_patch_own_mypage_not_found(self):
+    def test_patch_mypage_not_found(self):
         """ユーザーモデルの詳細取得APIへのPATCHリクエスト(異常系:エンドポイントのユーザーIDが存在しない時)"""
 
         token = str(RefreshToken.for_user(self.user1).access_token)
@@ -151,7 +152,7 @@ class TestMypageAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
-# (正常系)2methods,(異常系)3methods,(合計)5methods
+# (正常系)2methods,(異常系)3methods,(合計)5methods.
 class TestPostCreateAPIView(APITestCase):
     """PostCreateAPIViewのテストクラス"""
 
@@ -170,7 +171,7 @@ class TestPostCreateAPIView(APITestCase):
             born_at='1998-08-10',
         )
 
-    def test_post_create_options_2_success(self):
+    def test_post_options_2_success(self):
         """投稿モデルの登録APIへのPOSTリクエスト(正常系)"""
 
         # ログイン(JWT認証)
@@ -192,6 +193,7 @@ class TestPostCreateAPIView(APITestCase):
 
         # データベースの状態を検証
         self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(Option.objects.count(), 2)
         # レスポンスの内容を検証
         self.assertEqual(response.status_code, 201)
         
@@ -215,7 +217,7 @@ class TestPostCreateAPIView(APITestCase):
 
         self.assertJSONEqual(response.content, expected_json_dict)
 
-    def test_post_create_options_10_success(self):
+    def test_post_options_10_success(self):
         """投稿モデルの登録APIへのPOSTリクエスト(正常系)"""
 
         # ログイン(JWT認証)
@@ -260,12 +262,13 @@ class TestPostCreateAPIView(APITestCase):
         response = self.client.post(self.TARGET_URL, params, format='json')
 
         self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(Option.objects.count(), 10)
         self.assertEqual(response.status_code, 201)
 
         expected_json_dict = {}
         self.assertJSONEqual(response.content, expected_json_dict)
 
-    def test_post_create_unauthorized(self):
+    def test_post_unauthorized(self):
         """投稿モデルの登録APIへのPOSTリクエスト(異常系:リクエストのヘッダーにトークンが乗っていない時)"""
 
         # あえてJWT認証によるログインをしない。
@@ -284,6 +287,7 @@ class TestPostCreateAPIView(APITestCase):
         response = self.client.post(self.TARGET_URL, params, format='json')
 
         self.assertEqual(Post.objects.count(), 0)
+        self.assertEqual(Option.objects.count(), 0)
         self.assertEqual(response.status_code, 401)
 
         expected_json_dict = {
@@ -291,7 +295,7 @@ class TestPostCreateAPIView(APITestCase):
         }
         self.assertJSONEqual(response.content, expected_json_dict)
     
-    def test_post_create_options_1_bad_request(self):
+    def test_post_options_1_bad_request(self):
         """投稿モデルの登録APIへのPOSTリクエスト(異常系:リクエストのoptionsリストが2個未満の時)"""
 
         # ログイン(JWT認証)
@@ -309,6 +313,7 @@ class TestPostCreateAPIView(APITestCase):
         response = self.client.post(self.TARGET_URL, params, format='json')
 
         self.assertEqual(Post.objects.count(), 0)
+        self.assertEqual(Option.objects.count(), 0)
         self.assertEqual(response.status_code, 400)
 
         expected_json_dict = {
@@ -316,7 +321,7 @@ class TestPostCreateAPIView(APITestCase):
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
-    def test_post_create_options_11_bad_request(self):
+    def test_post_options_11_bad_request(self):
         """投稿モデルの登録APIへのPOSTリクエスト(異常系:リクエストのoptionsリストが10個以下ではなかった時)"""
 
         token = str(RefreshToken.for_user(self.user).access_token)
@@ -362,9 +367,206 @@ class TestPostCreateAPIView(APITestCase):
         response = self.client.post(self.TARGET_URL, params, format='json')
 
         self.assertEqual(Post.objects.count(), 0)
+        self.assertEqual(Option.objects.count(), 0)
         self.assertEqual(response.status_code, 400)
 
         expected_json_dict = {
             "options":[{"answer":"回答は10個以下にしてください。"}]
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+
+# (正常系)1method,(異常系)3methods,(合計)4methods.
+class TestPollCreateAPIView(APITestCase):
+    """PollCreateAPIViewのテストクラス"""
+
+    TARGET_URL_WITH_PK = '/api/v1/posts/{}/polls/'
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user1 = get_user_model().objects.create_user(
+            email='user1@example.com',
+            username='user1',
+            password='secret',
+            usernonamae='サンプル1',
+            sex='0',
+            age=21,
+            born_at='1998-08-10',
+        )
+        cls.user2 = get_user_model().objects.create_user(
+            email='user2@example.com',
+            username='user2',
+            password='secret',
+            usernonamae='サンプル2',
+            sex='1',
+            age=19,
+            born_at='2001-12-02',
+        )
+    
+    def test_post_poll_other_success(self):
+        """投票モデルの登録APIへのPOSTリクエスト(正常系)"""
+
+        # 投稿用のユーザーがログイン
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        params = {
+            'question':'あなたの推しメンは？',
+            'options':[{
+                'select_num':0,
+                'answer':'齋藤飛鳥'
+            },{
+                'select_num':1,
+                'answer':'北野日奈子'
+            }]
+        }
+        self.client.post('/api/v1/posts/', params, format='json')
+
+        # 投票POST用のテストなので下記はコメントアウト
+        # response = self.client.post('/api/v1/posts/', params, format='json')
+        # self.assertEqual(Post.objects.count(), 1)
+        # self.assertEqual(Option.objects.count(), 2)
+        # self.assertEqual(response.status_code, 201)
+
+        # 投票用のユーザーがログイン
+        token = str(RefreshToken.for_user(self.user2).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        post = Post.objects.get()
+        params = {
+            'option':{
+                'select_num':0
+            }
+        }
+        response = self.client.post(self.TARGET_URL_WITH_PK.format(post.id), params, format='json')
+
+        self.assertEqual(Poll.objects.count(), 1)
+        self.assertEqual(response.status_code, 201)
+
+        options = Option.objects.all()
+        options_list = []
+        for option in options:
+            option_dict = {}
+            option_dict['select_num'] = option.select_num
+            option_dict['votes'] = option.votes
+            options_list.append(option_dict)
+        expected_json_dict = {
+            'options':options_list,
+            'selected_num':Poll.objects.get().option.select_num
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_post_unauthorized(self):
+        """投票モデルの登録APIへのPOSTリクエスト(異常系:ヘッダーにトークンがのっていない時)"""
+
+        # 投稿用だけログイン
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        params = {
+            'question':'あなたの推しメンは？',
+            'options':[{
+                'select_num':0,
+                'answer':'齋藤飛鳥'
+            },{
+                'select_num':1,
+                'answer':'北野日奈子'
+            }]
+        }
+        self.client.post('/api/v1/posts/', params, format='json')
+
+        # 認証用のヘッダーを消去する
+        self.client.credentials()
+
+        post = Post.objects.get()
+        params = {
+            'option':{
+                'select_num':0
+            }
+        }
+        response = self.client.post(self.TARGET_URL_WITH_PK.format(post.id), params, format='json')
+
+        self.assertEqual(Poll.objects.count(), 0)
+        self.assertEqual(response.status_code, 401)
+
+        expected_json_dict = {
+            "detail": "認証情報が含まれていません。"
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_post_poll_other_postid_not_found(self):
+        """投票モデルの登録APIへのPOSTリクエスト(異常系:投稿に投票したが投稿IDが存在しない時)"""
+
+        # 投稿用のユーザーがログイン
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        params = {
+            'question':'あなたの推しメンは？',
+            'options':[{
+                'select_num':0,
+                'answer':'齋藤飛鳥'
+            },{
+                'select_num':1,
+                'answer':'北野日奈子'
+            }]
+        }
+        self.client.post('/api/v1/posts/', params, format='json')
+        
+        token = str(RefreshToken.for_user(self.user2).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        changed_pid = str(uuid.uuid4())
+        params = {
+            'option':{
+                'select_num':0
+            }
+        }
+        response = self.client.post(self.TARGET_URL_WITH_PK.format(changed_pid), params, format='json')
+
+        self.assertEqual(Poll.objects.count(), 0)
+        self.assertEqual(response.status_code, 404)
+
+        expected_json_dict = {
+            "detail":"存在しない投稿IDです。"
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_post_poll_other_selectnum_not_found(self):
+        """投票モデルの登録APIへのPOSTリクエスト(異常系:他人の投稿に投票したが選択肢が存在しない時)"""
+
+        # 投稿用のユーザーがログイン
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        params = {
+            'question':'あなたの推しメンは？',
+            'options':[{
+                'select_num':0,
+                'answer':'齋藤飛鳥'
+            },{
+                'select_num':1,
+                'answer':'北野日奈子'
+            }]
+        }
+        self.client.post('/api/v1/posts/', params, format='json')
+        
+        token = str(RefreshToken.for_user(self.user2).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        post = Post.objects.get()
+        params = {
+            'option':{
+                'select_num':2
+            }
+        }
+        response = self.client.post(self.TARGET_URL_WITH_PK.format(post.id), params, format='json')
+
+        self.assertEqual(Poll.objects.count(), 0)
+        self.assertEqual(response.status_code, 404)
+
+        expected_json_dict = {
+            "detail":"存在しない選択肢です。"
         }
         self.assertJSONEqual(response.content, expected_json_dict)

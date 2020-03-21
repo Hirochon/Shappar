@@ -23,7 +23,7 @@ def Response_unauthorized():
     return Response({"detail":"権限がありません。"},status.HTTP_401_UNAUTHORIZED)
 
 def Response_post_notfound():
-    return Response({"detail":"存在しないpost_idです。"},status.HTTP_404_NOT_FOUND)
+    return Response({"detail":"存在しない投稿IDです。"},status.HTTP_404_NOT_FOUND)
 
 class MypageAPIView(views.APIView):
     """マイページ用詳細・更新・一部更新APIクラス"""
@@ -399,19 +399,18 @@ class PollCreateAPIView(views.APIView):
         """投票時の登録APIに対応するハンドラメソッド"""
 
         post = Post.objects.filter(id=pk)
-
         if len(post) == 0:
             return Response_post_notfound()
 
         data = request.data
         data['post'] = post[0].id
-
         data['user'] = request.user.id
         # data['user'] = data['unique_id']
         # del data['unique_id']
-
         data_option = data['option']
         del data['option']
+
+        flag = 0
         options = Option.objects.filter(share_id=post[0].share_id)
         for option in options:
             if option.select_num == data_option['select_num']:
@@ -420,16 +419,22 @@ class PollCreateAPIView(views.APIView):
                 data_option['share_id'] = option.share_id
                 data_option['id'] = data['option'] = option.id
                 data_option['answer'] = option.answer
+                flag += 1
                 break
+
+        # リクエストに存在しない選択肢があった時
+        if flag == 0:
+            return Response({"detail":"存在しない選択肢です。"},status.HTTP_404_NOT_FOUND)
+        
         serializer_option = OptionSerializer(instance=Option.objects.get(id=data_option['id']) ,data=data_option)
         serializer_option.is_valid(raise_exception=True)
         serializer_option.save()
+
         serializer = PollSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        response_share_id = serializer_option.data["share_id"]
-        response_serializer = OptionSerializer(instance=Option.objects.filter(share_id=response_share_id), many=True)
+        response_serializer = OptionSerializer(instance=Option.objects.filter(share_id=serializer_option.data["share_id"]), many=True)
 
         for response_data in response_serializer.data:
             del response_data["answer"]
