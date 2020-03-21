@@ -399,7 +399,6 @@ class PollCreateAPIView(views.APIView):
         """投票時の登録APIに対応するハンドラメソッド"""
 
         post = Post.objects.filter(id=pk)
-
         if len(post) == 0:
             return Response_post_notfound()
 
@@ -413,6 +412,7 @@ class PollCreateAPIView(views.APIView):
         data_option = data['option']
         del data['option']
         options = Option.objects.filter(share_id=post[0].share_id)
+        flag = 0
         for option in options:
             if option.select_num == data_option['select_num']:
                 option.votes += 1
@@ -420,7 +420,10 @@ class PollCreateAPIView(views.APIView):
                 data_option['share_id'] = option.share_id
                 data_option['id'] = data['option'] = option.id
                 data_option['answer'] = option.answer
+                flag += 1
                 break
+        if flag == 0:
+            return Response({"detail":"存在しない選択肢です。"},status.HTTP_404_NOT_FOUND)
         serializer_option = OptionSerializer(instance=Option.objects.get(id=data_option['id']) ,data=data_option)
         serializer_option.is_valid(raise_exception=True)
         serializer_option.save()
