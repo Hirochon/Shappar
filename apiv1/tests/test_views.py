@@ -880,7 +880,6 @@ class TestPostUpdateAPIView(APITestCase):
     def test_get_update_posts_not_found(self):
         """投稿モデルの投票情報更新APIへのGETリクエスト(異常系:投稿に投票したが投稿IDが存在しない時)"""
 
-        # 投稿用のユーザーがログイン
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
@@ -895,9 +894,6 @@ class TestPostUpdateAPIView(APITestCase):
             }]
         }
         self.client.post('/api/v1/posts/', params, format='json')
-        
-        token = str(RefreshToken.for_user(self.user2).access_token)
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
         changed_pid = str(uuid.uuid4())
         response = self.client.get(self.TARGET_URL_WITH_PK.format(changed_pid))
