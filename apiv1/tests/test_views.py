@@ -153,6 +153,100 @@ class TestMypageAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
+class TestMypageVotedListAPIView(APITestCase):
+    """MypageVotedListAPIViewのテストクラス"""
+
+    TARGET_URL_WITH_PK = '/api/v1/users/{}/voted/'
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user1 = get_user_model().objects.create_user(
+            email='user1@example.com',
+            username='user1',
+            password='secret',
+            usernonamae='サンプル1',
+            sex='0',
+            age=21,
+            born_at='1998-08-10',
+        )
+        cls.user2 = get_user_model().objects.create_user(
+            email='user2@example.com',
+            username='user2',
+            password='secret',
+            usernonamae='サンプル2',
+            sex='1',
+            age=19,
+            born_at='2001-12-02',
+        )
+
+    def test_get_own_voted_posts_success(self):
+        """ユーザーモデルの投票済みの投稿一覧取得APIへのGETリクエスト(正常系:ユーザー本人のみ投票一覧を表示する)"""
+
+        # 投稿用ユーザーでログイン→投稿
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        params = {
+            'question':'あなたの推しメンは？',
+            'options':[{
+                'select_num':0,
+                'answer':'齋藤飛鳥'
+            },{
+                'select_num':1,
+                'answer':'北野日奈子'
+            }]
+        }
+        self.client.post('/api/v1/posts/', params, format='json')
+
+        # 投票用ユーザーでログイン→投票
+        token = str(RefreshToken.for_user(self.user2).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        post = Post.objects.get()
+        params = {
+            'option':{
+                'select_num':0
+            }
+        }
+        self.client.post('/api/v1/posts/{}/polls/'.format(post.id), params, format='json')
+
+        response = self.client.get(self.TARGET_URL_WITH_PK.format(self.user2.username))
+        self.assertEqual(response.status_code, 200)
+
+        # 予期されるjsonレスポンスを作成
+        flag = Option.objects.filter(poll_option__user_id=self.user2.id, share_id=post.share_id)
+        if len(flag) > 0:
+            voted = True
+            selected_num = flag[0].select_num
+        else: 
+            voted = False
+        options = Option.objects.filter(share_id=post.share_id)
+        options_list = []
+        for option in options:
+            option_dict = {}
+            option_dict['select_num'] = option.select_num
+            option_dict['answer'] = option.answer
+            option_dict['votes'] = option.votes
+            options_list.append(option_dict)
+        post_created_at = str(post.created_at)
+        hours = timedelta(hours=9)
+        utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
+        created_at = utc_created_at + hours
+        expected_json_dict = {
+            'posts':[{
+                'post_id':str(post.id),
+                'user_id':str(post.user.username),
+                'iconimage':circleci.MEDIA_URL + str(post.user.iconimage),
+                'question':post.question,
+                'created_at':created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                'voted':voted,
+                'selected_num':selected_num,
+                'total':1,
+                'options':options_list
+            }]
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+
 # (正常系)2methods,(異常系)3methods,(合計)5methods.
 class TestPostCreateAPIView(APITestCase):
     """PostCreateAPIViewのテストクラス"""

@@ -125,7 +125,7 @@ class MypageVotedListAPIView(views.APIView):
         """自分の投票取得(一覧)"""
 
         if request.user.username != pk:
-            return Response({}, status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
         sk = get_user_model().objects.get(username=pk).id
 
