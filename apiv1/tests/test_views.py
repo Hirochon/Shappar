@@ -376,6 +376,59 @@ class TestPostCreateAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
+# (正常系)1method,(異常系)2methods,(合計)3methods.
+class PostDeleteAPIView(APITestCase):
+    """PostDetailDeleteAPIViewのテストクラス"""
+
+    TARGET_URL_WITH_PK = '/api/v1/posts/{}/'
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user1 = get_user_model().objects.create_user(
+            email='user1@example.com',
+            username='user1',
+            password='secret',
+            usernonamae='サンプル1',
+            sex='0',
+            age=21,
+            born_at='1998-08-10',
+        )
+        cls.user2 = get_user_model().objects.create_user(
+            email='user2@example.com',
+            username='user2',
+            password='secret',
+            usernonamae='サンプル2',
+            sex='1',
+            age=19,
+            born_at='2001-12-02',
+        )
+
+    def test_delete_posts_success(self):
+        """投稿モデルの削除APIへのDELETEリクエスト(正常系)"""
+
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        params = {
+            'question':'あなたの推しメンは？',
+            'options':[{
+                'select_num':0,
+                'answer':'齋藤飛鳥'
+            },{
+                'select_num':1,
+                'answer':'北野日奈子'
+            }]
+        }
+        self.client.post('/api/v1/posts/', params, format='json')
+
+        post = Post.objects.get()
+        response = self.client.delete(self.TARGET_URL_WITH_PK.format(post.id))
+
+        self.assertEqual(Post.objects.count(), 0)
+        self.assertEqual(response.status_code, 204)
+
+
 # (正常系)1method,(異常系)3methods,(合計)4methods.
 class TestPollCreateAPIView(APITestCase):
     """PollCreateAPIViewのテストクラス"""
