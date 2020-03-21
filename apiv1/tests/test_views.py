@@ -116,7 +116,7 @@ class TestMypageAPIView(APITestCase):
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
-    def test_get_own_mypage_not_found(self):
+    def test_get_mypage_not_found(self):
         """ユーザーモデルの詳細取得APIへのGETリクエスト(異常系:エンドポイントのユーザーIDが存在しない時)"""
 
         token = str(RefreshToken.for_user(self.user1).access_token)
@@ -131,7 +131,7 @@ class TestMypageAPIView(APITestCase):
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
-    def test_patch_own_mypage_not_found(self):
+    def test_patch_mypage_not_found(self):
         """ユーザーモデルの詳細取得APIへのPATCHリクエスト(異常系:エンドポイントのユーザーIDが存在しない時)"""
 
         token = str(RefreshToken.for_user(self.user1).access_token)
@@ -170,7 +170,7 @@ class TestPostCreateAPIView(APITestCase):
             born_at='1998-08-10',
         )
 
-    def test_post_create_options_2_success(self):
+    def test_post_options_2_success(self):
         """投稿モデルの登録APIへのPOSTリクエスト(正常系)"""
 
         # ログイン(JWT認証)
@@ -216,7 +216,7 @@ class TestPostCreateAPIView(APITestCase):
 
         self.assertJSONEqual(response.content, expected_json_dict)
 
-    def test_post_create_options_10_success(self):
+    def test_post_options_10_success(self):
         """投稿モデルの登録APIへのPOSTリクエスト(正常系)"""
 
         # ログイン(JWT認証)
@@ -267,7 +267,7 @@ class TestPostCreateAPIView(APITestCase):
         expected_json_dict = {}
         self.assertJSONEqual(response.content, expected_json_dict)
 
-    def test_post_create_unauthorized(self):
+    def test_post_unauthorized(self):
         """投稿モデルの登録APIへのPOSTリクエスト(異常系:リクエストのヘッダーにトークンが乗っていない時)"""
 
         # あえてJWT認証によるログインをしない。
@@ -294,7 +294,7 @@ class TestPostCreateAPIView(APITestCase):
         }
         self.assertJSONEqual(response.content, expected_json_dict)
     
-    def test_post_create_options_1_bad_request(self):
+    def test_post_options_1_bad_request(self):
         """投稿モデルの登録APIへのPOSTリクエスト(異常系:リクエストのoptionsリストが2個未満の時)"""
 
         # ログイン(JWT認証)
@@ -320,7 +320,7 @@ class TestPostCreateAPIView(APITestCase):
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
-    def test_post_create_options_11_bad_request(self):
+    def test_post_options_11_bad_request(self):
         """投稿モデルの登録APIへのPOSTリクエスト(異常系:リクエストのoptionsリストが10個以下ではなかった時)"""
 
         token = str(RefreshToken.for_user(self.user).access_token)
@@ -402,7 +402,7 @@ class TestPollCreateAPIView(APITestCase):
             born_at='2001-12-02',
         )
     
-    def test_post_create_poll_other_success(self):
+    def test_post_poll_other_success(self):
         """投票モデルの登録APIへのPOSTリクエスト(正常系)"""
 
         # 投稿用のユーザーがログイン
