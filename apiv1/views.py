@@ -404,15 +404,14 @@ class PollCreateAPIView(views.APIView):
 
         data = request.data
         data['post'] = post[0].id
-
         data['user'] = request.user.id
         # data['user'] = data['unique_id']
         # del data['unique_id']
-
         data_option = data['option']
         del data['option']
-        options = Option.objects.filter(share_id=post[0].share_id)
+
         flag = 0
+        options = Option.objects.filter(share_id=post[0].share_id)
         for option in options:
             if option.select_num == data_option['select_num']:
                 option.votes += 1
@@ -422,17 +421,20 @@ class PollCreateAPIView(views.APIView):
                 data_option['answer'] = option.answer
                 flag += 1
                 break
+
+        # リクエストに存在しない選択肢があった時
         if flag == 0:
             return Response({"detail":"存在しない選択肢です。"},status.HTTP_404_NOT_FOUND)
+        
         serializer_option = OptionSerializer(instance=Option.objects.get(id=data_option['id']) ,data=data_option)
         serializer_option.is_valid(raise_exception=True)
         serializer_option.save()
+
         serializer = PollSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        response_share_id = serializer_option.data["share_id"]
-        response_serializer = OptionSerializer(instance=Option.objects.filter(share_id=response_share_id), many=True)
+        response_serializer = OptionSerializer(instance=Option.objects.filter(share_id=serializer_option.data["share_id"]), many=True)
 
         for response_data in response_serializer.data:
             del response_data["answer"]

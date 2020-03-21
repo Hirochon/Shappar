@@ -426,13 +426,12 @@ class TestPollCreateAPIView(APITestCase):
         # self.assertEqual(Post.objects.count(), 1)
         # self.assertEqual(Option.objects.count(), 2)
         # self.assertEqual(response.status_code, 201)
-        
-        post = Post.objects.get()
 
         # 投票用のユーザーがログイン
         token = str(RefreshToken.for_user(self.user2).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
+        post = Post.objects.get()
         params = {
             'option':{
                 'select_num':0
@@ -453,6 +452,44 @@ class TestPollCreateAPIView(APITestCase):
         expected_json_dict = {
             'options':options_list,
             'selected_num':Poll.objects.get().option.select_num
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_post_unauthorized(self):
+        """投票モデルの登録APIへのPOSTリクエスト(異常系:ヘッダーにトークンがのっていない時)"""
+
+        # 投稿用だけログイン
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        params = {
+            'question':'あなたの推しメンは？',
+            'options':[{
+                'select_num':0,
+                'answer':'齋藤飛鳥'
+            },{
+                'select_num':1,
+                'answer':'北野日奈子'
+            }]
+        }
+        self.client.post('/api/v1/posts/', params, format='json')
+
+        # 認証用のヘッダーを消去する
+        self.client.credentials()
+
+        post = Post.objects.get()
+        params = {
+            'option':{
+                'select_num':0
+            }
+        }
+        response = self.client.post(self.TARGET_URL_WITH_PK.format(post.id), params, format='json')
+
+        self.assertEqual(Poll.objects.count(), 0)
+        self.assertEqual(response.status_code, 401)
+
+        expected_json_dict = {
+            "detail": "認証情報が含まれていません。"
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
