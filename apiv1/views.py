@@ -124,19 +124,22 @@ class MypageVotedListAPIView(views.APIView):
     def get(self, request, pk, *args, **kwargs):
         """自分の投票取得(一覧)"""
 
+        user = get_user_model().objects.filter(username=pk)
+        if len(user) == 0:
+            return Response({'detail':'存在しないユーザーIDです'}, status.HTTP_404_NOT_FOUND)
+        user_id = user[0].id
+
         if request.user.username != pk:
             return Response(status=status.HTTP_204_NO_CONTENT)
-
-        sk = get_user_model().objects.get(username=pk).id
 
         # 自身の投票のみフィルタリング
         if 'pid' in request.GET:
             post_basis = Post.objects.get(id=request.GET['pid'])
-            querysets = Post.objects.filter(poll_post__user__id=sk, created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
+            querysets = Post.objects.filter(poll_post__user__id=user_id, created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
         else:
-            querysets = Post.objects.filter(poll_post__user__id=sk).order_by('-created_at')[:10]
+            querysets = Post.objects.filter(poll_post__user__id=user_id).order_by('-created_at')[:10]
 
-        serializer = PostListSerializer(instance=querysets, many=True, pk=sk)
+        serializer = PostListSerializer(instance=querysets, many=True, pk=user_id)
 
         for datas in serializer.data:
             if not datas['voted']:
@@ -151,7 +154,7 @@ class MypageVotedListAPIView(views.APIView):
             else:
                 total = 0
                 for data in datas['options']:
-                    flag = Poll.objects.filter(user_id=sk,option_id=data['id'])
+                    flag = Poll.objects.filter(user_id=user_id,option_id=data['id'])
                     if len(flag) > 0:
                         datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
                     else:

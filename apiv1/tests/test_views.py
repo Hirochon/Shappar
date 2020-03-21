@@ -153,6 +153,7 @@ class TestMypageAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
+# (正常系)2methods,(異常系)2methods,(合計)4methods.
 class TestMypageVotedListAPIView(APITestCase):
     """MypageVotedListAPIViewのテストクラス"""
 
@@ -281,6 +282,33 @@ class TestMypageVotedListAPIView(APITestCase):
 
         response = self.client.get(self.TARGET_URL_WITH_PK.format(self.user2.username))
         self.assertEqual(response.status_code, 204)
+
+    def test_get_voted_posts_unauthorized(self):
+        """ユーザーモデルの投票済みの投稿一覧取得APIへのGETリクエスト(異常系:ヘッダーにトークンがのっていない時)"""
+
+        # あえてヘッダーにトークンを載せない
+
+        response = self.client.get(self.TARGET_URL_WITH_PK.format(self.user2.username))
+        self.assertEqual(response.status_code, 401)
+
+        expected_json_dict = {
+            "detail": "認証情報が含まれていません。"
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_get_voted_posts_not_found(self):
+        """ユーザーモデルの投票済みの投稿一覧取得APIへのGETリクエスト(異常系:リクエストしたエンドポイントのユーザーIDが存在しない時)"""
+
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        response = self.client.get(self.TARGET_URL_WITH_PK.format('user3'))
+        self.assertEqual(response.status_code, 404)
+
+        expected_json_dict = {
+            'detail':'存在しないユーザーIDです'
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
 
 
 # (正常系)2methods,(異常系)3methods,(合計)5methods.
