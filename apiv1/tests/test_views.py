@@ -485,7 +485,7 @@ class TestPostDeleteAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
-# (正常系)3methods,(異常系)methods,(合計)methods.
+# (正常系)3methods,(異常系)2methods,(合計)5methods.
 class TestPostUpdateAPIView(APITestCase):
     """PostUpdateAPIViewのテストクラス"""
 
