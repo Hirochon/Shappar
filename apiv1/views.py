@@ -23,7 +23,7 @@ def Response_unauthorized():
     return Response({"detail":"権限がありません。"},status.HTTP_401_UNAUTHORIZED)
 
 def Response_post_notfound():
-    return Response({"detail":"存在しないpost_idです。"},status.HTTP_404_NOT_FOUND)
+    return Response({"detail":"存在しない投稿IDです。"},status.HTTP_404_NOT_FOUND)
 
 class MypageAPIView(views.APIView):
     """マイページ用詳細・更新・一部更新APIクラス"""

@@ -1,3 +1,4 @@
+import uuid
 from django.utils.timezone import localtime
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -375,6 +376,7 @@ class TestPostCreateAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
+# (正常系)1method,(異常系)3methods,(合計)4methods.
 class TestPollCreateAPIView(APITestCase):
     """PollCreateAPIViewのテストクラス"""
 
@@ -490,6 +492,44 @@ class TestPollCreateAPIView(APITestCase):
 
         expected_json_dict = {
             "detail": "認証情報が含まれていません。"
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_post_poll_other_postid_not_found(self):
+        """投票モデルの登録APIへのPOSTリクエスト(異常系:投稿に投票したが投稿IDが存在しない時)"""
+
+        # 投稿用のユーザーがログイン
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        params = {
+            'question':'あなたの推しメンは？',
+            'options':[{
+                'select_num':0,
+                'answer':'齋藤飛鳥'
+            },{
+                'select_num':1,
+                'answer':'北野日奈子'
+            }]
+        }
+        self.client.post('/api/v1/posts/', params, format='json')
+        
+        token = str(RefreshToken.for_user(self.user2).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        changed_pid = str(uuid.uuid4())
+        params = {
+            'option':{
+                'select_num':0
+            }
+        }
+        response = self.client.post(self.TARGET_URL_WITH_PK.format(changed_pid), params, format='json')
+
+        self.assertEqual(Poll.objects.count(), 0)
+        self.assertEqual(response.status_code, 404)
+
+        expected_json_dict = {
+            "detail":"存在しない投稿IDです。"
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
