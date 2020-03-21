@@ -2,10 +2,10 @@ import os
 from datetime import timedelta
 import environ
 
-env = environ.Env(DEBUG=(bool,False),ALLOWED_HOSTS=(list,[]))
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+env = environ.Env(DEBUG=(bool,False),ALLOWED_HOSTS=(list,[]))
+# env.read_env(os.path.join(BASE_DIR,'.env'))
 
 SECRET_KEY = 'ts*b*i0^-8+m@%6151^ko6=a6o0s7om^!*#1)$^fc0fehnj*m2'
 DEBUG = False
@@ -123,15 +123,17 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-STATIC_URL = 'https://%s/static/' % env('AWS_S3_CUSTOM_DOMAIN')
+AWS_S3_CUSTOM_DOMAIN = env('AWS_S3_CUSTOM_DOMAIN')
+
+STATIC_URL = 'https://%s/static/' % AWS_S3_CUSTOM_DOMAIN
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = 'https://%s/static/' % env('AWS_S3_CUSTOM_DOMAIN')
+STATIC_ROOT = 'https://%s/static/' % AWS_S3_CUSTOM_DOMAIN
 
 
 # Media Files
 
-MEDIA_URL = 'https://%s/media/' % env('AWS_S3_CUSTOM_DOMAIN')
-MEDIA_ROOT = 'https://%s/media/' % env('AWS_S3_CUSTOM_DOMAIN')
+MEDIA_URL = 'https://%s/media/' % AWS_S3_CUSTOM_DOMAIN
+MEDIA_ROOT = 'https://%s/media/' % AWS_S3_CUSTOM_DOMAIN
 
 ###########################
 # Authentication(allauth) #
