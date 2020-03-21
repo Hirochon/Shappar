@@ -192,6 +192,7 @@ class TestPostCreateAPIView(APITestCase):
 
         # データベースの状態を検証
         self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(Option.objects.count(), 2)
         # レスポンスの内容を検証
         self.assertEqual(response.status_code, 201)
         
@@ -260,6 +261,7 @@ class TestPostCreateAPIView(APITestCase):
         response = self.client.post(self.TARGET_URL, params, format='json')
 
         self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(Option.objects.count(), 10)
         self.assertEqual(response.status_code, 201)
 
         expected_json_dict = {}
@@ -284,6 +286,7 @@ class TestPostCreateAPIView(APITestCase):
         response = self.client.post(self.TARGET_URL, params, format='json')
 
         self.assertEqual(Post.objects.count(), 0)
+        self.assertEqual(Option.objects.count(), 0)
         self.assertEqual(response.status_code, 401)
 
         expected_json_dict = {
@@ -309,6 +312,7 @@ class TestPostCreateAPIView(APITestCase):
         response = self.client.post(self.TARGET_URL, params, format='json')
 
         self.assertEqual(Post.objects.count(), 0)
+        self.assertEqual(Option.objects.count(), 0)
         self.assertEqual(response.status_code, 400)
 
         expected_json_dict = {
@@ -362,6 +366,7 @@ class TestPostCreateAPIView(APITestCase):
         response = self.client.post(self.TARGET_URL, params, format='json')
 
         self.assertEqual(Post.objects.count(), 0)
+        self.assertEqual(Option.objects.count(), 0)
         self.assertEqual(response.status_code, 400)
 
         expected_json_dict = {
@@ -414,10 +419,14 @@ class TestPollCreateAPIView(APITestCase):
                 'answer':'北野日奈子'
             }]
         }
-        response = self.client.post('/api/v1/posts/', params, format='json')
-        self.assertEqual(Post.objects.count(), 1)
-        self.assertEqual(Option.objects.count(), 2)
-        self.assertEqual(response.status_code, 201)
+        self.client.post('/api/v1/posts/', params, format='json')
+
+        # 投票POST用のテストなので下記はコメントアウト
+        # response = self.client.post('/api/v1/posts/', params, format='json')
+        # self.assertEqual(Post.objects.count(), 1)
+        # self.assertEqual(Option.objects.count(), 2)
+        # self.assertEqual(response.status_code, 201)
+        
         post = Post.objects.get()
 
         # 投票用のユーザーがログイン
