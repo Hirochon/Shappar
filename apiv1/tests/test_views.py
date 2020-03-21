@@ -181,7 +181,7 @@ class TestMypageVotedListAPIView(APITestCase):
         )
 
     def test_get_own_voted_posts_success(self):
-        """ユーザーモデルの投票済みの投稿一覧取得APIへのGETリクエスト(正常系:ユーザー本人のみ投票一覧を表示する)"""
+        """ユーザーモデルの投票済みの投稿一覧取得APIへのGETリクエスト(正常系:投票済み一覧はユーザー本人であれば返す)"""
 
         # 投稿用ユーザーでログイン→投稿
         token = str(RefreshToken.for_user(self.user1).access_token)
@@ -245,6 +245,42 @@ class TestMypageVotedListAPIView(APITestCase):
             }]
         }
         self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_get_voted_posts_success(self):
+        """ユーザーモデルの投票済みの投稿一覧取得APIへのGETリクエスト(正常系:マイページの投票済み一覧は他人には返さない)"""
+
+        # 投稿用ユーザーでログイン→投稿
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        params = {
+            'question':'あなたの推しメンは？',
+            'options':[{
+                'select_num':0,
+                'answer':'齋藤飛鳥'
+            },{
+                'select_num':1,
+                'answer':'北野日奈子'
+            }]
+        }
+        self.client.post('/api/v1/posts/', params, format='json')
+
+        # 投票用ユーザーでログイン→投票
+        token = str(RefreshToken.for_user(self.user2).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        post = Post.objects.get()
+        params = {
+            'option':{
+                'select_num':0
+            }
+        }
+        self.client.post('/api/v1/posts/{}/polls/'.format(post.id), params, format='json')
+
+        # 投稿ユーザーで再びログイン→投票ユーザーの投票済み一覧表示を試みる
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        response = self.client.get(self.TARGET_URL_WITH_PK.format(self.user2.username))
+        self.assertEqual(response.status_code, 204)
 
 
 # (正常系)2methods,(異常系)3methods,(合計)5methods.
