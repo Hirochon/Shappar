@@ -485,7 +485,7 @@ class TestPostDeleteAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
-# (正常系)methods,(異常系)methods,(合計)methods.
+# (正常系)3methods,(異常系)methods,(合計)methods.
 class TestPostUpdateAPIView(APITestCase):
     """PostUpdateAPIViewのテストクラス"""
 
@@ -685,6 +685,37 @@ class TestPostUpdateAPIView(APITestCase):
             'selected_num':-1,
             'total':0,
             'options':options_list
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_get_update_posts_unauthorized(self):
+        """投稿モデルの投票情報更新APIへのGETリクエスト(異常系:ヘッダーにトークンがのっていない時)"""
+
+        # 投稿用だけログイン
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        params = {
+            'question':'あなたの推しメンは？',
+            'options':[{
+                'select_num':0,
+                'answer':'齋藤飛鳥'
+            },{
+                'select_num':1,
+                'answer':'北野日奈子'
+            }]
+        }
+        self.client.post('/api/v1/posts/', params, format='json')
+
+        # 認証用のヘッダーを消去する
+        self.client.credentials()
+
+        post = Post.objects.get()
+        response = self.client.get(self.TARGET_URL_WITH_PK.format(post.id))
+        self.assertEqual(response.status_code, 401)
+
+        expected_json_dict = {
+            "detail": "認証情報が含まれていません。"
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
