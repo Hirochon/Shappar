@@ -1,7 +1,10 @@
 <template>
-  <div class="New">
+  <div class="New"
+    @touchmove.stop
+    @wheel.stop.prevent
+    >
     <transition name="container">
-      <div class="New__container" v-if="isOpen">
+      <div class="New__container" v-if="isOpen" @touchmove.stop.prevent>
         <div class="Top">
           <h2 class="Top__header">
             <div class="Top__close">
@@ -20,19 +23,19 @@
         </div>
         <draggable v-model="options" handle=".New__option__handle" @touchmove.prevent.stop>
           <transition-group name="option">
-            <div class="New__option__container" v-for="(option, index) in options" :key="option.id">
-              <div class="New__option__wrapper" :id="'option_'+option.id">
+            <div class="New__option__container" v-for="(option, index) in options" :key="option.id" @touchmove.stop.prevent>
+              <div class="New__option__wrapper" :id="'option_'+option.id" @touchmove.stop.prevent>
                 <textarea class="New__option__text" cols="30" rows="3" v-model="option.answer" :placeholder="index+1"
                   @touchstart="delTouchStart(index)"
-                  @touchmove="delTouchMove(option.id)"
+                  @touchmove.stop="delTouchMove(option.id)"
                   @touchend.stop="delTouchEnd(option.id)"
                   @input="answerValidate(option)"
                   >
                 </textarea>
                 <div class="New__option__handle"><font-awesome-icon icon="bars"/></div>
-                <div class="New__option__num" :class="{hasError:!option.isValid}">{{option.length}}/40</div>
+                <div class="New__option__num" :class="{hasError:!option.isValid}" @touchmove.stop.prevent>{{option.length}}/40</div>
               </div>
-              <div class="New__delete__behind" :class="{on:deleteConfig.trigger}"><font-awesome-icon icon="trash-alt"/></div>
+              <div class="New__delete__behind" :class="{on:deleteConfig.trigger}" @touchmove.stop.prevent><font-awesome-icon icon="trash-alt"/></div>
             </div>
           </transition-group>
         </draggable>

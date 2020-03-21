@@ -4,12 +4,20 @@
       <img :src="user.iconimage" alt="">
     </div>
     <transition name="overlay">
-      <div class="Drawer__overlay" v-if="isOpen" @click.stop="isOpen = false"></div>
+      <div class="Drawer__overlay" v-if="isOpen"
+        @click.stop="isOpen = false"
+        @touchmove.stop.prevent
+        @wheel.stop.prevent
+        >
+      </div>
     </transition>
     <transition name="drawer">
-      <div class="Drawer__container" v-if="isOpen">
+      <div class="Drawer__container" v-if="isOpen"
+        @click.stop="isOpen = false"
+        @touchmove.stop.prevent
+        @wheel.stop.prevent
+        >
         <div class="Drawer__header">
-          Menu
           <div class="Drawer__close" @click="isOpen = false"><font-awesome-icon icon="times"/></div>
         </div>
         <div class="Drawer__wrapper">
@@ -22,10 +30,10 @@
           <div class="Drawer__user_id">@{{user.user_id}}</div>
         </div>
         <div class="Drawer__wrapper">
-          <div class="Drawer__logout" @click="logout()">ログアウト</div>
+          <router-link class="Drawer__settings" to="/settings">設定</router-link>
         </div>
         <div class="Drawer__wrapper">
-          <router-link class="Drawer__settings" to="/settings">設定</router-link>
+          <div class="Drawer__logout" @click="logout()">ログアウト</div>
         </div>
       </div>
     </transition>
@@ -93,8 +101,8 @@ export default {
     position: fixed;
     top: 0;
     left: 0;
+    width: 280px;
     max-width: 280px;
-    width: 80%;
     height: 100%;
     background: white;
   }
@@ -126,7 +134,7 @@ export default {
   }
   &__wrapper{
     padding: 8px 16px;
-    border-bottom: solid 1px #eee;
+    // border-bottom: solid 1px #eee;
   }
   &__icon{
     display: block;
@@ -143,26 +151,23 @@ export default {
     }
   }
   &__name{
-    padding: 0 16px;
     // text-align: center;
-    font-size: 24px;
+    font-size: 18px;
+    font-weight: bold;
   }
   &__user_id{
     margin: 0;
-    font-size: 14px;
-    padding: 0 16px;
+    font-size: 18px;
     // text-align: center;
     color: #666;
     color: $color-main;
   }
   &__logout{
     cursor: pointer;
-    padding: 0 16px;
     color: red;
   }
   &__settings{
     display: block;
-    padding: 0 16px;
     color: $color-sub;
     &:hover{
       color: $color-sub;

@@ -171,6 +171,9 @@ export default {
         this.initPosts(response.data.posts)
       })
     window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
+  },
+  destroyed () {
+    window.removeEventListener('scroll', this.scrollTriggers)
   }
 }
 </script>
