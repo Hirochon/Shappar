@@ -151,7 +151,7 @@ class TestMypageAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
-# (正常系)2methods,(異常系)3methods,(合計)5methods
+# (正常系)2methods,(異常系)3methods,(合計)5methods.
 class TestPostCreateAPIView(APITestCase):
     """PostCreateAPIViewのテストクラス"""
 
@@ -366,5 +366,83 @@ class TestPostCreateAPIView(APITestCase):
 
         expected_json_dict = {
             "options":[{"answer":"回答は10個以下にしてください。"}]
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+
+class TestPollCreateAPIView(APITestCase):
+    """PollCreateAPIViewのテストクラス"""
+
+    TARGET_URL_WITH_PK = '/api/v1/posts/{}/polls/'
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user1 = get_user_model().objects.create_user(
+            email='user1@example.com',
+            username='user1',
+            password='secret',
+            usernonamae='サンプル1',
+            sex='0',
+            age=21,
+            born_at='1998-08-10',
+        )
+        cls.user2 = get_user_model().objects.create_user(
+            email='user2@example.com',
+            username='user2',
+            password='secret',
+            usernonamae='サンプル2',
+            sex='1',
+            age=19,
+            born_at='2001-12-02',
+        )
+    
+    def test_post_create_poll_other_success(self):
+        """投票モデルの登録APIへのPOSTリクエスト(正常系)"""
+
+        # 投稿用のユーザーがログイン
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        params = {
+            'question':'あなたの推しメンは？',
+            'options':[{
+                'select_num':0,
+                'answer':'齋藤飛鳥'
+            },{
+                'select_num':1,
+                'answer':'北野日奈子'
+            }]
+        }
+        response = self.client.post('/api/v1/posts/', params, format='json')
+        self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(Option.objects.count(), 2)
+        self.assertEqual(response.status_code, 201)
+        post = Post.objects.get()
+
+        # 投票用のユーザーがログイン
+        token = str(RefreshToken.for_user(self.user2).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        params = {
+            'option':{
+                'select_num':0
+            }
+        }
+        response = self.client.post(self.TARGET_URL_WITH_PK.format(post.id), params, format='json')
+
+        self.assertEqual(Poll.objects.count(), 1)
+        self.assertEqual(response.status_code, 201)
+
+        options = Option.objects.all()
+        options_list = []
+        for option in options:
+            option_dict = {}
+            option_dict['select_num'] = option.select_num
+            option_dict['votes'] = option.votes
+            options_list.append(option_dict)
+        expected_json_dict = {
+            'options':options_list,
+            'selected_num':Poll.objects.get().option.select_num
         }
         self.assertJSONEqual(response.content, expected_json_dict)
