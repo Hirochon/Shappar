@@ -57,9 +57,10 @@ api.interceptors.response.use(function (response) {
     message = '想定外のエラーです。'
     store.dispatch('message/setErrorMessage', { message: message })
   }
-  setTimeout(() => {
-    store.dispatch('message/clearMessages')
-  }, 1500)
+  // setTimeout(() => {
+  //   store.dispatch('message/clearMessages')
+  //   console.log('in api')
+  // }, 1500)
   return Promise.reject(error)
 })
 

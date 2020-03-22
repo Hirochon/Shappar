@@ -134,17 +134,6 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-
-
-# Media Files
-
-MEDIA_URL = '/media/'
-
-
 ###########################
 # Authentication(allauth) #
 ###########################
@@ -187,10 +176,14 @@ AWS_S3_OBJECT_PARAMETERS = {
 }
 AWS_LOCATION = 'static'
 AWS_DEFAULT_ACL = None
+
 STATIC_ROOT = 'https://%s/static/' % AWS_S3_CUSTOM_DOMAIN
+STATIC_URL = 'https://%s/static/' % AWS_S3_CUSTOM_DOMAIN
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Mediaファイルの設定
+MEDIA_URL = 'https://%s/media/' % AWS_S3_CUSTOM_DOMAIN
 MEDIA_ROOT = 'https://%s/media/' % AWS_S3_CUSTOM_DOMAIN
 DEFAULT_FILE_STORAGE = 'config.storage_backends.MediaStorage'
 
@@ -202,6 +195,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES':[
         'rest_framework_simplejwt.authentication.JWTAuthentication'
     ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
 

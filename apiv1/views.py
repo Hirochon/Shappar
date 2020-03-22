@@ -20,12 +20,13 @@ from .serializers import (
 )
 
 def Response_unauthorized():
-    return Response({"detail":"権限がありません"},status.HTTP_401_UNAUTHORIZED)
+    return Response({"detail":"権限がありません。"},status.HTTP_401_UNAUTHORIZED)
+
+def Response_post_notfound():
+    return Response({"detail":"存在しない投稿IDです。"},status.HTTP_404_NOT_FOUND)
 
 class MypageAPIView(views.APIView):
     """マイページ用詳細・更新・一部更新APIクラス"""
-
-    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk, *args, **kwargs):
         """マイページモデルの取得APIに対応するハンドラメソッド"""
@@ -37,10 +38,11 @@ class MypageAPIView(views.APIView):
     def put(self, request, pk, *args, **kwargs):
         """マイページモデルの更新APIに対応するハンドラメソッド"""
 
+        mypage = get_object_or_404(get_user_model(), username=pk)
+
         if request.user.username != pk:
             return Response_unauthorized()
 
-        mypage = get_object_or_404(get_user_model(), username=pk)
         serializer = MypageSerializer(instance=mypage, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -49,10 +51,11 @@ class MypageAPIView(views.APIView):
     def patch(self, request, pk, *args, **kwargs):
         """マイページモデルの一部更新APIに対応するハンドラメソッド"""
 
+        mypage = get_object_or_404(get_user_model(), username=pk)
+
         if request.user.username != pk:
             return Response_unauthorized()
 
-        mypage = get_object_or_404(get_user_model(), username=pk)
         serializer = MypageSerializer(instance=mypage, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -62,21 +65,22 @@ class MypageAPIView(views.APIView):
 class MypagePostedListAPIView(views.APIView):
     """マイページでの自分の投稿取得(一覧)"""
 
-    permission_classes = [IsAuthenticated]
-
     def get(self, request, pk, *args, **kwargs):
         """自分の投稿取得(一覧)"""
 
-        sk = get_user_model().objects.get(username=pk).id
+        user = get_user_model().objects.filter(username=pk)
+        if len(user) == 0:
+            return Response({'detail':'存在しないユーザーIDです'}, status.HTTP_404_NOT_FOUND)
+        user_id = user[0].id
 
         # 自身の投稿のみフィルタリング
         if 'pid' in request.GET:
             post_basis = Post.objects.get(id=request.GET['pid'])
-            querysets = Post.objects.filter(user_id=sk, created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
+            querysets = Post.objects.filter(user_id=user_id, created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
         else:
-            querysets = Post.objects.filter(user_id=sk).order_by('-created_at')[:10]
+            querysets = Post.objects.filter(user_id=user_id).order_by('-created_at')[:10]
 
-        serializer = PostListSerializer(instance=querysets, many=True, pk=sk)
+        serializer = PostListSerializer(instance=querysets, many=True, pk=user_id)
 
         for datas in serializer.data:
             if not datas['voted']:
@@ -91,7 +95,7 @@ class MypagePostedListAPIView(views.APIView):
             else:
                 total = 0
                 for data in datas['options']:
-                    flag = Poll.objects.filter(user_id=sk,option_id=data['id'])
+                    flag = Poll.objects.filter(user_id=user_id,option_id=data['id'])
                     if len(flag) > 0:
                         datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
                     else:
@@ -111,21 +115,25 @@ class MypagePostedListAPIView(views.APIView):
 class MypageVotedListAPIView(views.APIView):
     """マイページでの自分の投票取得(一覧)"""
 
-    permission_classes = [IsAuthenticated]
-
     def get(self, request, pk, *args, **kwargs):
         """自分の投票取得(一覧)"""
 
-        sk = get_user_model().objects.get(username=pk).id
+        user = get_user_model().objects.filter(username=pk)
+        if len(user) == 0:
+            return Response({'detail':'存在しないユーザーIDです'}, status.HTTP_404_NOT_FOUND)
+        user_id = user[0].id
+
+        if request.user.username != pk:
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
         # 自身の投票のみフィルタリング
         if 'pid' in request.GET:
             post_basis = Post.objects.get(id=request.GET['pid'])
-            querysets = Post.objects.filter(poll_post__user__id=sk, created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
+            querysets = Post.objects.filter(poll_post__user__id=user_id, created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
         else:
-            querysets = Post.objects.filter(poll_post__user__id=sk).order_by('-created_at')[:10]
+            querysets = Post.objects.filter(poll_post__user__id=user_id).order_by('-created_at')[:10]
 
-        serializer = PostListSerializer(instance=querysets, many=True, pk=sk)
+        serializer = PostListSerializer(instance=querysets, many=True, pk=user_id)
 
         for datas in serializer.data:
             if not datas['voted']:
@@ -140,7 +148,7 @@ class MypageVotedListAPIView(views.APIView):
             else:
                 total = 0
                 for data in datas['options']:
-                    flag = Poll.objects.filter(user_id=sk,option_id=data['id'])
+                    flag = Poll.objects.filter(user_id=user_id,option_id=data['id'])
                     if len(flag) > 0:
                         datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
                     else:
@@ -160,57 +168,64 @@ class MypageVotedListAPIView(views.APIView):
 class PostCreateAPIView(views.APIView):
     """投稿用APIクラス"""
 
-    permission_classes = [IsAuthenticated]
-
     def post(self, request, *args, **kwargs):
         """投稿時の登録APIに対応するハンドラメソッド"""
 
         data = request.data
 
         if 10 < len(data['options']):
-            return HttpResponseNotFound('<h1>Bad Request!</h1>')
+            return Response({"options":[{"answer":"回答は10個以下にしてください。"}]},status.HTTP_400_BAD_REQUEST)
+        elif 2 > len(data['options']):
+            return Response({"options":[{"answer":"回答は2個以上にしてください。"}]},status.HTTP_400_BAD_REQUEST)
 
         share_uuid = uuid.uuid4()
         data['share_id'] = share_uuid
         for datas in data['options']:
             datas['share_id'] = share_uuid
 
-        user = get_object_or_404(get_user_model(), id=data['unique_id'])
-        data['user'] = user.id
-        del data['unique_id']
+        data['user'] = request.user.id
+        # data['user'] = data['unique_id']
 
         serializer = PostCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        for datas in serializer.data['options']:
-            del datas['id']
-            del datas['share_id']
+        # response = serializer.data
+        # del response['user']
+        # del response['share_id']
 
-        return Response(serializer.data, status.HTTP_201_CREATED)
+        # for datas in response['options']:
+        #     del datas['id']
+        #     del datas['share_id']
+
+        return Response({}, status.HTTP_201_CREATED)
 
 
 class PostListAPIView(views.APIView):
     """投稿の取得(一覧)APIクラス"""
 
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, pk, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         """投稿の取得(一覧)APIに対応するハンドラメソッド"""
 
         # モデルオブジェクトをクエリ文字列を使ってフィルタリング
         if 'q' in request.GET:
             if 'pid' in request.GET:
-                post_basis = Post.objects.get(id=request.GET['pid'])
-                queryset = Post.objects.filter(created_at__lt=post_basis.created_at, question__contains=request.GET['q']).order_by('-created_at')[:10]
+                post_basis = Post.objects.filter(id=request.GET['pid'])
+                if len(post_basis) == 0:
+                    return Response_post_notfound()
+                queryset = Post.objects.filter(created_at__lt=post_basis[0].created_at, question__contains=request.GET['q']).order_by('-created_at')[:10]
             else:
                 queryset = Post.objects.filter(question__contains=request.GET['q']).order_by('-created_at')[:10]
         elif 'pid' in request.GET:
-            post_basis = Post.objects.get(id=request.GET['pid'])
-            queryset = Post.objects.filter(created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
+            post_basis = Post.objects.filter(id=request.GET['pid'])
+            if len(post_basis) == 0:
+                return Response_post_notfound()
+            queryset = Post.objects.filter(created_at__lt=post_basis[0].created_at).order_by('-created_at')[:10]
         else:
             queryset = Post.objects.all().order_by('-created_at')[:10]
-        serializer = PostListSerializer(instance=queryset, many=True, pk=pk)
+
+        unique_id = request.user.id
+        serializer = PostListSerializer(instance=queryset, many=True, pk=unique_id)
 
         for datas in serializer.data:
             if not datas['voted']:
@@ -225,7 +240,7 @@ class PostListAPIView(views.APIView):
             else:
                 total = 0
                 for data in datas['options']:
-                    flag = Poll.objects.filter(user_id=pk,option_id=data['id'])
+                    flag = Poll.objects.filter(user_id=unique_id,option_id=data['id'])
                     if len(flag) > 0:
                         datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
                     else:
@@ -245,17 +260,28 @@ class PostListAPIView(views.APIView):
 class PostDetailDeleteAPIView(views.APIView):
     """投稿の詳細取得&削除APIクラス"""
 
-    permission_classes = [IsAuthenticated]
-
     def delete(self, request, pk, *args, **kwargs):
         """投稿の削除APIに対応するハンドラメソッド"""
         
-        post = Post.objects.get(id=pk)
-        post.delete()
+        user_id = request.user.id
+        post = Post.objects.filter(id=pk)
+
+        if len(post) == 0:
+            return Response_post_notfound()
+
+        if post[0].user_id != user_id:
+            return Response_unauthorized()
+        
+        post[0].delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get(self, request, pk, *args, **kwargs):
         """投稿の詳細取得APIに対応するハンドラメソッド"""
+
+        post = Post.objects.filter(id=pk)
+
+        if len(post) == 0:
+            return Response_post_notfound()
 
         users = get_user_model().objects.filter(poll_user__post__id=pk)
         serializer = PostDetailSerializer(instance=users, many=True)
@@ -323,13 +349,18 @@ class PostDetailDeleteAPIView(views.APIView):
 
 
 class PostUpdateAPIView(views.APIView):
-    """投稿の情報更新APIクラス"""
+    """投票モデルの投稿の投票結果取得APIクラス"""
 
-    permission_classes = [IsAuthenticated]
+    def get(self, request, pk, *args, **kwargs):
+        """投稿の投票結果取得APIに対応するハンドラメソッド"""
 
-    def get(self, request, pk, sk, *args, **kwargs):
-        queryset = Post.objects.get(id=sk)
-        serializer = PostListSerializer(instance=queryset, pk=pk)
+        queryset = Post.objects.filter(id=pk)
+
+        if len(queryset) == 0:
+            return Response_post_notfound()
+
+        user = request.user
+        serializer = PostListSerializer(instance=queryset[0], pk=user.id)
 
         seri_data = serializer.data
 
@@ -345,7 +376,7 @@ class PostUpdateAPIView(views.APIView):
         else:
             total = 0
             for data in seri_data['options']:
-                flag = Poll.objects.filter(user_id=pk,option_id=data['id'])
+                flag = Poll.objects.filter(user_id=user.id,option_id=data['id'])
                 if len(flag) > 0:
                     seri_data['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
                 else:
@@ -361,20 +392,23 @@ class PostUpdateAPIView(views.APIView):
 class PollCreateAPIView(views.APIView):
     """投票モデルの登録APIクラス"""
 
-    permission_classes = [IsAuthenticated]
-
     def post(self, request, pk, *args, **kwargs):
         """投票時の登録APIに対応するハンドラメソッド"""
 
-        data = request.data
-        data['post'] = pk
-        data['user'] = data['unique_id']
-        del data['unique_id']
+        post = Post.objects.filter(id=pk)
+        if len(post) == 0:
+            return Response_post_notfound()
 
+        data = request.data
+        data['post'] = post[0].id
+        data['user'] = request.user.id
+        # data['user'] = data['unique_id']
+        # del data['unique_id']
         data_option = data['option']
         del data['option']
-        post = Post.objects.get(id=data['post'])
-        options = Option.objects.filter(share_id=post.share_id)
+
+        flag = 0
+        options = Option.objects.filter(share_id=post[0].share_id)
         for option in options:
             if option.select_num == data_option['select_num']:
                 option.votes += 1
@@ -382,16 +416,22 @@ class PollCreateAPIView(views.APIView):
                 data_option['share_id'] = option.share_id
                 data_option['id'] = data['option'] = option.id
                 data_option['answer'] = option.answer
+                flag += 1
                 break
+
+        # リクエストに存在しない選択肢があった時
+        if flag == 0:
+            return Response({"detail":"存在しない選択肢です。"},status.HTTP_404_NOT_FOUND)
+        
         serializer_option = OptionSerializer(instance=Option.objects.get(id=data_option['id']) ,data=data_option)
         serializer_option.is_valid(raise_exception=True)
         serializer_option.save()
+
         serializer = PollSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        response_share_id = serializer_option.data["share_id"]
-        response_serializer = OptionSerializer(instance=Option.objects.filter(share_id=response_share_id), many=True)
+        response_serializer = OptionSerializer(instance=Option.objects.filter(share_id=serializer_option.data["share_id"]), many=True)
 
         for response_data in response_serializer.data:
             del response_data["answer"]

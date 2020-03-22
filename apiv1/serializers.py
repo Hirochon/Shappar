@@ -5,13 +5,12 @@ from .models import Post, Poll, Option
 class MypageSerializer(serializers.ModelSerializer):
     """マイページ用シリアライザ"""
 
-    unique_id = serializers.ReadOnlyField(source='id')
     user_id = serializers.CharField(source='username')
     name = serializers.CharField(source='usernonamae')
 
     class Meta:
         model = get_user_model()
-        fields = ['unique_id', 'user_id', 'name', 'introduction', 'iconimage', 'homeimage']
+        fields = ['user_id', 'name', 'introduction', 'iconimage', 'homeimage']
 
 
 class OptionSerializer(serializers.ModelSerializer):
@@ -84,3 +83,18 @@ class PollSerializer(serializers.ModelSerializer):
     class Meta:
         model = Poll
         fields = ['post','user','option']
+
+    def validate(self, data):
+        """同じ投稿への複数投票&投稿本人の投票阻止バリデーションメソッド"""
+        user = data.get('user')
+        post = data.get('post')
+
+        poll = Poll.objects.filter(user_id=user.id,post_id=post.id)
+        if len(poll) > 0:
+            raise serializers.ValidationError("同じ投稿への投票は一度のみです。")
+
+        post = Post.objects.filter(id=post.id,user_id=user.id)
+        if len(post) > 0:
+            raise serializers.ValidationError("投稿した本人は投票はできません。")
+        
+        return data

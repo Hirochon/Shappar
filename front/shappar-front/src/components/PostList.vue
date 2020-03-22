@@ -1,12 +1,13 @@
 <template>
   <div class="PostList" id="PostList">
-    <div class="Post" v-for="post in posts" :key="post.post_id" :id="post.post_id">
-      <div class="Post__icon">
+    <div class="Post" v-for="(post, index) in posts" :key="post.post_id" :id="post.post_id">
+      <router-link class="Post__icon" :to="'/mypage/'+ post.user_id + '/'">
         <img :src="post.iconimage" :alt="post.user_id+'_icon'">
-      </div>
+      </router-link>
       <div class="Post__top">
         <div class="Post__total">Total：{{post.total}}</div>
         <div class="Post__buttons" v-show="post.voted">
+          <div class="Post__sort" v-if="post.user_id === $store.state.auth.username" @click="deletePost(post, index)"><font-awesome-icon icon="trash-alt"/></div>
           <div class="Post__sort" v-if="post.voted" @click="optionsSort(post, post.options)">
             <font-awesome-icon icon="list-ol" v-show="post.sort === 0"/>
             <font-awesome-icon icon="sort-amount-up" v-show="post.sort === 1"/>
@@ -15,26 +16,50 @@
           <div class="Post__reload" v-if="post.voted" @click="refleshPost(post)"><font-awesome-icon icon="sync-alt"/></div>
         </div>
       </div>
+      <div class="Post__loading" v-if="post.isLoading">
+        <font-awesome-icon icon="spinner" class="Public__loading__icon"/>
+      </div>
       <div class="Post__question">
         {{post.question}}
       </div>
       <div class="Post__container">
         <div class="Post__option" v-for="option in post.options" :key="option.select_num"
-        @click="Select(post,option);">
+          @click="Select(post,option)"
+          :class="{selected: post.voted}"
+          >
           <!-- <div class="Post__option__border" v-show="post.selected_num === option.select_num"></div> -->
           <div class="Post__result__bar" :style="{width: rate(option.votes, post.total) + '%'}" :class="{selected: post.selected_num === option.select_num}"></div>
-          <div class="Post__result__num" v-show="post.view === 1">{{option.votes}}</div>
-          <div class="Post__option__answer" v-show="post.view === 0">{{option.select_num + 1 + '. '}}{{option.answer}}</div>
+          <div class="Post__result__data" v-show="post.view === 1">
+            <div class="Post__result__num" :class="{isMine: post.user_id === $store.state.auth.username}">
+              <div>{{option.votes}}</div>
+              <div v-show="post.total">{{Math.floor(rate(option.votes, post.total)) + '%'}}</div>
+            </div>
+            <div class="Post__result__check" v-if="post.selected_num === option.select_num"><font-awesome-icon icon="check"/></div>
+          </div>
+          <div class="Post__option__answer" v-show="post.view === 0" :class="{voted: post.selected_num === option.select_num, isMine: post.user_id === $store.state.auth.username}">
+            <div>{{option.answer}}</div>
+            <div class="Post__result__check" v-if="post.selected_num === option.select_num"><font-awesome-icon icon="check"/></div>
+          </div>
         </div>
       </div>
+      <div class="Post__details" @click="switchDetails(post.post_id)" v-if="post.voted">
+        <font-awesome-icon icon="chart-line"/>
+      </div>
     </div>
+    <transition name="details">
+      <PostDetails @switchDetails="switchDetails('')" :post_id="detailsPostId" v-if="isDetailsOpen"/>
+    </transition>
   </div>
 </template>
 
 <script>
+import PostDetails from '@/views/PostDetails'
 import api from '@/services/api'
 export default {
   name: 'PostList',
+  components: {
+    PostDetails
+  },
   props: {
     posts: {
       type: Array,
@@ -47,7 +72,10 @@ export default {
   },
   data () {
     return {
-      res: null
+      res: null,
+      isDetailsOpen: false,
+      detailsPostId: '',
+      error: {}
     }
   },
   methods: {
@@ -87,6 +115,9 @@ export default {
           }
           post.selected_num = response.data.selected_num
         })
+        .then(() => {
+          post.view = 1
+        })
     },
     rate (molec, denom) {
       return molec / denom * 100
@@ -96,7 +127,8 @@ export default {
     },
     async refleshPost (post) {
       var res
-      await api.get('/api/v1/posts/public/' + this.unique_id + '/' + post.post_id + '/')
+      post.isLoading = true
+      await api.get('/api/v1/posts/public/' + post.post_id + '/')
         .then((response) => {
           res = response.data
         })
@@ -105,6 +137,29 @@ export default {
       post.options = res.options.sort((a, b) => {
         return a.select_num < b.select_num ? -1 : 1
       })
+      post.isLoading = false
+    },
+    deletePost (post, index) {
+      if (!confirm('この投稿を削除しますか？')) return
+      // 送信前にも確認
+      if (this.$store.state.auth.username !== post.user_id) return
+      // apiにリクエスト
+      api.delete('/api/v1/posts/' + post.post_id + '/')
+        .then((response) => {
+          // 成功したらリストから削除と通知
+          if (response.status === 204) {
+            // console.log('before set message')
+            this.$store.dispatch('message/setInfoMessage', { message: '削除しました' })
+            // indexで削除した投稿だけ配列から除こうとしたが
+            // 自動更新の高さが変わるので一旦リロードする方針に変更する
+            // this.posts.splice(index, 1)
+            this.$emit('reload')
+          }
+        })
+        .catch((error) => {
+          // console.log(error)
+          this.error = error
+        })
     },
     optionsSort (post, options) {
       post.sort = (post.sort + 1) % 3
@@ -128,6 +183,10 @@ export default {
             return 0
           })
       }
+    },
+    switchDetails (id) {
+      this.detailsPostId = id
+      this.isDetailsOpen = !this.isDetailsOpen
     }
   }
 }
@@ -137,7 +196,7 @@ export default {
 <style lang="scss">
 @import '@/assets/common.scss';
 $icon-size: 56px;
-$option-height: 40px;
+$option-height: 32px;
 .PostList{
   z-index: 10;
   padding: 48px 16px 16px;
@@ -148,6 +207,8 @@ $option-height: 40px;
   background: #fff;
   position: relative;
   box-shadow: 0 0 8px rgba(black, 0.16);
+  transition: .3s ease-in-out;
+  border-radius: 3px;
   &__icon{
     width: $icon-size;
     height: $icon-size;
@@ -192,7 +253,7 @@ $option-height: 40px;
     display: flex;
     justify-content: space-around;
     height: 34px;
-    width: 80px;
+    // width: 80px;
     transition: .3s ease-in-out;
   }
   &__sort{
@@ -235,14 +296,26 @@ $option-height: 40px;
       }
     }
   }
+  &__loading{
+    width: 100%;
+    height: 50px;
+    padding: 13px;
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 24px;
+      animation: rotation 1s linear infinite;
+    }
+  }
   &__question{
     width: 100%;
-    margin-bottom: 8px;
+    margin: 8px 0;
     padding: 0 8px;
   }
   &__container{
     width: 100%;
     @include scrollbar;
+    border-radius: 3px;
   }
   &__option{
     cursor: pointer;
@@ -251,13 +324,26 @@ $option-height: 40px;
     position: relative;
     height: auto;
     min-height: $option-height;
-    line-height: $option-height;
-    padding: 0 8px;
+    padding: 8px 8px;
+    margin: 4px 0;
     background: #fff;
     box-sizing: border-box;
     word-break: break-word;
+    border: solid 2px $color-main;
+    border-radius: 3px;
+    color: #666;
+    &.selected{
+      border: solid 2px #ccc;
+    }
     &__answer{
-      line-height: $option-height;
+      position: relative;
+      line-height: 20px;
+      display: flex;
+      justify-content: space-between;
+      padding-right: 16px;
+      &.voted,&.isMine{
+        padding-right: 0;
+      }
     }
     &__border{
       position: absolute;
@@ -269,22 +355,78 @@ $option-height: 40px;
     }
   }
   &__result{
+    &__data{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      // padding-right: 20px;
+    }
     &__num{
-      line-height: $option-height;
+      line-height: 20px;
+      width: calc(100% - 16px);
+      padding-right: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      &.isMine{
+        width: 100%;
+        padding: 0;
+      }
     }
     &__bar{
       background: $color-sub;
       opacity: 0.5;
-      height: $option-height;
-      line-height: $option-height;
+      width: 0;
+      // height: 36px;
+      height: 100%;
       border-radius: 0 8px 8px 0;
       position: absolute;
       top: 0;
       left: 0;
+      transition: .3s ease-in-out;
       &.selected{
         background: $color-main;
       }
     }
+    &__check{
+      // position: absolute;
+      // right: 8px;
+      // top: 0;
+      color: $color-main;
+      height: 20px;
+      padding: 2px 0;
+      svg{
+        display: block;
+        margin: 0 auto;
+        font-size: 16px;
+      }
+    }
   }
+  &__details{
+    cursor: pointer;
+    max-width: 300px;
+    height: 32px;
+    line-height: 32px;
+    margin: 0 auto;
+    margin-top: 12px;
+    text-align: right;
+    border: solid 2px $color-main;
+    padding: 2px 0;
+    background: $color-main;
+    border-radius: 3px;
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 24px;
+      color: white;
+      // color: $color-main;
+    }
+  }
+}
+.details-leave-active{
+  transition: .3s ease-in-out;
+}
+.details-enter,.details-leave-to{
+  transform: translateY(100%);
 }
 </style>

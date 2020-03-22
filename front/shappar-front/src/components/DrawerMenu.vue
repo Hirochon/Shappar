@@ -1,19 +1,22 @@
 <template>
   <div class="Drawer">
-    <div class="Drawer__switch" @click="isOpen = true">
-      <img :src="user.iconimage" alt="">
-    </div>
     <transition name="overlay">
-      <div class="Drawer__overlay" v-if="isOpen" @click.stop="isOpen = false"></div>
+      <div class="Drawer__overlay" v-if="isOpen"
+        @click.stop="$emit('close')"
+        @touchmove.stop.prevent
+        @wheel.stop.prevent
+        >
+      </div>
     </transition>
     <transition name="drawer">
-      <div class="Drawer__container" v-if="isOpen">
-        <div class="Drawer__header">
-          Menu
-          <div class="Drawer__close" @click="isOpen = false"><font-awesome-icon icon="times"/></div>
-        </div>
+      <div class="Drawer__container" :class="{open: isOpen}"
+        @click.stop
+        @touchmove.stop.prevent
+        @wheel.stop.prevent
+        >
+        <div class="Drawer__close" @click="$emit('close')"><font-awesome-icon icon="times"/></div>
         <div class="Drawer__wrapper">
-          <router-link class="Drawer__icon" to="/mypage">
+          <router-link class="Drawer__icon" :to="'/mypage/'+ user.user_id + '/'">
             <img :src="user.iconimage" alt="">
           </router-link>
         </div>
@@ -22,10 +25,13 @@
           <div class="Drawer__user_id">@{{user.user_id}}</div>
         </div>
         <div class="Drawer__wrapper">
-          <div class="Drawer__logout" @click="logout()">ログアウト</div>
+          <router-link class="Drawer__settings" :to="'/mypage/'+ user.user_id + '/'">マイページ</router-link>
         </div>
         <div class="Drawer__wrapper">
           <router-link class="Drawer__settings" to="/settings">設定</router-link>
+        </div>
+        <div class="Drawer__wrapper">
+          <div class="Drawer__logout" @click="logout()">ログアウト</div>
         </div>
       </div>
     </transition>
@@ -40,11 +46,14 @@ export default {
     user: {
       type: Object,
       required: true
+    },
+    isOpen: {
+      type: Boolean,
+      required: true
     }
   },
   data () {
     return {
-      isOpen: false
     }
   },
   methods: {
@@ -66,15 +75,19 @@ export default {
 <style lang="scss">
 @import '@/assets/common.scss';
 .Drawer{
-  z-index: 100;
+  z-index: 200;
   &__switch{
     display: block;
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: $color-main;
+    background: white;
     color: white;
     overflow: hidden;
+    cursor: pointer;
+    @include media-1200 {
+      display: none;
+    }
     img{
       width: 100%;
       height: 100%;
@@ -88,15 +101,30 @@ export default {
     width: 100%;
     height: 100%;
     background: rgba(black, 0.5);
+    z-index: 200;
   }
   &__container{
     position: fixed;
     top: 0;
     left: 0;
-    max-width: 280px;
-    width: 80%;
+    width: 280px;
+    max-width: 230px;
     height: 100%;
+    padding-top: 20px;
     background: white;
+    transform: translateX(-100%);
+    opacity: 0;
+    transition: .3s ease-in-out;
+    z-index: 200;
+    @include media-1200 {
+      transform: translateX(-246px);
+      left: auto;
+      opacity: 1;
+    }
+    &.open{
+      transform: translateX(0);
+      opacity: 1;
+    }
   }
   &__header{
     position: relative;
@@ -107,7 +135,7 @@ export default {
     font-size: 24px;
     color: #888;
     text-align: center;
-    border-bottom: solid 1px #ccc;
+    // border-bottom: solid 1px #ccc;
   }
   &__close{
     cursor: pointer;
@@ -118,6 +146,9 @@ export default {
     height: 32px;
     padding: 4px;
     text-align: center;
+    @include media-1200 {
+      display: none ;
+    }
     svg{
       display: block;
       margin: 0 auto;
@@ -126,14 +157,17 @@ export default {
   }
   &__wrapper{
     padding: 8px 16px;
-    border-bottom: solid 1px #eee;
+    // &:first-child{
+    //   margin-top: 20px;
+    // }
+    // border-bottom: solid 1px #eee;
   }
   &__icon{
     display: block;
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background: $color-main;
+    background: white;
     color: white;
     overflow: hidden;
     img{
@@ -143,26 +177,23 @@ export default {
     }
   }
   &__name{
-    padding: 0 16px;
     // text-align: center;
-    font-size: 24px;
+    font-size: 18px;
+    font-weight: bold;
   }
   &__user_id{
     margin: 0;
-    font-size: 14px;
-    padding: 0 16px;
+    font-size: 18px;
     // text-align: center;
     color: #666;
     color: $color-main;
   }
   &__logout{
     cursor: pointer;
-    padding: 0 16px;
-    color: red;
+    color: $color-err;
   }
   &__settings{
     display: block;
-    padding: 0 16px;
     color: $color-sub;
     &:hover{
       color: $color-sub;

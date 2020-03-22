@@ -7,7 +7,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 
 # 環境変数を設定
 env = environ.Env(DEBUG=(bool,False),ALLOWED_HOSTS=(list,[]))
-env.read_env(os.path.join(BASE_DIR,'.env'))
 
 SECRET_KEY = env('SECRET_KEY')
 
@@ -202,6 +201,9 @@ DEFAULT_FILE_STORAGE = 'config.storage_backends.MediaStorage'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES':[
         'rest_framework_simplejwt.authentication.JWTAuthentication'
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
