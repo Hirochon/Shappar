@@ -1,7 +1,7 @@
 <template>
   <div class="New"
     @touchmove.stop
-    @wheel.stop.prevent
+    @wheel.stop
     >
     <transition name="container">
       <div class="New__container" v-if="isOpen" @touchmove.stop.prevent>
@@ -16,7 +16,7 @@
             </div>
           </h2>
           <textarea class="Top__question"
-            v-model="question.text" cols="30" rows="2" placeholder="質問文"
+            v-model="question.text" cols="30" rows="2" placeholder="質問"
             @input="questionValidate()"
             >
           </textarea>
@@ -25,7 +25,7 @@
           <transition-group name="option">
             <div class="New__option__container" v-for="(option, index) in options" :key="option.id" @touchmove.stop.prevent>
               <div class="New__option__wrapper" :id="'option_'+option.id" @touchmove.stop.prevent>
-                <textarea class="New__option__text" cols="30" rows="3" v-model="option.answer" :placeholder="index+1"
+                <textarea class="New__option__text" cols="30" rows="3" v-model="option.answer" :placeholder="'回答'+(index+1)"
                   @touchstart="delTouchStart(index)"
                   @touchmove.stop="delTouchMove(option.id)"
                   @touchend.stop="delTouchEnd(option.id)"
@@ -353,16 +353,16 @@ export default {
       position: absolute;
       bottom: 4px;
       right: 48px;
-      width: 80px;
+      width: 48px;
       height: 24px;
       line-height: 24px;
       font-size: 14px;
       // border-radius: 12px;
       // background: $color-main;
       color:$color-main;
-      text-align: center;
+      text-align: right;
       &.hasError{
-        color: red;
+        color: $color-err;
       }
     }
   }
@@ -374,7 +374,7 @@ export default {
     height: 96px;
     padding: 42px 0;
     padding-left: calc(100% - 40px);
-    background: red;
+    color: $color-err;
     z-index: -1;
     color: white;
     border-bottom: solid 1px #eee;
@@ -433,24 +433,30 @@ export default {
       height: 24px;
       line-height: 24px;
       font-size: 14px;
-      margin-right: 16px;
+      margin-right: 40px;
       border-radius: 12px;
-      background: $color-main;
-      color:#fff;
-      text-align: center;
+      // background: $color-main;
+      // color:#fff;
+      color: $color-main;
+      text-align: right;
       &.hasError{
-        background: red;
+        color: $color-err;
       }
     }
     &__options{
-      width: 24px;
-      height: 24px;
-      line-height: 24px;
-      font-size: 14px;
-      border-radius: 50%;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 40px;
+      height: 48px;
+      line-height: 48px;
+      font-size: 18px;
+      // border-radius: 50%;
       color: white;
       text-align: center;
       background: $color-sub;
+      // color: $color-sub;
+      font-weight: bold;
     }
   }
   &__question{

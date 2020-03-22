@@ -256,7 +256,7 @@ export default {
     color:#fff;
     text-align: center;
     &.hasError{
-      background: red;
+      background: $color-err;
     }
   }
   &__input{

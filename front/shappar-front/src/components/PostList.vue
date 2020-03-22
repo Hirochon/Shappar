@@ -21,19 +21,31 @@
       </div>
       <div class="Post__container">
         <div class="Post__option" v-for="option in post.options" :key="option.select_num"
-          @click="Select(post,option);"
+          @click="Select(post,option)"
+          :class="{selected: post.voted}"
           >
           <!-- <div class="Post__option__border" v-show="post.selected_num === option.select_num"></div> -->
           <div class="Post__result__bar" :style="{width: rate(option.votes, post.total) + '%'}" :class="{selected: post.selected_num === option.select_num}"></div>
-          <div class="Post__result__num" v-show="post.view === 1">{{option.votes}}</div>
-          <div class="Post__option__answer" v-show="post.view === 0">{{option.select_num + 1 + '. '}}{{option.answer}}</div>
+          <div class="Post__result__data" v-show="post.view === 1">
+            <div class="Post__result__num" :class="{isMine: post.user_id === $store.state.auth.username}">
+              <div>{{option.votes}}</div>
+              <div v-show="post.total">{{Math.floor(rate(option.votes, post.total)) + '%'}}</div>
+            </div>
+            <div class="Post__result__check" v-if="post.selected_num === option.select_num"><font-awesome-icon icon="check"/></div>
+          </div>
+          <div class="Post__option__answer" v-show="post.view === 0" :class="{voted: post.selected_num === option.select_num, isMine: post.user_id === $store.state.auth.username}">
+            <div>{{option.answer}}</div>
+            <div class="Post__result__check" v-if="post.selected_num === option.select_num"><font-awesome-icon icon="check"/></div>
+          </div>
         </div>
       </div>
       <div class="Post__details" @click="switchDetails(post.post_id)" v-if="post.voted">
         <font-awesome-icon icon="chart-line"/>
       </div>
     </div>
-    <PostDetails @switchDetails="switchDetails('')" :post_id="detailsPostId" v-if="isDetailsOpen"/>
+    <transition name="details">
+      <PostDetails @switchDetails="switchDetails('')" :post_id="detailsPostId" v-if="isDetailsOpen"/>
+    </transition>
   </div>
 </template>
 
@@ -98,6 +110,9 @@ export default {
             post.total += updates[i].votes
           }
           post.selected_num = response.data.selected_num
+        })
+        .then(() => {
+          post.view = 1
         })
     },
     rate (molec, denom) {
@@ -173,7 +188,7 @@ export default {
 <style lang="scss">
 @import '@/assets/common.scss';
 $icon-size: 56px;
-$option-height: 40px;
+$option-height: 32px;
 .PostList{
   z-index: 10;
   padding: 48px 16px 16px;
@@ -185,6 +200,7 @@ $option-height: 40px;
   position: relative;
   box-shadow: 0 0 8px rgba(black, 0.16);
   transition: .3s ease-in-out;
+  border-radius: 3px;
   &__icon{
     width: $icon-size;
     height: $icon-size;
@@ -274,12 +290,13 @@ $option-height: 40px;
   }
   &__question{
     width: 100%;
-    margin-bottom: 8px;
+    margin: 8px 0;
     padding: 0 8px;
   }
   &__container{
     width: 100%;
     @include scrollbar;
+    border-radius: 3px;
   }
   &__option{
     cursor: pointer;
@@ -288,13 +305,26 @@ $option-height: 40px;
     position: relative;
     height: auto;
     min-height: $option-height;
-    line-height: $option-height;
-    padding: 0 8px;
+    padding: 8px 8px;
+    margin: 4px 0;
     background: #fff;
     box-sizing: border-box;
     word-break: break-word;
+    border: solid 2px $color-main;
+    border-radius: 3px;
+    color: #666;
+    &.selected{
+      border: solid 2px #ccc;
+    }
     &__answer{
-      line-height: $option-height;
+      position: relative;
+      line-height: 20px;
+      display: flex;
+      justify-content: space-between;
+      padding-right: 16px;
+      &.voted,&.isMine{
+        padding-right: 0;
+      }
     }
     &__border{
       position: absolute;
@@ -306,20 +336,50 @@ $option-height: 40px;
     }
   }
   &__result{
+    &__data{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      // padding-right: 20px;
+    }
     &__num{
-      line-height: $option-height;
+      line-height: 20px;
+      width: calc(100% - 16px);
+      padding-right: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      &.isMine{
+        width: 100%;
+        padding: 0;
+      }
     }
     &__bar{
       background: $color-sub;
       opacity: 0.5;
-      height: $option-height;
-      line-height: $option-height;
+      width: 0;
+      // height: 36px;
+      height: 100%;
       border-radius: 0 8px 8px 0;
       position: absolute;
       top: 0;
       left: 0;
+      transition: .3s ease-in-out;
       &.selected{
         background: $color-main;
+      }
+    }
+    &__check{
+      // position: absolute;
+      // right: 8px;
+      // top: 0;
+      color: $color-main;
+      height: 20px;
+      padding: 2px 0;
+      svg{
+        display: block;
+        margin: 0 auto;
+        font-size: 16px;
       }
     }
   }
@@ -343,5 +403,11 @@ $option-height: 40px;
       // color: $color-main;
     }
   }
+}
+.details-leave-active{
+  transition: .3s ease-in-out;
+}
+.details-enter,.details-leave-to{
+  transform: translateY(100%);
 }
 </style>

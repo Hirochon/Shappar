@@ -66,12 +66,15 @@ export default {
 @import '@/assets/common.scss';
 .Search{
   position: fixed;
-  top: 8px;
-  margin-left: 16px;
+  // top: 8px;
+  top: 0;
+  // margin-left: 16px;
   display: flex;
-  width: calc(100% - 32px);
+  // width: calc(100% - 32px);
+  width: 100%;
   max-width: 668px;
-  justify-content: space-between;
+  // justify-content: space-between;
+  justify-content: space-around;
   padding: 8px;
   box-sizing: border-box;
   box-shadow: 0 0 8px rgba(black, 0.16);
@@ -177,7 +180,7 @@ export default {
       text-align: center;
       font-size: 14px;
       &.logout{
-        color: red;
+        color: $color-err;
       }
     }
   }

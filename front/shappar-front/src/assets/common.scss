@@ -1,5 +1,6 @@
 $color-main: #41be99;
 $color-sub: #62a7d0;
+$color-err: #f44336;
 @mixin media-8-16{
   @media screen and (min-width: 600px){
     @content

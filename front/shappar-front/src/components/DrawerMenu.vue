@@ -17,9 +17,7 @@
         @touchmove.stop.prevent
         @wheel.stop.prevent
         >
-        <div class="Drawer__header">
-          <div class="Drawer__close" @click="isOpen = false"><font-awesome-icon icon="times"/></div>
-        </div>
+        <div class="Drawer__close" @click="isOpen = false"><font-awesome-icon icon="times"/></div>
         <div class="Drawer__wrapper">
           <router-link class="Drawer__icon" :to="'/mypage/'+ user.user_id + '/'">
             <img :src="user.iconimage" alt="">
@@ -28,6 +26,9 @@
         <div class="Drawer__wrapper">
           <div class="Drawer__name">{{user.name}}</div>
           <div class="Drawer__user_id">@{{user.user_id}}</div>
+        </div>
+        <div class="Drawer__wrapper">
+          <router-link class="Drawer__settings" :to="'/mypage/'+ user.user_id + '/'">マイページ</router-link>
         </div>
         <div class="Drawer__wrapper">
           <router-link class="Drawer__settings" to="/settings">設定</router-link>
@@ -102,8 +103,9 @@ export default {
     top: 0;
     left: 0;
     width: 280px;
-    max-width: 280px;
+    max-width: 230px;
     height: 100%;
+    padding-top: 20px;
     background: white;
   }
   &__header{
@@ -115,7 +117,7 @@ export default {
     font-size: 24px;
     color: #888;
     text-align: center;
-    border-bottom: solid 1px #ccc;
+    // border-bottom: solid 1px #ccc;
   }
   &__close{
     cursor: pointer;
@@ -134,6 +136,9 @@ export default {
   }
   &__wrapper{
     padding: 8px 16px;
+    // &:first-child{
+    //   margin-top: 20px;
+    // }
     // border-bottom: solid 1px #eee;
   }
   &__icon{
@@ -164,7 +169,7 @@ export default {
   }
   &__logout{
     cursor: pointer;
-    color: red;
+    color: $color-err;
   }
   &__settings{
     display: block;
