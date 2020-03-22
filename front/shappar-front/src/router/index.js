@@ -36,7 +36,7 @@ const routes = [
   //   }
   // },
   {
-    path: '/MyPage',
+    path: '/MyPage/:user_id',
     component: MyPage,
     meta: {
       requiresAuth: true

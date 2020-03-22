@@ -189,8 +189,9 @@ export default {
   width: 100%;
   height: 100%;
   background: rgba(black, .6);
-  z-index: 100;
+  z-index: 300;
   overflow: scroll;
+  @include scrollbar();
   &__container{
     width: 100%;
     max-height: 700px;
