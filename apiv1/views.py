@@ -68,43 +68,71 @@ class MypagePostedListAPIView(views.APIView):
     def get(self, request, pk, *args, **kwargs):
         """自分の投稿取得(一覧)"""
 
-        user = get_user_model().objects.filter(username=pk)
-        if len(user) == 0:
+        user_pk = get_user_model().objects.filter(username=pk)
+        if len(user_pk) == 0:
             return Response({'detail':'存在しないユーザーIDです'}, status.HTTP_404_NOT_FOUND)
-        user_id = user[0].id
+        user_id = user_pk[0].id
 
-        # 自身の投稿のみフィルタリング
+        # pkの投稿をフィルタリング
         if 'pid' in request.GET:
             post_basis = Post.objects.get(id=request.GET['pid'])
             querysets = Post.objects.filter(user_id=user_id, created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
         else:
             querysets = Post.objects.filter(user_id=user_id).order_by('-created_at')[:10]
-
         serializer = PostListSerializer(instance=querysets, many=True, pk=user_id)
 
-        for datas in serializer.data:
-            if not datas['voted']:
-                total = 0
-                datas['selected_num'] = -1
-                for data in datas['options']:
-                    del data['id']
-                    del data['share_id']
-                    total += data['votes']
-                    data['votes'] = -1
-                datas['total'] = total
-            else:
-                total = 0
-                for data in datas['options']:
-                    flag = Poll.objects.filter(user_id=user_id,option_id=data['id'])
-                    if len(flag) > 0:
-                        datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
-                    else:
-                        if not 'selected_num' in datas:
-                            datas['selected_num'] = -1
-                    del data['id']
-                    del data['share_id']
-                    total += data['votes']
-                datas['total'] = total
+        user = request.user
+        if user_id == user.id:
+            for datas in serializer.data:
+                if not datas['voted']:
+                    total = 0
+                    datas['selected_num'] = -1
+                    for data in datas['options']:
+                        del data['id']
+                        del data['share_id']
+                        total += data['votes']
+                        data['votes'] = -1
+                    datas['total'] = total
+                else:
+                    total = 0
+                    for data in datas['options']:
+                        flag = Poll.objects.filter(user_id=user_id,option_id=data['id'])
+                        if len(flag) > 0:
+                            datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
+                        else:
+                            if not 'selected_num' in datas:
+                                datas['selected_num'] = -1
+                        del data['id']
+                        del data['share_id']
+                        total += data['votes']
+                    datas['total'] = total
+        else:
+            for datas in serializer.data:
+                poll = Poll.objects.filter(post_id=datas['post_id'], user_id=user.id)
+                if len(poll) == 0:
+                    datas['voted'] = False
+                    total = 0
+                    datas['selected_num'] = -1
+                    for data in datas['options']:
+                        del data['id']
+                        del data['share_id']
+                        total += data['votes']
+                        data['votes'] = -1
+                    datas['total'] = total
+                else:
+                    datas['voted'] = True
+                    total = 0
+                    for data in datas['options']:
+                        flag = Poll.objects.filter(user_id=user_id,option_id=data['id'])
+                        if len(flag) > 0:
+                            datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
+                        else:
+                            if not 'selected_num' in datas:
+                                datas['selected_num'] = -1
+                        del data['id']
+                        del data['share_id']
+                        total += data['votes']
+                    datas['total'] = total
         seri_datas = serializer.data
 
         response = {}
