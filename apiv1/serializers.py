@@ -5,13 +5,12 @@ from .models import Post, Poll, Option
 class MypageSerializer(serializers.ModelSerializer):
     """マイページ用シリアライザ"""
 
-    unique_id = serializers.ReadOnlyField(source='id')
     user_id = serializers.CharField(source='username')
     name = serializers.CharField(source='usernonamae')
 
     class Meta:
         model = get_user_model()
-        fields = ['unique_id', 'user_id', 'name', 'introduction', 'iconimage', 'homeimage']
+        fields = ['user_id', 'name', 'introduction', 'iconimage', 'homeimage']
 
 
 class OptionSerializer(serializers.ModelSerializer):
