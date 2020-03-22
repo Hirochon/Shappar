@@ -7,9 +7,9 @@
     <b-alert variant="warning" show v-show="message.warnings.length > 0" class="mb-0">
       <p v-for="warning in message.warnings" class="mb-0" :key="warning">{{ warning }}</p>
     </b-alert>
-    <b-alert variant="" show v-show="message.info" class="Message__info mb-0">
+    <div v-show="message.info" class="Message__info mb-0">
       {{ message.info }}
-    </b-alert>
+    </div>
   </div>
 </template>
 
@@ -39,11 +39,14 @@ export default {
   z-index: 1000;
   transition: .3s ease-in-out;
   &__info{
-    background: $color-main;
-    // color: $color-main;
-    color: white;
-    border: $color-main;
+    background: white;
+    // background: $color-main;
+    color: $color-main;
+    // color: white;
+    border: solid 2px $color-main;
     font-weight: bold;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.25rem;
   }
 }
 </style>

@@ -24,14 +24,14 @@
         </div>
       </div>
     </div>
-    <div class="PostSwitch" v-if="my_id === traget_id">
+    <div class="PostSwitch">
       <div class="PostSwitch__button" @click="changeActive(0)" :class="{'active': isActive === 0}">
         <font-awesome-icon icon="clipboard-list"/>
       </div>
-      <div class="PostSwitch__button" @click="changeActive(1)" :class="{'active': isActive === 1}">
+      <div class="PostSwitch__button" v-if="my_id === traget_id" @click="changeActive(1)" :class="{'active': isActive === 1}">
         <font-awesome-icon icon="clipboard-check"/>
       </div>
-      <div class="PostSwitch__bar" :style="{transform:tabBar}"></div>
+      <div class="PostSwitch__bar" :class="{other: my_id !== traget_id}" :style="{transform:tabBar}"></div>
     </div>
     <div class="Container" v-show="isActive === 0">
       <PostList :posts="posted" :unique_id="unique_id" @reload="loadPosts()"></PostList>
@@ -68,9 +68,9 @@ export default {
       isLoading: true,
       user: {},
       postedTargetId: '',
-      postedTargetHeight: 0,
+      postedTargetHeight: -1,
       votedTargetId: '',
-      votedTargetHeight: 0,
+      votedTargetHeight: -1,
       posted: [],
       voted: []
     }
@@ -78,7 +78,7 @@ export default {
   watch: {
     '$route' (to, from) {
       // ルートの変更の検知...
-      console.log('route')
+      // console.log('route')
       this.initComponent()
     }
   },
@@ -197,15 +197,17 @@ export default {
       this.my_id = this.$store.state.auth.username
       this.traget_id = this.$route.params.user_id
       this.isLoading = true
+      this.posted = []
+      this.voted = []
       api.get('/api/v1/users/' + this.traget_id + '/')
         .then((response) => {
           this.user = response.data
         })
-      if (this.my_id === this.traget_id) {
-        this.loadPosts()
-      } else {
-        this.isLoading = false
-      }
+      this.loadPosts()
+      this.isLoading = false
+      // if (this.my_id === this.traget_id) {
+      // } else {
+      // }
       window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
       window.addEventListener('resize', this.resizeTriggers)
     }
@@ -362,14 +364,13 @@ export default {
 .PostSwitch{
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
   width: 100%;
   height: 48px;
   background: white;
   position: relative;
   &__button{
     opacity: 0.5;
-    width: 50%;
+    width: 100%;
     height: 48px;
     padding: 12px 0;
     color: $color-main;
@@ -391,6 +392,9 @@ export default {
     position: absolute;
     bottom: 0;
     transition: .3s ease-in-out;
+    &.other{
+      width: 100%;
+    }
   }
 }
 </style>

@@ -47,7 +47,8 @@ export default {
       },
       pageName: 'ログインページ',
       isLoading: false,
-      isActive: -1
+      isActive: -1,
+      error: {}
     }
   },
   methods: {
@@ -68,7 +69,8 @@ export default {
         })
         .catch(error => {
           // this.$store.dispatch('message/setErrorMessage', { message: '認証エラー' })
-          console.log(error.response.data)
+          // console.log(error.response.data)
+          this.error = error
         })
         .then(() => {
           this.isLoading = false
