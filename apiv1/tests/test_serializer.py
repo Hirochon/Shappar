@@ -63,3 +63,32 @@ class TestOptionSerializer(TestCase):
         input_data['answer'] = 'テスト'
         del input_data['share_id']
         self.change_required(input_data, 'share_id')
+
+
+    def test_input_invalid_answer_shareid_are_blank(self):
+        """入力データのバリデーション(NG:answerやshare_idが空文字)"""
+
+        input_data = {
+            'select_num':0,
+            'answer':'',
+            'votes':3,
+            'share_id':uuid.uuid4()
+        }
+        serializer = OptionSerializer(data=input_data)
+
+        self.assertEqual(serializer.is_valid(), False)
+        self.assertCountEqual(serializer.errors.keys(), ['answer'])
+        self.assertCountEqual(
+            [x.code for x in serializer.errors['answer']],
+            ['blank'],
+        )
+
+        input_data['answer'] = 'テスト'
+        input_data['share_id'] = ''
+        serializer_share_id = OptionSerializer(data=input_data)
+        self.assertEqual(serializer_share_id.is_valid(), False)
+        self.assertCountEqual(serializer_share_id.errors.keys(), ['share_id'])
+        self.assertCountEqual(
+            [x.code for x in serializer_share_id.errors['share_id']],
+            ['invalid'],
+        )
