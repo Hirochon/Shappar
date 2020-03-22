@@ -46,9 +46,7 @@
         <font-awesome-icon icon="chart-line"/>
       </div>
     </div>
-    <transition name="details">
-      <PostDetails @switchDetails="switchDetails('')" :post_id="detailsPostId" v-if="isDetailsOpen"/>
-    </transition>
+    <PostDetails @switchDetails="switchDetails('')" :post_id="detailsPostId" v-if="isDetailsOpen"/>
   </div>
 </template>
 
@@ -253,8 +251,11 @@ $option-height: 32px;
     display: flex;
     justify-content: space-around;
     height: 34px;
-    // width: 80px;
+    // width: 112px;
     transition: .3s ease-in-out;
+    :not(:last-child){
+      margin-right: 6px;
+    }
   }
   &__sort{
     cursor: pointer;
