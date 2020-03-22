@@ -92,3 +92,22 @@ class TestOptionSerializer(TestCase):
             [x.code for x in serializer_share_id.errors['share_id']],
             ['invalid'],
         )
+
+    def test_output_data(self):
+        """出力データの内容検証"""
+
+        option = Option.objects.create(
+            select_num=0,
+            answer='テスト',
+            share_id=uuid.uuid4()
+        )
+        serializer = OptionSerializer(instance=option)
+
+        expected_data = {
+            'id':option.id,
+            'select_num':option.select_num,
+            'answer':option.answer,
+            'votes':option.votes,
+            'share_id':str(option.share_id)
+        }
+        self.assertDictEqual(serializer.data, expected_data)
