@@ -1,21 +1,27 @@
 <template>
   <div class="PostDetails" @click.stop="closeDetails()" @touchmove.prevent.stop @touchstart.stop>
-    <div class="PostDetails__container" id="PostDetails__area" @click.stop>
-      <doughnutChart class="PostDetails__chart" :chartData="isActiveChartData" @click.stop></doughnutChart>
-      <div class="PostDetails__switch">
-        <div class="PostDetails__button" @click.stop="isActive = 0" :class="{active: isActive === 0}">
-          <font-awesome-icon icon="venus-mars"/>
+    <div class="PostDetails__container" id="PostDetails__area" @click.stop :class="{horizon: W_more_H}">
+      <doughnutChart class="PostDetails__chart"
+        :chartData="isActiveChartData" @click.stop :class="{horizon: W_more_H}"
+        :style="{height: maxR+'px',width: maxR+'px'}"
+        >
+      </doughnutChart>
+      <div class="PostDetails__bottom-box" :class="{horizon: W_more_H}">
+        <div class="PostDetails__switch" :class="{horizon: W_more_H}">
+          <div class="PostDetails__button" @click.stop="isActive = 0" :class="{active: isActive === 0}">
+            <font-awesome-icon icon="venus-mars"/>
+          </div>
+          <div class="PostDetails__button" @click.stop="isActive = 1" :class="{active: isActive === 1}">
+            age
+          </div>
+          <div class="PostDetails__button" @click.stop="isActive = 2" :class="{active: isActive === 2}">
+            <font-awesome-icon icon="birthday-cake"/>
+          </div>
         </div>
-        <div class="PostDetails__button" @click.stop="isActive = 1" :class="{active: isActive === 1}">
-          age
-        </div>
-        <div class="PostDetails__button" @click.stop="isActive = 2" :class="{active: isActive === 2}">
-          <font-awesome-icon icon="birthday-cake"/>
+        <div class="PostDetails__button" :class="{horizon: W_more_H}">
+          <font-awesome-icon icon="times" @click.stop="closeDetails()"/>
         </div>
       </div>
-    </div>
-    <div class="PostDetails__button">
-      <font-awesome-icon icon="times" @click.stop="closeDetails()"/>
     </div>
   </div>
 </template>
@@ -46,7 +52,8 @@ export default {
       height: 0,
       maxR: 0,
       isActive: 0,
-      isActiveText: 0
+      isActiveText: 0,
+      W_more_H: false
     }
   },
   methods: {
@@ -114,6 +121,14 @@ export default {
         labels.push(item.id)
       })
       return labels
+    },
+    resizeTriggers () {
+      var area = document.getElementById('PostDetails__area')
+      this.width = area.clientWidth
+      this.height = area.clientHeight
+      this.maxR = this.width > this.height ? this.height : this.width
+      this.W_more_H = this.width > this.height
+      console.log('resize')
     }
   },
   computed: {
@@ -165,12 +180,13 @@ export default {
   },
   created () {
     this.getPostData()
+    window.addEventListener('resize', this.resizeTriggers)
   },
   mounted () {
-    var area = document.getElementById('PostDetails__area')
-    this.width = area.clientWidth
-    this.height = area.clientHeight
-    this.maxR = this.width > this.height ? this.height : this.width
+    this.resizeTriggers()
+  },
+  destroyed () {
+    window.removeEventListener('resize', this.resizeTriggers)
   }
 }
 </script>
@@ -193,9 +209,17 @@ export default {
   overflow: scroll;
   @include scrollbar();
   &__container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
     width: 100%;
-    max-height: 700px;
+    height: 100%;
+    // max-height: 700px;
     // background: white;
+    &.horizon{
+      flex-wrap: nowrap;
+    }
   }
   &__chart{
     max-width: 700px;
@@ -203,11 +227,31 @@ export default {
     & > canvas{
       max-width: 700px;
     }
+    &.horizon{
+      display: flex;
+      width: 100%;
+      max-width: 100%;
+      & > canvas{
+        max-width: 100%;
+        max-height: 100%;
+      }
+    }
+  }
+  &__bottom-box{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    &.horizon{
+      width: 50%;
+      // height: 100%;
+    }
   }
   &__switch{
-    max-width: 700px;
-    margin: 0 auto;
-    margin-top: 24px;
+    // max-width: 700px;
+    margin: 24px auto 96px;
     padding: 0 16px;
     display: flex;
     justify-content: space-evenly;
@@ -215,6 +259,11 @@ export default {
     // background: white;
     border-radius: 3px;
     overflow: hidden;
+    &.horizon{
+      width: 100%;
+      height: auto;
+      margin-top: 56px;
+    }
   }
   &__button{
     cursor: pointer;
@@ -231,6 +280,9 @@ export default {
     // font-family: ;
     &.active{
       background: $color-main;
+    }
+    &.horizon{
+      // position: absolute;
     }
     svg{
       display: block;

@@ -153,6 +153,9 @@ export default {
     var area = document.getElementById('Update')
     this.width = area.clientWidth
     this.height = this.width / 2
+  },
+  destroyed () {
+    window.removeEventListener('resize', this.resizeTriggers)
   }
 }
 </script>
