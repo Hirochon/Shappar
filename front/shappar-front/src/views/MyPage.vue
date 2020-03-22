@@ -80,6 +80,7 @@ export default {
       // ルートの変更の検知...
       // console.log('route')
       this.initComponent()
+      // console.log('after init')
     }
   },
   methods: {
@@ -183,10 +184,12 @@ export default {
         })
       api.get('/api/v1/users/' + this.traget_id + '/voted/')
         .then(async (response) => {
-          var posts = response.data.posts
-          await this.initPosts(false, response.data.posts)
-          await (this.votedTargetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
-          if (this.votedTargetId) this.votedTargetHeight = document.getElementById(this.votedTargetId).offsetTop - window.innerHeight // 次の高さを計測
+          if (response.status === 200) {
+            var posts = response.data.posts
+            await this.initPosts(false, response.data.posts)
+            await (this.votedTargetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
+            if (this.votedTargetId) this.votedTargetHeight = document.getElementById(this.votedTargetId).offsetTop - window.innerHeight // 次の高さを計測
+          }
         })
         .then(() => {
           this.isLoading = false
@@ -197,6 +200,7 @@ export default {
       this.my_id = this.$store.state.auth.username
       this.traget_id = this.$route.params.user_id
       this.isLoading = true
+      this.isActive = 0
       this.posted = []
       this.voted = []
       api.get('/api/v1/users/' + this.traget_id + '/')
