@@ -337,7 +337,7 @@ class PostDetailDeleteAPIView(views.APIView):
                 response['voted_age']['0-10'] += 1
             elif data['age'] < 20:
                 response['voted_age']['10-20'] += 1
-            elif data['age'] < 30-40:
+            elif data['age'] < 30:
                 response['voted_age']['20-30'] += 1
             elif data['age'] < 40:
                 response['voted_age']['30-40'] += 1
