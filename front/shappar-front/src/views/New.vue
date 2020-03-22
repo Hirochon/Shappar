@@ -166,7 +166,6 @@ export default {
         serveOptions.push(item)
       }
       api.post('/api/v1/posts/', {
-        unique_id: this.unique_id,
         question: this.question.text,
         options: serveOptions
       })

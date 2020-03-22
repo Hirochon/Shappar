@@ -66,7 +66,7 @@ export default {
       await (this.targetHeight = -1)// 読み込み中のスクロールで発火するのを避けるためにlockをかける
       var nextPostId = this.posts[this.posts.length - 1].post_id
       this.isLoading = true
-      await api.get('/api/v1/posts/public/' + this.unique_id + '/?pid=' + nextPostId)
+      await api.get('/api/v1/posts/public/?pid=' + nextPostId)
         .then((response) => {
           var posts = response.data.posts
           posts.forEach(item => {
@@ -128,7 +128,7 @@ export default {
       refConf.diffY = 0
     },
     async search () {
-      api.get('/api/v1/posts/public/' + this.unique_id + '/?q=' + this.query)
+      api.get('/api/v1/posts/public/?q=' + this.query)
         .then((response) => {
           this.initPosts(response.data.posts)
         })
@@ -148,7 +148,7 @@ export default {
       if (this.targetId) this.targetHeight = document.getElementById(this.targetId).offsetTop - window.innerHeight // 次の高さを計測
     },
     async refresh () { // ここの非同期処理いるのか？
-      await api.get('/api/v1/posts/public/' + this.unique_id + '/')
+      await api.get('/api/v1/posts/public/')
         .then((response) => {
           this.initPosts(response.data.posts)
         })
@@ -188,7 +188,7 @@ export default {
         this.user = response.data
       })
     this.isLoading = true
-    api.get('/api/v1/posts/public/' + this.unique_id + '/')
+    api.get('/api/v1/posts/public/')
       .then((response) => {
         this.initPosts(response.data.posts)
       })

@@ -74,7 +74,8 @@ export default {
     return {
       res: null,
       isDetailsOpen: false,
-      detailsPostId: ''
+      detailsPostId: '',
+      error: {}
     }
   },
   methods: {
@@ -127,7 +128,7 @@ export default {
     async refleshPost (post) {
       var res
       post.isLoading = true
-      await api.get('/api/v1/posts/public/' + this.unique_id + '/' + post.post_id + '/')
+      await api.get('/api/v1/posts/public/' + post.post_id + '/')
         .then((response) => {
           res = response.data
         })
@@ -154,8 +155,10 @@ export default {
             // this.posts.splice(index, 1)
             this.$emit('reload')
           }
-        }).catch((error) => {
-          console.log(error)
+        })
+        .catch((error) => {
+          // console.log(error)
+          this.error = error
         })
     },
     optionsSort (post, options) {
