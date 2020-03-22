@@ -25,15 +25,20 @@
           <transition-group name="option">
             <div class="New__option__container" v-for="(option, index) in options" :key="option.id" @touchmove.stop.prevent>
               <div class="New__option__wrapper" :id="'option_'+option.id" @touchmove.stop.prevent>
-                <textarea class="New__option__text" cols="30" rows="3" v-model="option.answer" :placeholder="'回答'+(index+1)"
-                  @touchstart="delTouchStart(index)"
-                  @touchmove.stop="delTouchMove(option.id)"
-                  @touchend.stop="delTouchEnd(option.id)"
-                  @input="answerValidate(option)"
-                  >
-                </textarea>
+                <div class="New__option__data">
+                  <div class="New__option__controll">
+                    <div class="New__delete" @click="deleteOption(index)"><font-awesome-icon icon="times"/></div>
+                    <div class="New__option__num" :class="{hasError:!option.isValid}" @touchmove.stop.prevent>{{option.length}}/40</div>
+                  </div>
+                  <textarea class="New__option__text" cols="30" rows="3" v-model="option.answer" :placeholder="'回答'+(index+1)"
+                    @touchstart="delTouchStart(index)"
+                    @touchmove.stop="delTouchMove(option.id)"
+                    @touchend.stop="delTouchEnd(option.id)"
+                    @input="answerValidate(option)"
+                    >
+                  </textarea>
+                </div>
                 <div class="New__option__handle"><font-awesome-icon icon="bars"/></div>
-                <div class="New__option__num" :class="{hasError:!option.isValid}" @touchmove.stop.prevent>{{option.length}}/40</div>
               </div>
               <div class="New__delete__behind" :class="{on:deleteConfig.trigger}" @touchmove.stop.prevent><font-awesome-icon icon="trash-alt"/></div>
             </div>
@@ -249,6 +254,7 @@ export default {
       if (!this.question.isValid) return false
       if (this.question.text === '') return false
       for (let item of this.options) {
+        if (!this.answerValidate(item)) return false
         if (item.answer !== '' && item.isValid) count++
       }
       if (count < 2) return false
@@ -269,8 +275,9 @@ export default {
 <style lang="scss">
 @import '@/assets/common.scss';
 .New{
-  position: absolute;
+  // position: absolute;
   width: 100%;
+  max-width: 700px;
   // height: 100%;
   // top: 0;
   bottom: 0;
@@ -282,12 +289,13 @@ export default {
   &__container{
     position: fixed;
     top: 0;
-    left: 0;
     height: 100%;
     width: 100%;
+    max-width: 700px;
     // max-height: 100%;
     // top: 100%;
     padding: 164px 0px 64px;
+    // margin-left: ;
     background: white;
     overflow-x: hidden;
     overflow-y: scroll;
@@ -297,10 +305,13 @@ export default {
   &__FAB{
     cursor: pointer;
     position: fixed;
-    right: 16px;
     bottom: 48px;
     width: 64px;
     height: 64px;
+    margin-left: calc(100% - 96px);
+    @include media-700 (){
+      margin-left: 604px;
+    }
     border-radius: 50%;
     color: white;
     background: $color-main;
@@ -325,10 +336,14 @@ export default {
       display: flex;
       background: white;
     }
+    &__data{
+      width: calc(100% - 40px);
+    }
     &__text{
       padding: 0 16px;
       box-sizing: border-box;
-      width: calc(100% - 40px);
+      // width: calc(100% - 40px);
+      width: 100%;
       height: 64px;
       line-height: 24px;
       background: #fff;
@@ -343,22 +358,25 @@ export default {
       color: black;
       background: #ccc;
       box-sizing: border-box;
+      cursor: move;
       svg{
         display: block;
         margin: 0 auto;
         font-size: 14px;
       }
     }
-    &__num{
-      position: absolute;
-      bottom: 4px;
-      right: 48px;
-      width: 48px;
+    &__controll{
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
       height: 24px;
+      // padding-left: calc(100% - 60px);
+      padding: 0 8px 0 14px;
+    }
+    &__num{
+      width: 40px;
       line-height: 24px;
       font-size: 14px;
-      // border-radius: 12px;
-      // background: $color-main;
       color:$color-main;
       text-align: right;
       &.hasError{
@@ -374,7 +392,7 @@ export default {
     height: 96px;
     padding: 42px 0;
     padding-left: calc(100% - 40px);
-    color: $color-err;
+    background: $color-err;
     z-index: -1;
     color: white;
     border-bottom: solid 1px #eee;
@@ -391,12 +409,23 @@ export default {
       }
     }
   }
+  &__delete{
+    cursor: pointer;
+    color: #888;
+    padding: 2px 0;
+    width: 20px;
+    svg{
+      display: block;
+      font-size: 20px;
+      margin: 0 auto;
+    }
+  }
 }
 .Top{
   position: fixed;
   top:0;
-  left: 0;
   width: 100%;
+  max-width: 700px;
   height: 148px;
   background: white;
   z-index: 100;
@@ -444,12 +473,13 @@ export default {
       }
     }
     &__options{
-      position: fixed;
+      position: absolute;
       top: 0;
       right: 0;
       width: 40px;
       height: 48px;
       line-height: 48px;
+      // margin-right: -100px;
       font-size: 18px;
       // border-radius: 50%;
       color: white;
@@ -487,6 +517,7 @@ export default {
     padding: 16px;
     color: white;
     background: $color-sub;
+    cursor: pointer;
     svg{
       display: block;
       margin: 0 auto;
@@ -499,8 +530,10 @@ export default {
     padding: 16px;
     color: white;
     background: $color-main;
+    cursor: pointer;
     &.hasError{
       opacity: 0.5;
+      cursor:auto;
     }
     svg{
       display: block;

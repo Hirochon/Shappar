@@ -1,6 +1,8 @@
 <template>
   <div class="Search">
-    <DrawerMenu :user="user"/>
+    <div class="Drawer__switch" @click="$emit('drawerOpen')">
+      <img :src="user.iconimage" alt="">
+    </div>
     <form action="" class="Search__form" @submit.prevent="getPost">
       <label for="text-box" class="Search__label">検索</label>
       <input type="text" id="text-box" class="Search__input" v-model="childQuery">
@@ -18,11 +20,9 @@
 
 <script>
 import api from '@/services/api'
-import DrawerMenu from '@/components/DrawerMenu.vue'
 export default {
   name: 'Search',
   components: {
-    DrawerMenu
   },
   props: {
     query: {
@@ -72,7 +72,7 @@ export default {
   display: flex;
   // width: calc(100% - 32px);
   width: 100%;
-  max-width: 668px;
+  max-width: 700px;
   // justify-content: space-between;
   justify-content: space-around;
   padding: 8px;
@@ -80,6 +80,9 @@ export default {
   box-shadow: 0 0 8px rgba(black, 0.16);
   background: rgba(255,255,255,1);
   z-index: 100;
+  @include media-1200 {
+    justify-content: center;
+  }
   &__form{
     position: relative;
     display: flex;
@@ -151,6 +154,9 @@ export default {
     border-radius: 50%;
     background: white;
     color: white;
+    @include media-1200 {
+      display: none;
+    }
     img{
       width: 100%;
       height: 100%;

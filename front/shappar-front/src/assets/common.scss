@@ -1,8 +1,14 @@
 $color-main: #41be99;
+$color-main-light: #a1dfcc;
 $color-sub: #62a7d0;
 $color-err: #f44336;
 @mixin media-8-16{
   @media screen and (min-width: 600px){
+    @content
+  }
+};
+@mixin media-700 {
+  @media screen and (min-width: 700px){
     @content
   }
 };
@@ -18,6 +24,11 @@ $color-err: #f44336;
 };
 @mixin media-pc{
   @media screen and (min-width: 1024px){
+    @content
+  }
+};
+@mixin media-1200{
+  @media screen and (min-width: 1200px){
     @content
   }
 };

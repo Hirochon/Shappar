@@ -1,13 +1,20 @@
 <template>
-  <div class="Update">
+  <div class="Update" id="Update">
     <GlobalMessage/>
     <router-link class="Update__close" :to="'/mypage/'+ before_user_id + '/'"><font-awesome-icon icon="times"/></router-link>
-    <div class="Update__image">
+    <div class="Update__image" :style="{width: width+'px',height: height+'px'}">
       <img :src="beforeHomeImage" alt="" id="homeimage">
-      <label class="Update__image__mask" for="home_file"><font-awesome-icon icon="camera"/></label>
+      <label class="Update__image__mask" for="home_file"
+        :style="{
+          width: width+'px',height: height+'px',
+          padding: height/2-10 + 'px 0'
+        }"
+        >
+        <font-awesome-icon icon="camera"/>
+      </label>
       <input class="Update__file" id="home_file" type="file" name="homeimage" @change="imageSelect(0, $event)">
     </div>
-    <div class="Update__icon">
+    <div class="Update__icon" :style="{top: height - 60 + 'px'}">
       <img :src="beforeIconImage" alt="" id="iconimage">
       <label class="Update__icon__mask" for="icon_file"><font-awesome-icon icon="camera"/></label>
       <input class="Update__file" id="icon_file" type="file" name="iconimage" @change="imageSelect(1, $event)">
@@ -45,6 +52,8 @@ export default {
   },
   data: function () {
     return {
+      width: 0,
+      height: 0,
       before_user_id: '',
       user_id: {
         value: '',
@@ -108,6 +117,11 @@ export default {
       option.length = option.value.length
       option.isValid = (option.length >= min && option.length <= max)
       return option.isValid
+    },
+    resizeTriggers () {
+      var area = document.getElementById('Update')
+      this.width = area.clientWidth
+      this.height = this.width / 2
     }
   },
   computed: {
@@ -133,6 +147,9 @@ export default {
         this.user_id.isValid = this.Validate(this.user_id, 1, 18)
         this.introduction.isValid = this.Validate(this.introduction, 0, 150)
       })
+    var area = document.getElementById('Update')
+    this.width = area.clientWidth
+    this.height = this.width / 2
   }
 }
 </script>
@@ -166,7 +183,6 @@ export default {
   &__image{
     position: relative;
     width: 100%;
-    height: 200px;
     margin-bottom: 48px;
     background: #eee;
     overflow: hidden;
@@ -180,8 +196,7 @@ export default {
       top: 0;
       left: 0;
       width: 100%;
-      height: 200px;
-      padding: 90px 0;
+      padding-top: calc(50% - 10px);
       margin: 0;
       background: rgba(0,0,0,0.5);
       color: white;
@@ -200,7 +215,6 @@ export default {
     border-radius: 50%;
     position: absolute;
     left: calc(50% - 50px);
-    top: 140px;
     background: white;
     overflow: hidden;
     border: solid 3px white;

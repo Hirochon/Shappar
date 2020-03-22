@@ -1,9 +1,10 @@
 <template>
   <div class="Public" @touchmove="pullToMove" @touchend="pullToEnd">
     <GlobalMessage/>
-    <New @switchNew="switchNew()" @refresh="refresh" :isOpen="isOpen"/>
+    <DrawerMenu :user="user" :isOpen="isDrawerOpen" @close="isDrawerOpen = false"/>
+    <New @switchNew="switchNew()" @refresh="refresh" :isOpen="isNewOpen"/>
     <transition name="search">
-      <Search :query="query" @search="search()" v-show="searchShow && !isOpen"></Search>
+      <Search :query="query" @search="search()" @drawerOpen="isDrawerOpen = true" v-show="searchShow && !isNewOpen"></Search>
     </transition>
     <div class="Pull-to" id="Pull-to">
       <font-awesome-icon icon="spinner" class="Pull-to__rotate" v-if="refreshConfig.loading"/>
@@ -22,6 +23,7 @@ import Search from '@/components/Search.vue'
 import PostList from '@/components/PostList.vue'
 import New from '@/views/New.vue'
 import GlobalMessage from '@/components/GlobalMessage.vue'
+import DrawerMenu from '@/components/DrawerMenu.vue'
 
 import api from '@/services/api'
 export default {
@@ -30,15 +32,18 @@ export default {
     Search,
     PostList,
     New,
-    GlobalMessage
+    GlobalMessage,
+    DrawerMenu
   },
   data: function () {
     return {
       unique_id: '',
       user_id: '',
+      user: {},
       posts: [],
       query: '',
-      isOpen: false,
+      isNewOpen: false,
+      isDrawerOpen: false,
       isLoading: true,
       searchShow: true,
       positionY: 0,
@@ -55,6 +60,7 @@ export default {
   },
   methods: {
     async loadMore () {
+      // console.log(this.targetHeight + ' : ' + this.scrollTop())
       if (this.scrollTop() < this.targetHeight) return
       if (this.targetHeight < 0) return
       await (this.targetHeight = -1)// 読み込み中のスクロールで発火するのを避けるためにlockをかける
@@ -77,13 +83,13 @@ export default {
         .then(() => {
           this.isLoading = false
         })
-      if (this.targetId) this.targetHeight = document.getElementById(this.targetId).offsetTop // 次の高さを計測
+      if (this.targetId) this.targetHeight = document.getElementById(this.targetId).offsetTop - window.innerHeight // 次の高さを計測
     },
     pullToMove () {
       // touchイベントとその他のイベントの統合
       var e = event.type === 'touchmove' ? event.changedTouches[0] : event
       var refConf = this.refreshConfig
-      if (this.scrollTop() > 0 || this.isOpen) { // 新規投稿画面使用時に発火しないため
+      if (this.scrollTop() > 0 || this.isnewOpen) { // 新規投稿画面使用時に発火しないため
         refConf.isStart = false
         return
       }
@@ -137,8 +143,9 @@ export default {
         })
       })
       this.posts = posts
+      // console.log(window.innerHeight)
       await (this.targetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
-      if (this.targetId) this.targetHeight = document.getElementById(this.targetId).offsetTop // 次の高さを計測
+      if (this.targetId) this.targetHeight = document.getElementById(this.targetId).offsetTop - window.innerHeight // 次の高さを計測
     },
     async refresh () { // ここの非同期処理いるのか？
       await api.get('/api/v1/posts/public/' + this.unique_id + '/')
@@ -169,13 +176,17 @@ export default {
       return document.documentElement.scrollTop > 0 ? document.documentElement.scrollTop : document.body.scrollTop
     },
     switchNew () {
-      this.isOpen = !this.isOpen
+      this.isNewOpen = !this.isNewOpen
     }
   },
   created: function () {
     this.unique_id = this.$store.state.auth.unique_id
     this.user_id = this.$store.state.auth.username
     this.query = ''
+    api.get('/api/v1/users/' + this.user_id + '/')
+      .then((response) => {
+        this.user = response.data
+      })
     this.isLoading = true
     api.get('/api/v1/posts/public/' + this.unique_id + '/')
       .then((response) => {
