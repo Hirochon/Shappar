@@ -20,3 +20,9 @@ collectstatic:
 
 test:
 	docker-compose run --rm shappar-back python3 manage.py test --settings=config.settings.local
+
+test_views:
+	docker-compose run --rm shappar-back python3 manage.py test apiv1.tests.test_views --settings=config.settings.local
+
+test_serializers:
+	docker-compose run --rm shappar-back python3 manage.py test apiv1.tests.test_serializers --settings=config.settings.local

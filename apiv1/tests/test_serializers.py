@@ -13,7 +13,7 @@ from apiv1.serializers import (
     PostDetailSerializer,
 )
 
-# (正常系)2methods,(異常系)2methods,(合計)4methods.
+# (正常系)2methods,(異常系)3methods,(合計)5methods.
 class TestOptionSerializer(TestCase):
     """OptionSerializerのテストクラス"""
 
@@ -91,6 +91,24 @@ class TestOptionSerializer(TestCase):
         self.assertCountEqual(
             [x.code for x in serializer_share_id.errors['share_id']],
             ['invalid'],
+        )
+
+    def test_input_invalid_answer_over(self):
+        """入力データのバリデーション(NG:answerが文字数制限を超える)"""
+
+        input_data = {
+            'select_num':0,
+            'answer':'テストテストテストテストテストテストテストテストテストテストテストテストテストテスト',
+            'votes':3,
+            'share_id':uuid.uuid4()
+        }
+        serializer = OptionSerializer(data=input_data)
+
+        self.assertEqual(serializer.is_valid(), False)
+        self.assertCountEqual(serializer.errors.keys(), ['answer'])
+        self.assertCountEqual(
+            [x.code for x in serializer.errors['answer']],
+            ['max_length'],
         )
 
     def test_output_data(self):
