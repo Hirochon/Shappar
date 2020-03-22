@@ -252,11 +252,10 @@ export default {
     line-height: 12px;
     font-size: 12px;
     border-radius: 6px;
-    background: $color-main;
-    color:#fff;
+    color: $color-main;
     text-align: center;
     &.hasError{
-      background: $color-err;
+      color: $color-err;
     }
   }
   &__input{

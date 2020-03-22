@@ -16,6 +16,9 @@
           <div class="Post__reload" v-if="post.voted" @click="refleshPost(post)"><font-awesome-icon icon="sync-alt"/></div>
         </div>
       </div>
+      <div class="Post__loading" v-if="post.isLoading">
+        <font-awesome-icon icon="spinner" class="Public__loading__icon"/>
+      </div>
       <div class="Post__question">
         {{post.question}}
       </div>
@@ -123,6 +126,7 @@ export default {
     },
     async refleshPost (post) {
       var res
+      post.isLoading = true
       await api.get('/api/v1/posts/public/' + this.unique_id + '/' + post.post_id + '/')
         .then((response) => {
           res = response.data
@@ -132,6 +136,7 @@ export default {
       post.options = res.options.sort((a, b) => {
         return a.select_num < b.select_num ? -1 : 1
       })
+      post.isLoading = false
     },
     deletePost (post, index) {
       if (!confirm('この投稿を削除しますか？')) return
@@ -286,6 +291,17 @@ $option-height: 32px;
         transition: .3s ease-in-out;
         transform: rotate(180deg);
       }
+    }
+  }
+  &__loading{
+    width: 100%;
+    height: 50px;
+    padding: 13px;
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 24px;
+      animation: rotation 1s linear infinite;
     }
   }
   &__question{

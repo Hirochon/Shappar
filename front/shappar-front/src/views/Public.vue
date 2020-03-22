@@ -10,6 +10,9 @@
       <font-awesome-icon icon="chevron-circle-down" :class="{'Pull-to__on': refreshConfig.trigger}" v-if="refreshConfig.isStart"/>
     </div>
     <PostList :posts="posts" :unique_id="unique_id" @reload="refresh()"></PostList>
+    <div class="Public__loading" v-if="isLoading">
+      <font-awesome-icon icon="spinner" class="Public__loading__icon"/>
+    </div>
   </div>
 </template>
 
@@ -36,6 +39,7 @@ export default {
       posts: [],
       query: '',
       isOpen: false,
+      isLoading: true,
       searchShow: true,
       positionY: 0,
       targetHeight: 0,
@@ -55,18 +59,23 @@ export default {
       if (this.targetHeight < 0) return
       await (this.targetHeight = -1)// 読み込み中のスクロールで発火するのを避けるためにlockをかける
       var nextPostId = this.posts[this.posts.length - 1].post_id
+      this.isLoading = true
       await api.get('/api/v1/posts/public/' + this.unique_id + '/?pid=' + nextPostId)
         .then((response) => {
           var posts = response.data.posts
           posts.forEach(item => {
             item.view = 0
             item.sort = 0
+            item.isLoading = false
             item.options.sort((a, b) => {
               return a.select_num < b.select_num ? -1 : 1
             })
           })
           this.posts = this.posts.concat(posts)
           this.targetId = posts.length === 10 ? posts[6].post_id : false
+        })
+        .then(() => {
+          this.isLoading = false
         })
       if (this.targetId) this.targetHeight = document.getElementById(this.targetId).offsetTop // 次の高さを計測
     },
@@ -122,6 +131,7 @@ export default {
       await posts.forEach(item => {
         item.view = 0
         item.sort = 0
+        item.isLoading = false
         item.options.sort((a, b) => {
           return a.select_num < b.select_num ? -1 : 1
         })
@@ -166,9 +176,13 @@ export default {
     this.unique_id = this.$store.state.auth.unique_id
     this.user_id = this.$store.state.auth.username
     this.query = ''
+    this.isLoading = true
     api.get('/api/v1/posts/public/' + this.unique_id + '/')
       .then((response) => {
         this.initPosts(response.data.posts)
+      })
+      .then(() => {
+        this.isLoading = false
       })
     window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
   },
@@ -183,6 +197,17 @@ export default {
   padding-top: 48px;
   height: 100%;
   box-sizing: content-box;
+  &__loading{
+    width: 100%;
+    height: 100px;
+    padding: 38px;
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 24px;
+      animation: rotation 1s linear infinite;
+    }
+  }
 }
 .Pull-to{
   position: absolute;

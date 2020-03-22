@@ -37,6 +37,9 @@
     <div class="Container" v-show="isActive === 1">
       <PostList :posts="voted" :unique_id="unique_id"></PostList>
     </div>
+    <div class="Mypage__loading" v-if="isLoading">
+      <font-awesome-icon icon="spinner" class="Public__loading__icon"/>
+    </div>
   </div>
 </template>
 
@@ -58,6 +61,7 @@ export default {
       my_id: '',
       traget_id: '',
       isActive: 0,
+      isLoading: true,
       user: {},
       postedTargetId: '',
       postedTargetHeight: 0,
@@ -83,6 +87,7 @@ export default {
       await posts.forEach(item => {
         item.view = 0
         item.sort = 0
+        item.isLoading = false
         item.options.sort((a, b) => {
           return a.select_num < b.select_num ? -1 : 1
         })
@@ -97,18 +102,23 @@ export default {
       if (this.postedTargetHeight < 0) return
       await (this.postedTargetHeight = -1)// 読み込み中のスクロールで発火するのを避けるためにlockをかける
       var nextPostId = this.posted[this.posted.length - 1].post_id
+      this.isLoading = true
       await api.get('/api/v1/users/' + this.my_id + '/posted/?pid=' + nextPostId)
         .then((response) => {
           var posts = response.data.posts
           posts.forEach(item => {
             item.view = 0
             item.sort = 0
+            item.isLoading = false
             item.options.sort((a, b) => {
               return a.select_num < b.select_num ? -1 : 1
             })
           })
           this.posted = this.posted.concat(posts)
           this.postedTargetId = posts.length === 10 ? posts[6].post_id : false
+        })
+        .then(() => {
+          this.isLoading = false
         })
       if (this.postedTargetId) this.postedTargetHeight = document.getElementById(this.postedTargetId).offsetTop // 次の高さを計測
     },
@@ -117,18 +127,23 @@ export default {
       if (this.votedTargetHeight < 0) return
       await (this.votedTargetHeight = -1)// 読み込み中のスクロールで発火するのを避けるためにlockをかける
       var nextPostId = this.voted[this.voted.length - 1].post_id
+      this.isLoading = true
       await api.get('/api/v1/users/' + this.my_id + '/voted/?pid=' + nextPostId)
         .then((response) => {
           var posts = response.data.posts
           posts.forEach(item => {
             item.view = 0
             item.sort = 0
+            item.isLoading = false
             item.options.sort((a, b) => {
               return a.select_num < b.select_num ? -1 : 1
             })
           })
           this.voted = this.voted.concat(posts)
           this.votedTargetId = posts.length === 10 ? posts[6].post_id : false
+        })
+        .then(() => {
+          this.isLoading = false
         })
       if (this.votedTargetId) this.votedTargetHeight = document.getElementById(this.votedTargetId).offsetTop // 次の高さを計測
     },
@@ -149,6 +164,7 @@ export default {
     this.unique_id = this.$store.state.auth.unique_id
     this.my_id = this.$store.state.auth.username
     this.traget_id = this.$route.params.user_id
+    this.isLoading = true
     api.get('/api/v1/users/' + this.traget_id + '/')
       .then((response) => {
         this.user = response.data
@@ -168,6 +184,11 @@ export default {
           await (this.votedTargetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
           if (this.votedTargetId) this.votedTargetHeight = document.getElementById(this.votedTargetId).offsetTop // 次の高さを計測
         })
+        .then(() => {
+          this.isLoading = false
+        })
+    } else {
+      this.isLoading = false
     }
     window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
   },
@@ -284,6 +305,17 @@ export default {
     padding: 0 16px;
     min-height: 32px;
     word-wrap: break-word;
+  }
+  &__loading{
+    width: 100%;
+    height: 50px;
+    padding: 13px;
+    svg{
+      display: block;
+      margin: 0 auto;
+      font-size: 24px;
+      animation: rotation 1s linear infinite;
+    }
   }
 }
 .PostSwitch{
