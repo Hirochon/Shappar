@@ -132,6 +132,9 @@ export default {
       return true
     }
   },
+  created () {
+    window.addEventListener('resize', this.resizeTriggers)
+  },
   mounted: function () {
     this.before_user_id = store.getters['auth/username']
     this.user_id.value = this.before_user_id
