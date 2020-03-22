@@ -33,9 +33,7 @@ class MypageAPIView(views.APIView):
 
         mypage = get_object_or_404(get_user_model(), username=pk)
         serializer = MypageSerializer(instance=mypage)
-        response = serializer.data
-        del response['unique_id']
-        return Response(response, status.HTTP_200_OK)
+        return Response(serializer.data, status.HTTP_200_OK)
 
     def put(self, request, pk, *args, **kwargs):
         """マイページモデルの更新APIに対応するハンドラメソッド"""
@@ -48,9 +46,7 @@ class MypageAPIView(views.APIView):
         serializer = MypageSerializer(instance=mypage, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        response = serializer.data
-        del response['unique_id']
-        return Response(response, status.HTTP_200_OK)
+        return Response(serializer.data, status.HTTP_200_OK)
 
     def patch(self, request, pk, *args, **kwargs):
         """マイページモデルの一部更新APIに対応するハンドラメソッド"""
@@ -63,9 +59,7 @@ class MypageAPIView(views.APIView):
         serializer = MypageSerializer(instance=mypage, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        response = serializer.data
-        del response['unique_id']
-        return Response(response, status.HTTP_200_OK)
+        return Response(serializer.data, status.HTTP_200_OK)
 
 
 class MypagePostedListAPIView(views.APIView):
