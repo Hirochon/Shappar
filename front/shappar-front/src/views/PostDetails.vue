@@ -128,7 +128,7 @@ export default {
       this.height = area.clientHeight
       this.maxR = this.width > this.height ? this.height : this.width
       this.W_more_H = this.width > this.height
-      console.log('resize')
+      // console.log('resize')
     }
   },
   computed: {
@@ -280,9 +280,6 @@ export default {
     // font-family: ;
     &.active{
       background: $color-main;
-    }
-    &.horizon{
-      // position: absolute;
     }
     svg{
       display: block;

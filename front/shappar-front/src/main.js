@@ -15,23 +15,19 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 
 import {
-  faSearch, faTags, faHome, faGlobe, faListOl, faSyncAlt,
-  faFileAlt, faTimes, faSortAmountUp, faSortAmountDownAlt,
-  faExchangeAlt, faBars, faPlus, faSpinner, faChevronCircleDown,
-  faTrashAlt, faCamera, faEdit, faReply, faArrowAltCircleLeft,
-  faEllipsisH, faVenusMars, faBirthdayCake, faChartLine, faClipboardCheck,
-  faClipboardList, faPaperPlane, faCheck
+  faTimes, faSearch, faEllipsisH, faListOl, faSortAmountUp, faSortAmountDownAlt,
+  faSyncAlt, faSpinner, faCheck, faChartLine, faCamera, faChevronCircleDown,
+  faVenusMars, faBirthdayCake, faBars, faTrashAlt, faPlus, faPaperPlane,
+  faArrowAltCircleLeft, faEdit, faClipboardList, faClipboardCheck
 } from '@fortawesome/free-solid-svg-icons'
 
 import './registerServiceWorker'
 
 library.add(
-  faSearch, faTags, faHome, faGlobe, faListOl, faSyncAlt,
-  faFileAlt, faTimes, faSortAmountUp, faSortAmountDownAlt,
-  faExchangeAlt, faBars, faPlus, faSpinner, faChevronCircleDown,
-  faTrashAlt, faCamera, faEdit, faReply, faArrowAltCircleLeft,
-  faEllipsisH, faVenusMars, faBirthdayCake, faChartLine, faClipboardCheck,
-  faClipboardList, faPaperPlane, faCheck
+  faTimes, faSearch, faEllipsisH, faListOl, faSortAmountUp, faSortAmountDownAlt,
+  faSyncAlt, faSpinner, faCheck, faChartLine, faCamera, faChevronCircleDown,
+  faVenusMars, faBirthdayCake, faBars, faTrashAlt, faPlus, faPaperPlane,
+  faArrowAltCircleLeft, faEdit, faClipboardList, faClipboardCheck
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
