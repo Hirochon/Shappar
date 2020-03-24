@@ -218,7 +218,13 @@ export default {
     },
     closeNew () {
       this.$emit('switchNew')
-      if (this.isEmpty()) return localStorage.removeItem('post')
+      if (this.isEmpty()) {
+        this.options = [
+          { id: 0, answer: '', length: 0, isValid: true },
+          { id: 1, answer: '', length: 0, isValid: true }
+        ]
+        return localStorage.removeItem('post')
+      }
       if (confirm('下書きを保存しますか？')) {
         var post = {
           question: this.question,
