@@ -37,7 +37,7 @@ commands:
                 name: Restore Python Package
                 keys:
                 - shappar-v2-{{ checksum "requirements.txt" }}
-                - shappar-v1
+                - shappar-v2-
     run_pip_install:
         description: "requirements.txtを元にPipInstallする"
         steps:
