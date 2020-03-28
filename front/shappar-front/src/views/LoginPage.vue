@@ -35,6 +35,7 @@
           </div>
         </div>
       </form>
+      <div class="Login__submit test" @click="testUserLogin()">テストユーザーでログイン</div>
     </main>
     <div class="Login__signup">
       <a href="http://localhost:8000/accounts/signup/">アカウントを作成</a>
@@ -79,6 +80,26 @@ export default {
         .catch(error => {
           // this.$store.dispatch('message/setErrorMessage', { message: '認証エラー' })
           // console.log(error.response.data)
+          this.error = error
+        })
+        .then(() => {
+          this.isLoading = false
+        })
+    },
+    testUserLogin () {
+      this.isLoading = true
+      this.$store.dispatch('auth/login', {
+        username: 'sample',
+        password: 'shappar1'
+      })
+        .then(() => {
+          // console.log('Login succeeded.')
+          this.$store.dispatch('message/setInfoMessage', { message: 'ログインしました。' })
+          // クエリ文字列に「next」がなければ、ホーム画面へ
+          const next = this.$route.query.next || '/'
+          this.$router.replace(next)
+        })
+        .catch(error => {
           this.error = error
         })
         .then(() => {
@@ -215,6 +236,10 @@ export default {
     color: white;
     background: $color-main;
     border-radius: 4px;
+    &.test{
+      margin-top: 24px;
+      background: $color-sub;
+    }
   }
   &__rotate{
     animation: rotation 1s linear infinite;
