@@ -85,14 +85,14 @@ jobs:
             - checkout
             - aws-s3/copy:
                 from: ./static/css/*
-                to: 's3://${AWS_STORAGE_BUCKET_NAME}/static/css/*'
+                to: 's3://${AWS_STORAGE_BUCKET_NAME}/'
     js-deploy:
         executor: shappar-django
         steps:
             - checkout
             - aws-s3/copy:
                 from: ./static/js/*
-                to: 's3://${AWS_STORAGE_BUCKET_NAME}/static/js/*'
+                to: 's3://${AWS_STORAGE_BUCKET_NAME}'
 
 workflows:
     version: 2
