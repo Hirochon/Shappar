@@ -88,17 +88,31 @@ jobs:
         steps:
             - checkout
             - aws-s3/sync:
-                from: "./static/css/*"
-                to: "s3://${AWS_STORAGE_BUCKET_NAME}/static/css/"
+                arguments: |
+                    --acl public-read \
+                    --cache-control "max-age=86400"
+                from: './static/css/*'
+                to: 's3://${AWS_STORAGE_BUCKET_NAME}/prefix'
                 overwrite: true
+            - aws-s3/copy:
+                arguments: '--dry-run'
+                from: './static/css/*'
+                to: 's3://${AWS_STORAGE_BUCKET_NAME}'
     js-deploy:
         executor: shappar-static
         steps:
             - checkout
             - aws-s3/sync:
-                from: "./static/js/*"
-                to: "s3://${AWS_STORAGE_BUCKET_NAME}/static/js/"
+                arguments: |
+                    --acl public-read \
+                    --cache-control "max-age=86400"
+                from: './static/js/*'
+                to: 's3://${AWS_STORAGE_BUCKET_NAME}/prefix'
                 overwrite: true
+            - aws-s3/copy:
+                arguments: '--dry-run'
+                from: './static/js/*'
+                to: 's3://${AWS_STORAGE_BUCKET_NAME}'
 workflows:
     version: 2
     # Djangoのテスト
