@@ -91,12 +91,12 @@ jobs:
                 arguments: |
                     --acl public-read \
                     --cache-control "max-age=86400"
-                from: static/favicon.ico
+                from: static/css
                 to: 's3://shappar-s3-backet/prefix'
                 overwrite: true
             - aws-s3/copy:
                 arguments: '--dry-run'
-                from: static/favicon.ico
+                from: static/css
                 to: 's3://shappar-s3-backet'
     js-deploy:
         executor: shappar-static
@@ -106,12 +106,12 @@ jobs:
                 arguments: |
                     --acl public-read \
                     --cache-control "max-age=86400"
-                from: /static/js/*
+                from: static/js
                 to: 's3://${AWS_STORAGE_BUCKET_NAME}/prefix'
                 overwrite: true
             - aws-s3/copy:
                 arguments: '--dry-run'
-                from: /static/js/*
+                from: static/js
                 to: 's3://${AWS_STORAGE_BUCKET_NAME}'
 workflows:
     version: 2
