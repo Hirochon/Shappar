@@ -91,6 +91,9 @@ jobs:
                 arguments: |
                     --acl public-read \
                     --cache-control "max-age=86400"
+                aws-access-key-id: AWS_ACCESS_KEY_ID
+                aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+                aws-region: AWS_REGION
                 from: static/css
                 to: 's3://shappar-s3-backet/static/css'
                 overwrite: true
@@ -106,6 +109,9 @@ jobs:
                 arguments: |
                     --acl public-read \
                     --cache-control "max-age=86400"
+                aws-access-key-id: AWS_ACCESS_KEY_ID
+                aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+                aws-region: AWS_REGION
                 from: static/js
                 to: 's3://${AWS_STORAGE_BUCKET_NAME}/static/js'
                 overwrite: true
