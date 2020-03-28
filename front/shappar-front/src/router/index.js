@@ -7,6 +7,7 @@ import MyPage from '@/views/MyPage.vue'
 import LoginPage from '@/views/LoginPage'
 import UpdateUser from '@/views/UpdateUser'
 import Admin from '@/views/Admin'
+import Home from '@/views/Home'
 import store from '@/store'
 
 Vue.use(VueRouter)
@@ -23,6 +24,10 @@ const routes = [
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path: '/Home',
+    component: Home
   },
   // {
   //   path: '/Private',

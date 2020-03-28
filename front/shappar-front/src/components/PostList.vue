@@ -405,7 +405,7 @@ $option-height: 32px;
   }
   &__details{
     cursor: pointer;
-    max-width: 300px;
+    max-width: 100%;
     height: 32px;
     line-height: 32px;
     margin: 0 auto;
