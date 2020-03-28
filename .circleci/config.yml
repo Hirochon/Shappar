@@ -92,7 +92,7 @@ jobs:
                     --acl public-read \
                     --cache-control "max-age=86400"
                 from: static/css
-                to: 's3://shappar-s3-backet/prefix'
+                to: 's3://shappar-s3-backet/static/css'
                 overwrite: true
             - aws-s3/copy:
                 arguments: '--dry-run'
@@ -107,7 +107,7 @@ jobs:
                     --acl public-read \
                     --cache-control "max-age=86400"
                 from: static/js
-                to: 's3://${AWS_STORAGE_BUCKET_NAME}/prefix'
+                to: 's3://${AWS_STORAGE_BUCKET_NAME}/static/js'
                 overwrite: true
             - aws-s3/copy:
                 arguments: '--dry-run'
