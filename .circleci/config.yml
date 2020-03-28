@@ -80,12 +80,14 @@ jobs:
             - db_migrations
             - run_test
     css-deploy:
+        executor: shappar-django
         steps:
             - checkout
             - aws-s3/copy:
                 from: ./static/css
                 to: 's3://${AWS_STORAGE_BUCKET_NAME}/static/css'
     js-deploy:
+        executor: shappar-django
         steps:
             - checkout
             - aws-s3/copy:
