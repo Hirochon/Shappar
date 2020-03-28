@@ -20,6 +20,10 @@ executors:
                 POSTGRES_USER: postgres
                 POSTGRES_PASSWORD: postgres
                 TZ: Asia/Tokyo
+    shappar-static:
+        working_directory: ~/Shappar
+        docker:
+            - image: 'cimg/python:3.6'
 
 commands:
     chown_python_package:
@@ -80,14 +84,14 @@ jobs:
             - db_migrations
             - run_test
     css-deploy:
-        executor: shappar-django
+        executor: shappar-static
         steps:
             - checkout
             - aws-s3/copy:
                 from: ./static/css/*
                 to: 's3://shappar-s3-bucket'
     js-deploy:
-        executor: shappar-django
+        executor: shappar-static
         steps:
             - checkout
             - aws-s3/copy:
