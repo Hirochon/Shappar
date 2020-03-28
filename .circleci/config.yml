@@ -4,9 +4,10 @@ description: "Djangoサーバーの起動とマイグレーション＆自動デ
 orbs:
     aws-ecr: circleci/aws-ecr@6.7.1
     aws-ecs: circleci/aws-ecs@1.1.0
+    aws-s3: circleci/aws-s3@1.0.15
 
 executors:
-    build-test:
+    shappar-django:
         working_directory: ~/Shappar
         docker:
             - image: circleci/python:3.8.1
@@ -68,8 +69,8 @@ commands:
                 command: python3 manage.py test --settings=config.settings.circleci
 
 jobs:
-    shappar-build-test:
-        executor: build-test
+    build-test:
+        executor: shappar-django
         steps:
             - checkout
             - chown_python_package
@@ -78,15 +79,40 @@ jobs:
             - save_python_package
             - db_migrations
             - run_test
+    css-deploy:
+        steps:
+            - checkout
+            - aws-s3/copy:
+                from: ./static/css
+                to: 's3://${AWS_STORAGE_BUCKET_NAME}/static/css'
+    js-deploy:
+        steps:
+            - checkout
+            - aws-s3/copy:
+                from: ./static/js
+                to: 's3://${AWS_STORAGE_BUCKET_NAME}/static/js'
 
 workflows:
     version: 2
+    # Djangoのテスト
     test:
         jobs:
-            - shappar-build-test:
+            - build-test:
                 filters:
                     branches:
                         ignore: master
+    # 静的ファイル(CSS/JS)をS3へデプロイ
+    s3-static-deploy:
+        jobs:
+            - css-deploy:
+                filters:
+                    branches:
+                        only: circleci
+            - js-deploy:
+                filters:
+                    branches:
+                        only: circleci
+    # Djangoのデプロイ
     back-deploy:
         jobs:
             - aws-ecr/build-and-push-image:
@@ -107,6 +133,7 @@ workflows:
                 cluster-name: '${MY_APP_PREFIX}-cluster-v2'
                 service-name: '${MY_APP_PREFIX}-service-v2'
                 container-image-name-updates: 'container=shappar-back,tag=${CIRCLE_SHA2}'
+    # Nginxのデプロイ
     nginx-deploy:
         jobs:
             - aws-ecr/build-and-push-image:
