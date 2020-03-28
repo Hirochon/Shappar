@@ -88,14 +88,14 @@ jobs:
         steps:
             - checkout
             - aws-s3/copy:
-                from: "./static/css/"
+                from: "./static/css/*"
                 to: "s3://${AWS_STORAGE_BUCKET_NAME}/static/css/"
     js-deploy:
         executor: shappar-static
         steps:
             - checkout
             - aws-s3/copy:
-                from: "./static/js/"
+                from: "./static/js/*"
                 to: "s3://${AWS_STORAGE_BUCKET_NAME}/static/js/"
 workflows:
     version: 2
