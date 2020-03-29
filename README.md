@@ -16,7 +16,7 @@
 - Django REST Framework: 3.11.0
 ### インフラ
 - インフラ構成図
-![Shappar Diagram](https://user-images.githubusercontent.com/50178851/77075961-77dd6e00-6a36-11ea-86c5-63acc994489c.png)
+![Shappar Diagram](https://user-images.githubusercontent.com/50178851/77857026-3880ff80-7236-11ea-937c-ca12f681582d.png)
 
 - AWS
   - **ECS** / ECR / ALB / RDS / S3 / CroudFront / Route53 / ACM / VPC / EC2
