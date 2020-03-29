@@ -88,7 +88,6 @@ jobs:
         steps:
             - checkout
             - aws-s3/copy:
-                arguments: '--dry-run'
                 from: static/css
                 to: 's3://${AWS_STORAGE_BUCKET_NAME}/static/css'
     js-deploy:
@@ -96,7 +95,6 @@ jobs:
         steps:
             - checkout
             - aws-s3/copy:
-                arguments: '--dry-run'
                 from: static/js
                 to: 's3://${AWS_STORAGE_BUCKET_NAME}/ststic/js'
 workflows:
