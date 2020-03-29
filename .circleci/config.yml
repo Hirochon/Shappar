@@ -90,13 +90,15 @@ jobs:
             - aws-s3/sync:
                 from: static/css
                 to: 's3://${AWS_STORAGE_BUCKET_NAME}/static/css'
+                overwrite: true
     js-deploy:
         executor: shappar-static
         steps:
             - checkout
             - aws-s3/sync:
                 from: static/js
-                to: 's3://${AWS_STORAGE_BUCKET_NAME}/ststic/js'
+                to: 's3://${AWS_STORAGE_BUCKET_NAME}/static/js'
+                overwrite: true
 workflows:
     version: 2
     # Djangoのテスト
