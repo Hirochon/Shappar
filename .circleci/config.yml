@@ -87,38 +87,18 @@ jobs:
         executor: shappar-static
         steps:
             - checkout
-            - aws-s3/sync:
-                arguments: |
-                    --acl public-read \
-                    --cache-control "max-age=86400"
-                aws-access-key-id: AWS_ACCESS_KEY_ID
-                aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-                aws-region: AWS_REGION
-                from: static/css
-                to: 's3://${AWS_STORAGE_BUCKET_NAME}/static/css'
-                overwrite: true
             - aws-s3/copy:
                 arguments: '--dry-run'
                 from: static/css
-                to: 's3://${AWS_STORAGE_BUCKET_NAME}'
+                to: 's3://${AWS_STORAGE_BUCKET_NAME}/static/css'
     js-deploy:
         executor: shappar-static
         steps:
             - checkout
-            - aws-s3/sync:
-                arguments: |
-                    --acl public-read \
-                    --cache-control "max-age=86400"
-                aws-access-key-id: AWS_ACCESS_KEY_ID
-                aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-                aws-region: AWS_REGION
-                from: static/js
-                to: 's3://${AWS_STORAGE_BUCKET_NAME}/static/js'
-                overwrite: true
             - aws-s3/copy:
                 arguments: '--dry-run'
                 from: static/js
-                to: 's3://${AWS_STORAGE_BUCKET_NAME}'
+                to: 's3://${AWS_STORAGE_BUCKET_NAME}/ststic/js'
 workflows:
     version: 2
     # Djangoのテスト
