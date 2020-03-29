@@ -4,9 +4,10 @@ description: "Djangoサーバーの起動とマイグレーション＆自動デ
 orbs:
     aws-ecr: circleci/aws-ecr@6.7.1
     aws-ecs: circleci/aws-ecs@1.1.0
+    aws-s3: circleci/aws-s3@1.0.15
 
 executors:
-    build-test:
+    shappar_django:
         working_directory: ~/Shappar
         docker:
             - image: circleci/python:3.8.1
@@ -19,6 +20,10 @@ executors:
                 POSTGRES_USER: postgres
                 POSTGRES_PASSWORD: postgres
                 TZ: Asia/Tokyo
+    shappar_static:
+        working_directory: ~/Shappar
+        docker:
+            - image: circleci/python:3.8.1
 
 commands:
     chown_python_package:
@@ -68,8 +73,8 @@ commands:
                 command: python3 manage.py test --settings=config.settings.circleci
 
 jobs:
-    shappar-build-test:
-        executor: build-test
+    build_test:
+        executor: shappar_django
         steps:
             - checkout
             - chown_python_package
@@ -78,16 +83,34 @@ jobs:
             - save_python_package
             - db_migrations
             - run_test
+    css_deploy:
+        executor: shappar_static
+        steps:
+            - checkout
+            - aws-s3/sync:
+                from: static/css
+                to: 's3://${AWS_STORAGE_BUCKET_NAME}/static/css'
+                overwrite: true
+    js_deploy:
+        executor: shappar_static
+        steps:
+            - checkout
+            - aws-s3/sync:
+                from: static/js
+                to: 's3://${AWS_STORAGE_BUCKET_NAME}/static/js'
+                overwrite: true
 
 workflows:
     version: 2
+    # Djangoのテスト
     test:
         jobs:
-            - shappar-build-test:
+            - build_test:
                 filters:
                     branches:
                         ignore: master
-    back-deploy:
+    # DjangoをECR/ECSへデプロイ
+    back_deploy:
         jobs:
             - aws-ecr/build-and-push-image:
                 account-url: AWS_ECR_ACCOUNT_URL
@@ -107,7 +130,8 @@ workflows:
                 cluster-name: '${MY_APP_PREFIX}-cluster-v2'
                 service-name: '${MY_APP_PREFIX}-service-v2'
                 container-image-name-updates: 'container=shappar-back,tag=${CIRCLE_SHA2}'
-    nginx-deploy:
+    # NginxをECR/ECSへデプロイ
+    nginx_deploy:
         jobs:
             - aws-ecr/build-and-push-image:
                 account-url: AWS_ECR_ACCOUNT_URL
@@ -128,3 +152,14 @@ workflows:
                 cluster-name: '${MY_APP_PREFIX}-cluster-v2'
                 service-name: '${MY_APP_PREFIX}-service-v2'
                 container-image-name-updates: 'container=shappar-nginx,tag=${CIRCLE_SHA2}'
+    # 静的ファイル(CSS/JS)をS3へデプロイ
+    static_deploy:
+        jobs:
+            - css_deploy:
+                filters:
+                    branches:
+                        only: master
+            - js_deploy:
+                filters:
+                    branches:
+                        only: master
