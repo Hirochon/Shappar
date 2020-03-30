@@ -37,8 +37,8 @@
       </form>
       <div class="Login__submit test" @click="testUserLogin()">テストユーザーでログイン</div>
     </main>
-    <div class="Login__signup">
-      <a href="http://localhost:8000/accounts/signup/">アカウントを作成</a>
+    <div class="Login__signup" @click="toSignUp()">
+      アカウントを作成
     </div>
   </div>
 </template>
@@ -74,6 +74,7 @@ export default {
         .then(() => {
           // console.log('Login succeeded.')
           this.$store.dispatch('message/setInfoMessage', { message: 'ログインしました。' })
+          this.$store.dispatch('user/load', { user_id: this.$store.getters['auth/username'] })
           // クエリ文字列に「next」がなければ、ホーム画面へ
           const next = this.$route.query.next || '/'
           this.$router.replace(next)
@@ -96,6 +97,7 @@ export default {
         .then(() => {
           // console.log('Login succeeded.')
           this.$store.dispatch('message/setInfoMessage', { message: 'ログインしました。' })
+          this.$store.dispatch('user/load', { user_id: this.$store.getters['auth/username'] })
           // クエリ文字列に「next」がなければ、ホーム画面へ
           const next = this.$route.query.next || '/'
           this.$router.replace(next)
@@ -106,6 +108,11 @@ export default {
         .then(() => {
           this.isLoading = false
         })
+    },
+    toSignUp () {
+      // 以下の記述だとローカルホストの方はbuildに含まれていなかった
+      const path = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://shappar.site'
+      window.location.href = path + '/accounts/signup/'
     }
   }
 }
@@ -233,6 +240,7 @@ export default {
     }
   }
   &__submit{
+    cursor: pointer;
     padding: 8px;
     color: white;
     background: $color-main;
@@ -247,11 +255,10 @@ export default {
   }
   &__signup{
     margin: 8px 0;
-    a{
-      color: $color-sub;
-      &:hover{
-        color: $color-sub;
-      }
+    color: $color-sub;
+    &:hover{
+      text-decoration: underline;
+      cursor: pointer;
     }
   }
 }

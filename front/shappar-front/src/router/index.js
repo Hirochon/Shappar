@@ -90,8 +90,9 @@ router.beforeEach((to, from, next) => {
 
   // ログインが必要な画面に遷移しようとした場合
   if (to.matched.some(record => record.meta.requiresAuth)) {
+    // console.log('inrequireAuth')
     // ログインしている状態の場合
-    if (isLoggedIn) {
+    if (isLoggedIn && token != null) {
       // console.log('User is already logged in. So, free to next.')
       next()
 
@@ -112,6 +113,7 @@ router.beforeEach((to, from, next) => {
           })
           .catch(() => {
             // 再取得できなければログイン画面へ
+            // console.log('forceToLogin')
             forceToLoginPage(to, from, next)
           })
       } else {

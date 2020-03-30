@@ -1,12 +1,12 @@
 <template>
-  <div id="login-page" class="Home">
+  <div class="Home">
     <GlobalMessage/>
     <!-- メインエリア -->
     <div class="Home__header">
       <h1 class="Home__shappar">Shappar</h1>
       <div class="Home__links">
-        <div class="Home__link signup">
-          <a href="http://localhost:8000/accounts/signup/">アカウント作成</a>
+        <div class="Home__link signup" @click="toSignUp()">
+          <a>アカウント作成</a>
         </div>
         <div class="Home__link">
           <router-link to="/login">ログイン</router-link>
@@ -20,8 +20,8 @@
       <p class="Home__description">
         SNS型アンケートサービス
       </p>
-      <div class="Home__button">
-        <a href="http://localhost:8000/accounts/signup/">アカウントを作成</a>
+      <div class="Home__button" @click="toSignUp()">
+        アカウントを作成
       </div>
       <div class="Home__links-inner">
         <div class="Home__link-inner">
@@ -68,8 +68,8 @@
         <div class="Home__card__detail">結果をグラフで表示</div>
       </div>
     </div>
-    <div class="Home__button bottom">
-      <a href="http://localhost:8000/accounts/signup/">さっそく始めてみる</a>
+    <div class="Home__button bottom" @click="toSignUp()">
+      さっそく始めてみる
     </div>
   </div>
 </template>
@@ -93,6 +93,10 @@ export default {
     }
   },
   methods: {
+    toSignUp () {
+      const path = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://shappar.site'
+      window.location.href = path + '/accounts/signup/'
+    }
   }
 }
 </script>
@@ -140,6 +144,7 @@ export default {
       border: solid 2px white;
       border-radius: 3px;
       padding: 2px 4px;
+      color: white;
       cursor: pointer;
     }
     a{
@@ -191,6 +196,7 @@ export default {
     text-align: center;
   }
   &__button{
+    cursor: pointer;
     width: 60%;
     height: 40px;
     line-height: 24px;

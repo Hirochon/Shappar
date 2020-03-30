@@ -219,6 +219,7 @@ export default {
     align-items: flex-start;
     width: 100%;
     height: 100%;
+    padding-top: 12px;
     // max-height: 700px;
     // background: white;
     &.horizon{
@@ -248,7 +249,7 @@ export default {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: auto;
+    margin-top: 24px;
     &.horizon{
       width: 45%;
       // height: 100%;

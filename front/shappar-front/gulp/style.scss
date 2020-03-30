@@ -11,6 +11,7 @@ html,body{
   background: #eee;
   overflow-x: hidden;
   @include scrollbar();
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 input, button, textarea, select {
     margin: 0;
@@ -68,7 +69,9 @@ input, button, textarea, select {
     display: flex;
   }
   &__shappar{
-    line-height: 36px;
+    // line-height: 36px;
+    line-height: 1.2;
+    padding: 4px 0;
     margin: 0;
     font-size: 24px;
     letter-spacing: 1.2px;
