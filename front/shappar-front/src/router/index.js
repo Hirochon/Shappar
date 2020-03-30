@@ -103,9 +103,12 @@ router.beforeEach((to, from, next) => {
 
         store.dispatch('auth/reload')
           .then(() => {
-            // 再取得できたらそのまま次へ
+            // 再取得できたら詳細なユーザー情報を取得（TODO ここに関してはまとめれるならまとめてもらいたい）
             // console.log('Succeeded to reload. So, free to next.')
-            next()
+            store.dispatch('user/load', { user_id: store.getters['auth/username'] })
+              .then(() => {
+                next()
+              })
           })
           .catch(() => {
             // 再取得できなければログイン画面へ

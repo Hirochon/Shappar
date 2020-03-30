@@ -149,10 +149,58 @@ const messageModule = {
   }
 }
 
+const userModule = {
+  strict: process.env.NODE_ENV !== 'production',
+  namespaced: true,
+  state: {
+    user_id: '',
+    name: '',
+    introduction: '',
+    iconimage: '',
+    homeimage: ''
+  },
+  getters: {
+    user_id: state => state.user_id,
+    name: state => state.name,
+    introduction: state => state.introduction,
+    iconimage: state => state.iconimage,
+    homeimage: state => state.homeimage
+  },
+  mutations: {
+    set (state, payload) {
+      state.user_id = payload.user.user_id
+      state.name = payload.user.name
+      state.introduction = payload.user.introduction
+      state.iconimage = payload.user.iconimage
+      state.homeimage = payload.user.homeimage
+    },
+    clear (state) {
+      state.user_id = ''
+      state.name = ''
+      state.introduction = ''
+      state.iconimage = ''
+      state.homeimage = ''
+    }
+  },
+  actions: {
+    load (context, payload) {
+      return api.get('/api/v1/users/' + payload.user_id + '/')
+        .then(response => {
+          // console.log(response.data)
+          const user = response.data
+          // storeのユーザー情報を更新
+          context.commit('set', { user: user })
+          return user
+        })
+    }
+  }
+}
+
 const store = new Vuex.Store({
   modules: {
     auth: authModule,
-    message: messageModule
+    message: messageModule,
+    user: userModule
   }
 })
 
