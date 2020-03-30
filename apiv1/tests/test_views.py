@@ -220,6 +220,8 @@ class TestMypageVotedListAPIView(APITestCase):
             selected_num = flag[0].select_num
         else: 
             voted = False
+
+        # 予期される選択肢の中身を作成
         options = Option.objects.filter(share_id=post.share_id)
         options_list = []
         for option in options:
@@ -228,10 +230,13 @@ class TestMypageVotedListAPIView(APITestCase):
             option_dict['answer'] = option.answer
             option_dict['votes'] = option.votes
             options_list.append(option_dict)
+        # 投稿日時をShappar仕様に変形
         post_created_at = str(post.created_at)
         hours = timedelta(hours=9)
         utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
         created_at = utc_created_at + hours
+        # 合計投票数を再算出
+        total = Post.objects.get().total
         expected_json_dict = {
             'posts':[{
                 'post_id':str(post.id),
@@ -241,7 +246,7 @@ class TestMypageVotedListAPIView(APITestCase):
                 'created_at':created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
                 'voted':voted,
                 'selected_num':selected_num,
-                'total':1,
+                'total':total,
                 'options':options_list
             }]
         }
