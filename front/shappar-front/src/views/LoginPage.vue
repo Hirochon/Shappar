@@ -66,6 +66,7 @@ export default {
     submitLogin: function () {
       // ログイン
       this.isLoading = true
+      // alert('auth/login')
       this.$store.dispatch('auth/login', {
         username: this.form.username,
         password: this.form.password

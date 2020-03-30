@@ -35,6 +35,7 @@ const authModule = {
      * ログイン
      */
     login (context, payload) {
+      // alert('auth/login')
       return api.post('/api/v1/auth/jwt/create/', {
         'username': payload.username,
         'password': payload.password
@@ -63,6 +64,7 @@ const authModule = {
       return api.get('/api/v1/auth/users/me/')
         .then(response => {
           // console.log(response)
+          // alert('auth/reload')
           const user = response.data
           // storeのユーザー情報を更新
           context.commit('set', { user: user })
@@ -187,6 +189,7 @@ const userModule = {
       return api.get('/api/v1/users/' + payload.user_id + '/')
         .then(response => {
           // console.log(response.data)
+          // alert('user/load')
           const user = response.data
           // storeのユーザー情報を更新
           context.commit('set', { user: user })
