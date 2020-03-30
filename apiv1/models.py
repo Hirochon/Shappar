@@ -29,6 +29,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(verbose_name='投稿日時',default=timezone.now, editable=False)
     options = models.ManyToManyField(Option, verbose_name='選択肢モデル', blank=True)
     share_id = models.UUIDField(verbose_name='選択肢共通ID')
+    total = models.IntegerField(verbose_name='合計投票数', default=0)
 
     def __str__(self):
         return '投稿者: ' + self.user.usernonamae + '(' + self.user.username + ') 質問: ' + self.question
