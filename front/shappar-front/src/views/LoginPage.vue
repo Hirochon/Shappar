@@ -89,7 +89,7 @@ export default {
     testUserLogin () {
       this.isLoading = true
       this.$store.dispatch('auth/login', {
-        username: 'sample',
+        username: 'sample1',
         password: 'shappar1'
       })
         .then(() => {
