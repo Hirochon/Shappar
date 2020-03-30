@@ -980,8 +980,11 @@ class TestPollCreateAPIView(APITestCase):
             option_dict['select_num'] = option.select_num
             option_dict['votes'] = option.votes
             options_list.append(option_dict)
+        # 投票後の合計投票数を取得
+        total = Post.objects.get().total
         expected_json_dict = {
             'options':options_list,
+            'total':total,
             'selected_num':Poll.objects.get().option.select_num
         }
         self.assertJSONEqual(response.content, expected_json_dict)
