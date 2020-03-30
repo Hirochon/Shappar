@@ -26,7 +26,7 @@ class OptionListSerializer(serializers.ListSerializer):
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
-    """投稿用シリアライザ"""
+    """投稿作成用シリアライザ"""
     options = OptionListSerializer()
 
     class Meta:
@@ -40,6 +40,14 @@ class PostCreateSerializer(serializers.ModelSerializer):
         post = super().create(validated_data)
         post.options.set(options)
         return post
+
+
+class PostPatchSerializer(serializers.ModelSerializer):
+    """投票による投稿の合計投票数の変化用シリアライザ"""
+
+    class Meta:
+        model = Post
+        fields = ['id', 'total']
 
 
 class PostListSerializer(serializers.ModelSerializer):
@@ -59,7 +67,7 @@ class PostListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['post_id', 'user_id', 'iconimage', 'question', 'voted', 'options', 'created_at']
+        fields = ['post_id', 'user_id', 'iconimage', 'question', 'voted', 'total', 'options', 'created_at']
 
     def get_voted(self, instance):
         if Poll.objects.filter(user_id=self.pk,post_id=instance.id):
