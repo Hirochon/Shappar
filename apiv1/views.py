@@ -12,6 +12,7 @@ from django.contrib.auth import get_user_model
 from .models import Poll, Post, Option
 from .serializers import (
     MypageSerializer, 
+    PostPatchSerializer,
     PostCreateSerializer, 
     PostListSerializer, 
     PollSerializer, 
@@ -85,16 +86,12 @@ class MypagePostedListAPIView(views.APIView):
         if user_id == user.id:
             for datas in serializer.data:
                 if not datas['voted']:
-                    total = 0
                     datas['selected_num'] = -1
                     for data in datas['options']:
                         del data['id']
                         del data['share_id']
-                        total += data['votes']
                         data['votes'] = -1
-                    datas['total'] = total
                 else:
-                    total = 0
                     for data in datas['options']:
                         flag = Poll.objects.filter(user_id=user_id,option_id=data['id'])
                         if len(flag) > 0:
@@ -104,24 +101,18 @@ class MypagePostedListAPIView(views.APIView):
                                 datas['selected_num'] = -1
                         del data['id']
                         del data['share_id']
-                        total += data['votes']
-                    datas['total'] = total
         else:
             for datas in serializer.data:
                 poll = Poll.objects.filter(post_id=datas['post_id'], user_id=user.id)
                 if len(poll) == 0:
                     datas['voted'] = False
-                    total = 0
                     datas['selected_num'] = -1
                     for data in datas['options']:
                         del data['id']
                         del data['share_id']
-                        total += data['votes']
                         data['votes'] = -1
-                    datas['total'] = total
                 else:
                     datas['voted'] = True
-                    total = 0
                     for data in datas['options']:
                         flag = Poll.objects.filter(user_id=user_id,option_id=data['id'])
                         if len(flag) > 0:
@@ -131,8 +122,6 @@ class MypagePostedListAPIView(views.APIView):
                                 datas['selected_num'] = -1
                         del data['id']
                         del data['share_id']
-                        total += data['votes']
-                    datas['total'] = total
         seri_datas = serializer.data
 
         response = {}
@@ -165,16 +154,12 @@ class MypageVotedListAPIView(views.APIView):
 
         for datas in serializer.data:
             if not datas['voted']:
-                total = 0
                 datas['selected_num'] = -1
                 for data in datas['options']:
                     del data['id']
                     del data['share_id']
-                    total += data['votes']
                     data['votes'] = -1
-                datas['total'] = total
             else:
-                total = 0
                 for data in datas['options']:
                     flag = Poll.objects.filter(user_id=user_id,option_id=data['id'])
                     if len(flag) > 0:
@@ -184,8 +169,6 @@ class MypageVotedListAPIView(views.APIView):
                             datas['selected_num'] = -1
                     del data['id']
                     del data['share_id']
-                    total += data['votes']
-                datas['total'] = total
         seri_datas = serializer.data
 
         response = {}
@@ -257,16 +240,12 @@ class PostListAPIView(views.APIView):
 
         for datas in serializer.data:
             if not datas['voted']:
-                total = 0
                 datas['selected_num'] = -1
                 for data in datas['options']:
                     del data['id']
                     del data['share_id']
-                    total += data['votes']
                     data['votes'] = -1
-                datas['total'] = total
             else:
-                total = 0
                 for data in datas['options']:
                     flag = Poll.objects.filter(user_id=unique_id,option_id=data['id'])
                     if len(flag) > 0:
@@ -276,8 +255,6 @@ class PostListAPIView(views.APIView):
                             datas['selected_num'] = -1
                     del data['id']
                     del data['share_id']
-                    total += data['votes']
-                datas['total'] = total
         seri_datas = serializer.data
 
         response = {}
@@ -316,13 +293,12 @@ class PostDetailDeleteAPIView(views.APIView):
 
         response = {}
         response['voted_sex'] = {'woman':0,'man':0,'others':0,'null':0}
+        response['voted_blood_type'] = {'A':0,'B':0,'O':0,'AB':0, 'others':0}
         response['voted_age'] = {'0-10':0,"10-20":0,"20-30":0,"30-40":0,"40-50":0,"50-60":0,"60-":0}
         response['voted_month'] = {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0}
-        response['total'] = 0
+        response['total'] = post[0].total
 
         for data in serializer.data:
-            
-            response['total'] += 1
 
             if data['sex'] == '0':
                 response['voted_sex']['woman'] += 1
@@ -332,6 +308,17 @@ class PostDetailDeleteAPIView(views.APIView):
                 response['voted_sex']['others'] += 1
             elif data['sex'] == '3':
                 response['voted_sex']['null'] += 1
+
+            if data['blood_type'] == '0':
+                response['voted_blood_type']['A'] += 1
+            elif data['blood_type'] == '1':
+                response['voted_blood_type']['B'] += 1
+            elif data['blood_type'] == '2':
+                response['voted_blood_type']['O'] += 1
+            elif data['blood_type'] == '3':
+                response['voted_blood_type']['AB'] += 1
+            elif data['blood_type'] == '4':
+                response['voted_blood_type']['others'] += 1
 
             if data['age'] < 10:
                 response['voted_age']['0-10'] += 1
@@ -377,7 +364,7 @@ class PostDetailDeleteAPIView(views.APIView):
 
 
 class PostUpdateAPIView(views.APIView):
-    """投票モデルの投稿の投票結果取得APIクラス"""
+    """投稿モデルの投票結果取得APIクラス"""
 
     def get(self, request, pk, *args, **kwargs):
         """投稿の投票結果取得APIに対応するハンドラメソッド"""
@@ -393,16 +380,12 @@ class PostUpdateAPIView(views.APIView):
         seri_data = serializer.data
 
         if not seri_data['voted']:
-            total = 0
             seri_data["selected_num"] = -1
             for data in seri_data['options']:
                 del data['id']
                 del data['share_id']
-                total += data['votes']
                 data['votes'] = -1
-            seri_data['total'] = total
         else:
-            total = 0
             for data in seri_data['options']:
                 flag = Poll.objects.filter(user_id=user.id,option_id=data['id'])
                 if len(flag) > 0:
@@ -412,8 +395,6 @@ class PostUpdateAPIView(views.APIView):
                         seri_data['selected_num'] = -1
                 del data['id']
                 del data['share_id']
-                total += data['votes']
-            seri_data['total'] = total
         return Response(seri_data, status.HTTP_200_OK)
 
 
@@ -428,7 +409,13 @@ class PollCreateAPIView(views.APIView):
             return Response_post_notfound()
 
         data = request.data
+
+        # 投票用のデータを代入しつつ、合計投票用のデータ群も作成
         data['post'] = post[0].id
+        data_post = {}
+        data_post['post'] = post[0].id
+        data_post['total'] = post[0].total
+
         data['user'] = request.user.id
         # data['user'] = data['unique_id']
         # del data['unique_id']
@@ -440,6 +427,7 @@ class PollCreateAPIView(views.APIView):
         for option in options:
             if option.select_num == data_option['select_num']:
                 option.votes += 1
+                data_post['total'] += 1
                 data_option['votes'] = option.votes
                 data_option['share_id'] = option.share_id
                 data_option['id'] = data['option'] = option.id
@@ -455,6 +443,10 @@ class PollCreateAPIView(views.APIView):
         serializer_option.is_valid(raise_exception=True)
         serializer_option.save()
 
+        serializer_post = PostPatchSerializer(instance=post[0], data=data_post)
+        serializer_post.is_valid(raise_exception=True)
+        serializer_post.save()
+
         serializer = PollSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -469,5 +461,6 @@ class PollCreateAPIView(views.APIView):
         response = {}
         response["options"] = response_serializer.data
         response["selected_num"] = data_option['select_num']
+        response['total'] = data_post['total']
 
         return Response(response, status.HTTP_201_CREATED)

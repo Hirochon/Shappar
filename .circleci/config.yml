@@ -1,5 +1,5 @@
 version: 2.1
-description: "Djangoサーバーの起動とマイグレーション＆自動デプロイ"
+description: "Djangoサーバーのビルド＆自動テスト＆自動デプロイ(S3/ECR/ECS)"
 
 orbs:
     aws-ecr: circleci/aws-ecr@6.7.1

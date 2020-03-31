@@ -1,5 +1,8 @@
 folder := ""
 
+runserver:
+	docker-compose run --rm shappar-back python3 manage.py runserver 0.0.0.0:8000 --settings=config.settings.local
+
 migrations:
 	docker-compose run --rm shappar-back python3 manage.py makemigrations --settings=config.settings.local
 
