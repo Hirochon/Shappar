@@ -89,8 +89,7 @@ export default {
       }
       api.post('/api/v1/posts/' + post.post_id + '/polls/', {
         option: {
-          select_num: post.selected_num,
-          answer: options[post.selected_num].answer
+          select_num: post.selected_num
         }
       })
         .then((response) => {
