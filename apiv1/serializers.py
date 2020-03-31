@@ -82,7 +82,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ['sex','age','born_at']
+        fields = ['sex', 'blood_type', 'age','born_at']
 
 
 class PollSerializer(serializers.ModelSerializer):

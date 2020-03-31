@@ -293,6 +293,7 @@ class PostDetailDeleteAPIView(views.APIView):
 
         response = {}
         response['voted_sex'] = {'woman':0,'man':0,'others':0,'null':0}
+        response['voted_blood_type'] = {'A':0,'B':0,'O':0,'AB':0, 'others':0}
         response['voted_age'] = {'0-10':0,"10-20":0,"20-30":0,"30-40":0,"40-50":0,"50-60":0,"60-":0}
         response['voted_month'] = {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0}
         response['total'] = post[0].total
@@ -307,6 +308,17 @@ class PostDetailDeleteAPIView(views.APIView):
                 response['voted_sex']['others'] += 1
             elif data['sex'] == '3':
                 response['voted_sex']['null'] += 1
+
+            if data['blood_type'] == '0':
+                response['voted_blood_type']['A'] += 1
+            elif data['blood_type'] == '1':
+                response['voted_blood_type']['B'] += 1
+            elif data['blood_type'] == '2':
+                response['voted_blood_type']['O'] += 1
+            elif data['blood_type'] == '3':
+                response['voted_blood_type']['AB'] += 1
+            elif data['blood_type'] == '4':
+                response['voted_blood_type']['others'] += 1
 
             if data['age'] < 10:
                 response['voted_age']['0-10'] += 1
