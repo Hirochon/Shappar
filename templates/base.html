@@ -6,39 +6,41 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>{% block title %}{% endblock %}</title>
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="{% static 'css/style.min.css' %}">
+        <!-- <link rel="stylesheet" href="http://localhost:3000/style.min.css"> -->
         <link rel="icon" href="{% static 'favicon.ico' %}">
     </head>
     <body>
         {% block body %}
-
-        {% if messages %}
-        <div>
-        <strong>Messages:</strong>
-        <ul>
-            {% for message in messages %}
-            <li>{{message}}</li>
-            {% endfor %}
-        </ul>
-        </div>
-        {% endif %}
-
-        <div>
-        <strong>Menu:</strong>
-        <ul>
-            {% if user.is_authenticated %}
-            <li><a href="{% url 'account_email' %}">Change E-mail</a></li>
-            <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
-            {% else %}
-            <li><a href="{% url 'account_login' %}">Sign In</a></li>
-            <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
-            {% endif %}
-        </ul>
-        </div>
-        {% block content %}
-        {% endblock %}
-        {% endblock %}
-        {% block extra_body %}
+        <div id="app">
+            <div class="Signup">
+                <div class="Signup__header">
+                    <h1 class="Signup__shappar">Shappar</h1>
+                    <div class="Signup__links">
+                        <div class="Signup__link">
+                            <a href="{% url 'index' %}">ログイン</a>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if messages %}
+                <div>
+                    <strong>Messages:</strong>
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{message}}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                {% block content %}
+                {% endblock %}
+                
+                {% endblock %}
+                {% block extra_body %}
+            </div>
+          </div>
         {% endblock %}
     </body>
 </html>

@@ -6,22 +6,21 @@
         :style="{height: maxR+'px',width: maxR+'px'}"
         >
       </doughnutChart>
-      <div class="PostDetails__bottom-box" :class="{horizon: W_more_H}">
-        <div class="PostDetails__switch" :class="{horizon: W_more_H}">
-          <div class="PostDetails__button" @click.stop="isActive = 0" :class="{active: isActive === 0}">
-            <font-awesome-icon icon="venus-mars"/>
-          </div>
-          <div class="PostDetails__button" @click.stop="isActive = 1" :class="{active: isActive === 1}">
-            age
-          </div>
-          <div class="PostDetails__button" @click.stop="isActive = 2" :class="{active: isActive === 2}">
-            <font-awesome-icon icon="birthday-cake"/>
-          </div>
+      <div class="PostDetails__switch" :class="{horizon: W_more_H}">
+        <div class="PostDetails__button" @click.stop="isActive = 0" :class="{active: isActive === 0}">
+          <font-awesome-icon icon="venus-mars"/>
         </div>
-        <div class="PostDetails__button" :class="{horizon: W_more_H}">
-          <font-awesome-icon icon="times" @click.stop="closeDetails()"/>
+        <div class="PostDetails__button" @click.stop="isActive = 1" :class="{active: isActive === 1}">
+          age
+        </div>
+        <div class="PostDetails__button" @click.stop="isActive = 2" :class="{active: isActive === 2}">
+          <font-awesome-icon icon="birthday-cake"/>
+        </div>
+        <div class="PostDetails__button" :class="{horizon: W_more_H}" @click.stop="closeDetails()">
+          <font-awesome-icon icon="times"/>
         </div>
       </div>
+      <!-- <div class="PostDetails__bottom-box" :class="{horizon: W_more_H}"></div> -->
     </div>
   </div>
 </template>
@@ -123,11 +122,16 @@ export default {
       return labels
     },
     resizeTriggers () {
+      // if (event.type === 'resize') event.preventDefault()
+      // event.preventDefault()
+      // console.log(event.type)
+      // alert(screen.width + ' :: ' + screen.height)
       var area = document.getElementById('PostDetails__area')
       this.width = area.clientWidth
       this.height = area.clientHeight
       this.maxR = this.width > this.height ? this.height : this.width
       this.W_more_H = this.width > this.height
+      // alert('width: ' + this.width + ' height: ' + this.height + ' maxR: ' + this.maxR)
       // console.log('resize')
     }
   },
@@ -212,9 +216,10 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
     height: 100%;
+    padding-top: 12px;
     // max-height: 700px;
     // background: white;
     &.horizon{
@@ -223,14 +228,15 @@ export default {
   }
   &__chart{
     max-width: 700px;
-    margin: 0 auto;
+    margin: 48px auto;
     & > canvas{
       max-width: 700px;
     }
     &.horizon{
       display: flex;
-      width: 100%;
-      max-width: 100%;
+      // width: 50%;
+      // max-width: 50%;
+      margin: 0;
       & > canvas{
         max-width: 100%;
         max-height: 100%;
@@ -243,26 +249,33 @@ export default {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: auto;
+    margin-top: 24px;
     &.horizon{
-      width: 50%;
+      width: 45%;
       // height: 100%;
     }
   }
   &__switch{
-    // max-width: 700px;
-    margin: 24px auto 96px;
+    max-width: 700px;
+    max-height: 700px;
+    // margin: 24px auto 96px;
+    position: fixed;
+    bottom: 96px;
     padding: 0 16px;
     display: flex;
+    align-items: center;
     justify-content: space-evenly;
     width: 100%;
     // background: white;
     border-radius: 3px;
     overflow: hidden;
     &.horizon{
-      width: 100%;
-      height: auto;
-      margin-top: 56px;
+      width: 80px;
+      height: 100%;
+      flex-wrap: wrap;
+      // margin-top: 56px;
+      bottom: auto;
+      right: 24px;
     }
   }
   &__button{

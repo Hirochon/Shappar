@@ -1,7 +1,7 @@
 <template>
   <div class="Search">
     <div class="Drawer__switch" @click="$emit('drawerOpen')">
-      <img :src="user.iconimage" alt="">
+      <img :src="this.$store.state.user.iconimage" alt="">
     </div>
     <form action="" class="Search__form" @submit.prevent="getPost">
       <label for="text-box" class="Search__label">検索</label>
@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import api from '@/services/api'
 export default {
   name: 'Search',
   components: {
@@ -52,11 +51,7 @@ export default {
     }
   },
   created () {
-    this.user_id = this.$store.state.auth.username
-    api.get('/api/v1/users/' + this.user_id + '/')
-      .then((response) => {
-        this.user = response.data
-      })
+    // this.user =
   }
 }
 </script>

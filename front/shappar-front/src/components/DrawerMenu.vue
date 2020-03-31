@@ -43,10 +43,6 @@
 export default {
   name: 'Search',
   props: {
-    user: {
-      type: Object,
-      required: true
-    },
     isOpen: {
       type: Boolean,
       required: true
@@ -54,6 +50,13 @@ export default {
   },
   data () {
     return {
+      user: {
+        user_id: '',
+        name: '',
+        introduction: '',
+        iconimage: '',
+        homeimage: ''
+      }
     }
   },
   methods: {
@@ -67,6 +70,11 @@ export default {
     }
   },
   created () {
+    this.user.user_id = this.$store.state.user.user_id
+    this.user.name = this.$store.state.user.name
+    this.user.introduction = this.$store.state.user.introduction
+    this.user.iconimage = this.$store.state.user.iconimage
+    this.user.homeimage = this.$store.state.user.homeimage
   }
 }
 </script>
