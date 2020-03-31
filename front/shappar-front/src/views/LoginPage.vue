@@ -2,7 +2,13 @@
   <div id="login-page" class="Login">
     <GlobalMessage/>
     <!-- メインエリア -->
-    <div class="Login__title">Shapparにログイン</div>
+    <div class="Login__header">
+      <h1 class="Login__shappar">
+        <router-link to="/home">
+          Shappar
+        </router-link>
+      </h1>
+    </div>
     <main class="Login__container">
       <div class="Login__loading" v-if="isLoading">
         <font-awesome-icon icon="spinner" class="Login__rotate"/>
@@ -29,7 +35,11 @@
           </div>
         </div>
       </form>
+      <div class="Login__submit test" @click="testUserLogin()">テストユーザーでログイン</div>
     </main>
+    <div class="Login__signup" @click="toSignUp()">
+      アカウントを作成
+    </div>
   </div>
 </template>
 
@@ -56,6 +66,7 @@ export default {
     submitLogin: function () {
       // ログイン
       this.isLoading = true
+      // alert('auth/login')
       this.$store.dispatch('auth/login', {
         username: this.form.username,
         password: this.form.password
@@ -63,6 +74,7 @@ export default {
         .then(() => {
           // console.log('Login succeeded.')
           this.$store.dispatch('message/setInfoMessage', { message: 'ログインしました。' })
+          this.$store.dispatch('user/load', { user_id: this.$store.getters['auth/username'] })
           // クエリ文字列に「next」がなければ、ホーム画面へ
           const next = this.$route.query.next || '/'
           this.$router.replace(next)
@@ -75,6 +87,32 @@ export default {
         .then(() => {
           this.isLoading = false
         })
+    },
+    testUserLogin () {
+      this.isLoading = true
+      this.$store.dispatch('auth/login', {
+        username: 'sample1',
+        password: 'shappar1'
+      })
+        .then(() => {
+          // console.log('Login succeeded.')
+          this.$store.dispatch('message/setInfoMessage', { message: 'ログインしました。' })
+          this.$store.dispatch('user/load', { user_id: this.$store.getters['auth/username'] })
+          // クエリ文字列に「next」がなければ、ホーム画面へ
+          const next = this.$route.query.next || '/'
+          this.$router.replace(next)
+        })
+        .catch(error => {
+          this.error = error
+        })
+        .then(() => {
+          this.isLoading = false
+        })
+    },
+    toSignUp () {
+      // 以下の記述だとローカルホストの方はbuildに含まれていなかった
+      const path = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://shappar.site'
+      window.location.href = path + '/accounts/signup/'
     }
   }
 }
@@ -83,6 +121,7 @@ export default {
 <style lang="scss">
 @import '@/assets/common.scss';
 .Login{
+  padding-top: 64px;
   width: 100%;
   height: 100%;
   display: flex;
@@ -100,6 +139,59 @@ export default {
     margin-top: 24px;
     background: white;
     border-radius: 3px;
+  }
+  &__header{
+    display: flex;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    max-width: 700px;
+    height: 52px;
+    // margin-bottom: 24px;
+    background: $color-main;
+    padding: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.16);
+    z-index: 100;
+  }
+  &__links{
+    display: flex;
+  }
+  &__shappar{
+    margin: 0;
+    padding: 4px 0;
+    font-size: 24px;
+    letter-spacing: 1.2px;
+    text-align: center;
+    font-weight: bold;
+    a{
+      color: white;
+      &:hover{
+        color: white;
+        text-decoration: none;
+      }
+    }
+  }
+  &__link{
+    margin-left: 4px;
+    padding: 4px;
+    // box-sizing: border-box;
+    &.signup{
+      border: solid 2px white;
+      border-radius: 3px;
+      padding: 2px 4px;
+      cursor: pointer;
+    }
+    a{
+      display: block;
+      color: white;
+      font-size: 13px;
+      line-height: 30px;
+      &:hover{
+        color: white;
+        text-decoration: none;
+      }
+    }
   }
   &__form{
     display: block;
@@ -119,17 +211,6 @@ export default {
       margin: 0 auto;
       font-size: 24px;
     }
-  }
-  &__title{
-    width: 100%;
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 24px;
-    background: $color-main;
-    color: white;
-    text-align: center;
-    padding: 16px;
-    letter-spacing: 1.2px;
   }
   &__form__title{
     display: flex;
@@ -159,13 +240,26 @@ export default {
     }
   }
   &__submit{
+    cursor: pointer;
     padding: 8px;
     color: white;
     background: $color-main;
     border-radius: 4px;
+    &.test{
+      margin-top: 24px;
+      background: $color-sub;
+    }
   }
   &__rotate{
     animation: rotation 1s linear infinite;
+  }
+  &__signup{
+    margin: 8px 0;
+    color: $color-sub;
+    &:hover{
+      text-decoration: underline;
+      cursor: pointer;
+    }
   }
 }
 </style>

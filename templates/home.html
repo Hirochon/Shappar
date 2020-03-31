@@ -1,13 +1,28 @@
-{% extends "base.html" %}
-
-{% block title %}ホーム{% endblock %}
-
-{% block content %}
-    <h2>ホーム</h2>
-    {% if user.is_authenticated %}
-        <p>ようこそ{{ user.usernonamae }}さん</p>
-        <p><a href="{% url 'account_logout' %}">ログアウト</a></p>
-    {% else %}
-        <p><a href="{% url 'account_login' %}">ログイン</a></p>
-    {% endif %}
-{% endblock %}
+<!DOCTYPE html>
+{% load static %}
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="{% static 'css/style.min.css' %}">
+        <!-- <link rel="stylesheet" href="http://localhost:3000/style.min.css"> -->
+        <link rel="icon" href="{% static 'favicon.ico' %}">
+    </head>
+    <body>
+        {% block body %}
+        <div id="app">
+            <div class="Signup">
+                <div class="Signup__header">
+                    <h1 class="Signup__shappar">Shappar</h1>
+                </div>
+                <div class="Signup__container">
+                    <p class="Signup__email-confirm">
+                        メールの内容を確認してください。
+                    </p>
+                </div>
+          </div>
+        {% endblock %}
+    </body>
+</html>

@@ -207,11 +207,9 @@ export default {
         .then((response) => {
           this.user = response.data
         })
+        // TODO error 処理
       this.loadPosts()
       this.isLoading = false
-      // if (this.my_id === this.traget_id) {
-      // } else {
-      // }
       window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
       window.addEventListener('resize', this.resizeTriggers)
     }

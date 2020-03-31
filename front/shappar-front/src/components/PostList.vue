@@ -62,10 +62,6 @@ export default {
     posts: {
       type: Array,
       required: true
-    },
-    unique_id: {
-      type: String,
-      required: true
     }
   },
   data () {
@@ -92,7 +88,6 @@ export default {
         if (options[i]) selectsArray[i] = options[i].select_num
       }
       api.post('/api/v1/posts/' + post.post_id + '/polls/', {
-        unique_id: this.$store.state.auth.unique_id,
         option: {
           select_num: post.selected_num,
           answer: options[post.selected_num].answer
@@ -405,7 +400,7 @@ $option-height: 32px;
   }
   &__details{
     cursor: pointer;
-    max-width: 300px;
+    max-width: 100%;
     height: 32px;
     line-height: 32px;
     margin: 0 auto;

@@ -6,7 +6,7 @@ services:
             - "8000:8000"
         volumes:
             - "./:/code/"                                       # プロジェクトのルートディレクトリからマウントを取る
-            - "staticdata:/code/static/"                        # volumesを用いたnginxとのコンテナ間のリソース共有
+            - "staticdata:/opt/static/"                        # volumesを用いたnginxとのコンテナ間のリソース共有
 
         command: >
             bash -c "python3 manage.py makemigrations --settings=config.settings.local &&

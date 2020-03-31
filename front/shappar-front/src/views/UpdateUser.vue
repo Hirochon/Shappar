@@ -107,8 +107,9 @@ export default {
       api.patch('/api/v1/users/' + this.before_user_id + '/', params)
         .then(async (response) => {
           if (response.status === 200) {
-            this.$store.dispatch('message/setInfoMessage', { message: '更新完了' })
-            await this.$store.dispatch('auth/reload')// ここで一度更新してないとユーザーIDを変更した際にエラーが出る
+            store.dispatch('message/setInfoMessage', { message: '更新完了' })
+            await store.dispatch('auth/reload')// ここで一度更新してないとユーザーIDを変更した際にエラーが出る
+            await store.dispatch('user/load', { user_id: store.getters['auth/username'] })
             this.$router.replace('/mypage/' + store.getters['auth/username'])
           }
         })
