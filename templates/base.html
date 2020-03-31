@@ -15,16 +15,11 @@
         <div id="app">
             <div class="Signup">
                 <div class="Signup__header">
-                    <h1 class="Signup__shappar">Shappar</h1>
-                    <div class="Signup__links">
-                        <div class="Signup__link">
-                            <a href="{% url 'index' %}">ログイン</a>
-                        </div>
-                    </div>
+                    <h1 class="Signup__shappar"><a href="{% url 'index' %}">Shappar</a></h1>
                 </div>
-                
+            
                 {% if messages %}
-                <div>
+                <div class="disp-none">
                     <strong>Messages:</strong>
                     <ul>
                         {% for message in messages %}
@@ -40,7 +35,7 @@
                 {% endblock %}
                 {% block extra_body %}
             </div>
-          </div>
+        </div>
         {% endblock %}
     </body>
 </html>

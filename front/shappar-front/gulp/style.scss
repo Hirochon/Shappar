@@ -80,6 +80,7 @@ input, button, textarea, select {
     color: white;
     a{
       color: white;
+      text-decoration: none;
       &:hover{
         color: white;
         text-decoration: none;
@@ -194,4 +195,8 @@ textarea{
   &.active{
     border-color: $color-main;
   }
+}
+
+.disp-none{
+  display: none;
 }
