@@ -169,9 +169,19 @@ export default {
         options: serveOptions
       })
         .then((response) => {
-          if (response.status === 201) alert('投稿完了！')
+          this.$store.dispatch('message/setInfoMessage', { message: '投稿が完了しました' })
           this.$emit('switchNew')
           this.$emit('refresh')
+          this.question = {
+            text: '',
+            length: 0,
+            isValid: true
+          }
+          this.count = 2
+          this.options = [
+            { id: 0, answer: '', length: 0, isValid: true },
+            { id: 1, answer: '', length: 0, isValid: true }
+          ]
         })
         .catch((error) => {
           // console.log(error.response)
@@ -182,16 +192,6 @@ export default {
           }
           this.$store.dispatch('message/setErrorMessage', { message: errMessage })
         })
-      this.question = {
-        text: '',
-        length: 0,
-        isValid: true
-      }
-      this.count = 2
-      this.options = [
-        { id: 0, answer: '', length: 0, isValid: true },
-        { id: 1, answer: '', length: 0, isValid: true }
-      ]
     },
     questionValidate () {
       var question = this.question
