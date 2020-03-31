@@ -80,6 +80,7 @@ class MypagePostedListAPIView(views.APIView):
             querysets = Post.objects.filter(user_id=user_id).order_by('-created_at')[:10]
         serializer = PostListSerializer(instance=querysets, many=True, pk=user_id)
 
+        # リクエストユーザーの定義
         user = request.user
         if user_id == user.id:
             for datas in serializer.data:
@@ -103,21 +104,14 @@ class MypagePostedListAPIView(views.APIView):
             for datas in serializer.data:
                 poll = Poll.objects.filter(post_id=datas['post_id'], user_id=user.id)
                 if len(poll) == 0:
-                    datas['voted'] = False
                     datas['selected_num'] = -1
                     for data in datas['options']:
                         del data['id']
                         del data['share_id']
                         data['votes'] = -1
                 else:
-                    datas['voted'] = True
+                    datas['selected_num'] = Option.objects.get(id=poll[0].option_id).select_num
                     for data in datas['options']:
-                        flag = Poll.objects.filter(user_id=user_id, option_id=data['id'])
-                        if len(flag) > 0:
-                            datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
-                        else:
-                            if 'selected_num' not in datas:
-                                datas['selected_num'] = -1
                         del data['id']
                         del data['share_id']
         seri_datas = serializer.data
