@@ -1,12 +1,12 @@
 import uuid
-from datetime import datetime,timedelta,timezone
-from django.utils.timezone import localtime
+from datetime import datetime, timedelta
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.contrib.auth import get_user_model
 from apiv1.models import Poll, Post, Option
 from config.settings import circleci
+
 
 # (正常系)2methods,(異常系)4methods,(合計)6methods.
 class TestMypageAPIView(APITestCase):
@@ -55,11 +55,11 @@ class TestMypageAPIView(APITestCase):
         # レスポンスの内容を検証
         self.assertEqual(response.status_code, 200)
         expected_json_dict = {
-            'user_id':user1.username,
-            'name':user1.usernonamae,
-            'introduction':user1.introduction,
-            'iconimage':circleci.MEDIA_URL + str(user1.iconimage),
-            'homeimage':circleci.MEDIA_URL + str(user1.homeimage),
+            'user_id': user1.username,
+            'name': user1.usernonamae,
+            'introduction': user1.introduction,
+            'iconimage': circleci.MEDIA_URL + str(user1.iconimage),
+            'homeimage': circleci.MEDIA_URL + str(user1.homeimage),
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -70,8 +70,8 @@ class TestMypageAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
         params = {
-            'name':'サンプルさん',
-            'introduction':'どーも。サンプルさんだよ〜！'
+            'name': 'サンプルさん',
+            'introduction': 'どーも。サンプルさんだよ〜！'
         }
         response = self.client.patch(self.TARGET_URL_WITH_PK.format('user1'), params, format='json')
 
@@ -79,11 +79,11 @@ class TestMypageAPIView(APITestCase):
         self.assertEqual(get_user_model().objects.count(), 2)
         self.assertEqual(response.status_code, 200)
         expected_json_dict = {
-            'user_id':user1.username,
-            'name':user1.usernonamae,
-            'introduction':user1.introduction,
-            'iconimage':circleci.MEDIA_URL + str(user1.iconimage),
-            'homeimage':circleci.MEDIA_URL + str(user1.homeimage),
+            'user_id': user1.username,
+            'name': user1.usernonamae,
+            'introduction': user1.introduction,
+            'iconimage': circleci.MEDIA_URL + str(user1.iconimage),
+            'homeimage': circleci.MEDIA_URL + str(user1.homeimage),
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -108,15 +108,15 @@ class TestMypageAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
         params = {
-            'name':'サンプルさん',
-            'introduction':'どーも。サンプルさんだよ〜！'
+            'name': 'サンプルさん',
+            'introduction': 'どーも。サンプルさんだよ〜！'
         }
         # JWT認証とは異なるユーザーIDを代入
         response = self.client.patch(self.TARGET_URL_WITH_PK.format('user2'), params, format='json')
 
         self.assertEqual(response.status_code, 401)
         expected_json_dict = {
-            "detail":"権限がありません。"
+            "detail": "権限がありません。"
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -142,8 +142,8 @@ class TestMypageAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
         params = {
-            'name':'サンプルさん',
-            'introduction':'どーも。サンプルさんだよ〜！'
+            'name': 'サンプルさん',
+            'introduction': 'どーも。サンプルさんだよ〜！'
         }
         # 存在しないユーザーIDを代入
         response = self.client.patch(self.TARGET_URL_WITH_PK.format('user3'), params, format='json')
@@ -192,13 +192,13 @@ class TestMypageVotedListAPIView(APITestCase):
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         self.client.post('/api/v1/posts/', params, format='json')
@@ -208,8 +208,8 @@ class TestMypageVotedListAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
         post = Post.objects.get()
         params = {
-            'option':{
-                'select_num':0
+            'option': {
+                'select_num': 0
             }
         }
         self.client.post('/api/v1/posts/{}/polls/'.format(post.id), params, format='json')
@@ -222,7 +222,7 @@ class TestMypageVotedListAPIView(APITestCase):
         if len(flag) > 0:
             voted = True
             selected_num = flag[0].select_num
-        else: 
+        else:
             voted = False
 
         # 予期される選択肢の中身を作成
@@ -242,16 +242,16 @@ class TestMypageVotedListAPIView(APITestCase):
         # 合計投票数を再算出
         total = Post.objects.get().total
         expected_json_dict = {
-            'posts':[{
-                'post_id':str(post.id),
-                'user_id':str(post.user.username),
-                'iconimage':circleci.MEDIA_URL + str(post.user.iconimage),
-                'question':post.question,
-                'created_at':created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-                'voted':voted,
-                'selected_num':selected_num,
-                'total':total,
-                'options':options_list
+            'posts': [{
+                'post_id': str(post.id),
+                'user_id': str(post.user.username),
+                'iconimage': circleci.MEDIA_URL + str(post.user.iconimage),
+                'question': post.question,
+                'created_at': created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                'voted': voted,
+                'selected_num': selected_num,
+                'total': total,
+                'options': options_list
             }]
         }
         self.assertJSONEqual(response.content, expected_json_dict)
@@ -263,13 +263,13 @@ class TestMypageVotedListAPIView(APITestCase):
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         self.client.post('/api/v1/posts/', params, format='json')
@@ -279,8 +279,8 @@ class TestMypageVotedListAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
         post = Post.objects.get()
         params = {
-            'option':{
-                'select_num':0
+            'option': {
+                'select_num': 0
             }
         }
         self.client.post('/api/v1/posts/{}/polls/'.format(post.id), params, format='json')
@@ -315,7 +315,7 @@ class TestMypageVotedListAPIView(APITestCase):
         self.assertEqual(response.status_code, 404)
 
         expected_json_dict = {
-            'detail':'存在しないユーザーIDです'
+            'detail': '存在しないユーザーIDです'
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -349,13 +349,13 @@ class TestPostCreateAPIView(APITestCase):
 
         # APIリクエストを実行
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         response = self.client.post(self.TARGET_URL, params, format='json')
@@ -395,37 +395,37 @@ class TestPostCreateAPIView(APITestCase):
 
         # APIリクエストを実行
         params = {
-            "question":"あなたの推しメンは？",
-            "options":[{
-                "select_num":1,
-                "answer":"齋藤飛鳥"
-            },{
-                "select_num":2,
-                "answer":"北野日奈子"
-            },{
-                "select_num":3,
-                "answer":"柿崎芽実"
-            },{
-                "select_num":4,
-                "answer":"金村美玖"
-            },{
-                "select_num":5,
-                "answer":"星野みなみ"
-            },{
-                "select_num":6,
-                "answer":"東村芽依"
-            },{
-                "select_num":7,
-                "answer":"河田陽菜"
-            },{
-                "select_num":8,
-                "answer":"山下美月"
-            },{
-                "select_num":9,
-                "answer":"与田祐希"
-            },{
-                "select_num":10,
-                "answer":"渡辺みりあ"
+            "question": "あなたの推しメンは？",
+            "options": [{
+                "select_num": 1,
+                "answer": "齋藤飛鳥"
+            }, {
+                "select_num": 2,
+                "answer": "北野日奈子"
+            }, {
+                "select_num": 3,
+                "answer": "柿崎芽実"
+            }, {
+                "select_num": 4,
+                "answer": "金村美玖"
+            }, {
+                "select_num": 5,
+                "answer": "星野みなみ"
+            }, {
+                "select_num": 6,
+                "answer": "東村芽依"
+            }, {
+                "select_num": 7,
+                "answer": "河田陽菜"
+            }, {
+                "select_num": 8,
+                "answer": "山下美月"
+            }, {
+                "select_num": 9,
+                "answer": "与田祐希"
+            }, {
+                "select_num": 10,
+                "answer": "渡辺みりあ"
             }]
         }
         response = self.client.post(self.TARGET_URL, params, format='json')
@@ -444,13 +444,13 @@ class TestPostCreateAPIView(APITestCase):
 
         # APIリクエストを実行
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         response = self.client.post(self.TARGET_URL, params, format='json')
@@ -473,10 +473,10 @@ class TestPostCreateAPIView(APITestCase):
 
         # APIリクエストを実行
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
             }]
         }
         response = self.client.post(self.TARGET_URL, params, format='json')
@@ -486,7 +486,7 @@ class TestPostCreateAPIView(APITestCase):
         self.assertEqual(response.status_code, 400)
 
         expected_json_dict = {
-            "options":[{"answer":"回答は2個以上にしてください。"}]
+            "options": [{"answer": "回答は2個以上にしてください。"}]
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -497,40 +497,40 @@ class TestPostCreateAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
         params = {
-            "question":"あなたの推しメンは？",
-            "options":[{
-                "select_num":1,
-                "answer":"齋藤飛鳥"
-            },{
-                "select_num":2,
-                "answer":"北野日奈子"
-            },{
-                "select_num":3,
-                "answer":"柿崎芽実"
-            },{
-                "select_num":4,
-                "answer":"金村美玖"
-            },{
-                "select_num":5,
-                "answer":"星野みなみ"
-            },{
-                "select_num":6,
-                "answer":"東村芽依"
-            },{
-                "select_num":7,
-                "answer":"河田陽菜"
-            },{
-                "select_num":8,
-                "answer":"山下美月"
-            },{
-                "select_num":9,
-                "answer":"与田祐希"
-            },{
-                "select_num":10,
-                "answer":"渡辺みりあ"
-            },{
-                "select_num":11,
-                "answer":"井口眞緒"
+            "question": "あなたの推しメンは？",
+            "options": [{
+                "select_num": 1,
+                "answer": "齋藤飛鳥"
+            }, {
+                "select_num": 2,
+                "answer": "北野日奈子"
+            }, {
+                "select_num": 3,
+                "answer": "柿崎芽実"
+            }, {
+                "select_num": 4,
+                "answer": "金村美玖"
+            }, {
+                "select_num": 5,
+                "answer": "星野みなみ"
+            }, {
+                "select_num": 6,
+                "answer": "東村芽依"
+            }, {
+                "select_num": 7,
+                "answer": "河田陽菜"
+            }, {
+                "select_num": 8,
+                "answer": "山下美月"
+            }, {
+                "select_num": 9,
+                "answer": "与田祐希"
+            }, {
+                "select_num": 10,
+                "answer": "渡辺みりあ"
+            }, {
+                "select_num": 11,
+                "answer": "井口眞緒"
             }]
         }
         response = self.client.post(self.TARGET_URL, params, format='json')
@@ -540,7 +540,7 @@ class TestPostCreateAPIView(APITestCase):
         self.assertEqual(response.status_code, 400)
 
         expected_json_dict = {
-            "options":[{"answer":"回答は10個以下にしてください。"}]
+            "options": [{"answer": "回答は10個以下にしてください。"}]
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -572,13 +572,13 @@ class TestPostDeleteAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         self.client.post('/api/v1/posts/', params, format='json')
@@ -597,13 +597,13 @@ class TestPostDeleteAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         self.client.post('/api/v1/posts/', params, format='json')
@@ -630,26 +630,25 @@ class TestPostDeleteAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         self.client.post('/api/v1/posts/', params, format='json')
 
         changed_pid = str(uuid.uuid4())
-        post = Post.objects.get()
         response = self.client.delete(self.TARGET_URL_WITH_PK.format(changed_pid))
 
         self.assertEqual(Post.objects.count(), 1)
         self.assertEqual(response.status_code, 404)
 
         expected_json_dict = {
-            "detail":"存在しない投稿IDです。"
+            "detail": "存在しない投稿IDです。"
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -691,13 +690,13 @@ class TestPostUpdateAPIView(APITestCase):
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         self.client.post('/api/v1/posts/', params, format='json')
@@ -706,8 +705,8 @@ class TestPostUpdateAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
         post = Post.objects.get()
         params = {
-            'option':{
-                'select_num':0
+            'option': {
+                'select_num': 0
             }
         }
         self.client.post('/api/v1/posts/{}/polls/'.format(post.id), params, format='json')
@@ -720,7 +719,7 @@ class TestPostUpdateAPIView(APITestCase):
         if len(flag) > 0:
             voted = True
             selected_num = flag[0].select_num
-        else: 
+        else:
             voted = False
         options = Option.objects.filter(share_id=post.share_id)
         options_list = []
@@ -735,15 +734,15 @@ class TestPostUpdateAPIView(APITestCase):
         utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
         created_at = utc_created_at + hours
         expected_json_dict = {
-            'post_id':str(post.id),
-            'user_id':str(post.user.username),
-            'iconimage':circleci.MEDIA_URL + str(post.user.iconimage),
-            'question':post.question,
-            'created_at':created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-            'voted':voted,
-            'selected_num':selected_num,
-            'total':1,
-            'options':options_list
+            'post_id': str(post.id),
+            'user_id': str(post.user.username),
+            'iconimage': circleci.MEDIA_URL + str(post.user.iconimage),
+            'question': post.question,
+            'created_at': created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+            'voted': voted,
+            'selected_num': selected_num,
+            'total': 1,
+            'options': options_list
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -754,13 +753,13 @@ class TestPostUpdateAPIView(APITestCase):
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         self.client.post('/api/v1/posts/', params, format='json')
@@ -769,8 +768,8 @@ class TestPostUpdateAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
         post = Post.objects.get()
         params = {
-            'option':{
-                'select_num':0
+            'option': {
+                'select_num': 0
             }
         }
         self.client.post('/api/v1/posts/{}/polls/'.format(post.id), params, format='json')
@@ -796,15 +795,15 @@ class TestPostUpdateAPIView(APITestCase):
         utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
         created_at = utc_created_at + hours
         expected_json_dict = {
-            'post_id':str(post.id),
-            'user_id':str(post.user.username),
-            'iconimage':circleci.MEDIA_URL + str(post.user.iconimage),
-            'question':post.question,
-            'created_at':created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-            'voted':True,
-            'selected_num':-1,
-            'total':1,
-            'options':options_list
+            'post_id': str(post.id),
+            'user_id': str(post.user.username),
+            'iconimage': circleci.MEDIA_URL + str(post.user.iconimage),
+            'question': post.question,
+            'created_at': created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+            'voted': True,
+            'selected_num': -1,
+            'total': 1,
+            'options': options_list
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -815,13 +814,13 @@ class TestPostUpdateAPIView(APITestCase):
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         self.client.post('/api/v1/posts/', params, format='json')
@@ -847,15 +846,15 @@ class TestPostUpdateAPIView(APITestCase):
         utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
         created_at = utc_created_at + hours
         expected_json_dict = {
-            'post_id':str(post.id),
-            'user_id':str(post.user.username),
-            'iconimage':circleci.MEDIA_URL + str(post.user.iconimage),
-            'question':post.question,
-            'created_at':created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-            'voted':False,
-            'selected_num':-1,
-            'total':0,
-            'options':options_list
+            'post_id': str(post.id),
+            'user_id': str(post.user.username),
+            'iconimage': circleci.MEDIA_URL + str(post.user.iconimage),
+            'question': post.question,
+            'created_at': created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+            'voted': False,
+            'selected_num': -1,
+            'total': 0,
+            'options': options_list
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -867,13 +866,13 @@ class TestPostUpdateAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         self.client.post('/api/v1/posts/', params, format='json')
@@ -897,13 +896,13 @@ class TestPostUpdateAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         self.client.post('/api/v1/posts/', params, format='json')
@@ -913,7 +912,7 @@ class TestPostUpdateAPIView(APITestCase):
         self.assertEqual(response.status_code, 404)
 
         expected_json_dict = {
-            "detail":"存在しない投稿IDです。"
+            "detail": "存在しない投稿IDです。"
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -956,13 +955,13 @@ class TestPollCreateAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         self.client.post('/api/v1/posts/', params, format='json')
@@ -979,8 +978,8 @@ class TestPollCreateAPIView(APITestCase):
 
         post = Post.objects.get()
         params = {
-            'option':{
-                'select_num':0
+            'option': {
+                'select_num': 0
             }
         }
         response = self.client.post(self.TARGET_URL_WITH_PK.format(post.id), params, format='json')
@@ -998,9 +997,9 @@ class TestPollCreateAPIView(APITestCase):
         # 投票後の合計投票数を取得
         total = Post.objects.get().total
         expected_json_dict = {
-            'options':options_list,
-            'total':total,
-            'selected_num':Poll.objects.get().option.select_num
+            'options': options_list,
+            'total': total,
+            'selected_num': Poll.objects.get().option.select_num
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -1012,13 +1011,13 @@ class TestPollCreateAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         self.client.post('/api/v1/posts/', params, format='json')
@@ -1028,8 +1027,8 @@ class TestPollCreateAPIView(APITestCase):
 
         post = Post.objects.get()
         params = {
-            'option':{
-                'select_num':0
+            'option': {
+                'select_num': 0
             }
         }
         response = self.client.post(self.TARGET_URL_WITH_PK.format(post.id), params, format='json')
@@ -1050,13 +1049,13 @@ class TestPollCreateAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         self.client.post('/api/v1/posts/', params, format='json')
@@ -1066,8 +1065,8 @@ class TestPollCreateAPIView(APITestCase):
 
         changed_pid = str(uuid.uuid4())
         params = {
-            'option':{
-                'select_num':0
+            'option': {
+                'select_num': 0
             }
         }
         response = self.client.post(self.TARGET_URL_WITH_PK.format(changed_pid), params, format='json')
@@ -1076,7 +1075,7 @@ class TestPollCreateAPIView(APITestCase):
         self.assertEqual(response.status_code, 404)
 
         expected_json_dict = {
-            "detail":"存在しない投稿IDです。"
+            "detail": "存在しない投稿IDです。"
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -1088,13 +1087,13 @@ class TestPollCreateAPIView(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
         params = {
-            'question':'あなたの推しメンは？',
-            'options':[{
-                'select_num':0,
-                'answer':'齋藤飛鳥'
-            },{
-                'select_num':1,
-                'answer':'北野日奈子'
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
             }]
         }
         self.client.post('/api/v1/posts/', params, format='json')
@@ -1104,8 +1103,8 @@ class TestPollCreateAPIView(APITestCase):
 
         post = Post.objects.get()
         params = {
-            'option':{
-                'select_num':2
+            'option': {
+                'select_num': 2
             }
         }
         response = self.client.post(self.TARGET_URL_WITH_PK.format(post.id), params, format='json')
@@ -1114,6 +1113,6 @@ class TestPollCreateAPIView(APITestCase):
         self.assertEqual(response.status_code, 404)
 
         expected_json_dict = {
-            "detail":"存在しない選択肢です。"
+            "detail": "存在しない選択肢です。"
         }
         self.assertJSONEqual(response.content, expected_json_dict)
