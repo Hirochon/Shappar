@@ -1,17 +1,9 @@
 import uuid
 from django.test import TestCase
-from django.utils.timezone import localtime
-from django.core.files import File
 
-from django.contrib.auth import get_user_model
-from apiv1.models import Post, Poll, Option
-from apiv1.serializers import (
-    PostCreateSerializer, 
-    PostListSerializer, 
-    PollSerializer, 
-    OptionSerializer,
-    PostDetailSerializer,
-)
+from apiv1.models import Option
+from apiv1.serializers import OptionSerializer
+
 
 # (正常系)2methods,(異常系)3methods,(合計)5methods.
 class TestOptionSerializer(TestCase):
@@ -33,10 +25,10 @@ class TestOptionSerializer(TestCase):
 
         # シリアライザを作成
         input_data = {
-            'select_num':1,
-            'answer':'テスト',
-            'votes':3,
-            'share_id':uuid.uuid4()
+            'select_num': 1,
+            'answer': 'テスト',
+            'votes': 3,
+            'share_id': uuid.uuid4()
         }
         serializer = OptionSerializer(data=input_data)
 
@@ -48,9 +40,9 @@ class TestOptionSerializer(TestCase):
 
         input_data = {
             'select_num': 0,
-            'answer':'テスト',
-            'votes':3,
-            'share_id':uuid.uuid4()
+            'answer': 'テスト',
+            'votes': 3,
+            'share_id': uuid.uuid4()
         }
         del input_data['select_num']
         # 事前に定義した関数を実行
@@ -64,15 +56,14 @@ class TestOptionSerializer(TestCase):
         del input_data['share_id']
         self.change_required(input_data, 'share_id')
 
-
     def test_input_invalid_answer_shareid_are_blank(self):
         """入力データのバリデーション(NG:answerやshare_idが空文字)"""
 
         input_data = {
-            'select_num':0,
-            'answer':'',
-            'votes':3,
-            'share_id':uuid.uuid4()
+            'select_num': 0,
+            'answer': '',
+            'votes': 3,
+            'share_id': uuid.uuid4()
         }
         serializer = OptionSerializer(data=input_data)
 
@@ -97,10 +88,10 @@ class TestOptionSerializer(TestCase):
         """入力データのバリデーション(NG:answerが文字数制限を超える)"""
 
         input_data = {
-            'select_num':0,
-            'answer':'テストテストテストテストテストテストテストテストテストテストテストテストテストテスト',
-            'votes':3,
-            'share_id':uuid.uuid4()
+            'select_num': 0,
+            'answer': 'テストテストテストテストテストテストテストテストテストテストテストテストテストテスト',
+            'votes': 3,
+            'share_id': uuid.uuid4()
         }
         serializer = OptionSerializer(data=input_data)
 
@@ -122,10 +113,10 @@ class TestOptionSerializer(TestCase):
         serializer = OptionSerializer(instance=option)
 
         expected_data = {
-            'id':option.id,
-            'select_num':option.select_num,
-            'answer':option.answer,
-            'votes':option.votes,
-            'share_id':str(option.share_id)
+            'id': option.id,
+            'select_num': option.select_num,
+            'answer': option.answer,
+            'votes': option.votes,
+            'share_id': str(option.share_id)
         }
         self.assertDictEqual(serializer.data, expected_data)
