@@ -21,7 +21,7 @@ class CustomUser(AbstractUser):
     username = models.CharField(verbose_name='ユーザID', unique=True, max_length=18)
     usernonamae = models.CharField(verbose_name='ユーザ名', max_length=18)
     sex_choice_site = (("0","女"),("1","男"),("2","その他"),("3","無回答"))
-    sex = models.CharField(verbose_name='性別', max_length=6, choices=choice_site)
+    sex = models.CharField(verbose_name='性別', max_length=6, choices=sex_choice_site)
     blood_type_choice_site = (("0","A"),("1","B"),("2","O"),("3","AB"),("4","その他"))
     blood_type = models.CharField(verbose_name='血液型', max_length=6, choices=blood_type_choice_site)
     age = models.IntegerField(verbose_name='年齢', default=0, validators=[MinValueValidator(0),MaxValueValidator(150)])
