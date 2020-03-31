@@ -9,7 +9,7 @@ const cssDeclarationSorter = require('css-declaration-sorter')
 const mqpacker = require('css-mqpacker')
 
 //* .scssのwatch（その他のファイルがある時に使うといい）
-gulp.task('scss-w', function () {
+gulp.task('default', function () {
   return gulp.watch('./*.scss', function () {
     return (
       gulp
