@@ -335,7 +335,7 @@ paths:
               option:
                 select_num: 1
           description: ''
-  /api/v1/posts/public/:
+  /api/v1/posts/public:
     get:
       summary: Your GET endpoint
       tags:
@@ -676,6 +676,21 @@ paths:
             $ref: '#/definitions/Users/x-examples'
       operationId: get-api-v1-frendships-userId-followers
       description: get followers
+  /api/v1/posts/public/rank:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - posts
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Posts'
+          examples:
+            $ref: '#/definitions/Posts/x-examples'
+      operationId: get-api-v1-posts-public-rank
+      description: get post ranking
+    parameters: []
 definitions:
   Posts:
     title: Posts
