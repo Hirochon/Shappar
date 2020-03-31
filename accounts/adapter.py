@@ -19,6 +19,7 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         user.usernonamae = data.get('usernonamae')
         user.sex = data.get('sex')
         user.age = data.get('age')
+        user.blood_type = data.get('blood_type')
         user.born_at = data.get('born_at')
         user.introduction = data.get('introduction')
 

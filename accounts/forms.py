@@ -8,9 +8,10 @@ class MyCustomSignupForm(SignupForm):
     username = forms.CharField(label='ID', required=True, widget=forms.TextInput(attrs={'placeholder':'taro1225'}))
     usernonamae = forms.CharField(label='ユーザ名', required=True, widget=forms.TextInput(attrs={'placeholder':'太郎'}))
     email = forms.EmailField(label='メールアドレス', required=True, widget=forms.TextInput(attrs={'placeholder':'taro@example.com'}))
-    sex = forms.ChoiceField(label='性別', required=True, choices=CustomUser.choice_site)
+    sex = forms.ChoiceField(label='性別', required=True, choices=CustomUser.sex_choice_site)
+    blood_type = forms.ChoiceField(label='血液型', required=True, choices=CustomUser.blood_type_choice_site)
     age = forms.IntegerField(label='年齢', required=True, min_value=0, max_value=150)
-    born_at = forms.DateField(label='生年月日', required=False, widget=forms.SelectDateWidget(years=range(1900,2021)))
+    born_at = forms.DateField(label='生年月日', required=True, widget=forms.SelectDateWidget(years=range(1900,2021)))
     introduction = forms.CharField(label='自己紹介', required=False, widget=forms.TextInput(attrs={'placeholder':'はじめまして。太郎です！'}))
 
     def save(self, request):
