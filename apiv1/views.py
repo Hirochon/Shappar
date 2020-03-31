@@ -1,30 +1,28 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import views, status
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import IsAuthenticated
-from django_filters import rest_framework as filters
-from django.http import HttpResponseNotFound
 import uuid
 
 from django.contrib.auth import get_user_model
 from .models import Poll, Post, Option
 from .serializers import (
-    MypageSerializer, 
+    MypageSerializer,
     PostPatchSerializer,
-    PostCreateSerializer, 
-    PostListSerializer, 
-    PollSerializer, 
+    PostCreateSerializer,
+    PostListSerializer,
+    PollSerializer,
     OptionSerializer,
     PostDetailSerializer,
 )
 
+
 def Response_unauthorized():
-    return Response({"detail":"権限がありません。"},status.HTTP_401_UNAUTHORIZED)
+    return Response({"detail": "権限がありません。"}, status.HTTP_401_UNAUTHORIZED)
+
 
 def Response_post_notfound():
-    return Response({"detail":"存在しない投稿IDです。"},status.HTTP_404_NOT_FOUND)
+    return Response({"detail": "存在しない投稿IDです。"}, status.HTTP_404_NOT_FOUND)
+
 
 class MypageAPIView(views.APIView):
     """マイページ用詳細・更新・一部更新APIクラス"""
@@ -71,7 +69,7 @@ class MypagePostedListAPIView(views.APIView):
 
         user_pk = get_user_model().objects.filter(username=pk)
         if len(user_pk) == 0:
-            return Response({'detail':'存在しないユーザーIDです'}, status.HTTP_404_NOT_FOUND)
+            return Response({'detail': '存在しないユーザーIDです'}, status.HTTP_404_NOT_FOUND)
         user_id = user_pk[0].id
 
         # pkの投稿をフィルタリング
@@ -93,11 +91,11 @@ class MypagePostedListAPIView(views.APIView):
                         data['votes'] = -1
                 else:
                     for data in datas['options']:
-                        flag = Poll.objects.filter(user_id=user_id,option_id=data['id'])
+                        flag = Poll.objects.filter(user_id=user_id, option_id=data['id'])
                         if len(flag) > 0:
                             datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
                         else:
-                            if not 'selected_num' in datas:
+                            if 'selected_num' not in datas:
                                 datas['selected_num'] = -1
                         del data['id']
                         del data['share_id']
@@ -114,11 +112,11 @@ class MypagePostedListAPIView(views.APIView):
                 else:
                     datas['voted'] = True
                     for data in datas['options']:
-                        flag = Poll.objects.filter(user_id=user_id,option_id=data['id'])
+                        flag = Poll.objects.filter(user_id=user_id, option_id=data['id'])
                         if len(flag) > 0:
                             datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
                         else:
-                            if not 'selected_num' in datas:
+                            if 'selected_num' not in datas:
                                 datas['selected_num'] = -1
                         del data['id']
                         del data['share_id']
@@ -137,7 +135,7 @@ class MypageVotedListAPIView(views.APIView):
 
         user = get_user_model().objects.filter(username=pk)
         if len(user) == 0:
-            return Response({'detail':'存在しないユーザーIDです'}, status.HTTP_404_NOT_FOUND)
+            return Response({'detail': '存在しないユーザーIDです'}, status.HTTP_404_NOT_FOUND)
         user_id = user[0].id
 
         if request.user.username != pk:
@@ -161,11 +159,11 @@ class MypageVotedListAPIView(views.APIView):
                     data['votes'] = -1
             else:
                 for data in datas['options']:
-                    flag = Poll.objects.filter(user_id=user_id,option_id=data['id'])
+                    flag = Poll.objects.filter(user_id=user_id, option_id=data['id'])
                     if len(flag) > 0:
                         datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
                     else:
-                        if not 'selected_num' in datas:
+                        if 'selected_num' not in datas:
                             datas['selected_num'] = -1
                     del data['id']
                     del data['share_id']
@@ -185,9 +183,9 @@ class PostCreateAPIView(views.APIView):
         data = request.data
 
         if 10 < len(data['options']):
-            return Response({"options":[{"answer":"回答は10個以下にしてください。"}]},status.HTTP_400_BAD_REQUEST)
+            return Response({"options": [{"answer": "回答は10個以下にしてください。"}]}, status.HTTP_400_BAD_REQUEST)
         elif 2 > len(data['options']):
-            return Response({"options":[{"answer":"回答は2個以上にしてください。"}]},status.HTTP_400_BAD_REQUEST)
+            return Response({"options": [{"answer": "回答は2個以上にしてください。"}]}, status.HTTP_400_BAD_REQUEST)
 
         share_uuid = uuid.uuid4()
         data['share_id'] = share_uuid
@@ -236,11 +234,11 @@ class PostListRankAPIView(views.APIView):
                     data['votes'] = -1
             else:
                 for data in datas['options']:
-                    flag = Poll.objects.filter(user_id=unique_id,option_id=data['id'])
+                    flag = Poll.objects.filter(user_id=unique_id, option_id=data['id'])
                     if len(flag) > 0:
                         datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
                     else:
-                        if not 'selected_num' in datas:
+                        if 'selected_num' not in datas:
                             datas['selected_num'] = -1
                     del data['id']
                     del data['share_id']
@@ -263,7 +261,8 @@ class PostListCreatedAPIView(views.APIView):
                 post_basis = Post.objects.filter(id=request.GET['pid'])
                 if len(post_basis) == 0:
                     return Response_post_notfound()
-                queryset = Post.objects.filter(created_at__lt=post_basis[0].created_at, question__contains=request.GET['q']).order_by('-created_at')[:10]
+                queryset = Post.objects.filter(
+                    created_at__lt=post_basis[0].created_at, question__contains=request.GET['q']).order_by('-created_at')[:10]
             else:
                 queryset = Post.objects.filter(question__contains=request.GET['q']).order_by('-created_at')[:10]
         elif 'pid' in request.GET:
@@ -286,11 +285,11 @@ class PostListCreatedAPIView(views.APIView):
                     data['votes'] = -1
             else:
                 for data in datas['options']:
-                    flag = Poll.objects.filter(user_id=unique_id,option_id=data['id'])
+                    flag = Poll.objects.filter(user_id=unique_id, option_id=data['id'])
                     if len(flag) > 0:
                         datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
                     else:
-                        if not 'selected_num' in datas:
+                        if 'selected_num' not in datas:
                             datas['selected_num'] = -1
                     del data['id']
                     del data['share_id']
@@ -331,10 +330,10 @@ class PostDetailDeleteAPIView(views.APIView):
         serializer = PostDetailSerializer(instance=users, many=True)
 
         response = {}
-        response['voted_sex'] = {'woman':0,'man':0,'others':0,'null':0}
-        response['voted_blood_type'] = {'A':0,'B':0,'O':0,'AB':0, 'others':0}
-        response['voted_age'] = {'0-10':0,"10-20":0,"20-30":0,"30-40":0,"40-50":0,"50-60":0,"60-":0}
-        response['voted_month'] = {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0}
+        response['voted_sex'] = {'woman': 0, 'man': 0, 'others': 0, 'null': 0}
+        response['voted_blood_type'] = {'A': 0, 'B': 0, 'O': 0, 'AB': 0, 'others': 0}
+        response['voted_age'] = {'0-10': 0, "10-20": 0, "20-30": 0, "30-40": 0, "40-50": 0, "50-60": 0, "60-": 0}
+        response['voted_month'] = {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0, "11": 0, "12": 0}
         response['total'] = post[0].total
 
         for data in serializer.data:
@@ -426,11 +425,11 @@ class PostUpdateAPIView(views.APIView):
                 data['votes'] = -1
         else:
             for data in seri_data['options']:
-                flag = Poll.objects.filter(user_id=user.id,option_id=data['id'])
+                flag = Poll.objects.filter(user_id=user.id, option_id=data['id'])
                 if len(flag) > 0:
                     seri_data['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
                 else:
-                    if not 'selected_num' in seri_data:
+                    if 'selected_num' not in seri_data:
                         seri_data['selected_num'] = -1
                 del data['id']
                 del data['share_id']
@@ -476,9 +475,9 @@ class PollCreateAPIView(views.APIView):
 
         # リクエストに存在しない選択肢があった時
         if flag == 0:
-            return Response({"detail":"存在しない選択肢です。"},status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "存在しない選択肢です。"}, status.HTTP_404_NOT_FOUND)
         
-        serializer_option = OptionSerializer(instance=Option.objects.get(id=data_option['id']) ,data=data_option)
+        serializer_option = OptionSerializer(instance=Option.objects.get(id=data_option['id']), data=data_option)
         serializer_option.is_valid(raise_exception=True)
         serializer_option.save()
 
