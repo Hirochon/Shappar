@@ -6,8 +6,8 @@ from datetime import timedelta
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # 環境変数を設定
-env = environ.Env(DEBUG=(bool,False),ALLOWED_HOSTS=(list,[]))
-env.read_env(os.path.join(BASE_DIR,'.env'))
+env = environ.Env(DEBUG=(bool, False), ALLOWED_HOSTS=(list, []))
+env.read_env(os.path.join(BASE_DIR, '.env'))
 
 SECRET_KEY = env('SECRET_KEY')
 
@@ -33,20 +33,20 @@ INSTALLED_APPS = [
     'apiv1.apps.Apiv1Config',
 
     # allauth
-    'django.contrib.sites',             #allauthではサイトを識別するsiteフレームワークが必須なためインストール
-    'allauth',                          #allauthアプリ
-    'allauth.account',                  #allauthの基本的なログイン認証系
-    'allauth.socialaccount',            #ソーシャル認証
+    'django.contrib.sites',             # allauthではサイトを識別するsiteフレームワークが必須なためインストール
+    'allauth',                          # allauthアプリ
+    'allauth.account',                  # allauthの基本的なログイン認証系
+    'allauth.socialaccount',            # ソーシャル認証
 
     # AWS
-    'django_ses',                       #AmazonSESとの連携アプリ
-    'storages',                         #AmazonS3との連携アプリ
-    'django_cleanup',                   #必要のない静的ファイルを自動消去アプリ
+    'django_ses',                       # AmazonSESとの連携アプリ
+    'storages',                         # AmazonS3との連携アプリ
+    'django_cleanup',                   # 必要のない静的ファイルを自動消去アプリ
 
     # 3rd party apps
-    'rest_framework',                   #RESTFrameworkアプリ
-    'djoser',                           #エンドポイントを設定
-    'django_filters',                   #フィルタリング
+    'rest_framework',                   # RESTFrameworkアプリ
+    'djoser',                           # エンドポイントを設定
+    'django_filters',                   # フィルタリング
 ]
 
 MIDDLEWARE = [
@@ -80,7 +80,7 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
             os.path.join(BASE_DIR, 'templates', 'allauth'),
-            ],
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -97,7 +97,7 @@ WSGI_APPLICATION = 'config.wsgi_local.application'
 
 
 DATABASES = {
-    'default':env.db(),
+    'default': env.db(),
 }
 
 
@@ -139,11 +139,11 @@ USE_TZ = True
 ###########################
 
 ACCOUNT_EMAIL_SUBJECT_PREFIX = "[Shappar(しゃぱー)]"
-SITE_ID = 1     #サイトの識別ID
-LOGIN_REDIRECT_URL = 'home'         #ログイン後のリダイレクト先
-LOGOUT_REDIRECT_URL = '/accounts/login/'    #ログアウト後のリダイレクト先
-AUTH_USER_MODEL = 'accounts.CustomUser'     #カスタムユーザーモデルの定義
-ACCOUNT_FORMS = {'signup': 'accounts.forms.MyCustomSignupForm'}    #カスタムフォームの定義
+SITE_ID = 1     # サイトの識別ID
+LOGIN_REDIRECT_URL = 'home'         # ログイン後のリダイレクト先
+LOGOUT_REDIRECT_URL = '/accounts/login/'    # ログアウト後のリダイレクト先
+AUTH_USER_MODEL = 'accounts.CustomUser'     # カスタムユーザーモデルの定義
+ACCOUNT_FORMS = {'signup': 'accounts.forms.MyCustomSignupForm'}    # カスタムフォームの定義
 ACCOUNT_EMAIL_REQUIRED = True      # 登録時にメールアドレスを必須項目にする。
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',                # デフォルトの設定
@@ -195,7 +195,7 @@ DEFAULT_FILE_STORAGE = 'config.storage_backends.MediaStorage'
 ##################
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES':[
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication'
     ],
     # 'DEFAULT_PERMISSION_CLASSES': [
@@ -205,94 +205,94 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'AUTH_HEADER_TYPES':('JWT',),
-    'ACCESS_TOKEN_LIFETIME':timedelta(minutes=180),
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=180),
 }
 
 
 if DEBUG:
     LOGGING = {
-        'version' : 1,                          #バージョンは1に固定
-        'disable_existing_loggers' : False,     #既存のログ設定を無効化しない
+        'version': 1,                          # バージョンは1に固定
+        'disable_existing_loggers': False,     # 既存のログ設定を無効化しない
 
-        #ログフォーマット
-        'formatters' : {
-            #開発用
-            'develop' : {
-                'format' : '%(asctime)s [%(levelname)s] %(pathname)s:%(lineno)d %(message)s'
+        # ログフォーマット
+        'formatters': {
+            # 開発用
+            'develop': {
+                'format': '%(asctime)s [%(levelname)s] %(pathname)s:%(lineno)d %(message)s'
             },
         },
-        #ハンドラ
-        'handlers' : {
-            #コンソール出力用ハンドラ
-            'console' : {
-                'level' : 'DEBUG',
-                'class' : 'logging.StreamHandler',
-                'formatter' : 'develop',
+        # ハンドラ
+        'handlers': {
+            # コンソール出力用ハンドラ
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+                'formatter': 'develop',
             },
         },
-        #ロガー
-        'loggers' : {
-            #自作アプリケーション全般のログを拾うロガー
-            '' : {
-                'handlers' : ['console'],
-                'level' : 'DEBUG',
-                'propagate' : False,
+        # ロガー
+        'loggers': {
+            # 自作アプリケーション全般のログを拾うロガー
+            '': {
+                'handlers': ['console'],
+                'level': 'DEBUG',
+                'propagate': False,
             },
-            #Django本体が出すログ全般を拾うロガー
-            'django' : {
-                'handlers' : ['console'],
-                'level' : 'INFO',
-                'propagate' : False,
+            # Django本体が出すログ全般を拾うロガー
+            'django': {
+                'handlers': ['console'],
+                'level': 'INFO',
+                'propagate': False,
             },
-            #発行されるSQL文を出力するための設定
-            'django.db.backends' : {
-                'handlers' : ['console'],
-                'level' : 'DEBUG',
-                'propagate' : False,
+            # 発行されるSQL文を出力するための設定
+            'django.db.backends': {
+                'handlers': ['console'],
+                'level': 'DEBUG',
+                'propagate': False,
             },
         },
     }
 else:
     LOGGING = {
-        'version' : 1,                          #バージョンは1に固定
-        'disable_existing_loggers' : False,     #既存のログ設定を無効化しない
+        'version': 1,                          # バージョンは1に固定
+        'disable_existing_loggers': False,     # 既存のログ設定を無効化しない
 
-        #ログフォーマット
-        'formatters' : {
-            #開発用
-            'production' : {
-                'format' : '%(asctime)s [%(levelname)s] %(process)d %(thread)d %(pathname)s:%(lineno)d %(message)s'
+        # ログフォーマット
+        'formatters': {
+            # 開発用
+            'production': {
+                'format': '%(asctime)s [%(levelname)s] %(process)d %(thread)d %(pathname)s:%(lineno)d %(message)s'
             },
         },
-        #ハンドラ
-        'handlers' : {
-            #コンソール出力用ハンドラ
-            'console' : {
-                'level' : 'INFO',
-                'class' : 'logging.StreamHandler',
-                'formatter' : 'production',
+        # ハンドラ
+        'handlers': {
+            # コンソール出力用ハンドラ
+            'console': {
+                'level': 'INFO',
+                'class': 'logging.StreamHandler',
+                'formatter': 'production',
             },
         },
-        #ロガー
-        'loggers' : {
-            #自作アプリケーション全般のログを拾うロガー
-            '' : {
-                'handlers' : ['console'],
-                'level' : 'INFO',
-                'propagate' : False,
+        # ロガー
+        'loggers': {
+            # 自作アプリケーション全般のログを拾うロガー
+            '': {
+                'handlers': ['console'],
+                'level': 'INFO',
+                'propagate': False,
             },
-            #Django本体が出すログ全般を拾うロガー
-            'django' : {
-                'handlers' : ['console'],
-                'level' : 'INFO',
-                'propagate' : False,
+            # Django本体が出すログ全般を拾うロガー
+            'django': {
+                'handlers': ['console'],
+                'level': 'INFO',
+                'propagate': False,
             },
-            #発行されるSQL文を出力するための設定
-            'django.db.backends' : {
-                'handlers' : ['console'],
-                'level' : 'INFO',
-                'propagate' : False,
+            # 発行されるSQL文を出力するための設定
+            'django.db.backends': {
+                'handlers': ['console'],
+                'level': 'INFO',
+                'propagate': False,
             },
         },
     }
