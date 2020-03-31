@@ -95,11 +95,11 @@ export default {
         refConf.startY = e.clientY
       }
       refConf.diffY = e.clientY - refConf.startY
-      refConf.trigger = refConf.diffY > 75 // 下がった高さが75pxを超えたら発火
+      refConf.trigger = refConf.diffY > 100 // 下がった高さが75pxを超えたら発火
       if (refConf.diffY > 0) {
         document.getElementById('PostList').style.transition = null
-        document.getElementById('PostList').style.transform = 'translateY(' + refConf.diffY * 2 / 3 + 'px)'
-        document.getElementById('Pull-to').style.transform = 'translateY(' + refConf.diffY * 2 / 3 + 'px)'
+        document.getElementById('PostList').style.transform = 'translateY(' + 5 * Math.sqrt(refConf.diffY) + 'px)'
+        document.getElementById('Pull-to').style.transform = 'translateY(' + 5 * Math.sqrt(refConf.diffY) + 'px)'
       } else {
         document.getElementById('PostList').style.transition = '.15s ease-in-out'
         document.getElementById('PostList').style.transform = null

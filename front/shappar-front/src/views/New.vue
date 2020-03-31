@@ -15,11 +15,13 @@
               <div class="Top__data__options">{{options.length}}</div>
             </div>
           </h2>
-          <textarea class="Top__question"
-            v-model="question.text" cols="30" rows="2" placeholder="質問"
-            @input="questionValidate()"
-            >
-          </textarea>
+          <div class="Top__question">
+            <textarea
+              v-model="question.text" cols="30" rows="2" placeholder="質問"
+              @input="questionValidate()"
+              >
+            </textarea>
+          </div>
         </div>
         <draggable v-model="options" handle=".New__option__handle" @touchmove.prevent.stop>
           <transition-group name="option">
@@ -45,7 +47,7 @@
           </transition-group>
         </draggable>
         <div class="Buttons">
-          <div class="Buttons__add-option" @click.stop="addOption">
+          <div class="Buttons__add-option" @click.stop="addOption" :class="{hasError: options.length === 10}">
             <font-awesome-icon icon="plus"/>
           </div>
           <div class="Buttons__submit" @click.stop="servePost" :class="{hasError:!postValidate}">
@@ -105,15 +107,19 @@ export default {
   },
   methods: {
     addOption () {
-      if (this.options.length < 10) {
-        this.options.push({
-          id: this.count++,
-          answer: '',
-          length: 0,
-          isValid: true
-        })
+      if (this.options.length === 10) return
+      this.options.push({
+        id: this.count++,
+        answer: '',
+        length: 0,
+        isValid: true
+      })
+    },
+    deleteOption (selectNum) {
+      if (this.options.length > 2) {
+        this.options.splice(selectNum, 1)
       } else {
-        alert('これ以上作成できません')
+        this.$store.dispatch('message/setErrorMessage', { message: '選択肢は2つ以上必要です。' })
       }
     },
     delTouchStart (index) {
@@ -144,13 +150,6 @@ export default {
       document.getElementById('option_' + id).style.transform = null
       delConf.isStart = false
       delConf.trigger = false
-    },
-    deleteOption (selectNum) {
-      if (this.options.length > 2) {
-        this.options.splice(selectNum, 1)
-      } else {
-        alert('これ以上削除できません')
-      }
     },
     servePost () {
       // console.log('servePost')
@@ -345,12 +344,12 @@ export default {
       width: calc(100% - 40px);
     }
     &__text{
-      padding: 0 16px;
+      padding: 0 8px 0 16px;
       box-sizing: border-box;
       // width: calc(100% - 40px);
       width: 100%;
-      height: 64px;
-      line-height: 24px;
+      height: 63px;
+      line-height: 21px;
       background: #fff;
       resize: none;
       overflow: hidden;
@@ -501,8 +500,13 @@ export default {
     height: 100px;
     line-height: 1.6em;
     background: #fff;
-    resize: none;
     border-radius: 0;
+    overflow-y: scroll;
+    textarea{
+      width: 100%;
+      height: 100%;
+      resize: none;
+    }
     &::placeholder{
       padding: 8px 0;
       line-height: 16px;
@@ -523,6 +527,10 @@ export default {
     color: white;
     background: $color-sub;
     cursor: pointer;
+    &.hasError{
+      opacity: 0.5;
+      cursor:auto;
+    }
     svg{
       display: block;
       margin: 0 auto;
