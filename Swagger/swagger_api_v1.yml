@@ -365,12 +365,8 @@ paths:
           in: query
           name: q
           description: 検索キーワード
-  '/api/v1/posts/{unique_id}/{post_id}':
+  '/api/v1/posts/public/{post_id}':
     parameters:
-      - type: string
-        name: unique_id
-        in: path
-        required: true
       - type: string
         name: post_id
         in: path
@@ -386,34 +382,18 @@ paths:
             $ref: '#/definitions/Post'
           examples:
             $ref: '#/definitions/Post/x-examples'
+        '404':
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+          examples:
+            example-1:
+              detail: 存在しない投稿IDです。
       operationId: get-api-v1-posts-postId
       description: get post details
-    put:
-      summary: ''
-      operationId: put-api-v1-posts-postId
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-          examples:
-            example-1: {}
-      description: update post proparty or vote details
-      tags:
-        - posts
-    delete:
-      summary: ''
-      operationId: delete-api-v1-posts-postId
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-          examples:
-            example-1: {}
-      description: delete post or vote
-      tags:
-        - posts
   /api/v1/users:
     get:
       summary: Your GET endpoint
