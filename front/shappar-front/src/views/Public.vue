@@ -1,16 +1,16 @@
 <template>
   <div class="Public" @touchmove="pullToMove" @touchend="pullToEnd">
     <GlobalMessage/>
-    <DrawerMenu :user="user" :isOpen="isDrawerOpen" @close="isDrawerOpen = false"/>
+    <DrawerMenu :isOpen="isDrawerOpen" @close="isDrawerOpen = false"/>
     <New @switchNew="switchNew()" @refresh="refresh" :isOpen="isNewOpen"/>
     <transition name="search">
-      <Search :query="query" @search="search()" @drawerOpen="isDrawerOpen = true" v-show="searchShow && !isNewOpen"></Search>
+      <Search :query="query" @search="search()" @drawerOpen="isDrawerOpen = true" @changeRanking="changeRanking()" v-show="searchShow && !isNewOpen"></Search>
     </transition>
     <div class="Pull-to" id="Pull-to">
       <font-awesome-icon icon="spinner" class="Pull-to__rotate" v-if="refreshConfig.loading"/>
       <font-awesome-icon icon="chevron-circle-down" :class="{'Pull-to__on': refreshConfig.trigger}" v-if="refreshConfig.isStart"/>
     </div>
-    <PostList :posts="posts" :unique_id="unique_id" @reload="refresh()"></PostList>
+    <PostList :posts="posts" @reload="refresh()"></PostList>
     <div class="Public__loading" v-if="isLoading">
       <font-awesome-icon icon="spinner" class="Public__loading__icon"/>
     </div>
@@ -37,9 +37,6 @@ export default {
   },
   data: function () {
     return {
-      unique_id: '',
-      user_id: '',
-      user: {},
       posts: [],
       query: '',
       isNewOpen: false,
@@ -47,7 +44,7 @@ export default {
       isLoading: true,
       searchShow: true,
       positionY: 0,
-      targetHeight: 0,
+      targetHeight: -1,
       targetId: '',
       refreshConfig: {
         isStart: false,
@@ -98,11 +95,11 @@ export default {
         refConf.startY = e.clientY
       }
       refConf.diffY = e.clientY - refConf.startY
-      refConf.trigger = refConf.diffY > 75 // 下がった高さが75pxを超えたら発火
+      refConf.trigger = refConf.diffY > 100 // 下がった高さが75pxを超えたら発火
       if (refConf.diffY > 0) {
         document.getElementById('PostList').style.transition = null
-        document.getElementById('PostList').style.transform = 'translateY(' + refConf.diffY * 2 / 3 + 'px)'
-        document.getElementById('Pull-to').style.transform = 'translateY(' + refConf.diffY * 2 / 3 + 'px)'
+        document.getElementById('PostList').style.transform = 'translateY(' + 5 * Math.sqrt(refConf.diffY) + 'px)'
+        document.getElementById('Pull-to').style.transform = 'translateY(' + 5 * Math.sqrt(refConf.diffY) + 'px)'
       } else {
         document.getElementById('PostList').style.transition = '.15s ease-in-out'
         document.getElementById('PostList').style.transform = null
@@ -147,10 +144,17 @@ export default {
       await (this.targetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
       if (this.targetId) this.targetHeight = document.getElementById(this.targetId).offsetTop - window.innerHeight // 次の高さを計測
     },
-    async refresh () { // ここの非同期処理いるのか？
-      await api.get('/api/v1/posts/public/')
+    refresh () {
+      this.isLoading = true
+      this.posts = []
+      var path = '/api/v1/posts/public/'
+      path += this.$store.state.user.isRanking ? 'rank/' : ''
+      api.get(path)
         .then((response) => {
           this.initPosts(response.data.posts)
+        })
+        .then(() => {
+          this.isLoading = false
         })
     },
     switchSearch () {
@@ -168,6 +172,9 @@ export default {
         // console.log('set false')
       }
     },
+    changeRanking () {
+      this.refresh()
+    },
     scrollTriggers () {
       this.switchSearch()
       this.loadMore()
@@ -180,21 +187,8 @@ export default {
     }
   },
   created: function () {
-    this.unique_id = this.$store.state.auth.unique_id
-    this.user_id = this.$store.state.auth.username
     this.query = ''
-    api.get('/api/v1/users/' + this.user_id + '/')
-      .then((response) => {
-        this.user = response.data
-      })
-    this.isLoading = true
-    api.get('/api/v1/posts/public/')
-      .then((response) => {
-        this.initPosts(response.data.posts)
-      })
-      .then(() => {
-        this.isLoading = false
-      })
+    this.refresh()
     window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
   },
   destroyed () {

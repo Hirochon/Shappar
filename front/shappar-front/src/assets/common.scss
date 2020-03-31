@@ -2,6 +2,23 @@ $color-main: #41be99;
 $color-main-light: #a1dfcc;
 $color-sub: #62a7d0;
 $color-err: #f44336;
+// material-color
+$color-material: (
+  '01': #FFA726,
+  '02': #FF7043,
+  '03': #ef5350,
+  '04': #EC407A,
+  '05': #AB47BC,
+  '06': #7E57C2,
+  '07': #5C6BC0,
+  '08': #42A5F5,
+  '09': #29B6F6,
+  '10': #26C6DA,
+  '11': #26A69A,
+  '12': #66BB6A,
+);
+$color-silver: #BDBDBD;
+$color-bronze: #d66140;
 @mixin media-8-16{
   @media screen and (min-width: 600px){
     @content

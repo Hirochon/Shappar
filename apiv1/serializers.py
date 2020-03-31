@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import Post, Poll, Option
 
+
 class MypageSerializer(serializers.ModelSerializer):
     """マイページ用シリアライザ"""
 
@@ -18,7 +19,7 @@ class OptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Option
-        fields = ['id','select_num', 'answer', 'votes', 'share_id']
+        fields = ['id', 'select_num', 'answer', 'votes', 'share_id']
 
 
 class OptionListSerializer(serializers.ListSerializer):
@@ -26,7 +27,7 @@ class OptionListSerializer(serializers.ListSerializer):
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
-    """投稿用シリアライザ"""
+    """投稿作成用シリアライザ"""
     options = OptionListSerializer()
 
     class Meta:
@@ -40,6 +41,14 @@ class PostCreateSerializer(serializers.ModelSerializer):
         post = super().create(validated_data)
         post.options.set(options)
         return post
+
+
+class PostPatchSerializer(serializers.ModelSerializer):
+    """投票による投稿の合計投票数の変化用シリアライザ"""
+
+    class Meta:
+        model = Post
+        fields = ['id', 'total']
 
 
 class PostListSerializer(serializers.ModelSerializer):
@@ -59,22 +68,23 @@ class PostListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['post_id', 'user_id', 'iconimage', 'question', 'voted', 'options', 'created_at']
+        fields = ['post_id', 'user_id', 'iconimage', 'question', 'voted', 'total', 'options', 'created_at']
 
     def get_voted(self, instance):
-        if Poll.objects.filter(user_id=self.pk,post_id=instance.id):
+        if Poll.objects.filter(user_id=self.pk, post_id=instance.id):
             return True
-        if Post.objects.filter(user_id=self.pk,id=instance.id):
+        if Post.objects.filter(user_id=self.pk, id=instance.id):
             return True
         else:
             return False
+
 
 class PostDetailSerializer(serializers.ModelSerializer):
     """投票済みユーザーの情報取得シリアライザ"""
 
     class Meta:
         model = get_user_model()
-        fields = ['sex','age','born_at']
+        fields = ['sex', 'blood_type', 'age', 'born_at']
 
 
 class PollSerializer(serializers.ModelSerializer):
@@ -82,18 +92,18 @@ class PollSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Poll
-        fields = ['post','user','option']
+        fields = ['post', 'user', 'option']
 
     def validate(self, data):
         """同じ投稿への複数投票&投稿本人の投票阻止バリデーションメソッド"""
         user = data.get('user')
         post = data.get('post')
 
-        poll = Poll.objects.filter(user_id=user.id,post_id=post.id)
+        poll = Poll.objects.filter(user_id=user.id, post_id=post.id)
         if len(poll) > 0:
             raise serializers.ValidationError("同じ投稿への投票は一度のみです。")
 
-        post = Post.objects.filter(id=post.id,user_id=user.id)
+        post = Post.objects.filter(id=post.id, user_id=user.id)
         if len(post) > 0:
             raise serializers.ValidationError("投稿した本人は投票はできません。")
         

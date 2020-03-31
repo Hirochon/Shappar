@@ -1,0 +1,3 @@
+#!/bin/bash
+cd public/css
+python -m SimpleHTTPServer 3000
