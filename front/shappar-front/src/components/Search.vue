@@ -1,6 +1,9 @@
 <template>
   <div class="Search">
-    <div class="Drawer__switch" @click="$emit('drawerOpen')">
+    <div class="Search__switch" @click="$emit('drawerOpen')">
+      <img :src="this.$store.state.user.iconimage" alt="">
+    </div>
+    <div class="Search__switch none" @click="$emit('drawerOpen')">
       <img :src="this.$store.state.user.iconimage" alt="">
     </div>
     <div class="Search__rank" v-if="$store.state.user.isRanking">投票数ランキング</div>
@@ -82,8 +85,30 @@ export default {
   box-shadow: 0 0 8px rgba(black, 0.16);
   background: rgba(255,255,255,1);
   z-index: 100;
-  @include media-1200 {
-    justify-content: center;
+  &__switch{
+    display: block;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: white;
+    color: white;
+    overflow: hidden;
+    cursor: pointer;
+    &.none{
+      display: none;
+    }
+    @include media-1200 {
+      display: none;
+      &.none{
+        display: block;
+        opacity: 0;
+      }
+    }
+    img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
   &__rank{
     width: 70%;
@@ -162,13 +187,13 @@ export default {
     display: block;
     width: 32px;
     height: 32px;
-    padding: 4px;
+    padding: 4px 0;
     border-radius: 50%;
     background: white;
     color: #999;
-    @include media-1200 {
-      display: none;
-    }
+    // @include media-1200 {
+    //   display: none;
+    // }
     &.active{
       color: map-get($color-material, '01');
     }
