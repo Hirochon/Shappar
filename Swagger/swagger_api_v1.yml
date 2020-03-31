@@ -23,40 +23,8 @@ paths:
           description: Created
           schema:
             type: object
-            properties:
-              user:
-                type: string
-              question:
-                type: string
-              options:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    select_num:
-                      type: integer
-                    answer:
-                      type: string
-                    votes:
-                      type: string
           examples:
-            201 Created:
-              user: 86f455ff-5029-4207-9300-b9dea5fe9d37
-              question: question
-              options:
-                - select_num: 1
-                  answer: answer_1
-                  votes: 0
-                - select_num: 2
-                  answer: answer_2
-                  votes: 0
-                - select_num: 3
-                  answer: answer_3
-                  votes: 0
-                - select_num: 4
-                  answer: answer_4
-                  votes: 0
-              share_id: 2c904dae-b970-4df6-9e94-623e595a886d
+            201 Created: {}
         '400':
           description: Bad Request
           schema:
@@ -78,6 +46,14 @@ paths:
               options:
                 - answer:
                     - この項目は空にできません。
+            example-2:
+              options:
+                - answer:
+                    - 回答は10個以下にしてください
+            example-3:
+              options:
+                - answer:
+                    - 回答は2個以上にしてください
       description: new post
       parameters:
         - in: body
@@ -97,18 +73,7 @@ paths:
                     answer:
                       type: string
           x-examples:
-            201 Created:
-              unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
-              question: question
-              options:
-                - select_num: 1
-                  answer: answer_1
-                - select_num: 2
-                  answer: answer_2
-                - select_num: 3
-                  answer: answer_3
-                - select_num: 4
-                  answer: answer_4
+            201 Created: {}
             400 Bad Request:
               unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
               question: ''
