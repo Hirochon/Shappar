@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "https://d3ms402csqm2a0.cloudfront.net/static/precache-manifest.bf1ed3f7539a72880ab754502c306a27.js"
+  "https://d3ms402csqm2a0.cloudfront.net/static/precache-manifest.5d27bb343b84498fba73abcaf6056bb4.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "shappar-front"});

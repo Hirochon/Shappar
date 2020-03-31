@@ -7,6 +7,7 @@ import MyPage from '@/views/MyPage.vue'
 import LoginPage from '@/views/LoginPage'
 import UpdateUser from '@/views/UpdateUser'
 import Admin from '@/views/Admin'
+import Home from '@/views/Home'
 import store from '@/store'
 
 Vue.use(VueRouter)
@@ -23,6 +24,10 @@ const routes = [
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path: '/Home',
+    component: Home
   },
   // {
   //   path: '/Private',
@@ -85,8 +90,9 @@ router.beforeEach((to, from, next) => {
 
   // ログインが必要な画面に遷移しようとした場合
   if (to.matched.some(record => record.meta.requiresAuth)) {
+    // console.log('inrequireAuth')
     // ログインしている状態の場合
-    if (isLoggedIn) {
+    if (isLoggedIn && token != null) {
       // console.log('User is already logged in. So, free to next.')
       next()
 
@@ -98,12 +104,16 @@ router.beforeEach((to, from, next) => {
 
         store.dispatch('auth/reload')
           .then(() => {
-            // 再取得できたらそのまま次へ
+            // 再取得できたら詳細なユーザー情報を取得（TODO ここに関してはまとめれるならまとめてもらいたい）
             // console.log('Succeeded to reload. So, free to next.')
-            next()
+            store.dispatch('user/load', { user_id: store.getters['auth/username'] })
+              .then(() => {
+                next()
+              })
           })
           .catch(() => {
             // 再取得できなければログイン画面へ
+            // console.log('forceToLogin')
             forceToLoginPage(to, from, next)
           })
       } else {
@@ -124,7 +134,7 @@ router.beforeEach((to, from, next) => {
 function forceToLoginPage (to, from, next) {
   // console.log('Force user to login page.')
   next({
-    path: '/login',
+    path: '/home',
     // 遷移先のURLはクエリ文字列として付加
     query: { next: to.fullPath }
   })

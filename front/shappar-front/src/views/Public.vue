@@ -1,7 +1,7 @@
 <template>
   <div class="Public" @touchmove="pullToMove" @touchend="pullToEnd">
     <GlobalMessage/>
-    <DrawerMenu :user="user" :isOpen="isDrawerOpen" @close="isDrawerOpen = false"/>
+    <DrawerMenu :isOpen="isDrawerOpen" @close="isDrawerOpen = false"/>
     <New @switchNew="switchNew()" @refresh="refresh" :isOpen="isNewOpen"/>
     <transition name="search">
       <Search :query="query" @search="search()" @drawerOpen="isDrawerOpen = true" v-show="searchShow && !isNewOpen"></Search>
@@ -10,7 +10,7 @@
       <font-awesome-icon icon="spinner" class="Pull-to__rotate" v-if="refreshConfig.loading"/>
       <font-awesome-icon icon="chevron-circle-down" :class="{'Pull-to__on': refreshConfig.trigger}" v-if="refreshConfig.isStart"/>
     </div>
-    <PostList :posts="posts" :unique_id="unique_id" @reload="refresh()"></PostList>
+    <PostList :posts="posts" @reload="refresh()"></PostList>
     <div class="Public__loading" v-if="isLoading">
       <font-awesome-icon icon="spinner" class="Public__loading__icon"/>
     </div>
@@ -37,9 +37,6 @@ export default {
   },
   data: function () {
     return {
-      unique_id: '',
-      user_id: '',
-      user: {},
       posts: [],
       query: '',
       isNewOpen: false,
@@ -180,13 +177,7 @@ export default {
     }
   },
   created: function () {
-    this.unique_id = this.$store.state.auth.unique_id
-    this.user_id = this.$store.state.auth.username
     this.query = ''
-    api.get('/api/v1/users/' + this.user_id + '/')
-      .then((response) => {
-        this.user = response.data
-      })
     this.isLoading = true
     api.get('/api/v1/posts/public/')
       .then((response) => {

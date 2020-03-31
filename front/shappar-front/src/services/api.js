@@ -1,5 +1,6 @@
 import axios from 'axios'
 import store from '@/store'
+import router from '@/router'
 
 const api = axios.create({
   baseURL: process.env.VUE_APP_ROOT_API,
@@ -12,6 +13,7 @@ const api = axios.create({
 
 // 共通前処理
 api.interceptors.request.use(function (config) {
+  // console.log(process.env)
   // メッセージをクリア
   // store.dispatch('message/clearMessages')
   // 認証用トークンがあればリクエストヘッダに乗せる
@@ -48,6 +50,7 @@ api.interceptors.response.use(function (response) {
     }
     store.dispatch('auth/logout')
     store.dispatch('message/setErrorMessage', { message: message })
+    router.replace('/login')
   } else if (status === 403) {
     // 権限エラー
     message = '権限エラーです。'

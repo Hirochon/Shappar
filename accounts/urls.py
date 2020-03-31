@@ -1,5 +1,6 @@
 from django.urls import path, re_path
 from allauth.account import views
+from . import custom_views
 
 """allauthのルーティング設定をすべて記述することによって
    パッケージのviewsを部分的にイジることができる。"""
@@ -13,11 +14,11 @@ urlpatterns = [
     path("password/set/", views.password_set, name="account_set_password"),
     path("inactive/", views.account_inactive, name="account_inactive"),
 
-    # E-mail
+    # E-mail confirm_emailについて参照先を変更
     path("email/", views.email, name="account_email"),
     path("confirm-email/", views.email_verification_sent,
          name="account_email_verification_sent"),
-    re_path(r"^confirm-email/(?P<key>[-:\w]+)/$", views.confirm_email,
+    re_path(r"^confirm-email/(?P<key>[-:\w]+)/$", custom_views.confirm_email,
             name="account_confirm_email"),
 
     # password reset
