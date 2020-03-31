@@ -23,40 +23,8 @@ paths:
           description: Created
           schema:
             type: object
-            properties:
-              user:
-                type: string
-              question:
-                type: string
-              options:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    select_num:
-                      type: integer
-                    answer:
-                      type: string
-                    votes:
-                      type: string
           examples:
-            201 Created:
-              user: 86f455ff-5029-4207-9300-b9dea5fe9d37
-              question: question
-              options:
-                - select_num: 1
-                  answer: answer_1
-                  votes: 0
-                - select_num: 2
-                  answer: answer_2
-                  votes: 0
-                - select_num: 3
-                  answer: answer_3
-                  votes: 0
-                - select_num: 4
-                  answer: answer_4
-                  votes: 0
-              share_id: 2c904dae-b970-4df6-9e94-623e595a886d
+            201 Created: {}
         '400':
           description: Bad Request
           schema:
@@ -78,6 +46,14 @@ paths:
               options:
                 - answer:
                     - この項目は空にできません。
+            example-2:
+              options:
+                - answer:
+                    - 回答は10個以下にしてください
+            example-3:
+              options:
+                - answer:
+                    - 回答は2個以上にしてください
       description: new post
       parameters:
         - in: body
@@ -97,18 +73,7 @@ paths:
                     answer:
                       type: string
           x-examples:
-            201 Created:
-              unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
-              question: question
-              options:
-                - select_num: 1
-                  answer: answer_1
-                - select_num: 2
-                  answer: answer_2
-                - select_num: 3
-                  answer: answer_3
-                - select_num: 4
-                  answer: answer_4
+            201 Created: {}
             400 Bad Request:
               unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
               question: ''
@@ -147,6 +112,19 @@ paths:
                   others:
                     type: integer
                   'null':
+                    type: integer
+              voted_blood_type:
+                type: object
+                properties:
+                  A:
+                    type: integer
+                  B:
+                    type: integer
+                  O:
+                    type: integer
+                  AB:
+                    type: integer
+                  others:
                     type: integer
               voted_age:
                 type: object
@@ -201,6 +179,11 @@ paths:
                 others: 1
                 man: 6
                 'null': 0
+              voted_blood_type:
+                A: 3
+                B: 4
+                AB: 3
+                others: 1
               voted_age:
                 0-10: 0
                 10-20: 5
@@ -223,16 +206,46 @@ paths:
                 '11': 2
                 '12': 1
               total: 11
+        '404':
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+          examples:
+            example-1:
+              detail: 存在しない投稿IDです。
       description: get post details
       operationId: get-api-v1-posts-post_id
     delete:
       summary: ''
       operationId: delete-api-v1-posts-post_id
       responses:
-        '200':
-          description: OK
+        '204':
+          description: No Content
           schema:
             type: object
+        '401':
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+          examples:
+            example-1:
+              detail: 権限がありません。
+        '404':
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+          examples:
+            example-1:
+              detail: 存在しない投稿IDです。
       description: delete post
       tags:
         - posts
@@ -265,6 +278,8 @@ paths:
                         - integer
               selected_num:
                 type: integer
+              total:
+                type: integer
           examples:
             201 Created:
               options:
@@ -277,6 +292,30 @@ paths:
                 - select_num: 1
                   votes: 1
               selected_num: 1
+        '400':
+          description: Bad Request
+          schema:
+            type: object
+            properties:
+              non_field_errors:
+                type: string
+          examples:
+            example-1:
+              non_field_errors:
+                - 同ユーザーの投稿への投票は一度のみです。
+            example-2:
+              non_field_errors:
+                - 自身が投稿した投稿への投票はできません。
+        '404':
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+          examples:
+            example-1:
+              detail: 存在しない投稿IDです。
       description: vote post
       tags:
         - posts
@@ -286,8 +325,6 @@ paths:
           schema:
             type: object
             properties:
-              unique_id:
-                type: string
               option:
                 type: object
                 properties:
@@ -295,11 +332,10 @@ paths:
                     type: integer
           x-examples:
             201 Created:
-              unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
               option:
                 select_num: 1
           description: ''
-  '/api/v1/posts/public/{unique_id}':
+  /api/v1/posts/public/:
     get:
       summary: Your GET endpoint
       tags:
@@ -311,6 +347,16 @@ paths:
             $ref: '#/definitions/Posts'
           examples:
             $ref: '#/definitions/Posts/x-examples'
+        '404':
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+          examples:
+            example-1:
+              detail: 存在しない投稿IDです。
       operationId: get-api-v1-posts-public
       description: get public posts
       parameters:
@@ -322,11 +368,7 @@ paths:
           in: query
           name: pid
           description: 追加読み込みの基準
-    parameters:
-      - type: string
-        name: unique_id
-        in: path
-        required: true
+    parameters: []
   /api/v1/posts/private:
     get:
       summary: Your GET endpoint
@@ -346,12 +388,8 @@ paths:
           in: query
           name: q
           description: 検索キーワード
-  '/api/v1/posts/{unique_id}/{post_id}':
+  '/api/v1/posts/public/{post_id}':
     parameters:
-      - type: string
-        name: unique_id
-        in: path
-        required: true
       - type: string
         name: post_id
         in: path
@@ -367,34 +405,18 @@ paths:
             $ref: '#/definitions/Post'
           examples:
             $ref: '#/definitions/Post/x-examples'
+        '404':
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+          examples:
+            example-1:
+              detail: 存在しない投稿IDです。
       operationId: get-api-v1-posts-postId
       description: get post details
-    put:
-      summary: ''
-      operationId: put-api-v1-posts-postId
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-          examples:
-            example-1: {}
-      description: update post proparty or vote details
-      tags:
-        - posts
-    delete:
-      summary: ''
-      operationId: delete-api-v1-posts-postId
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-          examples:
-            example-1: {}
-      description: delete post or vote
-      tags:
-        - posts
   /api/v1/users:
     get:
       summary: Your GET endpoint
@@ -559,6 +581,13 @@ paths:
             $ref: '#/definitions/Posts'
           examples:
             $ref: '#/definitions/Posts/x-examples'
+        '204':
+          description: No Content
+          schema:
+            type: object
+            properties: {}
+          examples:
+            example-1: {}
       operationId: get-api-v1-users-userId-voted
       description: user voted posts
   '/api/v1/friendships/{userId}':
@@ -831,8 +860,6 @@ definitions:
         iconimage: 'http://example.com/iconURL'
         homeimage: 'http://example.com/homeImageURL'
     properties:
-      unique_id:
-        type: string
       user_id:
         type: string
       name:
