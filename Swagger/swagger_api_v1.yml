@@ -194,10 +194,30 @@ paths:
       summary: ''
       operationId: delete-api-v1-posts-post_id
       responses:
-        '200':
-          description: OK
+        '204':
+          description: No Content
           schema:
             type: object
+        '401':
+          description: Unauthorized
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+          examples:
+            example-1:
+              detail: 権限がありません。
+        '404':
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+          examples:
+            example-1:
+              detail: 存在しない投稿IDです。
       description: delete post
       tags:
         - posts
@@ -264,7 +284,7 @@ paths:
               option:
                 select_num: 1
           description: ''
-  '/api/v1/posts/public/{unique_id}':
+  /api/v1/posts/public/:
     get:
       summary: Your GET endpoint
       tags:
@@ -276,6 +296,16 @@ paths:
             $ref: '#/definitions/Posts'
           examples:
             $ref: '#/definitions/Posts/x-examples'
+        '404':
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+          examples:
+            example-1:
+              detail: 存在しない投稿IDです。
       operationId: get-api-v1-posts-public
       description: get public posts
       parameters:
@@ -287,11 +317,7 @@ paths:
           in: query
           name: pid
           description: 追加読み込みの基準
-    parameters:
-      - type: string
-        name: unique_id
-        in: path
-        required: true
+    parameters: []
   /api/v1/posts/private:
     get:
       summary: Your GET endpoint
