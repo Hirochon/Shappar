@@ -23,6 +23,7 @@ class TestMypageAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル1',
             sex='0',
+            blood_type='0',
             age=21,
             born_at='1998-08-10',
         )
@@ -32,6 +33,7 @@ class TestMypageAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル2',
             sex='1',
+            blood_type='1',
             age=19,
             born_at='2001-12-02',
         )
@@ -168,6 +170,7 @@ class TestMypageVotedListAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル1',
             sex='0',
+            blood_type='0',
             age=21,
             born_at='1998-08-10',
         )
@@ -177,6 +180,7 @@ class TestMypageVotedListAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル2',
             sex='1',
+            blood_type='1',
             age=19,
             born_at='2001-12-02',
         )
@@ -331,6 +335,7 @@ class TestPostCreateAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル',
             sex='0',
+            blood_type='0',
             age=24,
             born_at='1998-08-10',
         )
@@ -555,6 +560,7 @@ class TestPostDeleteAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル',
             sex='0',
+            blood_type='0',
             age=21,
             born_at='1998-08-10',
         )
@@ -663,6 +669,7 @@ class TestPostUpdateAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル1',
             sex='0',
+            blood_type='0',
             age=21,
             born_at='1998-08-10',
         )
@@ -672,6 +679,7 @@ class TestPostUpdateAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル2',
             sex='1',
+            blood_type='1',
             age=19,
             born_at='2001-12-02',
         )
@@ -925,6 +933,7 @@ class TestPollCreateAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル1',
             sex='0',
+            blood_type='0',
             age=21,
             born_at='1998-08-10',
         )
@@ -934,6 +943,7 @@ class TestPollCreateAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル2',
             sex='1',
+            blood_type='1',
             age=19,
             born_at='2001-12-02',
         )
