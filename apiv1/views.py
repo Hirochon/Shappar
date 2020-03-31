@@ -217,14 +217,17 @@ class PostListRankAPIView(views.APIView):
         """投稿の作成順取得(一覧)APIに対応するハンドラメソッド"""
 
         # モデルオブジェクトをクエリ文字列を使ってフィルタリング
-        if 'q' in request.GET:
-            queryset = Post.objects.filter(question__contains=request.GET['q']).order_by('-total')[:20]
-        else:
-            queryset = Post.objects.all().order_by('-total')[:20]
-
+        # if 'q' in request.GET:
+        #     queryset = Post.objects.filter(question__contains=request.GET['q']).order_by('-total')[:5]
+        # else:
+        #     queryset = Post.objects.all().order_by('-total')[:5]
+        
+        queryset = Post.objects.all().order_by('-total')[:5]
         unique_id = request.user.id
         serializer = PostListSerializer(instance=queryset, many=True, pk=unique_id)
 
+        i = 0
+        flag_data = serializer.data[0]['total']
         for datas in serializer.data:
             if not datas['voted']:
                 datas['selected_num'] = -1
@@ -242,6 +245,12 @@ class PostListRankAPIView(views.APIView):
                             datas['selected_num'] = -1
                     del data['id']
                     del data['share_id']
+            if flag_data == datas['total']:
+                datas['rank'] = i
+            else:
+                i += 1
+                flag_data = datas['total']
+                datas['rank'] = i
         seri_datas = serializer.data
 
         response = {}
