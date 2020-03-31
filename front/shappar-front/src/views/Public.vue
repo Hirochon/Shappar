@@ -4,7 +4,7 @@
     <DrawerMenu :isOpen="isDrawerOpen" @close="isDrawerOpen = false"/>
     <New @switchNew="switchNew()" @refresh="refresh" :isOpen="isNewOpen"/>
     <transition name="search">
-      <Search :query="query" @search="search()" @drawerOpen="isDrawerOpen = true" v-show="searchShow && !isNewOpen"></Search>
+      <Search :query="query" @search="search()" @drawerOpen="isDrawerOpen = true" @changeRanking="changeRanking()" v-show="searchShow && !isNewOpen"></Search>
     </transition>
     <div class="Pull-to" id="Pull-to">
       <font-awesome-icon icon="spinner" class="Pull-to__rotate" v-if="refreshConfig.loading"/>
@@ -44,7 +44,7 @@ export default {
       isLoading: true,
       searchShow: true,
       positionY: 0,
-      targetHeight: 0,
+      targetHeight: -1,
       targetId: '',
       refreshConfig: {
         isStart: false,
@@ -144,10 +144,17 @@ export default {
       await (this.targetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
       if (this.targetId) this.targetHeight = document.getElementById(this.targetId).offsetTop - window.innerHeight // 次の高さを計測
     },
-    async refresh () { // ここの非同期処理いるのか？
-      await api.get('/api/v1/posts/public/')
+    refresh () {
+      this.isLoading = true
+      this.posts = []
+      var path = '/api/v1/posts/public/'
+      path += this.$store.state.user.isRanking ? 'rank/' : ''
+      api.get(path)
         .then((response) => {
           this.initPosts(response.data.posts)
+        })
+        .then(() => {
+          this.isLoading = false
         })
     },
     switchSearch () {
@@ -165,6 +172,9 @@ export default {
         // console.log('set false')
       }
     },
+    changeRanking () {
+      this.refresh()
+    },
     scrollTriggers () {
       this.switchSearch()
       this.loadMore()
@@ -178,14 +188,7 @@ export default {
   },
   created: function () {
     this.query = ''
-    this.isLoading = true
-    api.get('/api/v1/posts/public/')
-      .then((response) => {
-        this.initPosts(response.data.posts)
-      })
-      .then(() => {
-        this.isLoading = false
-      })
+    this.refresh()
     window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
   },
   destroyed () {

@@ -17,6 +17,8 @@ $color-material: (
   '11': #26A69A,
   '12': #66BB6A,
 );
+$color-silver: #BDBDBD;
+$color-bronze: #d66140;
 @mixin media-8-16{
   @media screen and (min-width: 600px){
     @content

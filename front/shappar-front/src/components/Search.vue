@@ -3,13 +3,15 @@
     <div class="Drawer__switch" @click="$emit('drawerOpen')">
       <img :src="this.$store.state.user.iconimage" alt="">
     </div>
-    <form action="" class="Search__form" @submit.prevent="getPost">
+    <div class="Search__rank" v-if="$store.state.user.isRanking">投票数ランキング</div>
+    <form action="" class="Search__form" @submit.prevent="getPost" v-else>
       <label for="text-box" class="Search__label">検索</label>
       <input type="text" id="text-box" class="Search__input" v-model="childQuery">
       <div class="Search__submit"><font-awesome-icon icon="search" @click="getPost"/></div>
     </form>
-    <div class="Search__button">
-      <font-awesome-icon icon="ellipsis-h" @click="isMenuOpen = !isMenuOpen"/>
+    <div class="Search__button" :class="{active: $store.state.user.isRanking}">
+      <font-awesome-icon icon="crown" @click="changeRanking()"/>
+      <!-- <font-awesome-icon icon="crown" @click="isMenuOpen = !isMenuOpen"/> -->
       <!-- <div class="Search__menu" :class="{on: isMenuOpen}">
         <div class="Search__menu__item"><router-link to="/settings">設定</router-link></div>
         <div class="Search__menu__item logout" @click="logout()">ログアウト</div>
@@ -48,6 +50,11 @@ export default {
         this.$store.dispatch('message/setInfoMessage', { message: 'ログアウトしました' })
         this.$router.replace('/login')
       }
+    },
+    changeRanking () {
+      this.$store.state.user.isRanking = !this.$store.state.user.isRanking
+      this.$emit('changeRanking')
+      // this.$store.dispatch('message/setInfoMessage', { message: 'ランキングモード' })
     }
   },
   created () {
@@ -77,6 +84,16 @@ export default {
   z-index: 100;
   @include media-1200 {
     justify-content: center;
+  }
+  &__rank{
+    width: 70%;
+    height: 32px;
+    line-height: 24px;
+    padding: 4px 12px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: map-get($color-material, '01');
   }
   &__form{
     position: relative;
@@ -148,9 +165,12 @@ export default {
     padding: 4px;
     border-radius: 50%;
     background: white;
-    color: white;
+    color: #999;
     @include media-1200 {
       display: none;
+    }
+    &.active{
+      color: map-get($color-material, '01');
     }
     img{
       width: 100%;
