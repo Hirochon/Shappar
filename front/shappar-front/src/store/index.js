@@ -189,12 +189,16 @@ const userModule = {
       return api.get('/api/v1/users/' + payload.user_id + '/')
         .then(response => {
           // console.log(response.data)
-          // alert('user/load')
+          // alert('user/load : ' + payload.user_id)
           const user = response.data
           // storeのユーザー情報を更新
           context.commit('set', { user: user })
           return user
         })
+    },
+    logout (context) {
+      // storeのユーザー情報をクリア
+      context.commit('clear')
     }
   }
 }

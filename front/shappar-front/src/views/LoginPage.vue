@@ -13,7 +13,7 @@
       <div class="Login__loading" v-if="isLoading">
         <font-awesome-icon icon="spinner" class="Login__rotate"/>
       </div>
-      <form class="Login__form" @submit.prevent="submitLogin">
+      <form class="Login__form" @submit.prevent="submitLogin(form.username,form.password)">
         <div class="Login__form__group">
           <label class="Login__form__title" :class="{active: isActive === 0}">ユーザーID</label>
           <input class="Login__input" type="text" v-model="form.username" required
@@ -35,7 +35,7 @@
           </div>
         </div>
       </form>
-      <div class="Login__submit test" @click="testUserLogin()">テストユーザーでログイン</div>
+      <div class="Login__submit test" @click="submitLogin()">テストユーザーでログイン</div>
     </main>
     <div class="Login__signup" @click="toSignUp()">
       アカウントを作成
@@ -63,13 +63,12 @@ export default {
   },
   methods: {
     // ログインボタン押下
-    submitLogin: function () {
+    submitLogin (username = 'sample1', password = 'shappar1') {
       // ログイン
       this.isLoading = true
-      // alert('auth/login')
       this.$store.dispatch('auth/login', {
-        username: this.form.username,
-        password: this.form.password
+        username: username,
+        password: password
       })
         .then(() => {
           // console.log('Login succeeded.')
@@ -80,29 +79,7 @@ export default {
           this.$router.replace(next)
         })
         .catch(error => {
-          // this.$store.dispatch('message/setErrorMessage', { message: '認証エラー' })
           // console.log(error.response.data)
-          this.error = error
-        })
-        .then(() => {
-          this.isLoading = false
-        })
-    },
-    testUserLogin () {
-      this.isLoading = true
-      this.$store.dispatch('auth/login', {
-        username: 'sample1',
-        password: 'shappar1'
-      })
-        .then(() => {
-          // console.log('Login succeeded.')
-          this.$store.dispatch('message/setInfoMessage', { message: 'ログインしました。' })
-          this.$store.dispatch('user/load', { user_id: this.$store.getters['auth/username'] })
-          // クエリ文字列に「next」がなければ、ホーム画面へ
-          const next = this.$route.query.next || '/'
-          this.$router.replace(next)
-        })
-        .catch(error => {
           this.error = error
         })
         .then(() => {
