@@ -23,6 +23,7 @@ class TestMypageAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル1',
             sex='0',
+            blood_type='0',
             age=21,
             born_at='1998-08-10',
         )
@@ -32,6 +33,7 @@ class TestMypageAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル2',
             sex='1',
+            blood_type='1',
             age=19,
             born_at='2001-12-02',
         )
@@ -168,6 +170,7 @@ class TestMypageVotedListAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル1',
             sex='0',
+            blood_type='0',
             age=21,
             born_at='1998-08-10',
         )
@@ -177,6 +180,7 @@ class TestMypageVotedListAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル2',
             sex='1',
+            blood_type='1',
             age=19,
             born_at='2001-12-02',
         )
@@ -220,6 +224,8 @@ class TestMypageVotedListAPIView(APITestCase):
             selected_num = flag[0].select_num
         else: 
             voted = False
+
+        # 予期される選択肢の中身を作成
         options = Option.objects.filter(share_id=post.share_id)
         options_list = []
         for option in options:
@@ -228,10 +234,13 @@ class TestMypageVotedListAPIView(APITestCase):
             option_dict['answer'] = option.answer
             option_dict['votes'] = option.votes
             options_list.append(option_dict)
+        # 投稿日時をShappar仕様に変形
         post_created_at = str(post.created_at)
         hours = timedelta(hours=9)
         utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
         created_at = utc_created_at + hours
+        # 合計投票数を再算出
+        total = Post.objects.get().total
         expected_json_dict = {
             'posts':[{
                 'post_id':str(post.id),
@@ -241,7 +250,7 @@ class TestMypageVotedListAPIView(APITestCase):
                 'created_at':created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
                 'voted':voted,
                 'selected_num':selected_num,
-                'total':1,
+                'total':total,
                 'options':options_list
             }]
         }
@@ -326,6 +335,7 @@ class TestPostCreateAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル',
             sex='0',
+            blood_type='0',
             age=24,
             born_at='1998-08-10',
         )
@@ -550,6 +560,7 @@ class TestPostDeleteAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル',
             sex='0',
+            blood_type='0',
             age=21,
             born_at='1998-08-10',
         )
@@ -658,6 +669,7 @@ class TestPostUpdateAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル1',
             sex='0',
+            blood_type='0',
             age=21,
             born_at='1998-08-10',
         )
@@ -667,6 +679,7 @@ class TestPostUpdateAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル2',
             sex='1',
+            blood_type='1',
             age=19,
             born_at='2001-12-02',
         )
@@ -920,6 +933,7 @@ class TestPollCreateAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル1',
             sex='0',
+            blood_type='0',
             age=21,
             born_at='1998-08-10',
         )
@@ -929,6 +943,7 @@ class TestPollCreateAPIView(APITestCase):
             password='secret',
             usernonamae='サンプル2',
             sex='1',
+            blood_type='1',
             age=19,
             born_at='2001-12-02',
         )
@@ -980,8 +995,11 @@ class TestPollCreateAPIView(APITestCase):
             option_dict['select_num'] = option.select_num
             option_dict['votes'] = option.votes
             options_list.append(option_dict)
+        # 投票後の合計投票数を取得
+        total = Post.objects.get().total
         expected_json_dict = {
             'options':options_list,
+            'total':total,
             'selected_num':Poll.objects.get().option.select_num
         }
         self.assertJSONEqual(response.content, expected_json_dict)
