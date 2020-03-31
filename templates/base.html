@@ -17,10 +17,9 @@
                 <div class="Signup__header">
                     <h1 class="Signup__shappar"><a href="{% url 'index' %}">Shappar</a></h1>
                 </div>
-            </div>
-                
+            
                 {% if messages %}
-                <div>
+                <div class="disp-none">
                     <strong>Messages:</strong>
                     <ul>
                         {% for message in messages %}
@@ -35,6 +34,7 @@
                 
                 {% endblock %}
                 {% block extra_body %}
+            </div>
         </div>
         {% endblock %}
     </body>
