@@ -113,6 +113,19 @@ paths:
                     type: integer
                   'null':
                     type: integer
+              voted_blood_type:
+                type: object
+                properties:
+                  A:
+                    type: integer
+                  B:
+                    type: integer
+                  O:
+                    type: integer
+                  AB:
+                    type: integer
+                  others:
+                    type: integer
               voted_age:
                 type: object
                 properties:
@@ -166,6 +179,11 @@ paths:
                 others: 1
                 man: 6
                 'null': 0
+              voted_blood_type:
+                A: 3
+                B: 4
+                AB: 3
+                others: 1
               voted_age:
                 0-10: 0
                 10-20: 5
@@ -188,6 +206,16 @@ paths:
                 '11': 2
                 '12': 1
               total: 11
+        '404':
+          description: Not Found
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+          examples:
+            example-1:
+              detail: 存在しない投稿IDです。
       description: get post details
       operationId: get-api-v1-posts-post_id
     delete:
