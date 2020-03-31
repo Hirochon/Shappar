@@ -559,6 +559,13 @@ paths:
             $ref: '#/definitions/Posts'
           examples:
             $ref: '#/definitions/Posts/x-examples'
+        '204':
+          description: No Content
+          schema:
+            type: object
+            properties: {}
+          examples:
+            example-1: {}
       operationId: get-api-v1-users-userId-voted
       description: user voted posts
   '/api/v1/friendships/{userId}':
@@ -831,8 +838,6 @@ definitions:
         iconimage: 'http://example.com/iconURL'
         homeimage: 'http://example.com/homeImageURL'
     properties:
-      unique_id:
-        type: string
       user_id:
         type: string
       name:
