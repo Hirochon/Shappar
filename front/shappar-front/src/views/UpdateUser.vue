@@ -19,21 +19,30 @@
       <label class="Update__icon__mask" for="icon_file"><font-awesome-icon icon="camera"/></label>
       <input class="Update__file" id="icon_file" type="file" name="iconimage" @change="imageSelect(1, $event)">
     </div>
-    <label class="Update__title" for="user_name">
+    <label class="Update__title" for="user_name" :class="{active: isActive === 0}">
       ユーザー名
       <span class="Update__num" :class="{hasError:!name.isValid}">{{name.length}}/18</span>
     </label>
-    <input class="Update__input" id="user_name" v-model="name.value" type="text" placeholder="ユーザー名" @input="Validate(name,1,18)">
-    <label class="Update__title" for="user_id">
+    <input class="Update__input" id="user_name" v-model="name.value" type="text" placeholder="ユーザー名" @input="Validate(name,1,18)"
+      :class="{active: isActive === 0}"
+      @focus="isActive = 0"
+      @blur="isActive = -1">
+    <label class="Update__title" for="user_id" :class="{active: isActive === 1}">
       ユーザーID
       <span class="Update__num" :class="{hasError:!user_id.isValid}">{{user_id.length}}/18</span>
     </label>
-    <input class="Update__input" id="user_id" v-model="user_id.value" type="text" placeholder="ユーザーID" @input="Validate(user_id,1,18)">
-    <label class="Update__title" for="introduction">
+    <input class="Update__input" id="user_id" v-model="user_id.value" type="text" placeholder="ユーザーID" @input="Validate(user_id,1,18)"
+      :class="{active: isActive === 1}"
+      @focus="isActive = 1"
+      @blur="isActive = -1">
+    <label class="Update__title" for="introduction" :class="{active: isActive === 2}">
       紹介文
       <span class="Update__num" :class="{hasError:!introduction.isValid}">{{introduction.length}}/150</span>
     </label>
-    <textarea class="Update__introduction" id="introduction" v-model="introduction.value" cols="30" rows="5" placeholder="紹介文" @input="Validate(introduction,0,150)"></textarea>
+    <textarea class="Update__introduction" id="introduction" v-model="introduction.value" cols="30" rows="5" placeholder="紹介文" @input="Validate(introduction,0,150)"
+      :class="{active: isActive === 2}"
+      @focus="isActive = 2"
+      @blur="isActive = -1"></textarea>
     <div class="Update__submit" @click="updateUser()" :class="{hasError:!allValidate}">
       保存する
     </div>
@@ -52,6 +61,7 @@ export default {
   },
   data: function () {
     return {
+      isActive: -1,
       width: 0,
       height: 0,
       before_user_id: '',
@@ -262,6 +272,9 @@ export default {
     padding: 4px 16px;
     font-size: 12px;
     color: #999;
+    &.active{
+      color: $color-main;
+    }
   }
   &__num{
     // position: absolute;
@@ -288,6 +301,9 @@ export default {
     width: 100%;
     background: white;
     border-bottom: solid 1px #eee;
+    &.active{
+      border-color: $color-main;
+    }
   }
   &__introduction{
     display: block;
