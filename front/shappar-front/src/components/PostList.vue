@@ -95,18 +95,15 @@ export default {
       })
         .then((response) => {
           post.voted = true
-          // post.total++ // これでもいいかな？
-          post.total = 0
           var updates = response.data.options.sort((a, b) => {
             return a.select_num < b.select_num ? -1 : 1
           })
           for (let i = 0; i < j; i++) {
             // 各選択肢の投票数を更新
             options[i].votes = updates[i].votes
-            // totalを更新
-            post.total += updates[i].votes
           }
           post.selected_num = response.data.selected_num
+          post.total = response.data.total
         })
         .then(() => {
           post.view = 1
