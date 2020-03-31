@@ -1,11 +1,18 @@
 <template>
   <div class="PostList" id="PostList">
-    <div class="Post" v-for="(post, index) in posts" :key="post.post_id" :id="post.post_id">
+    <div class="Post" v-for="(post, index) in posts" :key="post.post_id" :id="post.post_id" :class="{first: post.rank === 0, second: post.rank === 1, third: post.rank === 2, rank: post.rank < 5}">
       <router-link class="Post__icon" :to="'/mypage/'+ post.user_id + '/'">
         <img :src="post.iconimage" :alt="post.user_id+'_icon'">
       </router-link>
       <div class="Post__top">
-        <div class="Post__total">Total：{{post.total}}</div>
+        <div class="Post__total" v-if="post.rank != null"
+          :class="{first: post.rank === 0, second: post.rank === 1, third: post.rank === 2, rank: post.rank < 5}"
+          >
+          <font-awesome-icon icon="crown" v-if="post.rank < 3"/>
+          <font-awesome-icon icon="hand-peace" v-else/>
+          {{post.total}}
+        </div>
+        <div class="Post__total" v-else>Total：{{post.total}}</div>
         <div class="Post__buttons" v-show="post.voted">
           <div class="Post__sort" v-if="post.user_id === $store.state.auth.username" @click="deletePost(post, index)"><font-awesome-icon icon="trash-alt"/></div>
           <div class="Post__sort" v-if="post.voted" @click="optionsSort(post, post.options)">
@@ -42,7 +49,9 @@
           </div>
         </div>
       </div>
-      <div class="Post__details" @click="switchDetails(post.post_id)" v-if="post.voted">
+      <div class="Post__details" @click="switchDetails(post.post_id)" v-if="post.voted"
+         :class="{first: post.rank === 0, second: post.rank === 1, third: post.rank === 2, rank: post.rank < 5}"
+        >
         <font-awesome-icon icon="chart-line"/>
       </div>
     </div>
@@ -89,24 +98,20 @@ export default {
       }
       api.post('/api/v1/posts/' + post.post_id + '/polls/', {
         option: {
-          select_num: post.selected_num,
-          answer: options[post.selected_num].answer
+          select_num: post.selected_num
         }
       })
         .then((response) => {
           post.voted = true
-          // post.total++ // これでもいいかな？
-          post.total = 0
           var updates = response.data.options.sort((a, b) => {
             return a.select_num < b.select_num ? -1 : 1
           })
           for (let i = 0; i < j; i++) {
             // 各選択肢の投票数を更新
             options[i].votes = updates[i].votes
-            // totalを更新
-            post.total += updates[i].votes
           }
           post.selected_num = response.data.selected_num
+          post.total = response.data.total
         })
         .then(() => {
           post.view = 1
@@ -202,6 +207,19 @@ $option-height: 32px;
   box-shadow: 0 0 8px rgba(black, 0.16);
   transition: .3s ease-in-out;
   border-radius: 3px;
+  &.rank{
+    padding: 12px 12px 4px;
+    border: solid 4px $color-sub;
+  }
+  &.first{
+    border: solid 4px map-get($color-material, '01');
+  }
+  &.second{
+    border: solid 4px $color-silver;
+  }
+  &.third{
+    border: solid 4px $color-bronze;
+  }
   &__icon{
     width: $icon-size;
     height: $icon-size;
@@ -239,6 +257,25 @@ $option-height: 32px;
     border: solid 2px $color-main;
     font-weight: bold;
     transition: .3s ease-in-out;
+    svg{
+      margin-right: 8px;
+    }
+    &.rank{
+      border-color: $color-sub;
+      color: $color-sub;
+    }
+    &.first{
+      border-color: map-get($color-material, '01');
+      color: map-get($color-material, '01');
+    }
+    &.second{
+      border-color: $color-silver;
+      color: $color-silver;
+    }
+    &.third{
+      border-color: $color-bronze;
+      color: $color-bronze;
+    }
   }
   &__buttons{
     right: 16px;
@@ -406,8 +443,7 @@ $option-height: 32px;
     margin: 0 auto;
     margin-top: 12px;
     text-align: right;
-    border: solid 2px $color-main;
-    padding: 2px 0;
+    padding: 4px 0;
     background: $color-main;
     border-radius: 3px;
     svg{
@@ -416,6 +452,18 @@ $option-height: 32px;
       font-size: 24px;
       color: white;
       // color: $color-main;
+    }
+    &.rank{
+      background: $color-sub;
+    }
+    &.first{
+      background: map-get($color-material, '01');
+    }
+    &.second{
+      background: $color-silver;
+    }
+    &.third{
+      background: $color-bronze;
     }
   }
 }

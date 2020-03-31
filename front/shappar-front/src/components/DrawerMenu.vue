@@ -67,24 +67,6 @@ export default {
 @import '@/assets/common.scss';
 .Drawer{
   z-index: 200;
-  &__switch{
-    display: block;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: white;
-    color: white;
-    overflow: hidden;
-    cursor: pointer;
-    @include media-1200 {
-      display: none;
-    }
-    img{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
   &__overlay{
     position: fixed;
     top: 0;

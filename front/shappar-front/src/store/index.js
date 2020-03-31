@@ -159,14 +159,16 @@ const userModule = {
     name: '',
     introduction: '',
     iconimage: '',
-    homeimage: ''
+    homeimage: '',
+    isRanking: false
   },
   getters: {
     user_id: state => state.user_id,
     name: state => state.name,
     introduction: state => state.introduction,
     iconimage: state => state.iconimage,
-    homeimage: state => state.homeimage
+    homeimage: state => state.homeimage,
+    isRanking: state => state.isRanking
   },
   mutations: {
     set (state, payload) {
@@ -175,6 +177,7 @@ const userModule = {
       state.introduction = payload.user.introduction
       state.iconimage = payload.user.iconimage
       state.homeimage = payload.user.homeimage
+      state.isRanking = payload.user.isRanking
     },
     clear (state) {
       state.user_id = ''
@@ -182,6 +185,7 @@ const userModule = {
       state.introduction = ''
       state.iconimage = ''
       state.homeimage = ''
+      state.isRanking = ''
     }
   },
   actions: {

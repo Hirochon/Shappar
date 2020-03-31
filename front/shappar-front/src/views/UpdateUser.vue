@@ -44,7 +44,7 @@
       @focus="isActive = 2"
       @blur="isActive = -1"></textarea>
     <div class="Update__submit" @click="updateUser()" :class="{hasError:!allValidate}">
-      保存する
+      保存
     </div>
   </div>
 </template>
