@@ -1,26 +1,36 @@
 <template>
-  <div class="PostDetails" @click.stop="closeDetails()" @touchmove.prevent.stop @touchstart.stop>
-    <div class="PostDetails__container" id="PostDetails__area" @click.stop :class="{horizon: W_more_H}">
-      <doughnutChart class="PostDetails__chart"
-        :chartData="isActiveChartData" @click.stop :class="{horizon: W_more_H}"
-        :style="{height: maxR+'px',width: maxR+'px'}"
-        >
-      </doughnutChart>
-      <div class="PostDetails__switch" :class="{horizon: W_more_H}">
+  <div class="PostDetails" id="PostDetails__area" @touchmove.prevent.stop @touchstart.stop @click.stop>
+    <div class="PostDetails__overlay" @click.stop="closeDetails()"></div>
+    <doughnutChart class="PostDetails__chart"
+      :chartData="isActiveChartData" :class="{horizon: W_more_H}"
+      :style="{height: maxR+'px',width: maxR+'px'}"
+      >
+    </doughnutChart>
+    <!-- <div class="PostDetails__container" :class="{horizon: W_more_H}"></div> -->
+    <!-- <div class="PostDetails__bottom-box" :class="{horizon: W_more_H}"></div> -->
+    <div class="PostDetails__switch" :class="{horizon: W_more_H}">
+      <div class="PostDetails__wrap" :class="{active: isActive === 0}">
         <div class="PostDetails__button" @click.stop="isActive = 0" :class="{active: isActive === 0}">
           <font-awesome-icon icon="venus-mars"/>
         </div>
-        <div class="PostDetails__button" @click.stop="isActive = 1" :class="{active: isActive === 1}">
-          age
+      </div>
+      <div class="PostDetails__wrap" :class="{active: isActive === 1}">
+        <div class="PostDetails__button orange" @click.stop="isActive = 1" :class="{active: isActive === 1}">
+          <div class="PostDetails__age">a</div>
+          <div class="PostDetails__age">g</div>
+          <div class="PostDetails__age">e</div>
         </div>
-        <div class="PostDetails__button" @click.stop="isActive = 2" :class="{active: isActive === 2}">
+      </div>
+      <div class="PostDetails__wrap" :class="{active: isActive === 2}">
+        <div class="PostDetails__button pink" @click.stop="isActive = 2" :class="{active: isActive === 2}">
           <font-awesome-icon icon="birthday-cake"/>
         </div>
-        <div class="PostDetails__button" :class="{horizon: W_more_H}" @click.stop="closeDetails()">
+      </div>
+      <div class="PostDetails__wrap">
+        <div class="PostDetails__button red" :class="{horizon: W_more_H}" @click.stop="closeDetails()">
           <font-awesome-icon icon="times"/>
         </div>
       </div>
-      <!-- <div class="PostDetails__bottom-box" :class="{horizon: W_more_H}"></div> -->
     </div>
   </div>
 </template>
@@ -212,28 +222,40 @@ export default {
   z-index: 300;
   overflow: scroll;
   @include scrollbar();
+  &__overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
   &__container{
+    position: fixed;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: flex-start;
     width: 100%;
     height: 100%;
-    padding-top: 12px;
+    // padding-top: 12px;
     // max-height: 700px;
     // background: white;
     &.horizon{
       flex-wrap: nowrap;
+      // padding: 0;
     }
   }
   &__chart{
+    position: fixed;
+    top: 0;
     max-width: 700px;
     margin: 48px auto;
     & > canvas{
       max-width: 700px;
     }
     &.horizon{
-      display: flex;
+      // display: flex;
       // width: 50%;
       // max-width: 50%;
       margin: 0;
@@ -270,34 +292,68 @@ export default {
     border-radius: 3px;
     overflow: hidden;
     &.horizon{
-      width: 80px;
+      max-width: 90px;
       height: 100%;
-      flex-wrap: wrap;
+      flex-direction: column;
+      // flex-wrap: wrap;
       // margin-top: 56px;
       bottom: auto;
       right: 24px;
     }
   }
+  &__wrap{
+    width: 58px;
+    height: 58px;
+    padding: 5px;
+    &.active{
+      padding: 0;
+    }
+  }
   &__button{
     cursor: pointer;
+    display: flex;
+    justify-content: center;
     width: 48px;
     height: 48px;
     line-height: 24px;
-    padding: 12px 8px;
-    background: #a1dfcc;
-    border-radius: 3px;
+    padding: 12px 0;
+    background: $color-material-01;
+    // border-radius: 3px;
+    border-radius: 50%;
     text-align: center;
     font-weight: bold;
-    letter-spacing: -3px;
+    // letter-spacing: -3px;
     font-size: 24px;
     // font-family: ;
+    color: white;
     &.active{
-      background: $color-main;
+      position: relative;
+      width: 58px;
+      height: 58px;
+      padding: 17px 0;
+    }
+    &.orange{
+      background: $color-material-02;
+    }
+    &.pink{
+      background: $color-material-03;
+    }
+    &.red{
+      background: $color-material-04;
     }
     svg{
       display: block;
       margin: 0 auto;
       font-size: 24px;
+    }
+  }
+  &__age{
+    position: relative;
+    &:first-child{
+      left: 4px;
+    }
+    &:last-child{
+      right: 4px;
     }
   }
 }
