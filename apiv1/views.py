@@ -212,7 +212,46 @@ class PostCreateAPIView(views.APIView):
         return Response({}, status.HTTP_201_CREATED)
 
 
-class PostListAPIView(views.APIView):
+class PostListRankAPIView(views.APIView):
+    """投稿の作成順取得(一覧)APIクラス"""
+
+    def get(self, request, *args, **kwargs):
+        """投稿の作成順取得(一覧)APIに対応するハンドラメソッド"""
+
+        # モデルオブジェクトをクエリ文字列を使ってフィルタリング
+        if 'q' in request.GET:
+            queryset = Post.objects.filter(question__contains=request.GET['q']).order_by('-total')[:20]
+        else:
+            queryset = Post.objects.all().order_by('-total')[:20]
+
+        unique_id = request.user.id
+        serializer = PostListSerializer(instance=queryset, many=True, pk=unique_id)
+
+        for datas in serializer.data:
+            if not datas['voted']:
+                datas['selected_num'] = -1
+                for data in datas['options']:
+                    del data['id']
+                    del data['share_id']
+                    data['votes'] = -1
+            else:
+                for data in datas['options']:
+                    flag = Poll.objects.filter(user_id=unique_id,option_id=data['id'])
+                    if len(flag) > 0:
+                        datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
+                    else:
+                        if not 'selected_num' in datas:
+                            datas['selected_num'] = -1
+                    del data['id']
+                    del data['share_id']
+        seri_datas = serializer.data
+
+        response = {}
+        response["posts"] = seri_datas
+        return Response(response, status.HTTP_200_OK)
+
+
+class PostListCreatedAPIView(views.APIView):
     """投稿の取得(一覧)APIクラス"""
 
     def get(self, request, *args, **kwargs):
