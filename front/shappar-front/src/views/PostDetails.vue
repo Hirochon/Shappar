@@ -10,24 +10,29 @@
     <!-- <div class="PostDetails__bottom-box" :class="{horizon: W_more_H}"></div> -->
     <div class="PostDetails__switch" :class="{horizon: W_more_H}">
       <div class="PostDetails__wrap" :class="{active: isActive === 0}">
-        <div class="PostDetails__button" @click.stop="isActive = 0" :class="{active: isActive === 0}">
+        <div class="PostDetails__button material-01" @click.stop="isActive = 0" :class="{active: isActive === 0}">
           <font-awesome-icon icon="venus-mars"/>
         </div>
       </div>
       <div class="PostDetails__wrap" :class="{active: isActive === 1}">
-        <div class="PostDetails__button orange" @click.stop="isActive = 1" :class="{active: isActive === 1}">
+        <div class="PostDetails__button material-02" @click.stop="isActive = 1" :class="{active: isActive === 1}">
           <div class="PostDetails__age">a</div>
           <div class="PostDetails__age">g</div>
           <div class="PostDetails__age">e</div>
         </div>
       </div>
       <div class="PostDetails__wrap" :class="{active: isActive === 2}">
-        <div class="PostDetails__button pink" @click.stop="isActive = 2" :class="{active: isActive === 2}">
+        <div class="PostDetails__button material-03" @click.stop="isActive = 2" :class="{active: isActive === 2}">
           <font-awesome-icon icon="birthday-cake"/>
         </div>
       </div>
+      <div class="PostDetails__wrap" :class="{active: isActive === 3}">
+        <div class="PostDetails__button material-04" @click.stop="isActive = 3" :class="{active: isActive === 3}">
+          型
+        </div>
+      </div>
       <div class="PostDetails__wrap">
-        <div class="PostDetails__button red" :class="{horizon: W_more_H}" @click.stop="closeDetails()">
+        <div class="PostDetails__button material-05" :class="{horizon: W_more_H}" @click.stop="closeDetails()">
           <font-awesome-icon icon="times"/>
         </div>
       </div>
@@ -53,6 +58,7 @@ export default {
   data () {
     return {
       voted_sex: [],
+      voted_blood_type: [],
       voted_age: [],
       voted_month: [],
       total: 0,
@@ -97,6 +103,14 @@ export default {
               num: data.voted_month[key]
             })
           }
+          for (let key in data.voted_blood_type) {
+            // console.log(key)
+            this.voted_blood_type.push({
+              id: key + '型',
+              num: data.voted_blood_type[key]
+            })
+          }
+          this.voted_blood_type[4].id = 'その他'
           this.voted_sex = this.voted_sex.sort((a, b) => {
             if (a.num < b.num) return 1
             if (a.num > b.num) return -1
@@ -108,6 +122,11 @@ export default {
             return 0
           })
           this.voted_month = this.voted_month.sort((a, b) => {
+            if (a.num < b.num) return 1
+            if (a.num > b.num) return -1
+            return 0
+          })
+          this.voted_blood_type = this.voted_blood_type.sort((a, b) => {
             if (a.num < b.num) return 1
             if (a.num > b.num) return -1
             return 0
@@ -154,6 +173,8 @@ export default {
           return this.dataNum(this.voted_age)
         case 2:
           return this.dataNum(this.voted_month)
+        case 3:
+          return this.dataNum(this.voted_blood_type)
       }
       return false
     },
@@ -165,6 +186,8 @@ export default {
           return this.dataLabels(this.voted_age)
         case 2:
           return this.dataLabels(this.voted_month)
+        case 3:
+          return this.dataLabels(this.voted_blood_type)
       }
       return false
     },
@@ -317,7 +340,6 @@ export default {
     height: 48px;
     line-height: 24px;
     padding: 12px 0;
-    background: $color-material-01;
     // border-radius: 3px;
     border-radius: 50%;
     text-align: center;
@@ -332,14 +354,10 @@ export default {
       height: 58px;
       padding: 17px 0;
     }
-    &.orange{
-      background: $color-material-02;
-    }
-    &.pink{
-      background: $color-material-03;
-    }
-    &.red{
-      background: $color-material-04;
+    @each $num, $color in $color-material {
+      &.material-#{$num} {
+        background: $color;
+      }
     }
     svg{
       display: block;

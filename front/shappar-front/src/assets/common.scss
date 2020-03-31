@@ -3,18 +3,20 @@ $color-main-light: #a1dfcc;
 $color-sub: #62a7d0;
 $color-err: #f44336;
 // material-color
-$color-material-01:#FFA726;
-$color-material-02:#FF7043;
-$color-material-03:#ef5350;
-$color-material-04:#EC407A;
-$color-material-05:#AB47BC;
-$color-material-06:#7E57C2;
-$color-material-07:#5C6BC0;
-$color-material-08:#42A5F5;
-$color-material-09:#29B6F6;
-$color-material-10:#26C6DA;
-$color-material-11:#26A69A;
-$color-material-12:#66BB6A;
+$color-material: (
+  '01': #FFA726,
+  '02': #FF7043,
+  '03': #ef5350,
+  '04': #EC407A,
+  '05': #AB47BC,
+  '06': #7E57C2,
+  '07': #5C6BC0,
+  '08': #42A5F5,
+  '09': #29B6F6,
+  '10': #26C6DA,
+  '11': #26A69A,
+  '12': #66BB6A,
+);
 @mixin media-8-16{
   @media screen and (min-width: 600px){
     @content
