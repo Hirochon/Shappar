@@ -44,3 +44,4 @@ class Poll(models.Model):
     post = models.ForeignKey(Post, verbose_name='投稿モデル', on_delete=models.CASCADE, related_name='poll_post')
     user = models.ForeignKey(get_user_model(), verbose_name='投票者', on_delete=models.CASCADE, related_name='poll_user')
     option = models.ForeignKey(Option, verbose_name='選択肢ID', on_delete=models.CASCADE, related_name='poll_option')
+    created_at = models.DateTimeField(verbose_name='投票日時', default=timezone.now, editable=False)
