@@ -127,8 +127,8 @@ workflows:
                 requires: 
                     - aws-ecr/build-and-push-image
                 family: '${MY_APP_PREFIX}-task'
-                cluster-name: '${MY_APP_PREFIX}-cluster-v2'
-                service-name: '${MY_APP_PREFIX}-service-v2'
+                cluster-name: '${MY_APP_PREFIX}-cluster'
+                service-name: '${MY_APP_PREFIX}-service'
                 container-image-name-updates: 'container=shappar-back,tag=${CIRCLE_SHA2}'
     # NginxをECR/ECSへデプロイ
     nginx_deploy:
@@ -149,8 +149,8 @@ workflows:
                 requires: 
                     - aws-ecr/build-and-push-image
                 family: '${MY_APP_PREFIX}-task'
-                cluster-name: '${MY_APP_PREFIX}-cluster-v2'
-                service-name: '${MY_APP_PREFIX}-service-v2'
+                cluster-name: '${MY_APP_PREFIX}-cluster'
+                service-name: '${MY_APP_PREFIX}-service'
                 container-image-name-updates: 'container=shappar-nginx,tag=${CIRCLE_SHA2}'
     # 静的ファイル(CSS/JS)をS3へデプロイ
     static_deploy:
