@@ -3,7 +3,7 @@
     <div class="Search__switch" @click="$emit('drawerOpen')">
       <img :src="this.$store.state.user.iconimage" alt="">
     </div>
-    <div class="Search__switch none" @click="$emit('drawerOpen')">
+    <div class="Search__switch none">
       <img :src="this.$store.state.user.iconimage" alt="">
     </div>
     <div class="Search__rank" v-if="$store.state.user.isRanking">投票数ランキング</div>
@@ -102,6 +102,7 @@ export default {
       &.none{
         display: block;
         opacity: 0;
+        cursor: auto;
       }
     }
     img{
@@ -191,6 +192,7 @@ export default {
     border-radius: 50%;
     background: white;
     color: #999;
+    cursor: pointer;
     // @include media-1200 {
     //   display: none;
     // }
