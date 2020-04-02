@@ -239,14 +239,7 @@ class TestMypageVotedListAPIView(APITestCase):
         self.assertEqual(response.status_code, 200)
 
         # 予期されるjsonレスポンスを作成
-        flag = Option.objects.filter(poll_option__user_id=self.user2.id, share_id=post.share_id)
-        if len(flag) > 0:
-            voted = True
-            selected_num = flag[0].select_num
-        else:
-            voted = False
-
-        # 予期される選択肢の中身を作成
+        # 選択肢の中身を作成
         options = Option.objects.filter(share_id=post.share_id)
         options_list = create_options_list(options)
         # 投稿日時をShappar仕様に変形
@@ -260,8 +253,8 @@ class TestMypageVotedListAPIView(APITestCase):
                 'iconimage': circleci.MEDIA_URL + str(post.user.iconimage),
                 'question': post.question,
                 'created_at': created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-                'voted': voted,
-                'selected_num': selected_num,
+                'voted': True,
+                'selected_num': 0,
                 'total': total,
                 'options': options_list
             }]
@@ -396,14 +389,7 @@ class TestMypagePostedListAPIView(APITestCase):
         self.assertEqual(response.status_code, 200)
 
         # 予期されるjsonレスポンスを作成
-        flag = Option.objects.filter(poll_option__user_id=self.user2.id, share_id=post.share_id)
-        if len(flag) > 0:
-            voted = True
-            selected_num = flag[0].select_num
-        else:
-            voted = False
-
-        # 予期される選択肢の中身を作成
+        # 選択肢の中身を作成
         options = Option.objects.filter(share_id=post.share_id)
         options_list = create_options_list(options)
         # 投稿日時を日本時間へ変更
@@ -417,8 +403,8 @@ class TestMypagePostedListAPIView(APITestCase):
                 'iconimage': circleci.MEDIA_URL + str(post.user.iconimage),
                 'question': post.question,
                 'created_at': created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-                'voted': voted,
-                'selected_num': selected_num,
+                'voted': True,
+                'selected_num': 0,
                 'total': total,
                 'options': options_list
             }]
@@ -1080,12 +1066,6 @@ class TestPostUpdateAPIView(APITestCase):
         response = self.client.get(self.TARGET_URL_WITH_PK.format(post.id))
         self.assertEqual(response.status_code, 200)
         
-        flag = Option.objects.filter(poll_option__user_id=self.user2.id, share_id=post.share_id)
-        if len(flag) > 0:
-            voted = True
-            selected_num = flag[0].select_num
-        else:
-            voted = False
         # 予期されるレスポンスを作成
         options = Option.objects.filter(share_id=post.share_id)
         options_list = create_options_list(options)
@@ -1096,8 +1076,8 @@ class TestPostUpdateAPIView(APITestCase):
             'iconimage': circleci.MEDIA_URL + str(post.user.iconimage),
             'question': post.question,
             'created_at': created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-            'voted': voted,
-            'selected_num': selected_num,
+            'voted': True,
+            'selected_num': 0,
             'total': 1,
             'options': options_list
         }
