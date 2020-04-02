@@ -31,7 +31,7 @@ api.interceptors.request.use(function (config) {
 api.interceptors.response.use(function (response) {
   return response
 }, function (error) {
-  // console.log('error.response=', error.response)
+  console.log('error.response=', error.response)
   const status = error.response ? error.response.status : 500
 
   // エラーの内容に応じてstoreのメッセージを更新
@@ -39,7 +39,7 @@ api.interceptors.response.use(function (response) {
   if (status === 400) {
     // バリデーションNG
     message = '無効なリクエストです。'
-    this.$store.dispatch('message/setErrorMessage', { message: message })
+    store.dispatch('message/setErrorMessage', { message: message })
     let messages = [].concat.apply([], Object.values(error.response.data))
     store.dispatch('message/setWarningMessages', { messages: messages })
   } else if (status === 401) {

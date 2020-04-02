@@ -79,22 +79,15 @@ export default {
     return {
       unique_id: '',
       user_id: '',
-      question: {
-        text: '',
-        length: 0,
-        isValid: true
-      },
-      draggable_options: {
-        animation: 200
-      },
+      question: {},
       count: 2,
-      options: [
-        { id: 0, answer: '', length: 0, isValid: true },
-        { id: 1, answer: '', length: 0, isValid: true }
-      ],
+      options: [],
       validPattern: {
         question: /\d/,
         options: ''
+      },
+      draggable_options: {
+        animation: 200
       },
       deleteConfig: {
         isStart: false,
@@ -154,6 +147,9 @@ export default {
     servePost () {
       // console.log('servePost')
       if (!this.postValidate) return
+      // 一旦保存
+      this.savePost()
+      // 送信する情報のみを抽出
       var serveOptions = []
       var count = 0
       for (let item of this.options) {
@@ -172,16 +168,8 @@ export default {
           this.$store.dispatch('message/setInfoMessage', { message: '投稿が完了しました' })
           this.$emit('switchNew')
           this.$emit('refresh')
-          this.question = {
-            text: '',
-            length: 0,
-            isValid: true
-          }
-          this.count = 2
-          this.options = [
-            { id: 0, answer: '', length: 0, isValid: true },
-            { id: 1, answer: '', length: 0, isValid: true }
-          ]
+          localStorage.removeItem('post')
+          this.initPost()
         })
     },
     questionValidate () {
@@ -197,6 +185,7 @@ export default {
     },
     openNew () {
       this.$emit('switchNew')
+      this.initPost()
       var post = JSON.parse(localStorage.getItem('post'))
       if (post === null) return
       if (confirm('下書きがあります。使用しますか？')) {
@@ -216,20 +205,33 @@ export default {
         return localStorage.removeItem('post')
       }
       if (confirm('下書きを保存しますか？')) {
-        var post = {
-          question: this.question,
-          options: this.options
-        }
-        var obj = JSON.stringify(post)
-        localStorage.setItem('post', obj)
-      } else {
-        localStorage.removeItem('post')
+        this.savePost()
       }
       this.question = {
         text: '',
         length: 0,
         isValid: true
       }
+      this.options = [
+        { id: 0, answer: '', length: 0, isValid: true },
+        { id: 1, answer: '', length: 0, isValid: true }
+      ]
+    },
+    savePost () {
+      var post = {
+        question: this.question,
+        options: this.options
+      }
+      var obj = JSON.stringify(post)
+      localStorage.setItem('post', obj)
+    },
+    initPost () {
+      this.question = {
+        text: '',
+        length: 0,
+        isValid: true
+      }
+      this.count = 2
       this.options = [
         { id: 0, answer: '', length: 0, isValid: true },
         { id: 1, answer: '', length: 0, isValid: true }
@@ -256,7 +258,7 @@ export default {
       return true
     }
   },
-  created: function () {
+  created () {
     this.unique_id = this.$store.state.auth.unique_id
     this.user_id = this.$store.state.auth.username
     this.question.isValid = this.questionValidate()
