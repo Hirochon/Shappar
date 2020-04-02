@@ -937,6 +937,19 @@ class TestPostListRankAPIView(APITestCase):
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
+    def test_get_ranked_posts_unauthorized(self):
+        """ユーザーモデルの投稿済みの投稿一覧取得APIへのGETリクエスト(異常系:ヘッダーにトークンがのっていない時)"""
+
+        # あえてヘッダーにトークンを載せない
+
+        response = self.client.get(self.TARGET_URL)
+        self.assertEqual(response.status_code, 401)
+
+        expected_json_dict = {
+            "detail": "認証情報が含まれていません。"
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
 
 # (正常系)1method,(異常系)2methods,(合計)3methods.
 class TestPostDeleteAPIView(APITestCase):
