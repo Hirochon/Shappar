@@ -764,7 +764,7 @@ class TestPostCreateAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
-# (正常系)1methods,(異常系)0methods,(合計)1methods.
+# (正常系)2methods,(異常系)0methods,(合計)2methods.
 class TestPostListRankAPIView(APITestCase):
     """PostListRankAPIViewのテストクラス"""
 
@@ -879,6 +879,60 @@ class TestPostListRankAPIView(APITestCase):
                 'created_at': second_created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
                 'selected_num': -1,
                 'rank': 1
+            }]
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_get_ranked_1_1_posts_success(self):
+        """PostListRankAPIViewの投稿一覧取得APIへのGETリクエスト(正常:２つの１位の投稿を取得)"""
+
+        # 投稿用ユーザーで2つ投稿
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        # 投稿×２
+        self.client.post('/api/v1/posts/', self.params1, format='json')
+        self.client.post('/api/v1/posts/', self.params2, format='json')
+
+        # ランキングを取得
+        response = self.client.get(self.TARGET_URL)
+
+        # データベースの状態を検証
+        self.assertEqual(Post.objects.count(), 2)
+        # レスポンスの内容を検証
+        self.assertEqual(response.status_code, 200)
+
+        # 予期されるレスポンスを作成
+        posts = Post.objects.all().order_by('created_at')
+        first_options = Option.objects.filter(share_id=posts[0].share_id)
+        second_options = Option.objects.filter(share_id=posts[1].share_id)
+        first_options_list = create_options_list(first_options)
+        second_options_list = create_options_list(second_options)
+        first_created_at = change_created_at(posts[0])
+        second_created_at = change_created_at(posts[1])
+        expected_json_dict = {
+            'posts': [{
+                'post_id': str(posts[0].id),
+                'user_id': str(posts[0].user.username),
+                'iconimage': circleci.MEDIA_URL + str(posts[0].user.iconimage),
+                'question': posts[0].question,
+                'voted': True,
+                'total': 0,
+                'options': first_options_list,
+                'created_at': first_created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                'selected_num': -1,
+                'rank': 0
+            }, {
+                'post_id': str(posts[1].id),
+                'user_id': str(posts[1].user.username),
+                'iconimage': circleci.MEDIA_URL + str(posts[1].user.iconimage),
+                'question': posts[1].question,
+                'voted': True,
+                'total': 0,
+                'options': second_options_list,
+                'created_at': second_created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                'selected_num': -1,
+                'rank': 0
             }]
         }
         self.assertJSONEqual(response.content, expected_json_dict)
