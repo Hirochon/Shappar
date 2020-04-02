@@ -59,7 +59,7 @@ export default {
   components: {
     GlobalMessage
   },
-  data: function () {
+  data () {
     return {
       isActive: -1,
       width: 0,
@@ -116,12 +116,10 @@ export default {
       if (this.homeimage) params.append('homeimage', this.homeimage)
       api.patch('/api/v1/users/' + this.before_user_id + '/', params)
         .then(async (response) => {
-          if (response.status === 200) {
-            store.dispatch('message/setInfoMessage', { message: '更新完了' })
-            await store.dispatch('auth/reload')// ここで一度更新してないとユーザーIDを変更した際にエラーが出る
-            await store.dispatch('user/load', { user_id: store.getters['auth/username'] })
-            this.$router.replace('/mypage/' + store.getters['auth/username'])
-          }
+          store.dispatch('message/setInfoMessage', { message: '更新完了' })
+          await store.dispatch('auth/reload')// ここで一度更新してないとユーザーIDを変更した際にエラーが出る
+          await store.dispatch('user/load', { user_id: store.getters['auth/username'] })
+          this.$router.replace('/mypage/' + store.getters['auth/username'])
         })
     },
     Validate (option, min, max) {
@@ -146,15 +144,15 @@ export default {
   created () {
     window.addEventListener('resize', this.resizeTriggers)
   },
-  mounted: function () {
+  mounted () {
     this.before_user_id = store.getters['auth/username']
     this.user_id.value = this.before_user_id
-    api.get('/api/v1/users/' + this.before_user_id + '/')
-      .then((response) => {
-        this.name.value = response.data.name
-        this.introduction.value = response.data.introduction
-        this.beforeHomeImage = response.data.homeimage
-        this.beforeIconImage = response.data.iconimage
+    store.dispatch('user/load', { user_id: store.getters['auth/username'] })
+      .then((resUser) => {
+        this.name.value = resUser.name
+        this.introduction.value = resUser.introduction
+        this.beforeHomeImage = resUser.homeimage
+        this.beforeIconImage = resUser.iconimage
       })
       .then(() => {
         this.name.isValid = this.Validate(this.name, 1, 18)

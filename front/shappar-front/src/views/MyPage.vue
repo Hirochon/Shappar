@@ -51,6 +51,7 @@ import GlobalMessage from '@/components/GlobalMessage.vue'
 import PostList from '@/components/PostList.vue'
 
 import api from '@/services/api'
+import store from '@/store'
 export default {
   name: 'MyPage',
   components: {
@@ -207,7 +208,9 @@ export default {
         .then((response) => {
           this.user = response.data
         })
-        // TODO error 処理
+      // 自分の情報を再取得 #229 に理由
+      store.dispatch('user/load', { user_id: store.getters['auth/username'] })
+      // TODO error 処理
       this.loadPosts()
       this.isLoading = false
       window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
