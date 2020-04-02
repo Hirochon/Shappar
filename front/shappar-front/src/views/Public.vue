@@ -147,9 +147,7 @@ export default {
     refresh () {
       this.isLoading = true
       this.posts = []
-      var path = '/api/v1/posts/public/'
-      path += this.$store.state.user.isRanking ? 'rank/' : ''
-      api.get(path)
+      api.get(this.refreshPath)
         .then((response) => {
           this.initPosts(response.data.posts)
         })
@@ -184,6 +182,14 @@ export default {
     },
     switchNew () {
       this.isNewOpen = !this.isNewOpen
+    }
+  },
+  computed: {
+    refreshPath () {
+      // 状態に応じてエンドポイントを変更
+      let path = '/api/v1/posts/public/'
+      path += this.$store.state.user.isRanking ? 'rank/' : ''
+      return path
     }
   },
   created: function () {

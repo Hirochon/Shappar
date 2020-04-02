@@ -183,15 +183,6 @@ export default {
             { id: 1, answer: '', length: 0, isValid: true }
           ]
         })
-        .catch((error) => {
-          // console.log(error.response)
-          var errMessage
-          switch (error.response.status) {
-            case 400:
-              errMessage = '無効なリクエストです。'
-          }
-          this.$store.dispatch('message/setErrorMessage', { message: errMessage })
-        })
     },
     questionValidate () {
       var question = this.question
