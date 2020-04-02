@@ -248,18 +248,9 @@ class TestMypageVotedListAPIView(APITestCase):
 
         # 予期される選択肢の中身を作成
         options = Option.objects.filter(share_id=post.share_id)
-        options_list = []
-        for option in options:
-            option_dict = {}
-            option_dict['select_num'] = option.select_num
-            option_dict['answer'] = option.answer
-            option_dict['votes'] = option.votes
-            options_list.append(option_dict)
+        options_list = create_options_list(options)
         # 投稿日時をShappar仕様に変形
-        post_created_at = str(post.created_at)
-        hours = timedelta(hours=9)
-        utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
-        created_at = utc_created_at + hours
+        created_at = change_created_at(post)
         # 合計投票数を再算出
         total = Post.objects.get().total
         expected_json_dict = {
@@ -414,18 +405,9 @@ class TestMypagePostedListAPIView(APITestCase):
 
         # 予期される選択肢の中身を作成
         options = Option.objects.filter(share_id=post.share_id)
-        options_list = []
-        for option in options:
-            option_dict = {}
-            option_dict['select_num'] = option.select_num
-            option_dict['answer'] = option.answer
-            option_dict['votes'] = option.votes
-            options_list.append(option_dict)
-        # 投稿日時をShappar仕様に変形
-        post_created_at = str(post.created_at)
-        hours = timedelta(hours=9)
-        utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
-        created_at = utc_created_at + hours
+        options_list = create_options_list(options)
+        # 投稿日時を日本時間へ変更
+        created_at = change_created_at(post)
         # 合計投票数を再算出
         total = Post.objects.get().total
         expected_json_dict = {
@@ -482,18 +464,9 @@ class TestMypagePostedListAPIView(APITestCase):
 
         # 予期される選択肢の中身を作成
         options = Option.objects.filter(share_id=post.share_id)
-        options_list = []
-        for option in options:
-            option_dict = {}
-            option_dict['select_num'] = option.select_num
-            option_dict['answer'] = option.answer
-            option_dict['votes'] = option.votes
-            options_list.append(option_dict)
-        # 投稿日時をShappar仕様に変形
-        post_created_at = str(post.created_at)
-        hours = timedelta(hours=9)
-        utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
-        created_at = utc_created_at + hours
+        options_list = create_options_list(options)
+        # 投稿日時を日本時間変更
+        created_at = change_created_at(post)
         # 合計投票数を再算出
         total = Post.objects.get().total
         expected_json_dict = {
@@ -584,25 +557,7 @@ class TestPostCreateAPIView(APITestCase):
         self.assertEqual(Option.objects.count(), 2)
         # レスポンスの内容を検証
         self.assertEqual(response.status_code, 201)
-        
-        # post = Post.objects.get()
-        # # ネスト化している部分を代入
-        # option_set = Option.objects.all()
-        # options = list()
-        # for option in option_set:
-        #     add_dict = {}
-        #     add_dict['select_num'] = option.select_num
-        #     add_dict['answer'] = option.answer
-        #     add_dict['votes'] = option.votes
-        #     options.append(add_dict)
-
-        # expected_json_dict = {
-        #     'question': post.question,
-        #     'options': options
-        # }
-
         expected_json_dict = {}
-
         self.assertJSONEqual(response.content, expected_json_dict)
 
     def test_post_options_10_success(self):
@@ -764,7 +719,7 @@ class TestPostCreateAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
-# (正常系)2methods,(異常系)0methods,(合計)2methods.
+# (正常系)2methods,(異常系)1methods,(合計)3methods.
 class TestPostListRankAPIView(APITestCase):
     """PostListRankAPIViewのテストクラス"""
 
@@ -852,8 +807,10 @@ class TestPostListRankAPIView(APITestCase):
         posts = Post.objects.all().order_by('created_at')
         first_options = Option.objects.filter(share_id=posts[0].share_id)
         second_options = Option.objects.filter(share_id=posts[1].share_id)
+        # それぞれの選択肢を事前に定義してた関数により作成
         first_options_list = create_options_list(first_options)
         second_options_list = create_options_list(second_options)
+        # それぞれの作成日時について日本時間へ変更
         first_created_at = change_created_at(posts[0])
         second_created_at = change_created_at(posts[1])
         expected_json_dict = {
@@ -906,8 +863,10 @@ class TestPostListRankAPIView(APITestCase):
         posts = Post.objects.all().order_by('created_at')
         first_options = Option.objects.filter(share_id=posts[0].share_id)
         second_options = Option.objects.filter(share_id=posts[1].share_id)
+        # それぞれの選択肢を事前に定義してた関数により作成
         first_options_list = create_options_list(first_options)
         second_options_list = create_options_list(second_options)
+        # それぞれの作成日時について日本時間へ変更
         first_created_at = change_created_at(posts[0])
         second_created_at = change_created_at(posts[1])
         expected_json_dict = {
@@ -1127,18 +1086,10 @@ class TestPostUpdateAPIView(APITestCase):
             selected_num = flag[0].select_num
         else:
             voted = False
+        # 予期されるレスポンスを作成
         options = Option.objects.filter(share_id=post.share_id)
-        options_list = []
-        for option in options:
-            option_dict = {}
-            option_dict['select_num'] = option.select_num
-            option_dict['answer'] = option.answer
-            option_dict['votes'] = option.votes
-            options_list.append(option_dict)
-        post_created_at = str(post.created_at)
-        hours = timedelta(hours=9)
-        utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
-        created_at = utc_created_at + hours
+        options_list = create_options_list(options)
+        created_at = change_created_at(post)
         expected_json_dict = {
             'post_id': str(post.id),
             'user_id': str(post.user.username),
@@ -1188,18 +1139,10 @@ class TestPostUpdateAPIView(APITestCase):
         response = self.client.get(self.TARGET_URL_WITH_PK.format(post.id))
         self.assertEqual(response.status_code, 200)
         
+        # 予期されるレスポンスを作成
         options = Option.objects.filter(share_id=post.share_id)
-        options_list = []
-        for option in options:
-            option_dict = {}
-            option_dict['select_num'] = option.select_num
-            option_dict['answer'] = option.answer
-            option_dict['votes'] = option.votes
-            options_list.append(option_dict)
-        post_created_at = str(post.created_at)
-        hours = timedelta(hours=9)
-        utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
-        created_at = utc_created_at + hours
+        options_list = create_options_list(options)
+        created_at = change_created_at(post)
         expected_json_dict = {
             'post_id': str(post.id),
             'user_id': str(post.user.username),
@@ -1239,18 +1182,13 @@ class TestPostUpdateAPIView(APITestCase):
         response = self.client.get(self.TARGET_URL_WITH_PK.format(post.id))
         self.assertEqual(response.status_code, 200)
         
+        # 予期されるレスポンスを作成
         options = Option.objects.filter(share_id=post.share_id)
-        options_list = []
-        for option in options:
-            option_dict = {}
-            option_dict['select_num'] = option.select_num
-            option_dict['answer'] = option.answer
-            option_dict['votes'] = -1
-            options_list.append(option_dict)
-        post_created_at = str(post.created_at)
-        hours = timedelta(hours=9)
-        utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
-        created_at = utc_created_at + hours
+        options_list = create_options_list(options)
+        # 投票していないとvotesで-1を返す
+        for options in options_list:
+            options['votes'] = -1
+        created_at = change_created_at(post)
         expected_json_dict = {
             'post_id': str(post.id),
             'user_id': str(post.user.username),
@@ -1372,12 +1310,6 @@ class TestPollCreateAPIView(APITestCase):
         }
         self.client.post('/api/v1/posts/', params, format='json')
 
-        # 投票POST用のテストなので下記はコメントアウト
-        # response = self.client.post('/api/v1/posts/', params, format='json')
-        # self.assertEqual(Post.objects.count(), 1)
-        # self.assertEqual(Option.objects.count(), 2)
-        # self.assertEqual(response.status_code, 201)
-
         # 投票用のユーザーがログイン
         token = str(RefreshToken.for_user(self.user2).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
@@ -1394,12 +1326,10 @@ class TestPollCreateAPIView(APITestCase):
         self.assertEqual(response.status_code, 201)
 
         options = Option.objects.all()
-        options_list = []
-        for option in options:
-            option_dict = {}
-            option_dict['select_num'] = option.select_num
-            option_dict['votes'] = option.votes
-            options_list.append(option_dict)
+        options_list = create_options_list(options)
+        # 投票時のレスポンスではanswerを返さない
+        for options in options_list:
+            del options['answer']
         # 投票後の合計投票数を取得
         total = Post.objects.get().total
         expected_json_dict = {
