@@ -1,9 +1,9 @@
 <template>
   <div class="New"
-    @touchmove.stop
+    @touchmove.stop.prevent
     @wheel.stop
     >
-    <transition name="container">
+    <transition name="container" @touchmove.stop>
       <div class="New__container" v-if="isOpen" @touchmove.stop.prevent>
         <div class="Top">
           <h2 class="Top__header">
@@ -24,7 +24,7 @@
           </div>
         </div>
         <draggable v-model="options" handle=".New__option__handle" @touchmove.prevent.stop>
-          <transition-group name="option">
+          <transition-group name="option" @touchmove.stop>
             <div class="New__option__container" v-for="(option, index) in options" :key="option.id" @touchmove.stop.prevent>
               <div class="New__option__wrapper" :id="'option_'+option.id" @touchmove.stop.prevent>
                 <div class="New__option__data">
@@ -259,6 +259,7 @@ export default {
     }
   },
   created () {
+    this.initPost()
     this.unique_id = this.$store.state.auth.unique_id
     this.user_id = this.$store.state.auth.username
     this.question.isValid = this.questionValidate()
@@ -291,7 +292,7 @@ export default {
     max-width: 700px;
     // max-height: 100%;
     // top: 100%;
-    padding: 164px 0px 64px;
+    padding: 164px 0px 0;
     // margin-left: ;
     background: white;
     overflow-x: hidden;

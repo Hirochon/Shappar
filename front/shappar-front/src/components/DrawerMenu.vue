@@ -75,6 +75,7 @@ export default {
     height: 100%;
     background: rgba(black, 0.5);
     z-index: 200;
+    cursor: pointer;
   }
   &__container{
     position: fixed;

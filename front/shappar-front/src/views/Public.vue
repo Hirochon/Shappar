@@ -6,14 +6,15 @@
     <transition name="search">
       <Search :query="query" @search="search()" @drawerOpen="isDrawerOpen = true" @changeRanking="changeRanking()" v-show="searchShow && !isNewOpen"></Search>
     </transition>
-    <div class="Pull-to" id="Pull-to">
-      <font-awesome-icon icon="spinner" class="Pull-to__rotate" v-if="refreshConfig.loading"/>
-      <font-awesome-icon icon="chevron-circle-down" :class="{'Pull-to__on': refreshConfig.trigger}" v-if="refreshConfig.isStart"/>
-    </div>
-    <PostList :posts="posts" @reload="refresh()"></PostList>
     <div class="Public__loading" v-if="isLoading">
       <font-awesome-icon icon="spinner" class="Public__loading__icon"/>
     </div>
+    <div class="Pull-to" id="Pull-to">
+      <font-awesome-icon icon="chevron-circle-down" :class="{'Pull-to__on': refreshConfig.trigger}" v-if="refreshConfig.isStart"/>
+    </div>
+    <transition name="post-list">
+      <PostList :posts="posts" :isLoading="isLoading" @reload="refresh()" v-show="!isNewOpen"></PostList>
+    </transition>
   </div>
 </template>
 
@@ -108,19 +109,19 @@ export default {
     async pullToEnd (loaded) {
       var refConf = this.refreshConfig
       document.getElementById('PostList').style.transition = '.15s ease-in-out'
+      document.getElementById('Pull-to').style.transform = 'translateY(' + 5 * Math.sqrt(refConf.diffY) + 'px)'
       if (!refConf.trigger) {
         document.getElementById('PostList').style.transform = null
         refConf.isStart = false
         return
       }
       refConf.isStart = false
-      refConf.loading = true
+      // TODO リフレッシュ時には検索機能をリセットするかどうか？
       this.query = ''
       await this.refresh()
       document.getElementById('PostList').style.transform = null
       refConf.isStart = false
       refConf.trigger = false
-      refConf.loading = false
       refConf.startY = 0
       refConf.diffY = 0
     },
@@ -210,8 +211,8 @@ export default {
   box-sizing: content-box;
   &__loading{
     width: 100%;
-    height: 100px;
-    padding: 38px;
+    height: 88px;
+    padding: 32px;
     svg{
       display: block;
       margin: 0 auto;
@@ -248,5 +249,11 @@ export default {
 }
 .search-enter,.search-leave-to{
   transform: translateY(-200%);
+}
+.post-list-enter-active,.post-list-leave-active{
+  transition: .3s ease-in-out;
+}
+.post-list-enter,.post-list-leave-to{
+  opacity: 0;
 }
 </style>

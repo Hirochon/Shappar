@@ -34,10 +34,10 @@
       <div class="PostSwitch__bar" :class="{other: my_id !== traget_id}" :style="{transform:tabBar}"></div>
     </div>
     <div class="Container" v-show="isActive === 0">
-      <PostList :posts="posted" :unique_id="unique_id" @reload="loadPosts()"></PostList>
+      <PostList :posts="posted" :isLoading="isLoading" :unique_id="unique_id" @reload="loadPosts()"></PostList>
     </div>
     <div class="Container" v-show="isActive === 1">
-      <PostList :posts="voted" :unique_id="unique_id" @reload="loadPosts()"></PostList>
+      <PostList :posts="voted" :isLoading="isLoading" :unique_id="unique_id" @reload="loadPosts()"></PostList>
     </div>
     <div class="Mypage__loading" v-if="isLoading">
       <font-awesome-icon icon="spinner" class="Public__loading__icon"/>
