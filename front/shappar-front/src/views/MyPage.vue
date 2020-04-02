@@ -208,8 +208,8 @@ export default {
         .then((response) => {
           this.user = response.data
         })
-      // 自分の情報を再取得 #229 に理由
-      store.dispatch('user/load', { user_id: store.getters['auth/username'] })
+      // 自分の情報を再取得 #229 に理由 => ページ増えたら管理大変になるし、routerでやってもいいかな？
+      if (this.my_id === this.traget_id) store.dispatch('user/load', { user_id: store.getters['auth/username'] })
       // TODO error 処理
       this.loadPosts()
       this.isLoading = false

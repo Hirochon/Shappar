@@ -56,7 +56,7 @@
       </div>
     </div>
     <div class="Post__none" v-if="!isLoading && posts.length === 0">
-      該当する投稿はありませんでした。
+      該当する投稿はありませんでした
     </div>
     <PostDetails @switchDetails="switchDetails('')" :post_id="detailsPostId" v-if="isDetailsOpen"/>
   </div>

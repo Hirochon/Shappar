@@ -1,5 +1,5 @@
 <template>
-  <div class="Public" @touchmove="pullToMove" @touchend="pullToEnd">
+  <div class="Public" @touchmove="pullToMove()" @touchend="pullToEnd()">
     <GlobalMessage/>
     <DrawerMenu :isOpen="isDrawerOpen" @close="isDrawerOpen = false"/>
     <New @switchNew="switchNew()" @refresh="refresh" :isOpen="isNewOpen"/>
@@ -239,10 +239,6 @@ export default {
   &__rotate{
     animation: rotation 1s linear infinite;
   }
-}
-@keyframes rotation {
-  0%   { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 .search-enter-active,.search-leave-active{
   transition: .3s ease-in-out;
