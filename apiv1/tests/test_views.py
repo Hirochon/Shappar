@@ -8,6 +8,27 @@ from apiv1.models import Poll, Post, Option
 from config.settings import circleci
 
 
+# Optionsのリスト作成関数
+def create_options_list(options):
+    options_list = []
+    for option in options:
+        option_dict = {}
+        option_dict['select_num'] = option.select_num
+        option_dict['answer'] = option.answer
+        option_dict['votes'] = option.votes
+        options_list.append(option_dict)
+    return options_list
+
+
+# クエリセットクラスから取得した投稿日時を日本時間へ変形関数
+def change_created_at(post):
+    post_created_at = str(post.created_at)
+    hours = timedelta(hours=9)
+    utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
+    created_at = utc_created_at + hours
+    return created_at
+
+
 # (正常系)2methods,(異常系)4methods,(合計)6methods.
 class TestMypageAPIView(APITestCase):
     """MypageAPIViewのテストクラス"""
@@ -320,7 +341,7 @@ class TestMypageVotedListAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
-# (正常系)2methods,(異常系)0methods,(合計)2methods.
+# (正常系)2methods,(異常系)2methods,(合計)4methods.
 class TestMypagePostedListAPIView(APITestCase):
     """MypagePostedListAPIViewのテストクラス"""
 
@@ -739,6 +760,126 @@ class TestPostCreateAPIView(APITestCase):
 
         expected_json_dict = {
             "options": [{"answer": "回答は10個以下にしてください。"}]
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+
+# (正常系)1methods,(異常系)0methods,(合計)1methods.
+class TestPostListRankAPIView(APITestCase):
+    """PostListRankAPIViewのテストクラス"""
+
+    TARGET_URL = '/api/v1/posts/public/rank/'
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # ユーザーを定義→作成
+        cls.user1 = get_user_model().objects.create_user(
+            email='user1@example.com',
+            username='user1',
+            password='secret',
+            usernonamae='サンプル1',
+            sex='0',
+            blood_type='0',
+            age=21,
+            born_at='1998-08-10',
+        )
+        cls.user2 = get_user_model().objects.create_user(
+            email='user2@example.com',
+            username='user2',
+            password='secret',
+            usernonamae='サンプル2',
+            sex='1',
+            blood_type='1',
+            age=19,
+            born_at='2001-12-02',
+        )
+        # 投稿のパラメーターを定義
+        cls.params1 = {
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
+            }]
+        }
+        cls.params2 = {
+            'question': '好きなアニメは？',
+            'options': [{
+                'select_num': 0,
+                'answer': 'ソードアート・オンライン'
+            }, {
+                'select_num': 1,
+                'answer': '青春ブタ野郎はバニーガール先輩の夢を見ない'
+            }]
+        }
+
+    def test_get_ranked_1_2_posts_success(self):
+        """PostListRankAPIViewの投稿一覧取得APIへのGETリクエスト(正常:1位と2位の投稿を取得)"""
+
+        # 投稿用ユーザーで2つ投稿
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        self.client.post('/api/v1/posts/', self.params1, format='json')
+        post1 = Post.objects.get()
+        self.client.post('/api/v1/posts/', self.params2, format='json')
+
+        # 投票用ユーザーでログイン→１つの投稿にだけ投票
+        token = str(RefreshToken.for_user(self.user2).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        params = {
+            'option': {
+                'select_num': 0
+            }
+        }
+        self.client.post('/api/v1/posts/{}/polls/'.format(post1.id), params, format='json')
+
+        # 再び投稿用ユーザーでログイン→ランキングを取得
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        response = self.client.get(self.TARGET_URL)
+
+        # データベースの状態を検証
+        self.assertEqual(Post.objects.count(), 2)
+        self.assertEqual(Poll.objects.count(), 1)
+        # レスポンスの内容を検証
+        self.assertEqual(response.status_code, 200)
+
+        # 予期されるレスポンスを作成
+        posts = Post.objects.all().order_by('created_at')
+        first_options = Option.objects.filter(share_id=posts[0].share_id)
+        second_options = Option.objects.filter(share_id=posts[1].share_id)
+        first_options_list = create_options_list(first_options)
+        second_options_list = create_options_list(second_options)
+        first_created_at = change_created_at(posts[0])
+        second_created_at = change_created_at(posts[1])
+        expected_json_dict = {
+            'posts': [{
+                'post_id': str(posts[0].id),
+                'user_id': str(posts[0].user.username),
+                'iconimage': circleci.MEDIA_URL + str(posts[0].user.iconimage),
+                'question': posts[0].question,
+                'voted': True,
+                'total': 1,
+                'options': first_options_list,
+                'created_at': first_created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                'selected_num': -1,
+                'rank': 0
+            }, {
+                'post_id': str(posts[1].id),
+                'user_id': str(posts[1].user.username),
+                'iconimage': circleci.MEDIA_URL + str(posts[1].user.iconimage),
+                'question': posts[1].question,
+                'voted': True,
+                'total': 0,
+                'options': second_options_list,
+                'created_at': second_created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                'selected_num': -1,
+                'rank': 1
+            }]
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
