@@ -1,9 +1,4 @@
-import requests
-
-from django.core.files.base import ContentFile
-
 from allauth.account.adapter import DefaultAccountAdapter
-from allauth.account.adapter import get_adapter as get_account_adapter
 from allauth.account.utils import user_email, user_field
 
 
