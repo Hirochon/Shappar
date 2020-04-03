@@ -55,6 +55,9 @@
         <font-awesome-icon icon="chart-line"/>
       </div>
     </div>
+    <div class="Post__none" v-if="!isLoading && posts.length === 0">
+      該当する投稿はありませんでした
+    </div>
     <PostDetails @switchDetails="switchDetails('')" :post_id="detailsPostId" v-if="isDetailsOpen"/>
   </div>
 </template>
@@ -70,6 +73,10 @@ export default {
   props: {
     posts: {
       type: Array,
+      required: true
+    },
+    isLoading: {
+      type: Boolean,
       required: true
     }
   },
@@ -466,6 +473,16 @@ $option-height: 32px;
       background: $color-bronze;
     }
   }
+}
+.Post__none{
+  margin-bottom: 40px;
+  padding: 16px;
+  background: #fff;
+  position: relative;
+  box-shadow: 0 0 8px rgba(black, 0.16);
+  transition: .3s ease-in-out;
+  border-radius: 3px;
+  text-align: center;
 }
 .details-leave-active{
   transition: .3s ease-in-out;

@@ -34,10 +34,10 @@
       <div class="PostSwitch__bar" :class="{other: my_id !== traget_id}" :style="{transform:tabBar}"></div>
     </div>
     <div class="Container" v-show="isActive === 0">
-      <PostList :posts="posted" :unique_id="unique_id" @reload="loadPosts()"></PostList>
+      <PostList :posts="posted" :isLoading="isLoading" :unique_id="unique_id" @reload="loadPosts()"></PostList>
     </div>
     <div class="Container" v-show="isActive === 1">
-      <PostList :posts="voted" :unique_id="unique_id" @reload="loadPosts()"></PostList>
+      <PostList :posts="voted" :isLoading="isLoading" :unique_id="unique_id" @reload="loadPosts()"></PostList>
     </div>
     <div class="Mypage__loading" v-if="isLoading">
       <font-awesome-icon icon="spinner" class="Public__loading__icon"/>
@@ -51,6 +51,7 @@ import GlobalMessage from '@/components/GlobalMessage.vue'
 import PostList from '@/components/PostList.vue'
 
 import api from '@/services/api'
+import store from '@/store'
 export default {
   name: 'MyPage',
   components: {
@@ -207,7 +208,9 @@ export default {
         .then((response) => {
           this.user = response.data
         })
-        // TODO error 処理
+      // 自分の情報を再取得 #229 に理由 => ページ増えたら管理大変になるし、routerでやってもいいかな？
+      if (this.my_id === this.traget_id) store.dispatch('user/load', { user_id: store.getters['auth/username'] })
+      // TODO error 処理
       this.loadPosts()
       this.isLoading = false
       window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
@@ -276,7 +279,7 @@ export default {
     height: 200px;
     background: #eee;
     overflow: hidden;
-    @include media-700 () {
+    @include media(700) {
       height: 350px;
     }
     img{

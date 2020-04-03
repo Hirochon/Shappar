@@ -1,9 +1,9 @@
 <template>
   <div class="New"
-    @touchmove.stop
+    @touchmove.stop.prevent
     @wheel.stop
     >
-    <transition name="container">
+    <transition name="container" @touchmove.stop>
       <div class="New__container" v-if="isOpen" @touchmove.stop.prevent>
         <div class="Top">
           <h2 class="Top__header">
@@ -24,7 +24,7 @@
           </div>
         </div>
         <draggable v-model="options" handle=".New__option__handle" @touchmove.prevent.stop>
-          <transition-group name="option">
+          <transition-group name="option" @touchmove.stop>
             <div class="New__option__container" v-for="(option, index) in options" :key="option.id" @touchmove.stop.prevent>
               <div class="New__option__wrapper" :id="'option_'+option.id" @touchmove.stop.prevent>
                 <div class="New__option__data">
@@ -79,22 +79,15 @@ export default {
     return {
       unique_id: '',
       user_id: '',
-      question: {
-        text: '',
-        length: 0,
-        isValid: true
-      },
-      draggable_options: {
-        animation: 200
-      },
+      question: {},
       count: 2,
-      options: [
-        { id: 0, answer: '', length: 0, isValid: true },
-        { id: 1, answer: '', length: 0, isValid: true }
-      ],
+      options: [],
       validPattern: {
         question: /\d/,
         options: ''
+      },
+      draggable_options: {
+        animation: 200
       },
       deleteConfig: {
         isStart: false,
@@ -154,6 +147,9 @@ export default {
     servePost () {
       // console.log('servePost')
       if (!this.postValidate) return
+      // 一旦保存
+      this.savePost()
+      // 送信する情報のみを抽出
       var serveOptions = []
       var count = 0
       for (let item of this.options) {
@@ -172,25 +168,8 @@ export default {
           this.$store.dispatch('message/setInfoMessage', { message: '投稿が完了しました' })
           this.$emit('switchNew')
           this.$emit('refresh')
-          this.question = {
-            text: '',
-            length: 0,
-            isValid: true
-          }
-          this.count = 2
-          this.options = [
-            { id: 0, answer: '', length: 0, isValid: true },
-            { id: 1, answer: '', length: 0, isValid: true }
-          ]
-        })
-        .catch((error) => {
-          // console.log(error.response)
-          var errMessage
-          switch (error.response.status) {
-            case 400:
-              errMessage = '無効なリクエストです。'
-          }
-          this.$store.dispatch('message/setErrorMessage', { message: errMessage })
+          localStorage.removeItem('post')
+          this.initPost()
         })
     },
     questionValidate () {
@@ -206,6 +185,7 @@ export default {
     },
     openNew () {
       this.$emit('switchNew')
+      this.initPost()
       var post = JSON.parse(localStorage.getItem('post'))
       if (post === null) return
       if (confirm('下書きがあります。使用しますか？')) {
@@ -225,20 +205,33 @@ export default {
         return localStorage.removeItem('post')
       }
       if (confirm('下書きを保存しますか？')) {
-        var post = {
-          question: this.question,
-          options: this.options
-        }
-        var obj = JSON.stringify(post)
-        localStorage.setItem('post', obj)
-      } else {
-        localStorage.removeItem('post')
+        this.savePost()
       }
       this.question = {
         text: '',
         length: 0,
         isValid: true
       }
+      this.options = [
+        { id: 0, answer: '', length: 0, isValid: true },
+        { id: 1, answer: '', length: 0, isValid: true }
+      ]
+    },
+    savePost () {
+      var post = {
+        question: this.question,
+        options: this.options
+      }
+      var obj = JSON.stringify(post)
+      localStorage.setItem('post', obj)
+    },
+    initPost () {
+      this.question = {
+        text: '',
+        length: 0,
+        isValid: true
+      }
+      this.count = 2
       this.options = [
         { id: 0, answer: '', length: 0, isValid: true },
         { id: 1, answer: '', length: 0, isValid: true }
@@ -265,7 +258,8 @@ export default {
       return true
     }
   },
-  created: function () {
+  created () {
+    this.initPost()
     this.unique_id = this.$store.state.auth.unique_id
     this.user_id = this.$store.state.auth.username
     this.question.isValid = this.questionValidate()
@@ -298,7 +292,7 @@ export default {
     max-width: 700px;
     // max-height: 100%;
     // top: 100%;
-    padding: 164px 0px 64px;
+    padding: 164px 0px 0;
     // margin-left: ;
     background: white;
     overflow-x: hidden;
@@ -313,7 +307,7 @@ export default {
     width: 64px;
     height: 64px;
     margin-left: calc(100% - 96px);
-    @include media-700 (){
+    @include media(700){
       margin-left: 604px;
     }
     border-radius: 50%;

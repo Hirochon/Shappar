@@ -38,6 +38,8 @@ api.interceptors.response.use(function (response) {
   let message
   if (status === 400) {
     // バリデーションNG
+    message = '無効なリクエストです。'
+    store.dispatch('message/setErrorMessage', { message: message })
     let messages = [].concat.apply([], Object.values(error.response.data))
     store.dispatch('message/setWarningMessages', { messages: messages })
   } else if (status === 401) {
