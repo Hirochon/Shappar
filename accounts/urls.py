@@ -31,4 +31,6 @@ urlpatterns = [
             name="account_reset_password_from_key"),
     path("password/reset/key/done/", views.password_reset_from_key_done,
          name="account_reset_password_from_key_done"),
+    path("create_user/", custom_views.create_user, name='create_user'),
+    path("create_user/<int:num>", custom_views.create_user, name='create_user'),
 ]
