@@ -8,6 +8,27 @@ from apiv1.models import Poll, Post, Option
 from config.settings import circleci
 
 
+# Optionsのリスト作成関数
+def create_options_list(options):
+    options_list = []
+    for option in options:
+        option_dict = {}
+        option_dict['select_num'] = option.select_num
+        option_dict['answer'] = option.answer
+        option_dict['votes'] = option.votes
+        options_list.append(option_dict)
+    return options_list
+
+
+# クエリセットクラスから取得した投稿日時を日本時間へ変形関数
+def change_created_at(post):
+    post_created_at = str(post.created_at)
+    hours = timedelta(hours=9)
+    utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
+    created_at = utc_created_at + hours
+    return created_at
+
+
 # (正常系)2methods,(異常系)4methods,(合計)6methods.
 class TestMypageAPIView(APITestCase):
     """MypageAPIViewのテストクラス"""
@@ -37,6 +58,10 @@ class TestMypageAPIView(APITestCase):
             age=19,
             born_at='2001-12-02',
         )
+        cls.params = {
+            'name': 'サンプルさん',
+            'introduction': 'どーも。サンプルさんだよ〜！'
+        }
     
     def test_get_own_mypage_success(self):
         """ユーザーモデルの詳細取得APIへのGETリクエスト(正常系)"""
@@ -66,18 +91,17 @@ class TestMypageAPIView(APITestCase):
     def test_patch_own_mypage_success(self):
         """ユーザーモデルの一部更新APIへのPATCHリクエスト(正常系)"""
 
+        # ログイン
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
-        params = {
-            'name': 'サンプルさん',
-            'introduction': 'どーも。サンプルさんだよ〜！'
-        }
-        response = self.client.patch(self.TARGET_URL_WITH_PK.format('user1'), params, format='json')
-
-        user1 = get_user_model().objects.get(username='user1')
+        # リクエストを実行
+        response = self.client.patch(self.TARGET_URL_WITH_PK.format('user1'), self.params, format='json')
         self.assertEqual(get_user_model().objects.count(), 2)
         self.assertEqual(response.status_code, 200)
+
+        # 予期されるレスポンスを作成
+        user1 = get_user_model().objects.get(username='user1')
         expected_json_dict = {
             'user_id': user1.username,
             'name': user1.usernonamae,
@@ -107,12 +131,8 @@ class TestMypageAPIView(APITestCase):
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
-        params = {
-            'name': 'サンプルさん',
-            'introduction': 'どーも。サンプルさんだよ〜！'
-        }
         # JWT認証とは異なるユーザーIDを代入
-        response = self.client.patch(self.TARGET_URL_WITH_PK.format('user2'), params, format='json')
+        response = self.client.patch(self.TARGET_URL_WITH_PK.format('user2'), self.params, format='json')
 
         self.assertEqual(response.status_code, 401)
         expected_json_dict = {
@@ -141,12 +161,8 @@ class TestMypageAPIView(APITestCase):
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
 
-        params = {
-            'name': 'サンプルさん',
-            'introduction': 'どーも。サンプルさんだよ〜！'
-        }
         # 存在しないユーザーIDを代入
-        response = self.client.patch(self.TARGET_URL_WITH_PK.format('user3'), params, format='json')
+        response = self.client.patch(self.TARGET_URL_WITH_PK.format('user3'), self.params, format='json')
 
         self.assertEqual(response.status_code, 404)
         expected_json_dict = {
@@ -184,14 +200,7 @@ class TestMypageVotedListAPIView(APITestCase):
             age=19,
             born_at='2001-12-02',
         )
-
-    def test_get_own_voted_posts_success(self):
-        """ユーザーモデルの投票済みの投稿一覧取得APIへのGETリクエスト(正常系:投票済み一覧はユーザー本人であれば返す)"""
-
-        # 投稿用ユーザーでログイン→投稿
-        token = str(RefreshToken.for_user(self.user1).access_token)
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-        params = {
+        cls.post_params = {
             'question': 'あなたの推しメンは？',
             'options': [{
                 'select_num': 0,
@@ -201,44 +210,37 @@ class TestMypageVotedListAPIView(APITestCase):
                 'answer': '北野日奈子'
             }]
         }
-        self.client.post('/api/v1/posts/', params, format='json')
+        cls.vote_params = {
+            'option': {
+                'select_num': 0
+            }
+        }
+
+    def test_get_own_voted_posts_success(self):
+        """ユーザーモデルの投票済みの投稿一覧取得APIへのGETリクエスト(正常系:投票済み一覧はユーザー本人であれば返す)"""
+
+        # 投稿用ユーザーでログイン→投稿
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        # POSTメソッドの投稿リクエスト
+        self.client.post('/api/v1/posts/', self.post_params, format='json')
 
         # 投票用ユーザーでログイン→投票
         token = str(RefreshToken.for_user(self.user2).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
         post = Post.objects.get()
-        params = {
-            'option': {
-                'select_num': 0
-            }
-        }
-        self.client.post('/api/v1/posts/{}/polls/'.format(post.id), params, format='json')
+        self.client.post('/api/v1/posts/{}/polls/'.format(post.id), self.vote_params, format='json')
 
         response = self.client.get(self.TARGET_URL_WITH_PK.format(self.user2.username))
         self.assertEqual(response.status_code, 200)
 
         # 予期されるjsonレスポンスを作成
-        flag = Option.objects.filter(poll_option__user_id=self.user2.id, share_id=post.share_id)
-        if len(flag) > 0:
-            voted = True
-            selected_num = flag[0].select_num
-        else:
-            voted = False
-
-        # 予期される選択肢の中身を作成
+        # 選択肢の中身を作成
         options = Option.objects.filter(share_id=post.share_id)
-        options_list = []
-        for option in options:
-            option_dict = {}
-            option_dict['select_num'] = option.select_num
-            option_dict['answer'] = option.answer
-            option_dict['votes'] = option.votes
-            options_list.append(option_dict)
+        options_list = create_options_list(options)
         # 投稿日時をShappar仕様に変形
-        post_created_at = str(post.created_at)
-        hours = timedelta(hours=9)
-        utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
-        created_at = utc_created_at + hours
+        created_at = change_created_at(post)
         # 合計投票数を再算出
         total = Post.objects.get().total
         expected_json_dict = {
@@ -248,8 +250,8 @@ class TestMypageVotedListAPIView(APITestCase):
                 'iconimage': circleci.MEDIA_URL + str(post.user.iconimage),
                 'question': post.question,
                 'created_at': created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-                'voted': voted,
-                'selected_num': selected_num,
+                'voted': True,
+                'selected_num': 0,
                 'total': total,
                 'options': options_list
             }]
@@ -262,28 +264,13 @@ class TestMypageVotedListAPIView(APITestCase):
         # 投稿用ユーザーでログイン→投稿
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-        params = {
-            'question': 'あなたの推しメンは？',
-            'options': [{
-                'select_num': 0,
-                'answer': '齋藤飛鳥'
-            }, {
-                'select_num': 1,
-                'answer': '北野日奈子'
-            }]
-        }
-        self.client.post('/api/v1/posts/', params, format='json')
+        self.client.post('/api/v1/posts/', self.post_params, format='json')
 
         # 投票用ユーザーでログイン→投票
         token = str(RefreshToken.for_user(self.user2).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
         post = Post.objects.get()
-        params = {
-            'option': {
-                'select_num': 0
-            }
-        }
-        self.client.post('/api/v1/posts/{}/polls/'.format(post.id), params, format='json')
+        self.client.post('/api/v1/posts/{}/polls/'.format(post.id), self.vote_params, format='json')
 
         # 投稿ユーザーで再びログイン→投票ユーザーの投票済み一覧表示を試みる
         token = str(RefreshToken.for_user(self.user1).access_token)
@@ -320,7 +307,7 @@ class TestMypageVotedListAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
-# (正常系)2methods,(異常系)0methods,(合計)2methods.
+# (正常系)2methods,(異常系)2methods,(合計)4methods.
 class TestMypagePostedListAPIView(APITestCase):
     """MypagePostedListAPIViewのテストクラス"""
 
@@ -349,14 +336,7 @@ class TestMypagePostedListAPIView(APITestCase):
             age=19,
             born_at='2001-12-02',
         )
-
-    def test_get_other_posted_posts_success(self):
-        """ユーザーモデルの投稿済みの投稿一覧取得APIへのGETリクエスト(正常系:投稿一覧を投票者が見る場合)"""
-
-        # 投稿用ユーザーでログイン→投稿
-        token = str(RefreshToken.for_user(self.user1).access_token)
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-        params = {
+        cls.post_params = {
             'question': 'あなたの推しメンは？',
             'options': [{
                 'select_num': 0,
@@ -366,45 +346,36 @@ class TestMypagePostedListAPIView(APITestCase):
                 'answer': '北野日奈子'
             }]
         }
-        self.client.post('/api/v1/posts/', params, format='json')
+        cls.vote_params = {
+            'option': {
+                'select_num': 0
+            }
+        }
+
+    def test_get_other_posted_posts_success(self):
+        """ユーザーモデルの投稿済みの投稿一覧取得APIへのGETリクエスト(正常系:投稿一覧を投票者が見る場合)"""
+
+        # 投稿用ユーザーでログイン→投稿
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        self.client.post('/api/v1/posts/', self.post_params, format='json')
 
         # 投票用ユーザーでログイン→投票
         token = str(RefreshToken.for_user(self.user2).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
         post = Post.objects.get()
-        params = {
-            'option': {
-                'select_num': 0
-            }
-        }
-        self.client.post('/api/v1/posts/{}/polls/'.format(post.id), params, format='json')
+        self.client.post('/api/v1/posts/{}/polls/'.format(post.id), self.vote_params, format='json')
 
         # 投票ユーザーで投稿ユーザーの投稿一覧を取得
         response = self.client.get(self.TARGET_URL_WITH_PK.format(self.user1.username))
         self.assertEqual(response.status_code, 200)
 
         # 予期されるjsonレスポンスを作成
-        flag = Option.objects.filter(poll_option__user_id=self.user2.id, share_id=post.share_id)
-        if len(flag) > 0:
-            voted = True
-            selected_num = flag[0].select_num
-        else:
-            voted = False
-
-        # 予期される選択肢の中身を作成
+        # 選択肢の中身を作成
         options = Option.objects.filter(share_id=post.share_id)
-        options_list = []
-        for option in options:
-            option_dict = {}
-            option_dict['select_num'] = option.select_num
-            option_dict['answer'] = option.answer
-            option_dict['votes'] = option.votes
-            options_list.append(option_dict)
-        # 投稿日時をShappar仕様に変形
-        post_created_at = str(post.created_at)
-        hours = timedelta(hours=9)
-        utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
-        created_at = utc_created_at + hours
+        options_list = create_options_list(options)
+        # 投稿日時を日本時間へ変更
+        created_at = change_created_at(post)
         # 合計投票数を再算出
         total = Post.objects.get().total
         expected_json_dict = {
@@ -414,8 +385,8 @@ class TestMypagePostedListAPIView(APITestCase):
                 'iconimage': circleci.MEDIA_URL + str(post.user.iconimage),
                 'question': post.question,
                 'created_at': created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-                'voted': voted,
-                'selected_num': selected_num,
+                'voted': True,
+                'selected_num': 0,
                 'total': total,
                 'options': options_list
             }]
@@ -428,28 +399,13 @@ class TestMypagePostedListAPIView(APITestCase):
         # 投稿用ユーザーでログイン→投稿
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-        params = {
-            'question': 'あなたの推しメンは？',
-            'options': [{
-                'select_num': 0,
-                'answer': '齋藤飛鳥'
-            }, {
-                'select_num': 1,
-                'answer': '北野日奈子'
-            }]
-        }
-        self.client.post('/api/v1/posts/', params, format='json')
+        self.client.post('/api/v1/posts/', self.post_params, format='json')
 
         # 投票用ユーザーでログイン→投票
         token = str(RefreshToken.for_user(self.user2).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
         post = Post.objects.get()
-        params = {
-            'option': {
-                'select_num': 0
-            }
-        }
-        self.client.post('/api/v1/posts/{}/polls/'.format(post.id), params, format='json')
+        self.client.post('/api/v1/posts/{}/polls/'.format(post.id), self.vote_params, format='json')
 
         # もう一度投稿用ユーザーでログイン
         token = str(RefreshToken.for_user(self.user1).access_token)
@@ -461,18 +417,9 @@ class TestMypagePostedListAPIView(APITestCase):
 
         # 予期される選択肢の中身を作成
         options = Option.objects.filter(share_id=post.share_id)
-        options_list = []
-        for option in options:
-            option_dict = {}
-            option_dict['select_num'] = option.select_num
-            option_dict['answer'] = option.answer
-            option_dict['votes'] = option.votes
-            options_list.append(option_dict)
-        # 投稿日時をShappar仕様に変形
-        post_created_at = str(post.created_at)
-        hours = timedelta(hours=9)
-        utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
-        created_at = utc_created_at + hours
+        options_list = create_options_list(options)
+        # 投稿日時を日本時間変更
+        created_at = change_created_at(post)
         # 合計投票数を再算出
         total = Post.objects.get().total
         expected_json_dict = {
@@ -487,6 +434,33 @@ class TestMypagePostedListAPIView(APITestCase):
                 'total': total,
                 'options': options_list
             }]
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_get_posted_posts_unauthorized(self):
+        """ユーザーモデルの投稿済みの投稿一覧取得APIへのGETリクエスト(異常系:ヘッダーにトークンがのっていない時)"""
+
+        # あえてヘッダーにトークンを載せない
+
+        response = self.client.get(self.TARGET_URL_WITH_PK.format(self.user2.username))
+        self.assertEqual(response.status_code, 401)
+
+        expected_json_dict = {
+            "detail": "認証情報が含まれていません。"
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_get_posted_posts_not_found(self):
+        """ユーザーモデルの投稿済みの投稿一覧取得APIへのGETリクエスト(異常系:リクエストしたエンドポイントのユーザーIDが存在しない時)"""
+
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        response = self.client.get(self.TARGET_URL_WITH_PK.format('user3'))
+        self.assertEqual(response.status_code, 404)
+
+        expected_json_dict = {
+            'detail': '存在しないユーザーIDです'
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
@@ -510,16 +484,7 @@ class TestPostCreateAPIView(APITestCase):
             age=24,
             born_at='1998-08-10',
         )
-
-    def test_post_options_2_success(self):
-        """投稿モデルの登録APIへのPOSTリクエスト(正常系)"""
-
-        # ログイン(JWT認証)
-        token = str(RefreshToken.for_user(self.user).access_token)
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-
-        # APIリクエストを実行
-        params = {
+        cls.normal_params = {
             'question': 'あなたの推しメンは？',
             'options': [{
                 'select_num': 0,
@@ -529,32 +494,23 @@ class TestPostCreateAPIView(APITestCase):
                 'answer': '北野日奈子'
             }]
         }
-        response = self.client.post(self.TARGET_URL, params, format='json')
+
+    def test_post_options_2_success(self):
+        """投稿モデルの登録APIへのPOSTリクエスト(正常系)"""
+
+        # ログイン(JWT認証)
+        token = str(RefreshToken.for_user(self.user).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        # APIリクエストを実行
+        response = self.client.post(self.TARGET_URL, self.normal_params, format='json')
 
         # データベースの状態を検証
         self.assertEqual(Post.objects.count(), 1)
         self.assertEqual(Option.objects.count(), 2)
         # レスポンスの内容を検証
         self.assertEqual(response.status_code, 201)
-        
-        # post = Post.objects.get()
-        # # ネスト化している部分を代入
-        # option_set = Option.objects.all()
-        # options = list()
-        # for option in option_set:
-        #     add_dict = {}
-        #     add_dict['select_num'] = option.select_num
-        #     add_dict['answer'] = option.answer
-        #     add_dict['votes'] = option.votes
-        #     options.append(add_dict)
-
-        # expected_json_dict = {
-        #     'question': post.question,
-        #     'options': options
-        # }
-
         expected_json_dict = {}
-
         self.assertJSONEqual(response.content, expected_json_dict)
 
     def test_post_options_10_success(self):
@@ -614,17 +570,7 @@ class TestPostCreateAPIView(APITestCase):
         # あえてJWT認証によるログインをしない。
 
         # APIリクエストを実行
-        params = {
-            'question': 'あなたの推しメンは？',
-            'options': [{
-                'select_num': 0,
-                'answer': '齋藤飛鳥'
-            }, {
-                'select_num': 1,
-                'answer': '北野日奈子'
-            }]
-        }
-        response = self.client.post(self.TARGET_URL, params, format='json')
+        response = self.client.post(self.TARGET_URL, self.normal_params, format='json')
 
         self.assertEqual(Post.objects.count(), 0)
         self.assertEqual(Option.objects.count(), 0)
@@ -716,6 +662,197 @@ class TestPostCreateAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
+# (正常系)2methods,(異常系)1methods,(合計)3methods.
+class TestPostListRankAPIView(APITestCase):
+    """PostListRankAPIViewのテストクラス"""
+
+    TARGET_URL = '/api/v1/posts/public/rank/'
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # ユーザーを定義→作成
+        cls.user1 = get_user_model().objects.create_user(
+            email='user1@example.com',
+            username='user1',
+            password='secret',
+            usernonamae='サンプル1',
+            sex='0',
+            blood_type='0',
+            age=21,
+            born_at='1998-08-10',
+        )
+        cls.user2 = get_user_model().objects.create_user(
+            email='user2@example.com',
+            username='user2',
+            password='secret',
+            usernonamae='サンプル2',
+            sex='1',
+            blood_type='1',
+            age=19,
+            born_at='2001-12-02',
+        )
+        # 投稿のパラメーターを定義
+        cls.params1 = {
+            'question': 'あなたの推しメンは？',
+            'options': [{
+                'select_num': 0,
+                'answer': '齋藤飛鳥'
+            }, {
+                'select_num': 1,
+                'answer': '北野日奈子'
+            }]
+        }
+        cls.params2 = {
+            'question': '好きなアニメは？',
+            'options': [{
+                'select_num': 0,
+                'answer': 'ソードアート・オンライン'
+            }, {
+                'select_num': 1,
+                'answer': '青春ブタ野郎はバニーガール先輩の夢を見ない'
+            }]
+        }
+
+    def test_get_ranked_1_2_posts_success(self):
+        """PostListRankAPIViewの投稿一覧取得APIへのGETリクエスト(正常:1位と2位の投稿を取得)"""
+
+        # 投稿用ユーザーで2つ投稿
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        self.client.post('/api/v1/posts/', self.params1, format='json')
+        post1 = Post.objects.get()
+        self.client.post('/api/v1/posts/', self.params2, format='json')
+
+        # 投票用ユーザーでログイン→１つの投稿にだけ投票
+        token = str(RefreshToken.for_user(self.user2).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        params = {
+            'option': {
+                'select_num': 0
+            }
+        }
+        self.client.post('/api/v1/posts/{}/polls/'.format(post1.id), params, format='json')
+
+        # 再び投稿用ユーザーでログイン→ランキングを取得
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        response = self.client.get(self.TARGET_URL)
+
+        # データベースの状態を検証
+        self.assertEqual(Post.objects.count(), 2)
+        self.assertEqual(Poll.objects.count(), 1)
+        # レスポンスの内容を検証
+        self.assertEqual(response.status_code, 200)
+
+        # 予期されるレスポンスを作成
+        posts = Post.objects.all().order_by('created_at')
+        first_options = Option.objects.filter(share_id=posts[0].share_id)
+        second_options = Option.objects.filter(share_id=posts[1].share_id)
+        # それぞれの選択肢を事前に定義してた関数により作成
+        first_options_list = create_options_list(first_options)
+        second_options_list = create_options_list(second_options)
+        # それぞれの作成日時について日本時間へ変更
+        first_created_at = change_created_at(posts[0])
+        second_created_at = change_created_at(posts[1])
+        expected_json_dict = {
+            'posts': [{
+                'post_id': str(posts[0].id),
+                'user_id': str(posts[0].user.username),
+                'iconimage': circleci.MEDIA_URL + str(posts[0].user.iconimage),
+                'question': posts[0].question,
+                'voted': True,
+                'total': 1,
+                'options': first_options_list,
+                'created_at': first_created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                'selected_num': -1,
+                'rank': 0
+            }, {
+                'post_id': str(posts[1].id),
+                'user_id': str(posts[1].user.username),
+                'iconimage': circleci.MEDIA_URL + str(posts[1].user.iconimage),
+                'question': posts[1].question,
+                'voted': True,
+                'total': 0,
+                'options': second_options_list,
+                'created_at': second_created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                'selected_num': -1,
+                'rank': 1
+            }]
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_get_ranked_1_1_posts_success(self):
+        """PostListRankAPIViewの投稿一覧取得APIへのGETリクエスト(正常:２つの１位の投稿を取得)"""
+
+        # 投稿用ユーザーで2つ投稿
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        # 投稿×２
+        self.client.post('/api/v1/posts/', self.params1, format='json')
+        self.client.post('/api/v1/posts/', self.params2, format='json')
+
+        # ランキングを取得
+        response = self.client.get(self.TARGET_URL)
+
+        # データベースの状態を検証
+        self.assertEqual(Post.objects.count(), 2)
+        # レスポンスの内容を検証
+        self.assertEqual(response.status_code, 200)
+
+        # 予期されるレスポンスを作成
+        posts = Post.objects.all().order_by('created_at')
+        first_options = Option.objects.filter(share_id=posts[0].share_id)
+        second_options = Option.objects.filter(share_id=posts[1].share_id)
+        # それぞれの選択肢を事前に定義してた関数により作成
+        first_options_list = create_options_list(first_options)
+        second_options_list = create_options_list(second_options)
+        # それぞれの作成日時について日本時間へ変更
+        first_created_at = change_created_at(posts[0])
+        second_created_at = change_created_at(posts[1])
+        expected_json_dict = {
+            'posts': [{
+                'post_id': str(posts[0].id),
+                'user_id': str(posts[0].user.username),
+                'iconimage': circleci.MEDIA_URL + str(posts[0].user.iconimage),
+                'question': posts[0].question,
+                'voted': True,
+                'total': 0,
+                'options': first_options_list,
+                'created_at': first_created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                'selected_num': -1,
+                'rank': 0
+            }, {
+                'post_id': str(posts[1].id),
+                'user_id': str(posts[1].user.username),
+                'iconimage': circleci.MEDIA_URL + str(posts[1].user.iconimage),
+                'question': posts[1].question,
+                'voted': True,
+                'total': 0,
+                'options': second_options_list,
+                'created_at': second_created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                'selected_num': -1,
+                'rank': 0
+            }]
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_get_ranked_posts_unauthorized(self):
+        """ユーザーモデルの投稿済みの投稿一覧取得APIへのGETリクエスト(異常系:ヘッダーにトークンがのっていない時)"""
+
+        # あえてヘッダーにトークンを載せない
+
+        response = self.client.get(self.TARGET_URL)
+        self.assertEqual(response.status_code, 401)
+
+        expected_json_dict = {
+            "detail": "認証情報が含まれていません。"
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+
 # (正常系)1method,(異常系)2methods,(合計)3methods.
 class TestPostDeleteAPIView(APITestCase):
     """PostDetailDeleteAPIViewのテストクラス"""
@@ -735,14 +872,7 @@ class TestPostDeleteAPIView(APITestCase):
             age=21,
             born_at='1998-08-10',
         )
-
-    def test_delete_posts_success(self):
-        """投稿モデルの削除APIへのDELETEリクエスト(正常系)"""
-
-        token = str(RefreshToken.for_user(self.user).access_token)
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-
-        params = {
+        cls.params = {
             'question': 'あなたの推しメンは？',
             'options': [{
                 'select_num': 0,
@@ -752,8 +882,16 @@ class TestPostDeleteAPIView(APITestCase):
                 'answer': '北野日奈子'
             }]
         }
-        self.client.post('/api/v1/posts/', params, format='json')
 
+    def test_delete_posts_success(self):
+        """投稿モデルの削除APIへのDELETEリクエスト(正常系)"""
+
+        # ログイン→投稿API
+        token = str(RefreshToken.for_user(self.user).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        self.client.post('/api/v1/posts/', self.params, format='json')
+
+        # 投稿を取得→削除API
         post = Post.objects.get()
         response = self.client.delete(self.TARGET_URL_WITH_PK.format(post.id))
 
@@ -763,25 +901,15 @@ class TestPostDeleteAPIView(APITestCase):
     def test_delete_posts_unauthorized(self):
         """投稿モデルの削除APIへのDELETEリクエスト(異常系:ヘッダーにトークンがのっていない時)"""
 
-        # 投稿用でログイン
+        # 投稿用でログイン→投稿API
         token = str(RefreshToken.for_user(self.user).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-
-        params = {
-            'question': 'あなたの推しメンは？',
-            'options': [{
-                'select_num': 0,
-                'answer': '齋藤飛鳥'
-            }, {
-                'select_num': 1,
-                'answer': '北野日奈子'
-            }]
-        }
-        self.client.post('/api/v1/posts/', params, format='json')
+        self.client.post('/api/v1/posts/', self.params, format='json')
 
         # ヘッダーからトークンを消す
         self.client.credentials()
 
+        # 投稿を取得→削除API
         post = Post.objects.get()
         response = self.client.delete(self.TARGET_URL_WITH_PK.format(post.id))
 
@@ -796,22 +924,12 @@ class TestPostDeleteAPIView(APITestCase):
     def test_delete_posts_bad_request(self):
         """投稿モデルの削除APIへのDELETEリクエスト(異常系:投稿を削除命令したが、その投稿IDが存在しない時)"""
 
-        # 投稿用でログイン
+        # 投稿用でログイン→投稿API
         token = str(RefreshToken.for_user(self.user).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        self.client.post('/api/v1/posts/', self.params, format='json')
 
-        params = {
-            'question': 'あなたの推しメンは？',
-            'options': [{
-                'select_num': 0,
-                'answer': '齋藤飛鳥'
-            }, {
-                'select_num': 1,
-                'answer': '北野日奈子'
-            }]
-        }
-        self.client.post('/api/v1/posts/', params, format='json')
-
+        # 存在しないUUIDで削除API
         changed_pid = str(uuid.uuid4())
         response = self.client.delete(self.TARGET_URL_WITH_PK.format(changed_pid))
 
@@ -853,14 +971,7 @@ class TestPostUpdateAPIView(APITestCase):
             age=19,
             born_at='2001-12-02',
         )
-
-    def test_get_update_posts_voted_success(self):
-        """投稿モデルの投票情報更新APIへのGETリクエスト(正常系:投票済みユーザーなら投票結果閲覧可)"""
-
-        # 投稿用のユーザーがログイン→投稿
-        token = str(RefreshToken.for_user(self.user1).access_token)
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-        params = {
+        cls.post_params = {
             'question': 'あなたの推しメンは？',
             'options': [{
                 'select_num': 0,
@@ -870,48 +981,42 @@ class TestPostUpdateAPIView(APITestCase):
                 'answer': '北野日奈子'
             }]
         }
-        self.client.post('/api/v1/posts/', params, format='json')
-        # 投票用のユーザーがログイン→投票
-        token = str(RefreshToken.for_user(self.user2).access_token)
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-        post = Post.objects.get()
-        params = {
+        cls.vote_params = {
             'option': {
                 'select_num': 0
             }
         }
-        self.client.post('/api/v1/posts/{}/polls/'.format(post.id), params, format='json')
+
+    def test_get_update_posts_voted_success(self):
+        """投稿モデルの投票情報更新APIへのGETリクエスト(正常系:投票済みユーザーなら投票結果閲覧可)"""
+
+        # 投稿用のユーザーがログイン→投稿
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        self.client.post('/api/v1/posts/', self.post_params, format='json')
+
+        # 投票用のユーザーがログイン→投票
+        token = str(RefreshToken.for_user(self.user2).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        post = Post.objects.get()
+        self.client.post('/api/v1/posts/{}/polls/'.format(post.id), self.vote_params, format='json')
 
         # 投稿の情報を取得
         response = self.client.get(self.TARGET_URL_WITH_PK.format(post.id))
         self.assertEqual(response.status_code, 200)
         
-        flag = Option.objects.filter(poll_option__user_id=self.user2.id, share_id=post.share_id)
-        if len(flag) > 0:
-            voted = True
-            selected_num = flag[0].select_num
-        else:
-            voted = False
+        # 予期されるレスポンスを作成
         options = Option.objects.filter(share_id=post.share_id)
-        options_list = []
-        for option in options:
-            option_dict = {}
-            option_dict['select_num'] = option.select_num
-            option_dict['answer'] = option.answer
-            option_dict['votes'] = option.votes
-            options_list.append(option_dict)
-        post_created_at = str(post.created_at)
-        hours = timedelta(hours=9)
-        utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
-        created_at = utc_created_at + hours
+        options_list = create_options_list(options)
+        created_at = change_created_at(post)
         expected_json_dict = {
             'post_id': str(post.id),
             'user_id': str(post.user.username),
             'iconimage': circleci.MEDIA_URL + str(post.user.iconimage),
             'question': post.question,
             'created_at': created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-            'voted': voted,
-            'selected_num': selected_num,
+            'voted': True,
+            'selected_num': 0,
             'total': 1,
             'options': options_list
         }
@@ -923,27 +1028,13 @@ class TestPostUpdateAPIView(APITestCase):
         # 投稿用のユーザーがログイン→投稿
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-        params = {
-            'question': 'あなたの推しメンは？',
-            'options': [{
-                'select_num': 0,
-                'answer': '齋藤飛鳥'
-            }, {
-                'select_num': 1,
-                'answer': '北野日奈子'
-            }]
-        }
-        self.client.post('/api/v1/posts/', params, format='json')
+        self.client.post('/api/v1/posts/', self.post_params, format='json')
+
         # 投票用のユーザーがログイン→投票
         token = str(RefreshToken.for_user(self.user2).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
         post = Post.objects.get()
-        params = {
-            'option': {
-                'select_num': 0
-            }
-        }
-        self.client.post('/api/v1/posts/{}/polls/'.format(post.id), params, format='json')
+        self.client.post('/api/v1/posts/{}/polls/'.format(post.id), self.vote_params, format='json')
 
         # 再び投稿用のユーザーでログイン
         token = str(RefreshToken.for_user(self.user1).access_token)
@@ -953,18 +1044,10 @@ class TestPostUpdateAPIView(APITestCase):
         response = self.client.get(self.TARGET_URL_WITH_PK.format(post.id))
         self.assertEqual(response.status_code, 200)
         
+        # 予期されるレスポンスを作成
         options = Option.objects.filter(share_id=post.share_id)
-        options_list = []
-        for option in options:
-            option_dict = {}
-            option_dict['select_num'] = option.select_num
-            option_dict['answer'] = option.answer
-            option_dict['votes'] = option.votes
-            options_list.append(option_dict)
-        post_created_at = str(post.created_at)
-        hours = timedelta(hours=9)
-        utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
-        created_at = utc_created_at + hours
+        options_list = create_options_list(options)
+        created_at = change_created_at(post)
         expected_json_dict = {
             'post_id': str(post.id),
             'user_id': str(post.user.username),
@@ -984,17 +1067,7 @@ class TestPostUpdateAPIView(APITestCase):
         # 投稿用のユーザーがログイン→投稿
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-        params = {
-            'question': 'あなたの推しメンは？',
-            'options': [{
-                'select_num': 0,
-                'answer': '齋藤飛鳥'
-            }, {
-                'select_num': 1,
-                'answer': '北野日奈子'
-            }]
-        }
-        self.client.post('/api/v1/posts/', params, format='json')
+        self.client.post('/api/v1/posts/', self.post_params, format='json')
         
         # 他ユーザーにてログイン→投稿情報更新
         token = str(RefreshToken.for_user(self.user2).access_token)
@@ -1004,18 +1077,13 @@ class TestPostUpdateAPIView(APITestCase):
         response = self.client.get(self.TARGET_URL_WITH_PK.format(post.id))
         self.assertEqual(response.status_code, 200)
         
+        # 予期されるレスポンスを作成
         options = Option.objects.filter(share_id=post.share_id)
-        options_list = []
-        for option in options:
-            option_dict = {}
-            option_dict['select_num'] = option.select_num
-            option_dict['answer'] = option.answer
-            option_dict['votes'] = -1
-            options_list.append(option_dict)
-        post_created_at = str(post.created_at)
-        hours = timedelta(hours=9)
-        utc_created_at = datetime.strptime(post_created_at, '%Y-%m-%d %H:%M:%S.%f%z')
-        created_at = utc_created_at + hours
+        options_list = create_options_list(options)
+        # 投票していないとvotesで-1を返す
+        for options in options_list:
+            options['votes'] = -1
+        created_at = change_created_at(post)
         expected_json_dict = {
             'post_id': str(post.id),
             'user_id': str(post.user.username),
@@ -1035,18 +1103,7 @@ class TestPostUpdateAPIView(APITestCase):
         # 投稿用だけログイン
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-
-        params = {
-            'question': 'あなたの推しメンは？',
-            'options': [{
-                'select_num': 0,
-                'answer': '齋藤飛鳥'
-            }, {
-                'select_num': 1,
-                'answer': '北野日奈子'
-            }]
-        }
-        self.client.post('/api/v1/posts/', params, format='json')
+        self.client.post('/api/v1/posts/', self.post_params, format='json')
 
         # 認証用のヘッダーを消去する
         self.client.credentials()
@@ -1065,18 +1122,7 @@ class TestPostUpdateAPIView(APITestCase):
 
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-
-        params = {
-            'question': 'あなたの推しメンは？',
-            'options': [{
-                'select_num': 0,
-                'answer': '齋藤飛鳥'
-            }, {
-                'select_num': 1,
-                'answer': '北野日奈子'
-            }]
-        }
-        self.client.post('/api/v1/posts/', params, format='json')
+        self.client.post('/api/v1/posts/', self.post_params, format='json')
 
         changed_pid = str(uuid.uuid4())
         response = self.client.get(self.TARGET_URL_WITH_PK.format(changed_pid))
@@ -1117,15 +1163,7 @@ class TestPollCreateAPIView(APITestCase):
             age=19,
             born_at='2001-12-02',
         )
-    
-    def test_post_poll_other_success(self):
-        """投票モデルの登録APIへのPOSTリクエスト(正常系)"""
-
-        # 投稿用のユーザーがログイン
-        token = str(RefreshToken.for_user(self.user1).access_token)
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-
-        params = {
+        cls.post_params = {
             'question': 'あなたの推しメンは？',
             'options': [{
                 'select_num': 0,
@@ -1135,36 +1173,36 @@ class TestPollCreateAPIView(APITestCase):
                 'answer': '北野日奈子'
             }]
         }
-        self.client.post('/api/v1/posts/', params, format='json')
-
-        # 投票POST用のテストなので下記はコメントアウト
-        # response = self.client.post('/api/v1/posts/', params, format='json')
-        # self.assertEqual(Post.objects.count(), 1)
-        # self.assertEqual(Option.objects.count(), 2)
-        # self.assertEqual(response.status_code, 201)
-
-        # 投票用のユーザーがログイン
-        token = str(RefreshToken.for_user(self.user2).access_token)
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-
-        post = Post.objects.get()
-        params = {
+        cls.vote_params = {
             'option': {
                 'select_num': 0
             }
         }
-        response = self.client.post(self.TARGET_URL_WITH_PK.format(post.id), params, format='json')
+    
+    def test_post_poll_other_success(self):
+        """投票モデルの登録APIへのPOSTリクエスト(正常系)"""
 
+        # 投稿用のユーザーがログイン→投稿のPOSTAPI
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        self.client.post('/api/v1/posts/', self.post_params, format='json')
+
+        # 投票用のユーザーがログイン→投票のPOSTAPI
+        token = str(RefreshToken.for_user(self.user2).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        post = Post.objects.get()
+        response = self.client.post(self.TARGET_URL_WITH_PK.format(post.id), self.vote_params, format='json')
+
+        # データベースの状態を検証
         self.assertEqual(Poll.objects.count(), 1)
         self.assertEqual(response.status_code, 201)
 
+        # レスポンスの内容を検証
         options = Option.objects.all()
-        options_list = []
-        for option in options:
-            option_dict = {}
-            option_dict['select_num'] = option.select_num
-            option_dict['votes'] = option.votes
-            options_list.append(option_dict)
+        options_list = create_options_list(options)
+        # 投票時のレスポンスではanswerを返さない
+        for options in options_list:
+            del options['answer']
         # 投票後の合計投票数を取得
         total = Post.objects.get().total
         expected_json_dict = {
@@ -1177,32 +1215,17 @@ class TestPollCreateAPIView(APITestCase):
     def test_post_unauthorized(self):
         """投票モデルの登録APIへのPOSTリクエスト(異常系:ヘッダーにトークンがのっていない時)"""
 
-        # 投稿用だけログイン
+        # 投稿用だけログイン→投稿のPOSTAPI
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-
-        params = {
-            'question': 'あなたの推しメンは？',
-            'options': [{
-                'select_num': 0,
-                'answer': '齋藤飛鳥'
-            }, {
-                'select_num': 1,
-                'answer': '北野日奈子'
-            }]
-        }
-        self.client.post('/api/v1/posts/', params, format='json')
+        self.client.post('/api/v1/posts/', self.post_params, format='json')
 
         # 認証用のヘッダーを消去する
         self.client.credentials()
 
+        # 投票のPOSTAPI
         post = Post.objects.get()
-        params = {
-            'option': {
-                'select_num': 0
-            }
-        }
-        response = self.client.post(self.TARGET_URL_WITH_PK.format(post.id), params, format='json')
+        response = self.client.post(self.TARGET_URL_WITH_PK.format(post.id), self.vote_params, format='json')
 
         self.assertEqual(Poll.objects.count(), 0)
         self.assertEqual(response.status_code, 401)
@@ -1215,32 +1238,16 @@ class TestPollCreateAPIView(APITestCase):
     def test_post_poll_other_postid_not_found(self):
         """投票モデルの登録APIへのPOSTリクエスト(異常系:投稿に投票したが投稿IDが存在しない時)"""
 
-        # 投稿用のユーザーがログイン
+        # 投稿用のユーザーがログイン→投稿のPOSTAPI
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-
-        params = {
-            'question': 'あなたの推しメンは？',
-            'options': [{
-                'select_num': 0,
-                'answer': '齋藤飛鳥'
-            }, {
-                'select_num': 1,
-                'answer': '北野日奈子'
-            }]
-        }
-        self.client.post('/api/v1/posts/', params, format='json')
+        self.client.post('/api/v1/posts/', self.post_params, format='json')
         
+        # 投票用のユーザーでログイン→投票のPOSTAPI
         token = str(RefreshToken.for_user(self.user2).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-
         changed_pid = str(uuid.uuid4())
-        params = {
-            'option': {
-                'select_num': 0
-            }
-        }
-        response = self.client.post(self.TARGET_URL_WITH_PK.format(changed_pid), params, format='json')
+        response = self.client.post(self.TARGET_URL_WITH_PK.format(changed_pid), self.vote_params, format='json')
 
         self.assertEqual(Poll.objects.count(), 0)
         self.assertEqual(response.status_code, 404)
@@ -1253,25 +1260,14 @@ class TestPollCreateAPIView(APITestCase):
     def test_post_poll_other_selectnum_not_found(self):
         """投票モデルの登録APIへのPOSTリクエスト(異常系:他人の投稿に投票したが選択肢が存在しない時)"""
 
-        # 投稿用のユーザーがログイン
+        # 投稿用のユーザーがログイン→投稿のPOSTメソッドAPI
         token = str(RefreshToken.for_user(self.user1).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-
-        params = {
-            'question': 'あなたの推しメンは？',
-            'options': [{
-                'select_num': 0,
-                'answer': '齋藤飛鳥'
-            }, {
-                'select_num': 1,
-                'answer': '北野日奈子'
-            }]
-        }
-        self.client.post('/api/v1/posts/', params, format='json')
+        self.client.post('/api/v1/posts/', self.post_params, format='json')
         
+        # 投票用のユーザーにログイン→存在しない選択肢で投票のPOSTメソッドAPI
         token = str(RefreshToken.for_user(self.user2).access_token)
         self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
-
         post = Post.objects.get()
         params = {
             'option': {

@@ -1,9 +1,9 @@
 import uuid
 from django.db import models
-from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-from django.core.validators import MinLengthValidator,MaxValueValidator,MinValueValidator 
+from django.core.validators import MinLengthValidator
+
 
 class Option(models.Model):
     """投稿・投票の選択肢モデル"""
@@ -23,10 +23,10 @@ class Post(models.Model):
     class Meta:
         db_table = 'post'
 
-    id = models.UUIDField(verbose_name='投稿ID',primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(verbose_name='投稿ID', primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(get_user_model(), verbose_name='ユーザ', on_delete=models.CASCADE, related_name='post_user')
     question = models.TextField(verbose_name='質問文', max_length=150, blank=False, null=False)
-    created_at = models.DateTimeField(verbose_name='投稿日時',default=timezone.now, editable=False)
+    created_at = models.DateTimeField(verbose_name='投稿日時', default=timezone.now, editable=False)
     options = models.ManyToManyField(Option, verbose_name='選択肢モデル', blank=True)
     share_id = models.UUIDField(verbose_name='選択肢共通ID')
     total = models.IntegerField(verbose_name='合計投票数', default=0)
