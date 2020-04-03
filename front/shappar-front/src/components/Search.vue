@@ -97,7 +97,7 @@ export default {
     &.none{
       display: none;
     }
-    @include media-1200 {
+    @include media(1200) {
       display: none;
       &.none{
         display: block;

@@ -2,8 +2,8 @@
   <div class="PostDetails" id="PostDetails__area" @touchmove.prevent.stop @touchstart.stop @click.stop>
     <div class="PostDetails__overlay" @click.stop="closeDetails()"></div>
     <doughnutChart class="PostDetails__chart"
-      :chartData="isActiveChartData" :class="{horizon: W_more_H}"
-      :style="{height: maxR+'px',width: maxR+'px'}"
+      :chartData="isActiveChartData"
+       :class="{horizon: W_more_H}"
       >
     </doughnutChart>
     <!-- <div class="PostDetails__container" :class="{horizon: W_more_H}"></div> -->
@@ -237,20 +237,25 @@ export default {
   left: 0;
   display: flex;
   justify-content: center;
-  align-items: center;
+  // align-items: flex-start;
+  align-content: flex-start;
   flex-wrap: wrap;
   width: 100%;
   height: 100%;
-  background: rgba(black, .6);
+  max-width: 700px;
   z-index: 300;
   overflow: scroll;
   @include scrollbar();
+  @include media(700) {
+    left: calc(50% - 350px);
+  }
   &__overlay{
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vmax;
+    height: 100vmax;
+    background: rgba(black, .6);
     z-index: -1;
   }
   &__container{
@@ -264,29 +269,32 @@ export default {
     // padding-top: 12px;
     // max-height: 700px;
     // background: white;
-    &.horizon{
-      flex-wrap: nowrap;
-      // padding: 0;
-    }
+    // &.horizon{
+    //   flex-wrap: nowrap;
+    //   // padding: 0;
+    // }
   }
   &__chart{
-    position: fixed;
-    top: 0;
+    // position: fixed;
+    // top: 0;
+    width: 100vmin;
+    height: 100vmin;
     max-width: 700px;
-    margin: 48px auto;
+    max-height: 700px;
+    // margin: 48px auto;
     & > canvas{
       max-width: 700px;
     }
-    &.horizon{
-      // display: flex;
-      // width: 50%;
-      // max-width: 50%;
-      margin: 0;
-      & > canvas{
-        max-width: 100%;
-        max-height: 100%;
-      }
-    }
+    // &.horizon{
+    //   // display: flex;
+    //   // width: 50%;
+    //   // max-width: 50%;
+    //   margin: 0;
+    //   & > canvas{
+    //     max-width: 100%;
+    //     max-height: 100%;
+    //   }
+    // }
   }
   &__bottom-box{
     display: flex;
@@ -301,28 +309,30 @@ export default {
     }
   }
   &__switch{
-    max-width: 700px;
+    width: auto;
+    max-width: calc(100vmax - 100vmin);
+    // max-width: 700px;
     max-height: 700px;
-    // margin: 24px auto 96px;
-    position: fixed;
-    bottom: 96px;
-    padding: 0 16px;
+    // position: fixed;
+    // bottom: 96px;
+    padding: 16px 0;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-evenly;
-    width: 100%;
-    // background: white;
     border-radius: 3px;
-    overflow: hidden;
-    &.horizon{
-      max-width: 90px;
-      height: 100%;
-      flex-direction: column;
-      // flex-wrap: wrap;
-      // margin-top: 56px;
-      bottom: auto;
-      right: 24px;
+    @include media(700) {
+      max-width: 700px;
     }
+    // &.horizon{
+    //   max-width: 90px;
+    //   height: 100%;
+    //   flex-direction: column;
+    //   // flex-wrap: wrap;
+    //   // margin-top: 56px;
+    //   bottom: auto;
+    //   right: 24px;
+    // }
   }
   &__wrap{
     width: 58px;

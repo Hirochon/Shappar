@@ -90,7 +90,7 @@ export default {
     opacity: 0;
     transition: .3s ease-in-out;
     z-index: 200;
-    @include media-1200 {
+    @include media(1200) {
       transform: translateX(-246px);
       left: auto;
       opacity: 1;
@@ -120,7 +120,7 @@ export default {
     height: 32px;
     padding: 4px;
     text-align: center;
-    @include media-1200 {
+    @include media(1200) {
       display: none ;
     }
     svg{

@@ -307,7 +307,7 @@ export default {
     width: 64px;
     height: 64px;
     margin-left: calc(100% - 96px);
-    @include media-700 (){
+    @include media(700){
       margin-left: 604px;
     }
     border-radius: 50%;

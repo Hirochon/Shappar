@@ -279,7 +279,7 @@ export default {
     height: 200px;
     background: #eee;
     overflow: hidden;
-    @include media-700 () {
+    @include media(700) {
       height: 350px;
     }
     img{

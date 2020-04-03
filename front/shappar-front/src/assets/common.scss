@@ -24,8 +24,8 @@ $color-bronze: #d66140;
     @content
   }
 };
-@mixin media-700 {
-  @media screen and (min-width: 700px){
+@mixin media($w: 700) {
+  @media screen and (min-width: $w + 'px'){
     @content
   }
 };
@@ -41,11 +41,6 @@ $color-bronze: #d66140;
 };
 @mixin media-pc{
   @media screen and (min-width: 1024px){
-    @content
-  }
-};
-@mixin media-1200{
-  @media screen and (min-width: 1200px){
     @content
   }
 };
