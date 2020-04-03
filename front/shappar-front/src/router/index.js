@@ -118,6 +118,7 @@ router.beforeEach((to, from, next) => {
           })
       } else {
         // 認証用トークンが無い場合は、ログイン画面へ
+        store.dispatch('message/setErrorMessage', { message: '認証エラー' })
         forceToLoginPage(to, from, next)
       }
     }
