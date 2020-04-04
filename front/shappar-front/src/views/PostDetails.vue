@@ -3,7 +3,7 @@
     <div class="PostDetails__overlay" @click.stop="closeDetails()"></div>
     <doughnutChart class="PostDetails__chart"
       :chartData="isActiveChartData"
-       :class="{horizon: W_more_H}"
+      :class="{horizon: W_more_H}"
       >
     </doughnutChart>
     <!-- <div class="PostDetails__container" :class="{horizon: W_more_H}"></div> -->
