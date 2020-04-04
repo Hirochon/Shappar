@@ -169,7 +169,7 @@ const userModule = {
     iconimage: state => state.iconimage,
     homeimage: state => state.homeimage,
     isRanking: state => state.isRanking,
-    user: state => {
+    getUser: state => {
       return {
         user_id: state.user_id,
         name: state.name,

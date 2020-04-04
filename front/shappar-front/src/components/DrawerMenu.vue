@@ -17,7 +17,7 @@
         <div class="Drawer__close" @click="$emit('close')"><font-awesome-icon icon="times"/></div>
         <div class="Drawer__wrapper">
           <router-link class="Drawer__icon" :to="'/mypage/'+ user.user_id + '/'">
-            <img :src="user.iconimage" alt="">
+            <img class="Drawer__icon__img" :src="user.iconimage" alt="">
           </router-link>
         </div>
         <div class="Drawer__wrapper">
@@ -41,6 +41,7 @@
 <script>
 // import api from '@/services/api'
 import store from '@/store'
+import { mapGetters } from 'vuex'
 export default {
   name: 'DrawerMenu',
   props: {
@@ -61,9 +62,10 @@ export default {
     }
   },
   computed: {
-    user () {
-      return store.getters['user/user']
-    }
+    // 1:storeのuserModule, 2:このコンポーネント内で使えるcomputed, 3:userModuleのgetters
+    ...mapGetters('user', {
+      'user': 'getUser'
+    })
   }
 }
 </script>
@@ -150,7 +152,7 @@ export default {
     background: white;
     color: white;
     overflow: hidden;
-    img{
+    &__img{
       width: 100%;
       height: 100%;
       object-fit: cover;
