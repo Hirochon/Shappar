@@ -16,16 +16,16 @@
         >
         <div class="Drawer__close" @click="$emit('close')"><font-awesome-icon icon="times"/></div>
         <div class="Drawer__wrapper">
-          <router-link class="Drawer__icon" :to="'/mypage/'+ this.$store.getters['user/user_id'] + '/'">
-            <img :src="this.$store.getters['user/iconimage']" alt="">
+          <router-link class="Drawer__icon" :to="'/mypage/'+ user.user_id + '/'">
+            <img :src="user.iconimage" alt="">
           </router-link>
         </div>
         <div class="Drawer__wrapper">
-          <div class="Drawer__name">{{this.$store.getters['user/name']}}</div>
-          <div class="Drawer__user_id">@{{this.$store.getters['user/user_id']}}</div>
+          <div class="Drawer__name">{{user.name}}</div>
+          <div class="Drawer__user_id">@{{user.user_id}}</div>
         </div>
         <div class="Drawer__wrapper">
-          <router-link class="Drawer__settings" :to="'/mypage/'+ this.$store.getters['user/user_id'] + '/'">マイページ</router-link>
+          <router-link class="Drawer__settings" :to="'/mypage/'+ user.user_id + '/'">マイページ</router-link>
         </div>
         <div class="Drawer__wrapper">
           <router-link class="Drawer__settings" to="/settings">設定</router-link>
@@ -40,8 +40,9 @@
 
 <script>
 // import api from '@/services/api'
+import store from '@/store'
 export default {
-  name: 'Search',
+  name: 'DrawerMenu',
   props: {
     isOpen: {
       type: Boolean,
@@ -52,11 +53,16 @@ export default {
     logout () {
       var result = window.confirm('ログアウトしてよろしいですか？')
       if (result) {
-        this.$store.dispatch('auth/logout')
-        this.$store.dispatch('user/logout')
-        this.$store.dispatch('message/setInfoMessage', { message: 'ログアウトしました' })
+        store.dispatch('auth/logout')
+        store.dispatch('user/logout')
+        store.dispatch('message/setInfoMessage', { message: 'ログアウトしました' })
         this.$router.replace('/login')
       }
+    }
+  },
+  computed: {
+    user () {
+      return store.getters['user/user']
     }
   }
 }
