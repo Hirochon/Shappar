@@ -27,7 +27,7 @@ describe('DrawerMenu.vue', () => {
             introduction: 'introduction',
             iconimage: 'iconimage',
             homeimage: 'homeimage',
-            isRanking: 'isRankin'
+            isRanking: false
           }
         },
         name: () => 'name'

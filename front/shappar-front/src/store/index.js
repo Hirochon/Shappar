@@ -187,7 +187,7 @@ const userModule = {
       state.introduction = payload.user.introduction
       state.iconimage = payload.user.iconimage
       state.homeimage = payload.user.homeimage
-      state.isRanking = payload.user.isRanking
+      state.isRanking = false
     },
     clear (state) {
       state.user_id = ''
