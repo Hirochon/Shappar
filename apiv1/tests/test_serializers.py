@@ -169,3 +169,36 @@ class TestPostCreateSerializer(TestCase):
         serializer = PostCreateSerializer(data=input_data)
         # バリデーションの結果を検証
         self.assertEqual(serializer.is_valid(), True)
+
+    def test_input_invalid_unshared_options(self):
+        """PostCreateSerializerの入力データのバリデーション(NG: 選択肢間でshare_idが共通でない)"""
+
+        share_id = uuid.uuid4()
+        data1 = {
+            'select_num': 0,
+            'answer': 'テスト1',
+            'votes': 1,
+            'share_id': share_id
+        }
+        data2 = {
+            'select_num': 1,
+            'answer': 'テスト2',
+            'votes': 2,
+            'share_id': uuid.uuid4()
+        }
+
+        # シリアライズ
+        input_data = {
+            'user': get_user_model().objects.get().id,
+            'question': 'テストだよ〜',
+            'options': [data1, data2],
+            'share_id': share_id
+        }
+        serializer = PostCreateSerializer(data=input_data)
+        # バリデーションの結果を検証
+        self.assertEqual(serializer.is_valid(), False)
+        self.assertCountEqual(serializer.errors.keys(), ['non_field_errors'])
+        self.assertCountEqual(
+            [x.code for x in serializer.errors['non_field_errors']],
+            ['invalid'],
+        )
