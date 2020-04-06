@@ -808,6 +808,56 @@ class TestPostListCreatedAPIView(APITestCase):
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
+    def test_get_created_posted_posts_success(self):
+        """PostListCreatedAPIViewの投稿一覧取得APIへのGETリクエスト(正常:投稿したユーザーは投票結果を出力する)"""
+
+        # 投稿用ユーザーでログイン→投稿
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        self.client.post('/api/v1/posts/', self.post_params_1, format='json')
+        post = Post.objects.get()
+
+        # 投票用ユーザーでログイン→１つの投稿にだけ投票
+        token = str(RefreshToken.for_user(self.user2).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        self.client.post('/api/v1/posts/{}/polls/'.format(post.id), self.vote_params_1, format='json')
+
+        # 投稿用ユーザーで再びログイン→リクエスト
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        # 投稿用ユーザーで投稿一覧をリクエスト
+        response = self.client.get(self.TARGET_URL)
+
+        # データベースの状態を検証
+        self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(Poll.objects.count(), 1)
+        # レスポンスの内容を検証
+        self.assertEqual(response.status_code, 200)
+
+        # 予期されるレスポンスを作成
+        posts = Post.objects.get()
+        options = Option.objects.filter(share_id=posts.share_id)
+        # それぞれの選択肢を事前に定義してた関数により作成
+        options_list = create_options_list(options)
+        # それぞれの作成日時について日本時間へ変更
+        created_at = change_created_at(posts)
+        expected_json_dict = {
+            'posts': [{
+                'post_id': str(posts.id),
+                'user_id': str(posts.user.username),
+                'iconimage': circleci.MEDIA_URL + str(posts.user.iconimage),
+                'question': posts.question,
+                'voted': True,
+                'total': 1,
+                'options': options_list,
+                'created_at': created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                'selected_num': -1
+            }]
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+    
 
 # (正常系)2methods,(異常系)1methods,(合計)3methods.
 class TestPostListRankAPIView(APITestCase):
