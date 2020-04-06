@@ -30,7 +30,7 @@ class CreateUserView(View):
         }
         return render(request, 'account/create_user.html', params)
 
-    def post(self, request, *args, **kwargs): 
+    def post(self, request, *args, **kwargs):
         users = get_user_model().objects.all().order_by('-created_at')
         count = get_user_model().objects.count()
         if count < 10:
