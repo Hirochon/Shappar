@@ -662,7 +662,7 @@ class TestPostCreateAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
-# (正常系)4methods,(異常系)0methods,(合計)4methods.
+# (正常系)4methods,(異常系)2methods,(合計)6methods.
 class TestPostListCreatedAPIView(APITestCase):
     """PostListCreatedAPIViewのテストクラス"""
 
@@ -933,6 +933,33 @@ class TestPostListCreatedAPIView(APITestCase):
                 'created_at': created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
                 'selected_num': -1
             }]
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_get_ranked_posts_unauthorized(self):
+        """ユーザーモデルの投稿済みの投稿一覧取得APIへのGETリクエスト(異常系:ヘッダーにトークンがのっていない時)"""
+
+        # あえてヘッダーにトークンを載せない
+
+        response = self.client.get(self.TARGET_URL)
+        self.assertEqual(response.status_code, 401)
+
+        expected_json_dict = {
+            "detail": "認証情報が含まれていません。"
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+
+    def test_get_posted_posts_not_found(self):
+        """ユーザーモデルの投稿済みの投稿一覧取得APIへのGETリクエスト(異常系:リクエストしたクエリパラメーターである投稿IDが存在しない時)"""
+
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+
+        response = self.client.get(self.TARGET_URL + '?pid=' + str(uuid.uuid4()))
+        self.assertEqual(response.status_code, 404)
+
+        expected_json_dict = {
+            'detail': '存在しない投稿IDです。'
         }
         self.assertJSONEqual(response.content, expected_json_dict)
 
