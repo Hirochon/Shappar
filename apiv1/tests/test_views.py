@@ -662,7 +662,7 @@ class TestPostCreateAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
-# (正常系)3methods,(異常系)0methods,(合計)2methods.
+# (正常系)4methods,(異常系)0methods,(合計)4methods.
 class TestPostListCreatedAPIView(APITestCase):
     """PostListCreatedAPIViewのテストクラス"""
 
@@ -888,6 +888,45 @@ class TestPostListCreatedAPIView(APITestCase):
                 'user_id': str(post.user.username),
                 'iconimage': circleci.MEDIA_URL + str(post.user.iconimage),
                 'question': post.question,
+                'voted': True,
+                'total': 0,
+                'options': options_list,
+                'created_at': created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                'selected_num': -1
+            }]
+        }
+        self.assertJSONEqual(response.content, expected_json_dict)
+    
+    def test_get_created_pagination_posts_success(self):
+        """PostListCreatedAPIViewの投稿一覧取得APIへのGETリクエスト(正常:ページネーションによる投稿一覧の取得)"""
+
+        # 投稿用ユーザーでログイン→投稿
+        token = str(RefreshToken.for_user(self.user1).access_token)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        self.client.post('/api/v1/posts/', self.post_params_1, format='json')
+        self.client.post('/api/v1/posts/', self.post_params_2, format='json')
+
+        # 投稿用ユーザーで投稿IDを使ったクエリパラメーターでリクエスト
+        posts = Post.objects.all().order_by('-created_at')
+        response = self.client.get(self.TARGET_URL + '?pid=' + str(posts[0].id))
+
+        # データベースの状態を検証
+        self.assertEqual(Post.objects.count(), 2)
+        # レスポンスの内容を検証
+        self.assertEqual(response.status_code, 200)
+
+        # 予期されるレスポンスを作成
+        options = Option.objects.filter(share_id=posts[1].share_id)
+        # それぞれの選択肢を事前に定義してた関数により作成
+        options_list = create_options_list(options)
+        # それぞれの作成日時について日本時間へ変更
+        created_at = change_created_at(posts[1])
+        expected_json_dict = {
+            'posts': [{
+                'post_id': str(posts[1].id),
+                'user_id': str(posts[1].user.username),
+                'iconimage': circleci.MEDIA_URL + str(posts[1].user.iconimage),
+                'question': posts[1].question,
                 'voted': True,
                 'total': 0,
                 'options': options_list,
