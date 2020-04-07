@@ -124,7 +124,7 @@ class TestOptionSerializer(TestCase):
         self.assertDictEqual(serializer.data, expected_data)
 
 
-# (正常系)1methods,(異常系)0methods,(合計)1methods.
+# (正常系)1methods,(異常系)1methods,(合計)2methods.
 class TestPostCreateSerializer(TestCase):
     """PostCreateSerializerのテストクラス"""
 
@@ -193,6 +193,39 @@ class TestPostCreateSerializer(TestCase):
             'question': 'テストだよ〜',
             'options': [data1, data2],
             'share_id': share_id
+        }
+        serializer = PostCreateSerializer(data=input_data)
+        # バリデーションの結果を検証
+        self.assertEqual(serializer.is_valid(), False)
+        self.assertCountEqual(serializer.errors.keys(), ['non_field_errors'])
+        self.assertCountEqual(
+            [x.code for x in serializer.errors['non_field_errors']],
+            ['invalid'],
+        )
+
+    def test_input_invalid_unshared_post_option(self):
+        """PostCreateSerializerの入力データのバリデーション(NG: 投稿と選択肢でshare_idが共通でない)"""
+
+        share_id = uuid.uuid4()
+        data1 = {
+            'select_num': 0,
+            'answer': 'テスト1',
+            'votes': 1,
+            'share_id': share_id
+        }
+        data2 = {
+            'select_num': 1,
+            'answer': 'テスト2',
+            'votes': 2,
+            'share_id': share_id
+        }
+
+        # シリアライズ
+        input_data = {
+            'user': get_user_model().objects.get().id,
+            'question': 'テストだよ〜',
+            'options': [data1, data2],
+            'share_id': uuid.uuid4()
         }
         serializer = PostCreateSerializer(data=input_data)
         # バリデーションの結果を検証
