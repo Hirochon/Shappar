@@ -124,7 +124,7 @@ class TestOptionSerializer(TestCase):
         self.assertDictEqual(serializer.data, expected_data)
 
 
-# (正常系)1methods,(異常系)3methods,(合計)3methods.
+# (正常系)1methods,(異常系)4methods,(合計)5methods.
 class TestPostCreateSerializer(TestCase):
     """PostCreateSerializerのテストクラス"""
 
@@ -170,7 +170,7 @@ class TestPostCreateSerializer(TestCase):
         # バリデーションの結果を検証
         self.assertEqual(serializer.is_valid(), True)
     
-    def test_input_invalid_max_length(self):
+    def test_input_invalid_question_over(self):
         """PostCreateSerializerの入力データのバリデーション(NG: questionが150字より上)"""
 
         share_id = uuid.uuid4()
@@ -210,6 +210,37 @@ class TestPostCreateSerializer(TestCase):
         self.assertCountEqual(
             [x.code for x in serializer.errors['question']],
             ['max_length'],
+        )
+
+    # def test_input_invalid_required_id_blank(self):
+    #     """PostCreateSerializerの入力データのバリデーション(NG: 必須の入力データが存在しない時)"""
+    #     next
+    
+    def test_input_invalid_lesser_2_options(self):
+        """PostCreateSerializerの入力データのバリデーション(NG: 選択肢が2個未満だった時)"""
+        share_id = uuid.uuid4()
+        data1 = {
+            'select_num': 0,
+            'answer': 'テスト1',
+            'votes': 1,
+            'share_id': share_id
+        }
+
+        # シリアライズ(境界値もテストするよ！)
+        input_data = {
+            'user': get_user_model().objects.get().id,
+            'question': 'テストだよ〜！',
+            'options': [data1],
+            'share_id': share_id
+        }
+        serializer = PostCreateSerializer(data=input_data)
+        # バリデーションの結果を検証
+        self.assertEqual(serializer.is_valid(), False)
+        print(serializer.errors)
+        self.assertCountEqual(serializer.errors.keys(), ['options'])
+        self.assertCountEqual(
+            [x.code for x in serializer.errors['options']],
+            ['invalid'],
         )
 
     def test_input_invalid_unshared_options(self):
