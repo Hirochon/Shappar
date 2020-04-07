@@ -1,13 +1,13 @@
 <template>
   <!-- メッセージエリア -->
   <div id="messages" class="Message">
-    <b-alert variant="danger" show v-show="message.error" class="mb-0">
+    <div v-show="message.error" class="Message__error">
       {{ message.error }}
-    </b-alert>
-    <b-alert variant="warning" show v-show="message.warnings.length > 0" class="mb-0">
-      <p v-for="warning in message.warnings" class="mb-0" :key="warning">{{ warning }}</p>
-    </b-alert>
-    <div v-show="message.info" class="Message__info mb-0">
+    </div>
+    <div v-show="message.warnings.length" class="Message__warnings">
+      <p class="Message__warning" v-for="warning in message.warnings" :key="warning">{{ warning }}</p>
+    </div>
+    <div v-show="message.info" class="Message__info">
       {{ message.info }}
     </div>
   </div>
@@ -16,14 +16,9 @@
 <script>
 export default {
   computed: {
-    message: function () {
+    message () {
       return this.$store.state.message
     }
-  },
-  created () {
-    // setTimeout(() => {
-    //   this.$store.dispatch('message/clearMessages')
-    // }, 1500)
   }
 }
 </script>
@@ -38,15 +33,31 @@ export default {
   max-width: 700px;
   z-index: 1000;
   transition: .3s ease-in-out;
+  @mixin message {
+    font-weight: bold;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.25rem;
+  }
+  &__error{
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    @include message;
+  }
+  &__warning{
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    margin-bottom: 0;
+    @include message;
+  }
   &__info{
     background: white;
     // background: $color-main;
     color: $color-main;
     // color: white;
     border: solid 2px $color-main;
-    font-weight: bold;
-    padding: 0.75rem 1.25rem;
-    border-radius: 0.25rem;
+    @include message;
   }
 }
 </style>

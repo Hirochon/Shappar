@@ -27,8 +27,7 @@ describe('Search.vue', () => {
             homeimage: 'homeimage',
             isRanking: false
           }
-        },
-        name: () => 'name'
+        }
       }
     }
     store = new Vuex.Store({

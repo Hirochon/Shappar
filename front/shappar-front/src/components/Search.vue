@@ -65,6 +65,10 @@ export default {
     ...mapGetters('user', {
       'user': 'getUser'
     })
+    // 以下の方法でも取って来れるよな stateとgettersって何の差があるのか？
+    // user () {
+    //   return this.$store.state.user
+    // }
   }
 }
 </script>

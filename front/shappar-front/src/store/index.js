@@ -146,6 +146,7 @@ const messageModule = {
      */
     clearMessages (context) {
       // console.log('in clearMessages')
+      // ここでsetTimeoutしても良かったけど、各メッセージごとに変化する可能性を考えて
       context.commit('clear')
     }
   }
