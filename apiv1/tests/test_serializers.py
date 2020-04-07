@@ -8,20 +8,20 @@ from apiv1.serializers import (
 from django.contrib.auth import get_user_model
 
 
+def change_required(self, serializer, field):
+    """requiredに関する処理を関数化(method:test_input_invalid_something_is_required)"""
+
+    self.assertEqual(serializer.is_valid(), False)
+    self.assertCountEqual(serializer.errors.keys(), [field])
+    self.assertCountEqual(
+        [x.code for x in serializer.errors[field]],
+        ['required'],
+    )
+
+
 # (正常系)2methods,(異常系)3methods,(合計)5methods.
 class TestOptionSerializer(TestCase):
     """OptionSerializerのテストクラス"""
-
-    def change_required(self, input_data, field):
-        """何度も使う処理を関数化(method:test_input_invalid_something_is_required)"""
-
-        serializer = OptionSerializer(data=input_data)
-        self.assertEqual(serializer.is_valid(), False)
-        self.assertCountEqual(serializer.errors.keys(), [field])
-        self.assertCountEqual(
-            [x.code for x in serializer.errors[field]],
-            ['required'],
-        )
 
     def test_input_valid(self):
         """OptionSerializerの入力データのバリデーション(OK)"""
@@ -48,15 +48,18 @@ class TestOptionSerializer(TestCase):
         }
         del input_data['select_num']
         # 事前に定義した関数を実行
-        self.change_required(input_data, 'select_num')
+        serializer = OptionSerializer(data=input_data)
+        change_required(self, serializer, 'select_num')
 
         input_data['select_num'] = 0
         del input_data['answer']
-        self.change_required(input_data, 'answer')
+        serializer = OptionSerializer(data=input_data)
+        change_required(self, serializer, 'answer')
 
         input_data['answer'] = 'テスト'
         del input_data['share_id']
-        self.change_required(input_data, 'share_id')
+        serializer = OptionSerializer(data=input_data)
+        change_required(self, serializer, 'share_id')
 
     def test_input_invalid_answer_shareid_are_blank(self):
         """OptionSerializerの入力データのバリデーション(NG:answerやshare_idが空文字)"""
@@ -124,7 +127,7 @@ class TestOptionSerializer(TestCase):
         self.assertDictEqual(serializer.data, expected_data)
 
 
-# (正常系)1methods,(異常系)4methods,(合計)5methods.
+# (正常系)1methods,(異常系)5methods,(合計)6methods.
 class TestPostCreateSerializer(TestCase):
     """PostCreateSerializerのテストクラス"""
 
@@ -159,13 +162,14 @@ class TestPostCreateSerializer(TestCase):
             'share_id': share_id
         }
 
-        # シリアライズ
+        # 入力データの加工
         input_data = {
             'user': get_user_model().objects.get().id,
             'question': 'テストだよ〜',
             'options': [data1, data2],
             'share_id': share_id
         }
+        # シリアライズ
         serializer = PostCreateSerializer(data=input_data)
         # バリデーションの結果を検証
         self.assertEqual(serializer.is_valid(), True)
@@ -187,13 +191,14 @@ class TestPostCreateSerializer(TestCase):
             'share_id': share_id
         }
 
-        # シリアライズ(境界値もテストするよ！)
+        # 入力データの加工
         input_data_valid = {
             'user': get_user_model().objects.get().id,
             'question': 'テストだよ' * 30,
             'options': [data1, data2],
             'share_id': share_id
         }
+        # シリアライズ(境界値もテストするよ！)
         serializer_valid = PostCreateSerializer(data=input_data_valid)
         self.assertEqual(serializer_valid.is_valid(), True)
 
@@ -203,6 +208,7 @@ class TestPostCreateSerializer(TestCase):
             'options': [data1, data2],
             'share_id': share_id
         }
+        # シリアライズ(境界値もテストするよ！)
         serializer = PostCreateSerializer(data=input_data_invalid)
         # バリデーションの結果を検証
         self.assertEqual(serializer.is_valid(), False)
@@ -212,9 +218,50 @@ class TestPostCreateSerializer(TestCase):
             ['max_length'],
         )
 
-    # def test_input_invalid_required_id_blank(self):
-    #     """PostCreateSerializerの入力データのバリデーション(NG: 必須の入力データが存在しない時)"""
-    #     next
+    def test_input_invalid_something_is_required(self):
+        """PostCreateSerializerの入力データのバリデーション(NG: 必須の入力データが存在しない時)"""
+        
+        share_id = uuid.uuid4()
+        data1 = {
+            'select_num': 0,
+            'answer': 'テスト1',
+            'votes': 1,
+            'share_id': share_id
+        }
+        data2 = {
+            'select_num': 1,
+            'answer': 'テスト2',
+            'votes': 2,
+            'share_id': share_id
+        }
+
+        # 入力データの加工
+        input_data = {
+            'user': get_user_model().objects.get().id,
+            'question': 'テストだよ〜！',
+            'options': [data1, data2],
+            'share_id': share_id
+        }
+
+        # シリアライズ
+        del input_data['user']
+        serializer = PostCreateSerializer(data=input_data)
+        change_required(self, serializer, 'user')
+
+        input_data['user'] = get_user_model().objects.get().id
+        del input_data['question']
+        serializer = PostCreateSerializer(data=input_data)
+        change_required(self, serializer, 'question')
+
+        input_data['question'] = 'テストだよ〜！'
+        del input_data['options']
+        serializer = PostCreateSerializer(data=input_data)
+        change_required(self, serializer, 'options')
+
+        input_data['options'] = [data1, data2]
+        del input_data['share_id']
+        serializer = PostCreateSerializer(data=input_data)
+        change_required(self, serializer, 'share_id')
     
     def test_input_invalid_lesser_2_options(self):
         """PostCreateSerializerの入力データのバリデーション(NG: 選択肢が2個未満だった時)"""
@@ -236,7 +283,6 @@ class TestPostCreateSerializer(TestCase):
         serializer = PostCreateSerializer(data=input_data)
         # バリデーションの結果を検証
         self.assertEqual(serializer.is_valid(), False)
-        print(serializer.errors)
         self.assertCountEqual(serializer.errors.keys(), ['options'])
         self.assertCountEqual(
             [x.code for x in serializer.errors['options']],
