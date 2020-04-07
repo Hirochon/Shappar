@@ -42,8 +42,14 @@ class PostCreateSerializer(serializers.ModelSerializer):
         post.options.set(options)
         return post
 
+    def validate_options(self, value):
+        """複数の選択肢(options)が2つ以上存在しないことを阻止バリデーションメソッド"""
+        if len(value) < 2:
+            raise serializers.ValidationError("選択肢は2つ以上にしてください。")
+        return value
+
     def validate(self, data):
-        """同じ投稿への複数投票&投稿本人の投票阻止バリデーションメソッド"""
+        """選択肢間and選択肢-投稿間でshare_idが非共通化阻止バリデーションメソッド"""
         options = data.get('options')
         share_id = data.get('share_id')
 
