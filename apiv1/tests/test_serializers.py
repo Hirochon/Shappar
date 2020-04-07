@@ -127,7 +127,7 @@ class TestOptionSerializer(TestCase):
         self.assertDictEqual(serializer.data, expected_data)
 
 
-# (正常系)1methods,(異常系)5methods,(合計)6methods.
+# (正常系)1methods,(異常系)6methods,(合計)7methods.
 class TestPostCreateSerializer(TestCase):
     """PostCreateSerializerのテストクラス"""
 
@@ -262,6 +262,49 @@ class TestPostCreateSerializer(TestCase):
         del input_data['share_id']
         serializer = PostCreateSerializer(data=input_data)
         change_required(self, serializer, 'share_id')
+
+    def test_input_invalid_user_or_question_is_blank(self):
+        """OptionSerializerの入力データのバリデーション(NG: questionかuserの値が空文字)"""
+
+        share_id = uuid.uuid4()
+        data1 = {
+            'select_num': 0,
+            'answer': 'テスト1',
+            'votes': 1,
+            'share_id': share_id
+        }
+        data2 = {
+            'select_num': 1,
+            'answer': 'テスト2',
+            'votes': 2,
+            'share_id': share_id
+        }
+
+        # 入力データの加工
+        input_data = {
+            'user': get_user_model().objects.get().id,
+            'question': 'テストだよ〜！',
+            'options': [data1, data2],
+            'share_id': share_id
+        }
+        input_data['user'] = ''
+        serializer_user = PostCreateSerializer(data=input_data)
+        self.assertEqual(serializer_user.is_valid(), False)
+        self.assertCountEqual(serializer_user.errors.keys(), ['user'])
+        self.assertCountEqual(
+            [x.code for x in serializer_user.errors['user']],
+            ['null'],
+        )
+
+        input_data['user'] = get_user_model().objects.get().id
+        input_data['question'] = ''
+        serializer_question = PostCreateSerializer(data=input_data)
+        self.assertEqual(serializer_question.is_valid(), False)
+        self.assertCountEqual(serializer_question.errors.keys(), ['question'])
+        self.assertCountEqual(
+            [x.code for x in serializer_question.errors['question']],
+            ['blank'],
+        )
     
     def test_input_invalid_lesser_2_options(self):
         """PostCreateSerializerの入力データのバリデーション(NG: 選択肢が2個未満だった時)"""
