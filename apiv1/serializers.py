@@ -42,6 +42,27 @@ class PostCreateSerializer(serializers.ModelSerializer):
         post.options.set(options)
         return post
 
+    def validate_options(self, value):
+        """複数の選択肢(options)が2つ以上存在しないことを阻止バリデーションメソッド"""
+        if len(value) < 2:
+            raise serializers.ValidationError("選択肢は2つ以上にしてください。")
+        return value
+
+    def validate(self, data):
+        """選択肢間and選択肢-投稿間でshare_idが非共通化阻止バリデーションメソッド"""
+        options = data.get('options')
+        share_id = data.get('share_id')
+
+        option_share_id = options[0]['share_id']
+        for option in options:
+            if option_share_id != option['share_id']:
+                raise serializers.ValidationError("選択肢間でshare_idが共通ではありません")
+
+        if option_share_id != share_id:
+            raise serializers.ValidationError("投稿と選択肢のshare_idが共通ではありません")
+        
+        return data
+
 
 class PostPatchSerializer(serializers.ModelSerializer):
     """投票による投稿の合計投票数の変化用シリアライザ"""
