@@ -36,5 +36,5 @@ class MyCustomSignupForm(SignupForm):
 
 
 class CreateUserForm(forms.Form):
-    num1 = forms.IntegerField(label='引数１', required=True, min_value=0, max_value=100)
-    num2 = forms.IntegerField(label='引数２', required=True, min_value=0, max_value=100)
+    num1 = forms.IntegerField(label='引数１', required=True, min_value=0, max_value=100, widget=forms.NumberInput(attrs={'placeholder': 0}))
+    num2 = forms.IntegerField(label='引数２', required=True, min_value=0, max_value=100, widget=forms.NumberInput(attrs={'placeholder': 10}))

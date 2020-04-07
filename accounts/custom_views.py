@@ -93,6 +93,7 @@ class ConfirmEmailView(TemplateResponseMixin, View):
         # if not redirect_url:
         #     ctx = self.get_context_data()
         #     return self.render_to_response(ctx)
+        # ここでリクエストユーザーの実験をしてみたい
         return redirect(to='/')
 
     def login_on_confirm(self, confirmation):
