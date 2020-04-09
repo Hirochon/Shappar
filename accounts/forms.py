@@ -24,7 +24,7 @@ class MyCustomSignupForm(SignupForm):
     blood_type = forms.ChoiceField(label='血液型', required=True, choices=CustomUser.blood_type_choice_site)
     age = forms.IntegerField(label='年齢', required=True, min_value=0, max_value=150, widget=forms.NumberInput(attrs={'placeholder': 0}))
     age = forms.IntegerField(label='年齢', required=True, min_value=0, max_value=150, widget=forms.Select(choices=choices))
-    # born_at = forms.DateField(label='生年月日', required=True, widget=forms.SelectDateWidget(years=range(1900, 2021), empty_label=("年", "月", "日")))
+    born_at = forms.DateField(label='生年月日', required=True, widget=forms.SelectDateWidget(years=range(1900, 2021), empty_label=("年", "月", "日")))
     introduction = forms.CharField(label='自己紹介', required=False, widget=forms.Textarea(
         attrs={'placeholder': 'はじめまして。太郎です！', 'cols': '30', 'rows': '5'}))
 

@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import Http404
-from django.shortcuts import redirect
+# from django.shortcuts import redirect
 from django.views.generic.base import TemplateResponseMixin, View
 from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
@@ -71,7 +71,7 @@ class ConfirmEmailView(TemplateResponseMixin, View):
         ctx = self.get_context_data()
         return self.render_to_response(ctx)
 
-    def post(self, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         self.object = confirmation = self.get_object()
         confirmation.confirm(self.request)
         get_adapter(self.request).add_message(
@@ -93,8 +93,7 @@ class ConfirmEmailView(TemplateResponseMixin, View):
         # if not redirect_url:
         #     ctx = self.get_context_data()
         #     return self.render_to_response(ctx)
-        # ここでリクエストユーザーの実験をしてみたい
-        return redirect(to='/')
+        return render(request, 'account/custom_email_confirmed.html', {'username': request.user.usernonamae})
 
     def login_on_confirm(self, confirmation):
         """
