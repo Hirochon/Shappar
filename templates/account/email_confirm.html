@@ -14,8 +14,8 @@
 
   <p class="Signup__email-confirm">
     {% blocktrans with confirmation.email_address.email as email %}
-      メールアドレス：<a href="mailto:{{ email }}">{{ email }}</a><br>
-      上記のメールアドレスが{{ user }}さんのものであることを確認してください。
+      メールアドレス: <b>{{ email }}</b><br>
+      上記のメールアドレスが<b>{{ user }}</b>様のものであることを確認してください。
     {% endblocktrans %}
   </p>
 
