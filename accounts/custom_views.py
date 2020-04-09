@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from .forms import CreateUserForm
 from config.create import CreateUser
+from django.contrib.auth import logout
 
 from allauth.account import app_settings
 from allauth.account.adapter import get_adapter
@@ -93,7 +94,10 @@ class ConfirmEmailView(TemplateResponseMixin, View):
         # if not redirect_url:
         #     ctx = self.get_context_data()
         #     return self.render_to_response(ctx)
-        return render(request, 'account/custom_email_confirmed.html', {'username': request.user.usernonamae})
+        param = {'username': request.user.usernonamae}
+        if request.user.is_authenticated:
+            logout(request)
+        return render(request, 'account/custom_email_confirmed.html', param)
 
     def login_on_confirm(self, confirmation):
         """
