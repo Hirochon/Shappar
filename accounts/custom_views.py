@@ -1,13 +1,14 @@
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import Http404
-from django.shortcuts import redirect
+# from django.shortcuts import redirect
 from django.views.generic.base import TemplateResponseMixin, View
 from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from .forms import CreateUserForm
 from config.create import CreateUser
+from django.contrib.auth import logout
 
 from allauth.account import app_settings
 from allauth.account.adapter import get_adapter
@@ -71,7 +72,7 @@ class ConfirmEmailView(TemplateResponseMixin, View):
         ctx = self.get_context_data()
         return self.render_to_response(ctx)
 
-    def post(self, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         self.object = confirmation = self.get_object()
         confirmation.confirm(self.request)
         get_adapter(self.request).add_message(
@@ -93,7 +94,10 @@ class ConfirmEmailView(TemplateResponseMixin, View):
         # if not redirect_url:
         #     ctx = self.get_context_data()
         #     return self.render_to_response(ctx)
-        return redirect(to='/')
+        param = {'username': request.user.usernonamae}
+        if request.user.is_authenticated:
+            logout(request)
+        return render(request, 'account/custom_email_confirmed.html', param)
 
     def login_on_confirm(self, confirmation):
         """
