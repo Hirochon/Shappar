@@ -43,29 +43,34 @@ describe('Testing DoughnutChart component', () => {
   })
 
   it('is a Vue instance', () => {
+    // setTimeoutをDouhghnutChartのmountedで使うことで
+    // 表示できるようになったがコンソールにエラーが出る
+
+    // let chartData = {
+    //   labels: ['女性', '男性', 'その他', '未回答'],
+    //   datasets: [{
+    //     data: [4, 2, 1, 0],
+    //     backgroundColor: [
+    //       '#FFA726',
+    //       '#FF7043',
+    //       '#ef5350',
+    //       '#EC407A',
+    //       '#AB47BC',
+    //       '#7E57C2',
+    //       '#5C6BC0',
+    //       '#42A5F5',
+    //       '#29B6F6',
+    //       '#26C6DA',
+    //       '#26A69A',
+    //       '#66BB6A'
+    //     ],
+    //     borderWidth: 0
+    //   }]
+    // }
     // const wrapper = shallowMount(DoughnutChart, {
+    //   localVue,
     //   propsData: {
-    //     chartData: {
-    //       labels: ['女性', '男性', 'その他', '未回答'],
-    //       datasets: [{
-    //         data: [4, 2, 1, 0],
-    //         backgroundColor: [
-    //           '#FFA726',
-    //           '#FF7043',
-    //           '#ef5350',
-    //           '#EC407A',
-    //           '#AB47BC',
-    //           '#7E57C2',
-    //           '#5C6BC0',
-    //           '#42A5F5',
-    //           '#29B6F6',
-    //           '#26C6DA',
-    //           '#26A69A',
-    //           '#66BB6A'
-    //         ],
-    //         borderWidth: 0
-    //       }]
-    //     }
+    //     chartData: chartData
     //   }
     // })
     // expect(wrapper.isVueInstance).toBeTruthy()

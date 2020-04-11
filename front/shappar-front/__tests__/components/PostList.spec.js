@@ -228,7 +228,7 @@ describe('PostList.vue', () => {
     expect(wrapper.find('.Post__none').exists()).toBe(true)
   })
   // loadingの表示
-  it('sort reload details を非表示→表示にする?', async () => {
+  it('loading を非表示→表示にする', async () => {
     let Post = wrapper.find('.Post')
     expect(Post.find('.Post__loading').exists()).toBe(false)
     await (posts[0].isLoading = true)
@@ -237,7 +237,7 @@ describe('PostList.vue', () => {
     }, 500)
   })
   // 未投票の場合
-  it('sort reload details を非表示→表示にする?', async () => {
+  it('sort reload details を非表示→表示にする', async () => {
     let Post = wrapper.find('.Post')
     expect(Post.find('.Post__sort').exists()).toBe(false)
     expect(Post.find('.Post__reload').exists()).toBe(false)
@@ -252,7 +252,7 @@ describe('PostList.vue', () => {
     }, 500)
   })
   // deleteの表示
-  it('delete を非表示→表示にする?', async () => {
+  it('delete を非表示→表示にする', async () => {
     let Post = wrapper.find('.Post')
     expect(Post.find('.Post__delete').exists()).toBe(false)
     await (posts[0].user_id = user.name)

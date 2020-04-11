@@ -80,18 +80,6 @@ export default {
   components: {
     GlobalMessage
   },
-  data () {
-    return {
-      form: {
-        username: '',
-        password: ''
-      },
-      pageName: 'ログインページ',
-      isLoading: false,
-      isActive: -1,
-      error: {}
-    }
-  },
   methods: {
     toSignUp () {
       const path = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://shappar.site'
