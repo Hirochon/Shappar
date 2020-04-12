@@ -75,7 +75,8 @@ describe('PostList.vue', () => {
           }
         ],
         'created_at': '2020-04-03T11:52:46.964429Z',
-        'selected_num': 0
+        'selected_num': 0,
+        'isLoading': false
       },
       {
         'post_id': '13f133fb-0c09-426a-9007-5fc10f419cb6',
@@ -117,7 +118,8 @@ describe('PostList.vue', () => {
           }
         ],
         'created_at': '2020-04-03T11:52:46.963009Z',
-        'selected_num': -1
+        'selected_num': -1,
+        'isLoading': false
       },
       {
         'post_id': 'fa4f6222-01a1-4e0f-a577-04c1da2b6f3a',
@@ -174,7 +176,8 @@ describe('PostList.vue', () => {
           }
         ],
         'created_at': '2020-04-03T11:52:46.911335Z',
-        'selected_num': -1
+        'selected_num': -1,
+        'isLoading': false
       }
     ]
     store = new Vuex.Store({
@@ -231,10 +234,34 @@ describe('PostList.vue', () => {
   it('loading を非表示→表示にする', async () => {
     let Post = wrapper.find('.Post')
     expect(Post.find('.Post__loading').exists()).toBe(false)
-    await (posts[0].isLoading = true)
-    setTimeout(() => {
-      expect(Post.find('.Post__loading').exists()).toBe(true)
-    }, 500)
+    await wrapper.setProps({
+      posts: [
+        {
+          'post_id': 'ff0c46c4-fb14-4123-a11b-454a85ffc3de',
+          'user_id': 'sample2',
+          'iconimage': 'https://d3ms402csqm2a0.cloudfront.net/media/images/customuser/iconimage/icon.png',
+          'question': 'question_18',
+          'voted': false,
+          'total': 2,
+          'options': [
+            {
+              'select_num': 1,
+              'answer': 'answer_1',
+              'votes': 2
+            },
+            {
+              'select_num': 2,
+              'answer': 'answer_2',
+              'votes': 0
+            }
+          ],
+          'created_at': '2020-04-03T11:52:46.964429Z',
+          'selected_num': 0,
+          'isLoading': true
+        }
+      ]
+    })
+    expect(wrapper.find('.Post__loading').exists()).toBe(true)
   })
   // 未投票の場合
   it('sort reload details を非表示→表示にする', async () => {
@@ -242,23 +269,71 @@ describe('PostList.vue', () => {
     expect(Post.find('.Post__sort').exists()).toBe(false)
     expect(Post.find('.Post__reload').exists()).toBe(false)
     expect(Post.find('.Post__details').exists()).toBe(false)
-    // await (posts[0].voted = true)
-    await Post.find('.Post__option').click
-    // 表示までに少し時間がかかるみたい
-    setTimeout(() => {
-      expect(Post.find('.Post__sort').exists()).toBe(true)
-      expect(Post.find('.Post__reload').exists()).toBe(true)
-      expect(Post.find('.Post__details').exists()).toBe(true)
-    }, 500)
+    await wrapper.setProps({
+      posts: [
+        {
+          'post_id': 'ff0c46c4-fb14-4123-a11b-454a85ffc3de',
+          'user_id': 'sample2',
+          'iconimage': 'https://d3ms402csqm2a0.cloudfront.net/media/images/customuser/iconimage/icon.png',
+          'question': 'question_18',
+          'voted': true,
+          'total': 2,
+          'options': [
+            {
+              'select_num': 1,
+              'answer': 'answer_1',
+              'votes': 2
+            },
+            {
+              'select_num': 2,
+              'answer': 'answer_2',
+              'votes': 0
+            }
+          ],
+          'created_at': '2020-04-03T11:52:46.964429Z',
+          'selected_num': 0,
+          'isLoading': true
+        }
+      ]
+    })
+    Post = wrapper.find('.Post')
+    expect(Post.find('.Post__sort').exists()).toBe(true)
+    expect(Post.find('.Post__reload').exists()).toBe(true)
+    expect(Post.find('.Post__details').exists()).toBe(true)
   })
   // deleteの表示
   it('delete を非表示→表示にする', async () => {
     let Post = wrapper.find('.Post')
     expect(Post.find('.Post__delete').exists()).toBe(false)
-    await (posts[0].user_id = user.name)
-    setTimeout(() => {
-      expect(Post.find('.Post__delete').exists()).toBe(true)
-    }, 500)
+    await wrapper.setProps({
+      posts: [
+        {
+          'post_id': 'ff0c46c4-fb14-4123-a11b-454a85ffc3de',
+          'user_id': user.getters.name(),
+          'iconimage': 'https://d3ms402csqm2a0.cloudfront.net/media/images/customuser/iconimage/icon.png',
+          'question': 'question_18',
+          'voted': true,
+          'total': 2,
+          'options': [
+            {
+              'select_num': 1,
+              'answer': 'answer_1',
+              'votes': 2
+            },
+            {
+              'select_num': 2,
+              'answer': 'answer_2',
+              'votes': 0
+            }
+          ],
+          'created_at': '2020-04-03T11:52:46.964429Z',
+          'selected_num': 0,
+          'isLoading': false
+        }
+      ]
+    })
+    Post = wrapper.find('.Post')
+    expect(Post.find('.Post__delete').exists()).toBe(true)
   })
   // apiのテスト?
   // sortに関しては詳細をすると壊れやすそうなのでしない
