@@ -1,3 +1,6 @@
 export default {
-  get: () => Promise.resolve({ data: 'value' })
+  get: () => {
+    console.log('api get')
+    return Promise.resolve({ data: 'value' })
+  }
 }

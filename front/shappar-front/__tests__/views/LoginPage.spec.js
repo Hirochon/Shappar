@@ -6,6 +6,7 @@ import Vuex from 'vuex'
 import Router from '@/router'
 import VueRouter from 'vue-router'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+jest.mock('api')
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
@@ -21,11 +22,12 @@ describe('LoginPage.vue', () => {
   let user
   let wrapper
   let input = { username: 'usernmae', password: 'password' }
-  let count = 0
+  let count
 
   process.on('unhandledRejection', console.dir)
 
   beforeEach(() => {
+    count = 0
     auth = {
       namespaced: true,
       getters: {
@@ -73,18 +75,20 @@ describe('LoginPage.vue', () => {
     expect(wrapper.isVueInstance).toBeTruthy()
   })
 
-  it('ログインボタン押下時のフロー', async () => {
+  it('ログインボタン押下時のフロー', (done) => {
     wrapper.find('#username').setValue(input.username)
     wrapper.find('#password').setValue(input.password)
-    await wrapper.find('.Login__form').trigger('submit')
+    wrapper.find('.Login__form').trigger('submit')
     setTimeout(() => {
       expect(count).toBe(3)
+      done()
     }, 100)
   })
-  it('テストユーザーボタン押下時のフロー', async () => {
+  it('テストユーザーボタン押下時のフロー', (done) => {
     wrapper.find('.Login__submit.test').trigger('click')
     setTimeout(() => {
       expect(count).toBe(3)
+      done()
     }, 100)
   })
 })
