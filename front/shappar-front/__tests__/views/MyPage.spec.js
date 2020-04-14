@@ -63,11 +63,12 @@ describe('MyPage.vue', () => {
     methods: {
       initComponent
     },
-    localVue
     // mocks: {
-    //   $route: $route
+    //   // $route: $route
+    //   api: api
     // },
     // stubs: ['router-link']
+    localVue
   }
   beforeEach(() => {
     wrapper = shallowMount(Component, option)

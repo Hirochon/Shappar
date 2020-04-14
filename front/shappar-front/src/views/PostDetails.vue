@@ -1,14 +1,8 @@
 <template>
   <div class="PostDetails" id="PostDetails__area" @touchmove.prevent.stop @touchstart.stop @click.stop>
     <div class="PostDetails__overlay" @click.stop="closeDetails()"></div>
-    <doughnutChart class="PostDetails__chart"
-      :chartData="isActiveChartData"
-      :class="{horizon: W_more_H}"
-      >
-    </doughnutChart>
-    <!-- <div class="PostDetails__container" :class="{horizon: W_more_H}"></div> -->
-    <!-- <div class="PostDetails__bottom-box" :class="{horizon: W_more_H}"></div> -->
-    <div class="PostDetails__switch" :class="{horizon: W_more_H}">
+    <doughnutChart class="PostDetails__chart" :chartData="isActiveChartData"/>
+    <div class="PostDetails__switch">
       <div class="PostDetails__wrap" :class="{active: isActive === 0}">
         <div class="PostDetails__button material-01" @click.stop="isActive = 0" :class="{active: isActive === 0}">
           <font-awesome-icon icon="venus-mars"/>
@@ -32,7 +26,7 @@
         </div>
       </div>
       <div class="PostDetails__wrap">
-        <div class="PostDetails__button material-05" :class="{horizon: W_more_H}" @click.stop="closeDetails()">
+        <div class="PostDetails__button material-05" @click.stop="closeDetails()">
           <font-awesome-icon icon="times"/>
         </div>
       </div>
@@ -66,14 +60,15 @@ export default {
       width: 0,
       height: 0,
       maxR: 0,
-      isActive: 0,
-      isActiveText: 0,
-      W_more_H: false
+      isActive: 0
     }
   },
   methods: {
     getPostData () {
       api.get('/api/v1/posts/' + this.post_id + '/')
+        .catch(error => {
+          if (process.env.NODE_ENV !== 'production') console.log(error)
+        })
         .then((response) => {
           let data = response.data
           this.total = data.total
@@ -149,19 +144,6 @@ export default {
         labels.push(item.id)
       })
       return labels
-    },
-    resizeTriggers () {
-      // if (event.type === 'resize') event.preventDefault()
-      // event.preventDefault()
-      // console.log(event.type)
-      // alert(screen.width + ' :: ' + screen.height)
-      var area = document.getElementById('PostDetails__area')
-      this.width = area.clientWidth
-      this.height = area.clientHeight
-      this.maxR = this.width > this.height ? this.height : this.width
-      this.W_more_H = this.width > this.height
-      // alert('width: ' + this.width + ' height: ' + this.height + ' maxR: ' + this.maxR)
-      // console.log('resize')
     }
   },
   computed: {
@@ -217,13 +199,6 @@ export default {
   },
   created () {
     this.getPostData()
-    window.addEventListener('resize', this.resizeTriggers)
-  },
-  mounted () {
-    this.resizeTriggers()
-  },
-  destroyed () {
-    window.removeEventListener('resize', this.resizeTriggers)
   }
 }
 </script>
@@ -269,10 +244,6 @@ export default {
     // padding-top: 12px;
     // max-height: 700px;
     // background: white;
-    // &.horizon{
-    //   flex-wrap: nowrap;
-    //   // padding: 0;
-    // }
   }
   &__chart{
     // position: fixed;
@@ -284,28 +255,6 @@ export default {
     // margin: 48px auto;
     & > canvas{
       max-width: 700px;
-    }
-    // &.horizon{
-    //   // display: flex;
-    //   // width: 50%;
-    //   // max-width: 50%;
-    //   margin: 0;
-    //   & > canvas{
-    //     max-width: 100%;
-    //     max-height: 100%;
-    //   }
-    // }
-  }
-  &__bottom-box{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin-top: 24px;
-    &.horizon{
-      width: 45%;
-      // height: 100%;
     }
   }
   &__switch{
@@ -324,15 +273,6 @@ export default {
     @include media(700) {
       max-width: 700px;
     }
-    // &.horizon{
-    //   max-width: 90px;
-    //   height: 100%;
-    //   flex-direction: column;
-    //   // flex-wrap: wrap;
-    //   // margin-top: 56px;
-    //   bottom: auto;
-    //   right: 24px;
-    // }
   }
   &__wrap{
     width: 58px;
@@ -350,13 +290,10 @@ export default {
     height: 48px;
     line-height: 24px;
     padding: 12px 0;
-    // border-radius: 3px;
     border-radius: 50%;
     text-align: center;
     font-weight: bold;
-    // letter-spacing: -3px;
     font-size: 24px;
-    // font-family: ;
     color: white;
     &.active{
       position: relative;
