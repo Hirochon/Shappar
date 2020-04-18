@@ -438,23 +438,6 @@ class TestPostPatchSerializer(TestCase):
             ['invalid'],
         )
 
-    def test_input_invalid_something_is_required(self):
-        """PostPatchSerializerの入力(パッチ)データのバリデーション(NG: なんか足りない時)"""
-
-        # シリアライズ
-        input_data = {
-            'id': 'aaaa',
-            'total': 2,
-        }
-        serializer = PostPatchSerializer(data=input_data)
-        # バリデーションの結果を検証
-        self.assertEqual(serializer.is_valid(), False)
-        self.assertCountEqual(serializer.errors.keys(), ['id'])
-        self.assertCountEqual(
-            [x.code for x in serializer.errors['id']],
-            ['invalid'],
-        )
-
 
 # class TestMypageSrializer(TestCase):
 #     """TestMypageSrializerのテストクラス"""
