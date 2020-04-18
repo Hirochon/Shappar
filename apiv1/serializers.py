@@ -71,6 +71,13 @@ class PostPatchSerializer(serializers.ModelSerializer):
         model = Post
         fields = ['id', 'total']
 
+    def validate_total(self, value):
+        """totalが１以上でない時にエラー検出バリデーションメソッド"""
+
+        if value < 1:
+            raise serializers.ValidationError("totalが１以上でありません。")
+        return value
+
 
 class PostListSerializer(serializers.ModelSerializer):
     """投稿一覧取得シリアライザ"""
