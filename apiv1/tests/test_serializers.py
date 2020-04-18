@@ -8,7 +8,8 @@ from apiv1.models import Option
 from apiv1.serializers import (
     # MypageSerializer,
     OptionSerializer,
-    PostCreateSerializer
+    PostCreateSerializer,
+    PostPatchSerializer,
 )
 from django.contrib.auth import get_user_model
 
@@ -132,7 +133,7 @@ class TestOptionSerializer(TestCase):
         self.assertDictEqual(serializer.data, expected_data)
 
 
-# (正常系)1methods,(異常系)6methods,(合計)7methods.
+# (正常系)1method,(異常系)6methods,(合計)7methods.
 class TestPostCreateSerializer(TestCase):
     """PostCreateSerializerのテストクラス"""
 
@@ -400,6 +401,57 @@ class TestPostCreateSerializer(TestCase):
         self.assertCountEqual(serializer.errors.keys(), ['non_field_errors'])
         self.assertCountEqual(
             [x.code for x in serializer.errors['non_field_errors']],
+            ['invalid'],
+        )
+
+
+# (正常系)1method,(異常系)1method,(合計)2method.
+class TestPostPatchSerializer(TestCase):
+    """PostPatchSerializerのテストクラス"""
+
+    def test_input_valid(self):
+        """"PostPatchSerializerの入力(パッチ)データのバリデーション(OK)"""
+
+        # シリアライズ
+        input_data = {
+            'id': uuid.uuid4(),
+            'total': 1,
+        }
+        serializer = PostPatchSerializer(data=input_data)
+        # バリデーションの結果を検証
+        self.assertEqual(serializer.is_valid(), True)
+
+    def test_input_invalid_lesser_0_total(self):
+        """PostPatchSerializerの入力(パッチ)データのバリデーション(NG: totalパラメーターで1未満がリクエストされた時)"""
+
+        # シリアライズ
+        input_data = {
+            'id': uuid.uuid4(),
+            'total': 0,
+        }
+        serializer = PostPatchSerializer(data=input_data)
+        # バリデーションの結果を検証
+        self.assertEqual(serializer.is_valid(), False)
+        self.assertCountEqual(serializer.errors.keys(), ['total'])
+        self.assertCountEqual(
+            [x.code for x in serializer.errors['total']],
+            ['invalid'],
+        )
+
+    def test_input_invalid_something_is_required(self):
+        """PostPatchSerializerの入力(パッチ)データのバリデーション(NG: なんか足りない時)"""
+
+        # シリアライズ
+        input_data = {
+            'id': 'aaaa',
+            'total': 2,
+        }
+        serializer = PostPatchSerializer(data=input_data)
+        # バリデーションの結果を検証
+        self.assertEqual(serializer.is_valid(), False)
+        self.assertCountEqual(serializer.errors.keys(), ['id'])
+        self.assertCountEqual(
+            [x.code for x in serializer.errors['id']],
             ['invalid'],
         )
 
