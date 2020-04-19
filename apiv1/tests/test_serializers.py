@@ -1,9 +1,15 @@
+# import base64
+# from io import BytesIO
+# from PIL import Image
+# from django.db import models
 import uuid
 from django.test import TestCase
 from apiv1.models import Option
 from apiv1.serializers import (
+    # MypageSerializer,
     OptionSerializer,
-    PostCreateSerializer
+    PostCreateSerializer,
+    PostPatchSerializer,
 )
 from django.contrib.auth import get_user_model
 
@@ -127,7 +133,7 @@ class TestOptionSerializer(TestCase):
         self.assertDictEqual(serializer.data, expected_data)
 
 
-# (正常系)1methods,(異常系)6methods,(合計)7methods.
+# (正常系)1method,(異常系)6methods,(合計)7methods.
 class TestPostCreateSerializer(TestCase):
     """PostCreateSerializerのテストクラス"""
 
@@ -397,3 +403,87 @@ class TestPostCreateSerializer(TestCase):
             [x.code for x in serializer.errors['non_field_errors']],
             ['invalid'],
         )
+
+
+# (正常系)1method,(異常系)1method,(合計)2method.
+class TestPostPatchSerializer(TestCase):
+    """PostPatchSerializerのテストクラス"""
+
+    def test_input_valid(self):
+        """"PostPatchSerializerの入力(パッチ)データのバリデーション(OK)"""
+
+        # シリアライズ
+        input_data = {
+            'id': uuid.uuid4(),
+            'total': 1,
+        }
+        serializer = PostPatchSerializer(data=input_data)
+        # バリデーションの結果を検証
+        self.assertEqual(serializer.is_valid(), True)
+
+    def test_input_invalid_lesser_0_total(self):
+        """PostPatchSerializerの入力(パッチ)データのバリデーション(NG: totalパラメーターで1未満がリクエストされた時)"""
+
+        # シリアライズ
+        input_data = {
+            'id': uuid.uuid4(),
+            'total': 0,
+        }
+        serializer = PostPatchSerializer(data=input_data)
+        # バリデーションの結果を検証
+        self.assertEqual(serializer.is_valid(), False)
+        self.assertCountEqual(serializer.errors.keys(), ['total'])
+        self.assertCountEqual(
+            [x.code for x in serializer.errors['total']],
+            ['invalid'],
+        )
+
+
+# class TestMypageSrializer(TestCase):
+#     """TestMypageSrializerのテストクラス"""
+
+#     @classmethod
+#     def setUpClass(cls):
+#         super().setUpClass()
+#         cls.user1 = get_user_model().objects.create_user(
+#             email='user1@example.com',
+#             username='user1',
+#             password='secret',
+#             usernonamae='サンプル1',
+#             introduction='サンプルだよ〜！',
+#             sex='0',
+#             blood_type='0',
+#             age=21,
+#             born_at='1998-08-10',
+#         )
+
+#     def test_input_valid(self):
+#         """PostCreateSerializerの入力データのバリデーション(OK)"""
+
+#         FILE_PATH_ICON = 'apiv1/tests/test_images/icon.png'
+#         # FILE_PATH_HOME = 'apiv1/tests/test_images/home.jpg'
+
+#         buffered = BytesIO()
+#         img_icon = open(FILE_PATH_ICON, 'rb')
+#         # img_home = Image.open(FILE_PATH_HOME)
+#         # img_icon.save(buffered, format="PNG")
+#         # img_home.save(buffered, format="JPG")
+#         # request_img_icon = base64.b64encode(buffered.getvalue()).decode("utf-8")
+#         # request_img_home = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+
+#         # _file = open(, 'rb')
+
+#         # 入力データの加工
+#         input_data = {
+#             'user_id': get_user_model().objects.get().username,
+#             'name': '進化サンプル',
+#             'introduction': 'サンプルが進化したよ〜。',
+#             'iconimage': iconimage
+#         }
+#         # シリアライズ
+#         serializer = MypageSerializer(data=input_data)
+#         # バリデーションの結果を検証
+#         serializer.is_valid()
+#         print(serializer.errors)
+#         self.assertEqual(serializer.is_valid(), True)

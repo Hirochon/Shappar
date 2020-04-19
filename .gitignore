@@ -3,6 +3,7 @@ db.sqlite3
 __pycache__/
 .env
 media/
+test_images/
 
 .DS_Store
 node_modules
