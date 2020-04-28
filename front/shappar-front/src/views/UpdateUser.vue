@@ -2,20 +2,15 @@
   <div class="Update" id="Update">
     <GlobalMessage/>
     <router-link class="Update__close" :to="'/mypage/'+ before_user_id + '/'"><font-awesome-icon icon="times"/></router-link>
-    <div class="Update__image" :style="{width: width+'px',height: height+'px'}">
-      <img :src="beforeHomeImage" alt="" id="homeimage">
-      <label class="Update__image__mask" for="home_file"
-        :style="{
-          width: width+'px',height: height+'px',
-          padding: height/2-10 + 'px 0'
-        }"
-        >
+    <div class="Update__image">
+      <img class="Update__image__img" :src="beforeHomeImage" alt="" id="homeimage">
+      <label class="Update__image__mask" for="home_file">
         <font-awesome-icon icon="camera"/>
       </label>
       <input class="Update__file" id="home_file" type="file" name="homeimage" @change="imageSelect(0, $event)">
     </div>
-    <div class="Update__icon" :style="{top: height - 60 + 'px'}">
-      <img :src="beforeIconImage" alt="" id="iconimage">
+    <div class="Update__icon">
+      <img class="Update__icon__img" :src="beforeIconImage" alt="" id="iconimage">
       <label class="Update__icon__mask" for="icon_file"><font-awesome-icon icon="camera"/></label>
       <input class="Update__file" id="icon_file" type="file" name="iconimage" @change="imageSelect(1, $event)">
     </div>
@@ -142,11 +137,6 @@ export default {
       option.length = option.value.length
       option.isValid = (option.length >= min && option.length <= max)
       return option.isValid
-    },
-    resizeTriggers () {
-      var area = document.getElementById('Update')
-      this.width = area.clientWidth
-      this.height = this.width / 2
     }
   },
   computed: {
@@ -156,9 +146,6 @@ export default {
       if (!this.introduction.isValid) return false
       return true
     }
-  },
-  created () {
-    window.addEventListener('resize', this.resizeTriggers)
   },
   mounted () {
     this.before_user_id = store.getters['auth/username']
@@ -177,12 +164,6 @@ export default {
         this.introduction.isValid = this.Validate(this.introduction, 0, 150)
         this.isLoading = false
       })
-    var area = document.getElementById('Update')
-    this.width = area.clientWidth
-    this.height = this.width / 2
-  },
-  destroyed () {
-    window.removeEventListener('resize', this.resizeTriggers)
   }
 }
 </script>
@@ -216,10 +197,12 @@ export default {
   &__image{
     position: relative;
     width: 100%;
+    max-width: 700px;
+    height: 50vw;
     margin-bottom: 48px;
     background: #eee;
     overflow: hidden;
-    img{
+    &__img{
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -229,7 +212,9 @@ export default {
       top: 0;
       left: 0;
       width: 100%;
-      padding-top: calc(50% - 10px);
+      max-width: 700px;
+      height: 50vw;
+      padding: calc(25vw - 10px) 0;
       margin: 0;
       background: rgba(0,0,0,0.5);
       color: white;
@@ -247,11 +232,12 @@ export default {
     height: 100px;
     border-radius: 50%;
     position: absolute;
+    top: calc(50vw - 60px);
     left: calc(50% - 50px);
     background: white;
     overflow: hidden;
     border: solid 3px white;
-    img{
+    &__img{
       width: 100%;
       height: 100%;
       object-fit: cover;
