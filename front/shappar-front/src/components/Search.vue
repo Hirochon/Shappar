@@ -1,19 +1,19 @@
 <template>
   <div class="Search">
-    <div class="Search__switch" @click="$emit('drawerOpen')">
-      <img :src="this.$store.state.user.iconimage" alt="">
+    <div class="Search__drawer-switch disp" @click="$emit('drawerOpen')">
+      <img class="Search__drawer-switch__img" :src="user.iconimage" alt="">
     </div>
-    <div class="Search__switch none">
-      <img :src="this.$store.state.user.iconimage" alt="">
+    <div class="Search__drawer-switch none">
+      <img :src="user.iconimage" alt="">
     </div>
-    <div class="Search__rank" v-if="$store.state.user.isRanking">投票数ランキング</div>
-    <form action="" class="Search__form" @submit.prevent="getPost" v-else>
+    <div class="Search__rank" v-if="user.isRanking">投票数ランキング</div>
+    <form class="Search__form" @submit.prevent="getPost()" v-else>
       <label for="text-box" class="Search__label">検索</label>
       <input type="text" id="text-box" class="Search__input" v-model="childQuery">
-      <div class="Search__submit"><font-awesome-icon icon="search" @click="getPost"/></div>
+      <div class="Search__submit" @click="getPost()"><font-awesome-icon icon="search"/></div>
     </form>
-    <div class="Search__button" :class="{active: $store.state.user.isRanking}">
-      <font-awesome-icon icon="crown" @click="changeRanking()"/>
+    <div class="Search__button" :class="{active: user.isRanking}" @click="changeRanking()">
+      <font-awesome-icon icon="crown"/>
       <!-- <font-awesome-icon icon="crown" @click="isMenuOpen = !isMenuOpen"/> -->
       <!-- <div class="Search__menu" :class="{on: isMenuOpen}">
         <div class="Search__menu__item"><router-link to="/settings">設定</router-link></div>
@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Search',
   components: {
@@ -36,8 +38,6 @@ export default {
   data () {
     return {
       childQuery: '',
-      user_id: '',
-      user: {},
       isMenuOpen: false
     }
   },
@@ -60,8 +60,15 @@ export default {
       // this.$store.dispatch('message/setInfoMessage', { message: 'ランキングモード' })
     }
   },
-  created () {
-    // this.user =
+  computed: {
+    // 1:storeのuserModule, 2:このコンポーネント内で使えるcomputed, 3:userModuleのgetters
+    ...mapGetters('user', {
+      'user': 'getUser'
+    })
+    // 以下の方法でも取って来れるよな stateとgettersって何の差があるのか？
+    // user () {
+    //   return this.$store.state.user
+    // }
   }
 }
 </script>
@@ -85,7 +92,7 @@ export default {
   box-shadow: 0 0 8px rgba(black, 0.16);
   background: rgba(255,255,255,1);
   z-index: 100;
-  &__switch{
+  &__drawer-switch{
     display: block;
     width: 32px;
     height: 32px;

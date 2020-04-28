@@ -29,7 +29,7 @@ api.interceptors.request.use(function (config) {
 
 // 共通エラー処理
 api.interceptors.response.use(function (response) {
-  return response
+  return Promise.resolve(response)
 }, function (error) {
   // console.log('error.response=', error.response)
   const status = error.response ? error.response.status : 500

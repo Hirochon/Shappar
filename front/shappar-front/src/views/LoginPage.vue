@@ -17,6 +17,7 @@
         <div class="Login__form__group">
           <label class="Login__form__title" :class="{active: isActive === 0}">ユーザーID</label>
           <input class="Login__input" type="text" v-model="form.username" required
+          id="username"
           :class="{active: isActive === 0}"
           @focus="isActive = 0"
           @blur="isActive = -1"/>
@@ -24,6 +25,7 @@
         <div class="Login__form__group">
           <label class="Login__form__title" :class="{active: isActive === 1}">パスワード</label>
           <input class="Login__input" type="password" v-model="form.password" required
+          id="password"
           :class="{active: isActive === 1}"
           @focus="isActive = 1"
           @blur="isActive = -1"/>
@@ -45,6 +47,7 @@
 
 <script>
 import GlobalMessage from '@/components/GlobalMessage.vue'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     GlobalMessage
@@ -70,20 +73,27 @@ export default {
         username: username,
         password: password
       })
+        .catch(error => {
+          if (process.env.NODE_ENV !== 'production') console.log(error)
+        })
         .then(() => {
           // console.log('Login succeeded.')
           this.$store.dispatch('message/setInfoMessage', { message: 'ログインしました。' })
-          this.$store.dispatch('user/load', { user_id: this.$store.getters['auth/username'] })
-          // クエリ文字列に「next」がなければ、ホーム画面へ
-          const next = this.$route.query.next || '/'
-          this.$router.replace(next)
-        })
-        .catch(error => {
-          // console.log(error.response.data)
-          this.error = error
+          this.$store.dispatch('user/load', { user_id: this.username })
+            .catch(error => {
+              if (process.env.NODE_ENV !== 'production') console.log(error)
+            })
         })
         .then(() => {
           this.isLoading = false
+          // クエリ文字列に「next」がなければ、ホーム画面へ
+          const next = this.$route.query.next || '/'
+          this.$router.push(next)
+            .catch(error => {
+              // navigationが失敗するとエラーを吐くことを知った
+              // test環境はどうしようか迷ったが今の所除外
+              if (process.env.NODE_ENV === 'development') console.log(error)
+            })
         })
     },
     toSignUp () {
@@ -91,6 +101,11 @@ export default {
       const path = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://shappar.site'
       window.location.href = path + '/accounts/signup/'
     }
+  },
+  computed: {
+    ...mapGetters('auth', {
+      'username': 'username'
+    })
   }
 }
 </script>
