@@ -57,8 +57,9 @@
 </template>
 
 <script>
-import store from '../store'
+// import store from '../store' // ここで呼び出していたらテストでこっち使われるのでglobalな方使う
 import GlobalMessage from '@/components/GlobalMessage.vue'
+import { mapGetters } from 'vuex'
 
 import api from '@/services/api'
 export default {
@@ -72,7 +73,6 @@ export default {
       isLoading: false,
       width: 0,
       height: 0,
-      before_user_id: '',
       user_id: {
         value: '',
         length: 0,
@@ -126,10 +126,10 @@ export default {
       if (this.homeimage) params.append('homeimage', this.homeimage)
       api.patch('/api/v1/users/' + this.before_user_id + '/', params)
         .then(async (response) => {
-          store.dispatch('message/setInfoMessage', { message: '更新完了' })
-          await store.dispatch('auth/reload')// ここで一度更新してないとユーザーIDを変更した際にエラーが出る
-          await store.dispatch('user/load', { user_id: store.getters['auth/username'] })
-          this.$router.replace('/mypage/' + store.getters['auth/username'])
+          this.$store.dispatch('message/setInfoMessage', { message: '更新完了' })
+          await this.$store.dispatch('auth/reload')// ここで一度更新してないとユーザーIDを変更した際にエラーが出る
+          await this.$store.dispatch('user/load', { user_id: this.$store.getters['auth/username'] })
+          this.$router.replace('/mypage/' + this.$store.getters['auth/username'])
           this.isLoading = false
         })
     },
@@ -145,14 +145,17 @@ export default {
       if (!this.name.isValid) return false
       if (!this.introduction.isValid) return false
       return true
-    }
+    },
+    ...mapGetters('auth', {
+      'before_user_id': 'username'
+    })
   },
   mounted () {
-    this.before_user_id = store.getters['auth/username']
     this.user_id.value = this.before_user_id
     this.isLoading = true
-    store.dispatch('user/load', { user_id: store.getters['auth/username'] })
+    this.$store.dispatch('user/load', { user_id: this.before_user_id })
       .then((resUser) => {
+        // console.log(resUser)
         this.name.value = resUser.name
         this.introduction.value = resUser.introduction
         this.beforeHomeImage = resUser.homeimage
