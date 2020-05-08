@@ -29,6 +29,8 @@ def change_created_at(post):
     return created_at
 
 
+# (総数)41methods.
+
 # (正常系)2methods,(異常系)4methods,(合計)6methods.
 class TestMypageAPIView(APITestCase):
     """MypageAPIViewのテストクラス"""
@@ -662,7 +664,7 @@ class TestPostCreateAPIView(APITestCase):
         self.assertJSONEqual(response.content, expected_json_dict)
 
 
-# (正常系)4methods,(異常系)2methods,(合計)6methods.
+# (正常系)5methods,(異常系)2methods,(合計)7methods.
 class TestPostListCreatedAPIView(APITestCase):
     """PostListCreatedAPIViewのテストクラス"""
 
