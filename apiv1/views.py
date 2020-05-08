@@ -86,13 +86,6 @@ class MypagePostedListAPIView(views.APIView):
 
         if user_id == user.id:
             for datas in serializer.data:
-                # if not datas['voted']:
-                #     datas['selected_num'] = -1
-                #     for data in datas['options']:
-                #         del data['id']
-                #         del data['share_id']
-                #         data['votes'] = -1
-                # else:
                 for data in datas['options']:
                     flag = Poll.objects.filter(user_id=user_id, option_id=data['id'])
                     if len(flag) > 0:

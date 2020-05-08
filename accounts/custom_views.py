@@ -5,11 +5,10 @@ from django.http import Http404
 from django.views.generic.base import TemplateResponseMixin, View
 from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from .forms import CreateUserForm
 from config.create import CreateUser
 from django.contrib.auth import logout
-from rest_framework.permissions import IsAdminUser
 
 from allauth.account import app_settings
 from allauth.account.adapter import get_adapter
