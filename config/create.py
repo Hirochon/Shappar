@@ -36,5 +36,6 @@ class CreateUser():
                 blood_type=str(i % 5),
                 age=age,
                 born_at=date(2020 - age, randint(1, 12), randint(1, 30)).isoformat(),
+                introduction='じこしょうかいだよん@' + str(i) + '号',
             )
         return "Success!!"
