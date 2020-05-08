@@ -9,7 +9,8 @@ from .serializers import (
     MypageSerializer,
     PostPatchSerializer,
     PostCreateSerializer,
-    PostListSerializer,
+    PostMainListSerializer,
+    PostPostedListSerializer,
     PollSerializer,
     OptionSerializer,
     PostDetailSerializer,
@@ -72,34 +73,35 @@ class MypagePostedListAPIView(views.APIView):
             return Response({'detail': '存在しないユーザーIDです'}, status.HTTP_404_NOT_FOUND)
         user_id = user_pk[0].id
 
+        # リクエストユーザーの定義
+        user = request.user
+
         # pkの投稿をフィルタリング
         if 'pid' in request.GET:
             post_basis = Post.objects.get(id=request.GET['pid'])
             querysets = Post.objects.filter(user_id=user_id, created_at__lt=post_basis.created_at).order_by('-created_at')[:10]
         else:
             querysets = Post.objects.filter(user_id=user_id).order_by('-created_at')[:10]
-        serializer = PostListSerializer(instance=querysets, many=True, pk=user_id)
+        serializer = PostPostedListSerializer(instance=querysets, many=True, pk=user.id)
 
-        # リクエストユーザーの定義
-        user = request.user
         if user_id == user.id:
             for datas in serializer.data:
-                if not datas['voted']:
-                    datas['selected_num'] = -1
-                    for data in datas['options']:
-                        del data['id']
-                        del data['share_id']
-                        data['votes'] = -1
-                else:
-                    for data in datas['options']:
-                        flag = Poll.objects.filter(user_id=user_id, option_id=data['id'])
-                        if len(flag) > 0:
-                            datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
-                        else:
-                            if 'selected_num' not in datas:
-                                datas['selected_num'] = -1
-                        del data['id']
-                        del data['share_id']
+                # if not datas['voted']:
+                #     datas['selected_num'] = -1
+                #     for data in datas['options']:
+                #         del data['id']
+                #         del data['share_id']
+                #         data['votes'] = -1
+                # else:
+                for data in datas['options']:
+                    flag = Poll.objects.filter(user_id=user_id, option_id=data['id'])
+                    if len(flag) > 0:
+                        datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
+                    else:
+                        if 'selected_num' not in datas:
+                            datas['selected_num'] = -1
+                    del data['id']
+                    del data['share_id']
         else:
             for datas in serializer.data:
                 poll = Poll.objects.filter(post_id=datas['post_id'], user_id=user.id)
@@ -142,7 +144,7 @@ class MypageVotedListAPIView(views.APIView):
         else:
             querysets = Post.objects.filter(poll_post__user__id=user_id).order_by('-created_at')[:10]
 
-        serializer = PostListSerializer(instance=querysets, many=True, pk=user_id)
+        serializer = PostMainListSerializer(instance=querysets, many=True, pk=user_id)
 
         for datas in serializer.data:
             if not datas['voted']:
@@ -218,7 +220,7 @@ class PostListRankAPIView(views.APIView):
         
         queryset = Post.objects.all().order_by('-total')[:5]
         unique_id = request.user.id
-        serializer = PostListSerializer(instance=queryset, many=True, pk=unique_id)
+        serializer = PostMainListSerializer(instance=queryset, many=True, pk=unique_id)
 
         i = 0
         flag_data = serializer.data[0]['total']
@@ -277,7 +279,7 @@ class PostListCreatedAPIView(views.APIView):
             queryset = Post.objects.all().order_by('-created_at')[:10]
 
         unique_id = request.user.id
-        serializer = PostListSerializer(instance=queryset, many=True, pk=unique_id)
+        serializer = PostMainListSerializer(instance=queryset, many=True, pk=unique_id)
 
         for datas in serializer.data:
             if not datas['voted']:
@@ -416,7 +418,7 @@ class PostUpdateAPIView(views.APIView):
             return Response_post_notfound()
 
         user = request.user
-        serializer = PostListSerializer(instance=queryset[0], pk=user.id)
+        serializer = PostMainListSerializer(instance=queryset[0], pk=user.id)
 
         seri_data = serializer.data
 
