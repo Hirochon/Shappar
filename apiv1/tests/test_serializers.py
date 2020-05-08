@@ -25,6 +25,8 @@ def change_required(self, serializer, field):
     )
 
 
+# (総数)14methods.
+
 # (正常系)2methods,(異常系)3methods,(合計)5methods.
 class TestOptionSerializer(TestCase):
     """OptionSerializerのテストクラス"""

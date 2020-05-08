@@ -18,8 +18,12 @@ from allauth.account.utils import perform_login, url_str_to_user_pk
 
 class CreateUserView(View):
     """ユーザー自動作成機能"""
-    
+
     def get(self, request, num=1, *args, **kwargs):
+        if not request.user.is_staff:
+            params = {'message': 'アクセスの権限がありません。'}
+            return render(request, 'errors/403.html', params)
+
         users = get_user_model().objects.all().order_by('-created_at')
         count = get_user_model().objects.count()
         if count < 10:
@@ -32,6 +36,25 @@ class CreateUserView(View):
         return render(request, 'account/create_user.html', params)
 
     def post(self, request, *args, **kwargs):
+        # 権限チェック
+        if not request.user.is_superuser:
+            users = get_user_model().objects.all().order_by('-created_at')
+            count = get_user_model().objects.count()
+            if count < 10:
+                page = Paginator(users, count)
+            page = Paginator(users, 10)
+            params = {
+                'users': page.get_page(1),
+                'form': CreateUserForm(),
+                'message': 'Error: 権限がありません'
+            }
+            return render(request, 'account/create_user.html', params)
+
+        num1 = request.POST['num1']
+        num2 = request.POST['num2']
+        createuser = CreateUser(num1, num2)
+        message = createuser.create()
+        
         users = get_user_model().objects.all().order_by('-created_at')
         count = get_user_model().objects.count()
         if count < 10:
@@ -39,19 +62,10 @@ class CreateUserView(View):
         page = Paginator(users, 10)
         params = {
             'users': page.get_page(1),
-            'form': CreateUserForm()
+            'form': CreateUserForm(),
+            'message': message
         }
         
-        # 権限チェック
-        if not request.user.is_superuser:
-            params['message'] = 'Error: 権限がありません'
-            return render(request, 'account/create_user.html', params)
-
-        num1 = request.POST['num1']
-        num2 = request.POST['num2']
-        createuser = CreateUser(num1, num2)
-        message = createuser.create()
-        params['message'] = message
         return render(request, 'account/create_user.html', params)
 
 

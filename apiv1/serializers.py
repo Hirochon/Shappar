@@ -79,8 +79,36 @@ class PostPatchSerializer(serializers.ModelSerializer):
         return value
 
 
-class PostListSerializer(serializers.ModelSerializer):
-    """投稿一覧取得シリアライザ"""
+class PostMainListSerializer(serializers.ModelSerializer):
+    """メイン投稿一覧取得シリアライザ"""
+
+    def __init__(self, pk, instance):
+        super().__init__(instance)
+        self.pk = pk
+
+    post_id = serializers.ReadOnlyField(source='id')
+    user_id = serializers.ReadOnlyField(source='user.username')
+    iconimage = serializers.ImageField(source='user.iconimage')
+    created_at = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S.%fZ')
+
+    voted = serializers.SerializerMethodField()
+    options = OptionListSerializer()
+
+    class Meta:
+        model = Post
+        fields = ['post_id', 'user_id', 'iconimage', 'question', 'voted', 'total', 'options', 'created_at']
+
+    def get_voted(self, instance):
+        if Poll.objects.filter(user_id=self.pk, post_id=instance.id):
+            return True
+        if Post.objects.filter(user_id=self.pk, id=instance.id):
+            return True
+        else:
+            return False
+
+
+class PostPostedListSerializer(serializers.ModelSerializer):
+    """メイン投稿一覧取得シリアライザ"""
 
     def __init__(self, pk, instance):
         super().__init__(instance)
