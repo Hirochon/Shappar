@@ -12,6 +12,6 @@ urlpatterns = [
     path('api/v1/', include('apiv1.urls')),
     re_path(r'^mypage/.*', TemplateView.as_view(template_name='index.html'), name='index'),
     re_path(r'^settings/.*', TemplateView.as_view(template_name='index.html'), name='index'),
-    re_path(r'^login/.*', TemplateView.as_view(template_name='index.html'), name='index'),
+    re_path(r'^login/.*', TemplateView.as_view(template_name='index.html'), name='login'),
     re_path(r'^home/.*', TemplateView.as_view(template_name='index.html'), name='index')
 ]
