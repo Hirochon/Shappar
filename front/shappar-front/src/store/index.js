@@ -40,6 +40,7 @@ const authModule = {
         'username': payload.username,
         'password': payload.password
       })
+        .catch(error => { console.log(error) })
         .then(response => {
           // 認証用トークンをlocalStorageに保存
           localStorage.setItem('access', response.data.access)
@@ -62,6 +63,7 @@ const authModule = {
      */
     reload (context) {
       return api.get('/api/v1/auth/users/me/')
+        .catch(error => { console.log(error) })
         .then(response => {
           // console.log(response)
           // alert('auth/reload')
@@ -146,6 +148,7 @@ const messageModule = {
      */
     clearMessages (context) {
       // console.log('in clearMessages')
+      // ここでsetTimeoutしても良かったけど、各メッセージごとに変化する可能性を考えて
       context.commit('clear')
     }
   }
@@ -168,7 +171,17 @@ const userModule = {
     introduction: state => state.introduction,
     iconimage: state => state.iconimage,
     homeimage: state => state.homeimage,
-    isRanking: state => state.isRanking
+    isRanking: state => state.isRanking,
+    getUser: state => {
+      return {
+        user_id: state.user_id,
+        name: state.name,
+        introduction: state.introduction,
+        iconimage: state.iconimage,
+        homeimage: state.homeimage,
+        isRanking: state.isRanking
+      }
+    }
   },
   mutations: {
     set (state, payload) {
@@ -177,7 +190,7 @@ const userModule = {
       state.introduction = payload.user.introduction
       state.iconimage = payload.user.iconimage
       state.homeimage = payload.user.homeimage
-      state.isRanking = payload.user.isRanking
+      state.isRanking = false
     },
     clear (state) {
       state.user_id = ''
@@ -191,6 +204,7 @@ const userModule = {
   actions: {
     load (context, payload) {
       return api.get('/api/v1/users/' + payload.user_id + '/')
+        .catch(error => { console.log(error) })
         .then(response => {
           // console.log(response.data)
           // alert('user/load : ' + payload.user_id)

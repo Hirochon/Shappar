@@ -70,6 +70,9 @@
     },
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"
-    }
+    },
+    "setupFiles": [
+      "<rootDir>/__mocks__/localstorageMock.js"
+    ]
   }
 }

@@ -2,7 +2,7 @@
   <div class="PostList" id="PostList">
     <div class="Post" v-for="(post, index) in posts" :key="post.post_id" :id="post.post_id" :class="{first: post.rank === 0, second: post.rank === 1, third: post.rank === 2, rank: post.rank < 5}">
       <router-link class="Post__icon" :to="'/mypage/'+ post.user_id + '/'">
-        <img :src="post.iconimage" :alt="post.user_id+'_icon'">
+        <img class="Post__icon__img" :src="post.iconimage" :alt="post.user_id+'_icon'">
       </router-link>
       <div class="Post__top">
         <div class="Post__total" v-if="post.rank != null"
@@ -14,7 +14,7 @@
         </div>
         <div class="Post__total" v-else>Total：{{post.total}}</div>
         <div class="Post__buttons" v-show="post.voted">
-          <div class="Post__sort" v-if="post.user_id === $store.state.auth.username" @click="deletePost(post, index)"><font-awesome-icon icon="trash-alt"/></div>
+          <div class="Post__delete" v-if="post.user_id === username" @click="deletePost(post, index)"><font-awesome-icon icon="trash-alt"/></div>
           <div class="Post__sort" v-if="post.voted" @click="optionsSort(post, post.options)">
             <font-awesome-icon icon="list-ol" v-show="post.sort === 0"/>
             <font-awesome-icon icon="sort-amount-up" v-show="post.sort === 1"/>
@@ -37,13 +37,13 @@
           <!-- <div class="Post__option__border" v-show="post.selected_num === option.select_num"></div> -->
           <div class="Post__result__bar" :style="{width: rate(option.votes, post.total) + '%'}" :class="{selected: post.selected_num === option.select_num}"></div>
           <div class="Post__result__data" v-show="post.view === 1">
-            <div class="Post__result__num" :class="{isMine: post.user_id === $store.state.auth.username}">
+            <div class="Post__result__num" :class="{isMine: post.user_id === username}">
               <div>{{option.votes}}</div>
               <div v-show="post.total">{{Math.floor(rate(option.votes, post.total)) + '%'}}</div>
             </div>
             <div class="Post__result__check" v-if="post.selected_num === option.select_num"><font-awesome-icon icon="check"/></div>
           </div>
-          <div class="Post__option__answer" v-show="post.view === 0" :class="{voted: post.selected_num === option.select_num, isMine: post.user_id === $store.state.auth.username}">
+          <div class="Post__option__answer" v-show="post.view === 0" :class="{voted: post.selected_num === option.select_num, isMine: post.user_id === username}">
             <div>{{option.answer}}</div>
             <div class="Post__result__check" v-if="post.selected_num === option.select_num"><font-awesome-icon icon="check"/></div>
           </div>
@@ -65,6 +65,8 @@
 <script>
 import PostDetails from '@/views/PostDetails'
 import api from '@/services/api'
+// import store from '@/store'
+import { mapGetters } from 'vuex'
 export default {
   name: 'PostList',
   components: {
@@ -147,7 +149,7 @@ export default {
     deletePost (post, index) {
       if (!confirm('この投稿を削除しますか？')) return
       // 送信前にも確認
-      if (this.$store.state.auth.username !== post.user_id) return
+      if (this.username !== post.user_id) return
       // apiにリクエスト
       api.delete('/api/v1/posts/' + post.post_id + '/')
         .then((response) => {
@@ -193,6 +195,11 @@ export default {
       this.detailsPostId = id
       this.isDetailsOpen = !this.isDetailsOpen
     }
+  },
+  computed: {
+    ...mapGetters('user', {
+      'username': 'name'
+    })
   }
 }
 </script>
@@ -237,7 +244,7 @@ $option-height: 32px;
     position: absolute;
     top: -24px;
     left: calc(50% - 28px);
-    img{
+    &__img{
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -294,6 +301,24 @@ $option-height: 32px;
     transition: .3s ease-in-out;
     :not(:last-child){
       margin-right: 6px;
+    }
+  }
+  &__delete{
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    padding: 6px;
+    background: #fff;
+    border-bottom: 0.5px solid #ccc;
+    transition: .3s ease-in-out;
+    svg{
+      display: block;
+      font-size: 20px;
+      margin: 0 auto;
+    }
+    &:hover{
+      border-bottom: solid 0.5px $color-main;
+      color: $color-main;
     }
   }
   &__sort{

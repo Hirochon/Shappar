@@ -1,18 +1,17 @@
 <template>
   <div class="MyPage" id="MyPage">
     <GlobalMessage/>
-    <h1 class="Mypage__h1">{{user.user_id}} | Mypage</h1>
     <div class="Mypage__main">
       <div class="Mypage__to-public">
         <router-link to="/public"><font-awesome-icon icon="arrow-alt-circle-left"/></router-link>
       </div>
-      <div class="Mypage__image" :style="{width: width+'px',height: height+'px'}">
-        <img :src="user.homeimage" alt="">
+      <div class="Mypage__image">
+        <img class="Mypage__image__img" :src="user.homeimage" alt="">
       </div>
       <!-- <div class="Mypage__logout" @click="logout">ログアウト</div> -->
       <div class="Mypage__container">
         <div class="Mypage__icon">
-          <img :src="user.iconimage" alt="">
+          <img class="Mypage__icon__img" :src="user.iconimage" alt="">
         </div>
         <div class="Mypage__settings">
           <router-link to="/settings" v-if="this.my_id === this.traget_id"><font-awesome-icon icon="edit"/></router-link>
@@ -33,11 +32,11 @@
       </div>
       <div class="PostSwitch__bar" :class="{other: my_id !== traget_id}" :style="{transform:tabBar}"></div>
     </div>
-    <div class="Container" v-show="isActive === 0">
-      <PostList :posts="posted" :isLoading="isLoading" :unique_id="unique_id" @reload="loadPosts()"></PostList>
+    <div class="Container Posted" v-show="isActive === 0" :class="{'active': isActive === 0}">
+      <PostList :posts="posted" :isLoading="isLoading" @reload="loadPosts()"></PostList>
     </div>
-    <div class="Container" v-show="isActive === 1">
-      <PostList :posts="voted" :isLoading="isLoading" :unique_id="unique_id" @reload="loadPosts()"></PostList>
+    <div class="Container Voted" v-show="isActive === 1" :class="{'active': isActive === 1}">
+      <PostList :posts="voted" :isLoading="isLoading" @reload="loadPosts()"></PostList>
     </div>
     <div class="Mypage__loading" v-if="isLoading">
       <font-awesome-icon icon="spinner" class="Public__loading__icon"/>
@@ -52,6 +51,7 @@ import PostList from '@/components/PostList.vue'
 
 import api from '@/services/api'
 import store from '@/store'
+import { mapGetters } from 'vuex'
 export default {
   name: 'MyPage',
   components: {
@@ -60,13 +60,9 @@ export default {
   },
   data: function () {
     return {
-      width: 0,
-      height: 0,
-      unique_id: '',
-      my_id: '',
-      traget_id: '',
       isActive: 0,
       isLoading: true,
+      traget_id: '',
       user: {},
       postedTargetId: '',
       postedTargetHeight: -1,
@@ -78,7 +74,7 @@ export default {
   },
   watch: {
     '$route' (to, from) {
-      // ルートの変更の検知...
+      // ルートの変更の検知...他の人のマイページへ移る時
       // console.log('route')
       this.initComponent()
       // console.log('after init')
@@ -91,8 +87,8 @@ export default {
     logout () {
       var result = window.confirm('ログアウトしてよろしいですか？')
       if (result) {
-        this.$store.dispatch('auth/logout')
-        this.$store.dispatch('message/setInfoMessage', { message: 'ログアウトしました' })
+        store.dispatch('auth/logout')
+        store.dispatch('message/setInfoMessage', { message: 'ログアウトしました' })
         this.$router.replace('/login')
       }
     },
@@ -105,10 +101,8 @@ export default {
           return a.select_num < b.select_num ? -1 : 1
         })
       })
-      // targetList = posts
       if (targetList) this.posted = posts
       else this.voted = posts
-      // this.posts = posts
     },
     async loadPostedMore () {
       if (this.scrollTop() < this.postedTargetHeight) return
@@ -164,26 +158,27 @@ export default {
       if (this.isActive === 0) this.loadPostedMore()
       else this.loadVotedMore()
     },
-    resizeTriggers () {
-      var area = document.getElementById('MyPage')
-      this.width = area.clientWidth
-      this.height = this.width / 2
-    },
     scrollTop () {
       return document.documentElement.scrollTop > 0 ? document.documentElement.scrollTop : document.body.scrollTop
     },
-    loadPosts () {
+    async loadPosts () {
       this.posted = []
       this.voted = []
       this.isLoading = true
-      api.get('/api/v1/users/' + this.traget_id + '/posted/')
+      await api.get('/api/v1/users/' + this.traget_id + '/posted/')
+        .catch(error => {
+          if (process.env.NODE_ENV !== 'production') console.log(error)
+        })
         .then(async (response) => {
           var posts = response.data.posts
           await this.initPosts(true, posts)
           await (this.postedTargetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
           if (this.postedTargetId) this.postedTargetHeight = document.getElementById(this.postedTargetId).offsetTop - window.innerHeight // 次の高さを計測
         })
-      api.get('/api/v1/users/' + this.traget_id + '/voted/')
+      await api.get('/api/v1/users/' + this.traget_id + '/voted/')
+        .catch(error => {
+          if (process.env.NODE_ENV !== 'production') console.log(error)
+        })
         .then(async (response) => {
           if (response.status === 200) {
             var posts = response.data.posts
@@ -192,19 +187,21 @@ export default {
             if (this.votedTargetId) this.votedTargetHeight = document.getElementById(this.votedTargetId).offsetTop - window.innerHeight // 次の高さを計測
           }
         })
-        .then(() => {
-          this.isLoading = false
-        })
+      this.isLoading = false
     },
-    initComponent () {
-      this.unique_id = this.$store.state.auth.unique_id
-      this.my_id = this.$store.state.auth.username
-      this.traget_id = this.$route.params.user_id
+    async initComponent () {
+      // this.traget_id = this.$route.params.user_id
+      this.traget_id = process.env.NODE_ENV === 'test'
+        ? 'sample1'
+        : this.$route.params.user_id
       this.isLoading = true
       this.isActive = 0
       this.posted = []
       this.voted = []
-      api.get('/api/v1/users/' + this.traget_id + '/')
+      await api.get('/api/v1/users/' + this.traget_id + '/')
+        .catch(error => {
+          if (process.env.NODE_ENV !== 'production') console.log(error)
+        })
         .then((response) => {
           this.user = response.data
         })
@@ -214,25 +211,21 @@ export default {
       this.loadPosts()
       this.isLoading = false
       window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
-      window.addEventListener('resize', this.resizeTriggers)
     }
   },
   computed: {
     tabBar () {
       return 'translateX(' + (100 * this.isActive) + '%)'
-    }
+    },
+    ...mapGetters('user', {
+      'my_id': 'user_id'
+    })
   },
   created () {
     this.initComponent()
   },
   destroyed () {
     window.removeEventListener('scroll', this.scrollTriggers)
-    window.removeEventListener('resize', this.resizeTriggers)
-  },
-  mounted () {
-    var area = document.getElementById('MyPage')
-    this.width = area.clientWidth
-    this.height = this.width / 2
   }
 }
 </script>
@@ -276,13 +269,13 @@ export default {
   &__image{
     width: 100%;
     max-width: 700px;
-    height: 200px;
+    height: 50vw;
     background: #eee;
     overflow: hidden;
     @include media(700) {
       height: 350px;
     }
-    img{
+    &__img{
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -303,7 +296,7 @@ export default {
     background: white;
     overflow: hidden;
     border: solid 3px white;
-    img{
+    &__img{
       width: 100%;
       height: 100%;
       object-fit: cover;

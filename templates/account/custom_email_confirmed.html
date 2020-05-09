@@ -1,0 +1,15 @@
+{% extends "account/base.html" %}
+
+{% load account %}
+
+{% block title %}やっはろー{% endblock %}
+
+
+{% block content %}
+<div class="Signup__container">
+    <p class="Signup__email-confirm">
+        {{username}}様のメールアドレスは確認されました。
+    </p>
+    <p>登録したIDとパスワードにて<a href="{% url 'index' %}">コチラでログイン</a>をお願いいたします。</p>
+</div>
+{% endblock %}

@@ -7,8 +7,8 @@
       <div class="New__container" v-if="isOpen" @touchmove.stop.prevent>
         <div class="Top">
           <h2 class="Top__header">
-            <div class="Top__close">
-              <font-awesome-icon icon="times" @click.stop="closeNew()"/>
+            <div class="Top__close" @click.stop="closeNew()">
+              <font-awesome-icon icon="times"/>
             </div>
             <div class="Top__data">
               <div class="Top__data__question" :class="{hasError:!question.isValid}">{{question.length}}/150</div>
@@ -25,7 +25,10 @@
         </div>
         <draggable v-model="options" handle=".New__option__handle" @touchmove.prevent.stop>
           <transition-group name="option" @touchmove.stop>
-            <div class="New__option__container" v-for="(option, index) in options" :key="option.id" @touchmove.stop.prevent>
+            <div class="New__option__container"
+              v-for="(option, index) in options" :key="option.id"
+              @touchmove.stop.prevent
+              >
               <div class="New__option__wrapper" :id="'option_'+option.id" @touchmove.stop.prevent>
                 <div class="New__option__data">
                   <div class="New__option__controll">
@@ -42,7 +45,12 @@
                 </div>
                 <div class="New__option__handle"><font-awesome-icon icon="bars"/></div>
               </div>
-              <div class="New__delete__behind" :class="{on:deleteConfig.trigger}" @touchmove.stop.prevent><font-awesome-icon icon="trash-alt"/></div>
+              <div class="New__delete__behind"
+                :class="{on:deleteConfig.trigger}"
+                @touchmove.stop.prevent
+                >
+                <font-awesome-icon icon="trash-alt"/>
+              </div>
             </div>
           </transition-group>
         </draggable>
@@ -77,8 +85,6 @@ export default {
   },
   data: function () {
     return {
-      unique_id: '',
-      user_id: '',
       question: {},
       count: 2,
       options: [],
@@ -185,7 +191,6 @@ export default {
     },
     openNew () {
       this.$emit('switchNew')
-      this.initPost()
       var post = JSON.parse(localStorage.getItem('post'))
       if (post === null) return
       if (confirm('下書きがあります。使用しますか？')) {
@@ -193,15 +198,16 @@ export default {
         this.options = post.options
       } else {
         localStorage.removeItem('post')
+        this.initPost()
       }
     },
     closeNew () {
       this.$emit('switchNew')
       if (this.isEmpty()) {
-        this.options = [
-          { id: 0, answer: '', length: 0, isValid: true },
-          { id: 1, answer: '', length: 0, isValid: true }
-        ]
+        // this.options = [
+        //   { id: 0, answer: '', length: 0, isValid: true },
+        //   { id: 1, answer: '', length: 0, isValid: true }
+        // ]
         return localStorage.removeItem('post')
       }
       if (confirm('下書きを保存しますか？')) {
@@ -259,9 +265,8 @@ export default {
     }
   },
   created () {
+    // Publicができる時（※開いたときではない）
     this.initPost()
-    this.unique_id = this.$store.state.auth.unique_id
-    this.user_id = this.$store.state.auth.username
     this.question.isValid = this.questionValidate()
     this.options.forEach(item => {
       item.isValid = this.answerValidate(item)

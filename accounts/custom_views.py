@@ -1,13 +1,75 @@
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import Http404
-from django.shortcuts import redirect
+# from django.shortcuts import redirect
 from django.views.generic.base import TemplateResponseMixin, View
+from django.core.paginator import Paginator
+from django.contrib.auth import get_user_model
+from django.shortcuts import render
+from .forms import CreateUserForm
+from config.create import CreateUser
+from django.contrib.auth import logout
 
 from allauth.account import app_settings
 from allauth.account.adapter import get_adapter
 from allauth.account.models import EmailConfirmation, EmailConfirmationHMAC
 from allauth.account.utils import perform_login, url_str_to_user_pk
+
+
+class CreateUserView(View):
+    """ユーザー自動作成機能"""
+
+    def get(self, request, num=1, *args, **kwargs):
+        if not request.user.is_staff:
+            params = {'message': 'アクセスの権限がありません。'}
+            return render(request, 'errors/403.html', params)
+
+        users = get_user_model().objects.all().order_by('-created_at')
+        count = get_user_model().objects.count()
+        if count < 10:
+            page = Paginator(users, count)
+        page = Paginator(users, 10)
+        params = {
+            'users': page.get_page(num),
+            'form': CreateUserForm()
+        }
+        return render(request, 'account/create_user.html', params)
+
+    def post(self, request, *args, **kwargs):
+        # 権限チェック
+        if not request.user.is_superuser:
+            users = get_user_model().objects.all().order_by('-created_at')
+            count = get_user_model().objects.count()
+            if count < 10:
+                page = Paginator(users, count)
+            page = Paginator(users, 10)
+            params = {
+                'users': page.get_page(1),
+                'form': CreateUserForm(),
+                'message': 'Error: 権限がありません'
+            }
+            return render(request, 'account/create_user.html', params)
+
+        num1 = request.POST['num1']
+        num2 = request.POST['num2']
+        createuser = CreateUser(num1, num2)
+        message = createuser.create()
+        
+        users = get_user_model().objects.all().order_by('-created_at')
+        count = get_user_model().objects.count()
+        if count < 10:
+            page = Paginator(users, count)
+        page = Paginator(users, 10)
+        params = {
+            'users': page.get_page(1),
+            'form': CreateUserForm(),
+            'message': message
+        }
+        
+        return render(request, 'account/create_user.html', params)
+
+
+create_user = CreateUserView.as_view()
 
 
 class ConfirmEmailView(TemplateResponseMixin, View):
@@ -24,7 +86,7 @@ class ConfirmEmailView(TemplateResponseMixin, View):
         ctx = self.get_context_data()
         return self.render_to_response(ctx)
 
-    def post(self, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         self.object = confirmation = self.get_object()
         confirmation.confirm(self.request)
         get_adapter(self.request).add_message(
@@ -46,7 +108,10 @@ class ConfirmEmailView(TemplateResponseMixin, View):
         # if not redirect_url:
         #     ctx = self.get_context_data()
         #     return self.render_to_response(ctx)
-        return redirect(to='/')
+        param = {'username': request.user.usernonamae}
+        if request.user.is_authenticated:
+            logout(request)
+        return render(request, 'account/custom_email_confirmed.html', param)
 
     def login_on_confirm(self, confirmation):
         """

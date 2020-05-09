@@ -3,7 +3,7 @@
 // createLocalVue と shallowMount でないとだめみたい、ちゃんと確かめていないのでテストを書いていきながら学ぶ
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import Component from '@/App.vue'
-import Router from '../src/router'
+import Router from '@/router'
 
 const localVue = createLocalVue()
 localVue.use(Router)
