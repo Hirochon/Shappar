@@ -37,8 +37,10 @@
           </div>
         </div>
       </form>
-      <div class="Login__submit test" @click="submitLogin()">テストユーザーでログイン</div>
     </main>
+    <div class="Login__signup" @click="submitLogin()">
+      テストユーザーでログイン
+    </div>
     <div class="Login__signup" @click="toSignUp()">
       アカウントを作成
     </div>
@@ -117,7 +119,7 @@ export default {
   width: 100%;
   height: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
   flex-wrap: wrap;
   &__container{
