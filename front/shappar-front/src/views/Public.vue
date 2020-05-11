@@ -59,6 +59,7 @@ export default {
   methods: {
     async loadMore () {
       // console.log(this.targetHeight + ' : ' + this.scrollTop())
+      if (this.$store.state.user.isRanking) return
       if (this.scrollTop() < this.targetHeight) return
       if (this.targetHeight < 0) return
       await (this.targetHeight = -1)// 読み込み中のスクロールで発火するのを避けるためにlockをかける
