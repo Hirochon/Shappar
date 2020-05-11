@@ -205,6 +205,9 @@ export default {
     margin-bottom: 48px;
     background: #eee;
     overflow: hidden;
+    @include media(700) {
+      height: 350px;
+    }
     &__img{
       width: 100%;
       height: 100%;
@@ -221,6 +224,10 @@ export default {
       margin: 0;
       background: rgba(0,0,0,0.5);
       color: white;
+      @include media(700) {
+        height: 350px;
+        padding: 165px 0;
+      }
       cursor: pointer;
       svg{
         display: block;
@@ -240,6 +247,9 @@ export default {
     background: white;
     overflow: hidden;
     border: solid 3px white;
+    @include media(700) {
+      top: 290px;
+    }
     &__img{
       width: 100%;
       height: 100%;
