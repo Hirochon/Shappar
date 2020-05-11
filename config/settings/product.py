@@ -14,6 +14,7 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
+ADMIN_URL = env('ADMIN_URL')
 
 # Application definition
 
