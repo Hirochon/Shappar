@@ -87,6 +87,7 @@ router.beforeEach((to, from, next) => {
   // console.log(to)
   // console.log('to.path=', to.path)
   // console.log('isLoggedIn=', isLoggedIn)
+  // console.log('token=' + token)
 
   // ログインが必要な画面に遷移しようとした場合
   if (to.matched.some(record => record.meta.requiresAuth)) {
@@ -125,7 +126,8 @@ router.beforeEach((to, from, next) => {
   } else {
     // ログインが不要な画面であればそのまま次へ
     // console.log('Go to path page.')
-    next()
+    if (token != null) forceToRootPage(to, from, next)
+    else next()
   }
 })
 
@@ -138,6 +140,12 @@ function forceToLoginPage (to, from, next) {
     path: '/login',
     // 遷移先のURLはクエリ文字列として付加
     query: { next: to.fullPath }
+  })
+}
+
+function forceToRootPage (to, from, next) {
+  next({
+    path: '/'
   })
 }
 
