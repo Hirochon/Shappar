@@ -67,6 +67,13 @@
         <div class="Home__card__detail">投票者の情報を集めて</div>
         <div class="Home__card__detail">結果をグラフで表示</div>
       </div>
+      <div class="Home__phone-img">
+        <img src="https://d3ms402csqm2a0.cloudfront.net/static/img/images/home_005.jpg" alt="">
+      </div>
+      <div class="Home__card">
+        <div class="Home__card__title">ランキング機能</div>
+        <div class="Home__card__detail">いま話題の投稿を確認できる</div>
+      </div>
     </div>
     <div class="Home__button bottom" @click="toSignUp()">
       さっそく始めてみる
