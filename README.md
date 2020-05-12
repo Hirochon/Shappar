@@ -73,7 +73,7 @@
 ### フロントエンド
 - Vue.js
 - Vue CLI
-- Storybook(準備中)
+- Storybook
 - Sass(scss)
 - HTML/CSS
 ### バックエンド
