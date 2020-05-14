@@ -137,7 +137,7 @@ router.beforeEach((to, from, next) => {
 function forceToLoginPage (to, from, next) {
   // console.log('Force user to login page.')
   next({
-    path: '/login',
+    path: '/home',
     // 遷移先のURLはクエリ文字列として付加
     query: { next: to.fullPath }
   })
