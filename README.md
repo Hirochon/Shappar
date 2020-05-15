@@ -1,4 +1,6 @@
 # Shappar(しゃぱー)
+## URL
+https://shappar.site
 ## 概要
 ### 気軽に**投票**を【**取れる**】【**見れる**】【**できる**】アプリです。
 **《操作が分かりやすい》**
@@ -85,7 +87,7 @@
 ![Shappar Diagram](https://user-images.githubusercontent.com/50178851/77857026-3880ff80-7236-11ea-937c-ca12f681582d.png)
 
 - AWS
-  - **ECS** / ECR / ALB / EC2 / VPC / RDS(PostgreSQL) / S3 / CroudFront / Route53 / ACM
+  - **ECS** / ECR / ALB / EC2 / VPC / RDS(PostgreSQL) / S3 / CroudFront / Route53 / ACM / SES / CroudWatch
     - ECSのデプロイメントタイプでローリングアップデートを採用することでアップデートした際も稼働し続けられる
     - PostgreSQL: 11.5
 - Docker
