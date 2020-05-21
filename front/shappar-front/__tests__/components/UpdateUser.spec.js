@@ -81,20 +81,20 @@ describe('UpdateUser.vue', () => {
     expect(wrapper.find('.Update__num.hasError').exists()).toBe(true)
     expect(wrapper.find('.Update__submit.hasError').exists()).toBe(true)
   })
-  it('user_id の表示', () => {
-    expect(wrapper.find('#user_id').element.value).toBe(userId)
-  })
-  it('user_id のエラー', async () => {
-    let text = 'a'.repeat(19)
-    let input = wrapper.find('#user_id')
-    let userid = wrapper.vm.$data.user_id
-    expect(userid.isValid).toBe(true)
-    input.element.value = text
-    await (input.trigger('input'))
-    expect(userid.isValid).toBe(false)
-    expect(wrapper.find('.Update__num.hasError').exists()).toBe(true)
-    expect(wrapper.find('.Update__submit.hasError').exists()).toBe(true)
-  })
+  // it('user_id の表示', () => {
+  //   expect(wrapper.find('#user_id').element.value).toBe(userId)
+  // })
+  // it('user_id のエラー', async () => {
+  //   let text = 'a'.repeat(19)
+  //   let input = wrapper.find('#user_id')
+  //   let userid = wrapper.vm.$data.user_id
+  //   expect(userid.isValid).toBe(true)
+  //   input.element.value = text
+  //   await (input.trigger('input'))
+  //   expect(userid.isValid).toBe(false)
+  //   expect(wrapper.find('.Update__num.hasError').exists()).toBe(true)
+  //   expect(wrapper.find('.Update__submit.hasError').exists()).toBe(true)
+  // })
   it('introduction の表示', () => {
     expect(wrapper.find('.Update__introduction').element.value).toBe(userData.introduction)
   })

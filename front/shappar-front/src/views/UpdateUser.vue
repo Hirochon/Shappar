@@ -25,17 +25,6 @@
         @focus="isActive = 0"
         @blur="isActive = -1">
     </div>
-    <div class="Upadate__container">
-      <label class="Update__title" for="user_id" :class="{active: isActive === 1}">
-        ユーザーID
-        <span class="Update__num" :class="{hasError:!user_id.isValid}">{{user_id.length}}/18</span>
-      </label>
-      <input class="Update__input" id="user_id" v-model="user_id.value" type="text" placeholder="ユーザーID"
-        :class="{active: isActive === 1}"
-        @input="Validate(user_id,1,18)"
-        @focus="isActive = 1"
-        @blur="isActive = -1">
-    </div>
     <div class="Update__container">
       <label class="Update__title" for="introduction" :class="{active: isActive === 2}">
         紹介文
@@ -73,11 +62,11 @@ export default {
       isLoading: false,
       width: 0,
       height: 0,
-      user_id: {
-        value: '',
-        length: 0,
-        isValid: false
-      },
+      // user_id: {
+      //   value: '',
+      //   length: 0,
+      //   isValid: false
+      // },
       name: {
         value: '',
         length: 0,
@@ -119,7 +108,7 @@ export default {
       if (this.isLoading) return
       this.isLoading = true
       if (!this.allValidate) return
-      if (this.user_id.value) params.append('user_id', this.user_id.value)
+      // if (this.user_id.value) params.append('user_id', this.user_id.value)
       if (this.name.value) params.append('name', this.name.value)
       params.append('introduction', this.introduction.value)
       if (this.iconimage) params.append('iconimage', this.iconimage)
@@ -134,6 +123,7 @@ export default {
         })
     },
     Validate (option, min, max) {
+      // console.log(option.value)
       option.length = option.value.length
       option.isValid = (option.length >= min && option.length <= max)
       return option.isValid
@@ -141,7 +131,7 @@ export default {
   },
   computed: {
     allValidate () {
-      if (!this.user_id.isValid) return false
+      // if (!this.user_id.isValid) return false
       if (!this.name.isValid) return false
       if (!this.introduction.isValid) return false
       return true
@@ -151,7 +141,7 @@ export default {
     })
   },
   mounted () {
-    this.user_id.value = this.before_user_id
+    // this.user_id.value = this.before_user_id
     this.isLoading = true
     this.$store.dispatch('user/load', { user_id: this.before_user_id })
       .then((resUser) => {
@@ -163,7 +153,7 @@ export default {
       })
       .then(() => {
         this.name.isValid = this.Validate(this.name, 1, 18)
-        this.user_id.isValid = this.Validate(this.user_id, 1, 18)
+        // this.user_id.isValid = this.Validate(this.user_id, 1, 18)
         this.introduction.isValid = this.Validate(this.introduction, 0, 150)
         this.isLoading = false
       })
