@@ -38,7 +38,7 @@
         </div>
       </form>
     </main>
-    <div class="Login__signup" @click="submitLogin()">
+    <div class="Login__test" @click="submitLogin()">
       テストユーザーでログイン
     </div>
     <div class="Login__signup" @click="toSignUp()">
@@ -247,7 +247,7 @@ export default {
   &__rotate{
     animation: rotation 1s linear infinite;
   }
-  &__signup{
+  &__signup,&__test{
     margin: 8px 0;
     color: $color-sub;
     &:hover{

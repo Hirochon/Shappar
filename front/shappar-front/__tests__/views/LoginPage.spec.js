@@ -85,7 +85,7 @@ describe('LoginPage.vue', () => {
     }, 100)
   })
   it('テストユーザーボタン押下時のフロー', (done) => {
-    wrapper.find('.Login__submit.test').trigger('click')
+    wrapper.find('.Login__test').trigger('click')
     setTimeout(() => {
       expect(count).toBe(3)
       done()
