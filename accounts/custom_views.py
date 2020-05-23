@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from .forms import CreateUserForm
 from config.create import CreateUser
-from django.contrib.auth import logout
+# from django.contrib.auth import logout
 
 from allauth.account import app_settings
 from allauth.account.adapter import get_adapter
