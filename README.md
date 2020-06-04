@@ -98,7 +98,7 @@ https://shappar.site
 ![Shappar Diagram](https://user-images.githubusercontent.com/50178851/77857026-3880ff80-7236-11ea-937c-ca12f681582d.png)
 
 - AWS
-  - **ECS** / ECR / ALB / EC2 / VPC / RDS(PostgreSQL) / S3 / CroudFront / Route53 / ACM / SES / CroudWatch
+  - **ECS** / ECR / ALB / EC2 / VPC / RDS(PostgreSQL) / S3 / CroudFront / Route53 / ACM / SES / CloudWatch
     - ECSのデプロイメントタイプでローリングアップデートを採用することでアップデートした際も稼働し続けられる
     - PostgreSQL: 11.5
 - Docker
