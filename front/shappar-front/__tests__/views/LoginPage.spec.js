@@ -31,7 +31,8 @@ describe('LoginPage.vue', () => {
     auth = {
       namespaced: true,
       getters: {
-        username: () => 'username'
+        username: () => 'username',
+        isLoggedIn: () => true
       },
       actions: {
         // login: () => new Promise((resolve, reject) => {

@@ -75,16 +75,18 @@ export default {
         username: username,
         password: password
       })
+        .then((res) => {
+          if (this.isLoggedIn) {
+            console.log('Login succeeded.')
+            this.$store.dispatch('message/setInfoMessage', { message: 'ログインしました。' })
+            this.$store.dispatch('user/load', { user_id: this.username })
+              .catch(error => {
+                if (process.env.NODE_ENV !== 'production') console.log(error)
+              })
+          }
+        })
         .catch(error => {
           if (process.env.NODE_ENV !== 'production') console.log(error)
-        })
-        .then(() => {
-          // console.log('Login succeeded.')
-          this.$store.dispatch('message/setInfoMessage', { message: 'ログインしました。' })
-          this.$store.dispatch('user/load', { user_id: this.username })
-            .catch(error => {
-              if (process.env.NODE_ENV !== 'production') console.log(error)
-            })
         })
         .then(() => {
           this.isLoading = false
@@ -106,7 +108,8 @@ export default {
   },
   computed: {
     ...mapGetters('auth', {
-      'username': 'username'
+      'username': 'username',
+      'isLoggedIn': 'isLoggedIn'
     })
   }
 }

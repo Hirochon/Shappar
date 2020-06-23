@@ -66,9 +66,6 @@ export default {
   methods: {
     getPostData () {
       api.get('/api/v1/posts/' + this.post_id + '/')
-        .catch(error => {
-          if (process.env.NODE_ENV !== 'production') console.log(error)
-        })
         .then((response) => {
           let data = response.data
           this.total = data.total
@@ -126,6 +123,9 @@ export default {
             if (a.num > b.num) return -1
             return 0
           })
+        })
+        .catch(error => {
+          if (process.env.NODE_ENV !== 'production') console.log(error)
         })
     },
     closeDetails () {

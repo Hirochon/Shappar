@@ -83,6 +83,13 @@ export default {
   methods: {
     changeActive (num) {
       this.isActive = num
+      if (this.votedTargetId && num === 1) {
+        this.$nextTick(() => {
+          this.votedTargetHeight = document.getElementById(this.votedTargetId).offsetTop - window.innerHeight // 次の高さを計測
+          // console.log(document.getElementById(this.votedTargetId).offsetTop)
+          // console.log(this.votedTargetHeight)
+        })
+      }
     },
     logout () {
       var result = window.confirm('ログアウトしてよろしいですか？')
@@ -166,26 +173,27 @@ export default {
       this.voted = []
       this.isLoading = true
       await api.get('/api/v1/users/' + this.traget_id + '/posted/')
-        .catch(error => {
-          if (process.env.NODE_ENV !== 'production') console.log(error)
-        })
         .then(async (response) => {
           var posts = response.data.posts
           await this.initPosts(true, posts)
           await (this.postedTargetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
           if (this.postedTargetId) this.postedTargetHeight = document.getElementById(this.postedTargetId).offsetTop - window.innerHeight // 次の高さを計測
         })
-      await api.get('/api/v1/users/' + this.traget_id + '/voted/')
         .catch(error => {
           if (process.env.NODE_ENV !== 'production') console.log(error)
         })
+      await api.get('/api/v1/users/' + this.traget_id + '/voted/')
         .then(async (response) => {
           if (response.status === 200) {
             var posts = response.data.posts
             await this.initPosts(false, response.data.posts)
             await (this.votedTargetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
+            // tab切り替え前は表示されていないので取得できない
             if (this.votedTargetId) this.votedTargetHeight = document.getElementById(this.votedTargetId).offsetTop - window.innerHeight // 次の高さを計測
           }
+        })
+        .catch(error => {
+          if (process.env.NODE_ENV !== 'production') console.log(error)
         })
       this.isLoading = false
     },
@@ -199,11 +207,11 @@ export default {
       this.posted = []
       this.voted = []
       await api.get('/api/v1/users/' + this.traget_id + '/')
-        .catch(error => {
-          if (process.env.NODE_ENV !== 'production') console.log(error)
-        })
         .then((response) => {
           this.user = response.data
+        })
+        .catch(error => {
+          if (process.env.NODE_ENV !== 'production') console.log(error)
         })
       // 自分の情報を再取得 #229 に理由 => ページ増えたら管理大変になるし、routerでやってもいいかな？
       if (this.my_id === this.traget_id) store.dispatch('user/load', { user_id: store.getters['auth/username'] })
