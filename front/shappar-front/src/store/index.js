@@ -40,7 +40,6 @@ const authModule = {
         'username': payload.username,
         'password': payload.password
       })
-        .catch(error => { console.log(error) })
         .then(response => {
           // 認証用トークンをlocalStorageに保存
           localStorage.setItem('access', response.data.access)
@@ -48,6 +47,7 @@ const authModule = {
           return context.dispatch('reload')
             .then(user => user)
         })
+        .catch(error => { console.log(error) })
     },
     /**
      * ログアウト
@@ -63,7 +63,6 @@ const authModule = {
      */
     reload (context) {
       return api.get('/api/v1/auth/users/me/')
-        .catch(error => { console.log(error) })
         .then(response => {
           // console.log(response)
           // alert('auth/reload')
@@ -72,6 +71,7 @@ const authModule = {
           context.commit('set', { user: user })
           return user
         })
+        .catch(error => { console.log(error) })
     }
   }
 }
