@@ -83,6 +83,13 @@ export default {
   methods: {
     changeActive (num) {
       this.isActive = num
+      if (this.votedTargetId && num === 1) {
+        this.$nextTick(() => {
+          this.votedTargetHeight = document.getElementById(this.votedTargetId).offsetTop - window.innerHeight // 次の高さを計測
+          // console.log(document.getElementById(this.votedTargetId).offsetTop)
+          // console.log(this.votedTargetHeight)
+        })
+      }
     },
     logout () {
       var result = window.confirm('ログアウトしてよろしいですか？')
@@ -181,6 +188,7 @@ export default {
             var posts = response.data.posts
             await this.initPosts(false, response.data.posts)
             await (this.votedTargetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
+            // tab切り替え前は表示されていないので取得できない
             if (this.votedTargetId) this.votedTargetHeight = document.getElementById(this.votedTargetId).offsetTop - window.innerHeight // 次の高さを計測
           }
         })
