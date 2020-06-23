@@ -7,7 +7,7 @@ from .models import CustomUser
 class CustomUserAdmin(UserAdmin):
     """管理画面の表示する項目を設定"""
 
-    list_display = ('id', 'usernonamae', 'username', 'email', 'age', 'sex', 'blood_type', 'is_staff')
+    list_display = ('id', 'usernonamae', 'username', 'email', 'age', 'sex', 'blood_type', 'date_joined')
 
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
