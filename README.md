@@ -1,8 +1,10 @@
 # Shappar(しゃぱー)
 ## URL
-https://shappar.site
+**料金がかかるため現在は稼働しておりません。**
 
+## イメージ図
 ![Screenshot from 2020-05-23 17-29-29](https://user-images.githubusercontent.com/50178851/82725865-01513b00-9d1b-11ea-896b-a093b0a534da.png)
+
 ## 概要
 ### 気軽に**投票**を【**取れる**】【**見れる**】【**できる**】アプリです。
 **《操作が分かりやすい》**
