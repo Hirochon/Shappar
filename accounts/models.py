@@ -18,7 +18,7 @@ class CustomUser(AbstractUser):
 
     class Meta(AbstractUser.Meta):
         db_table = 'user'
-    
+
     id = models.UUIDField(verbose_name='ユーザID', primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(verbose_name='メールアドレス', unique=True)
     username = models.CharField(verbose_name='ユーザID', unique=True, max_length=18)
