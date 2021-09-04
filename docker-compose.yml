@@ -1,8 +1,8 @@
-version: "3"
-services: 
+version: "3.8"
+services:
     shappar-back:
         build: "./"
-        ports: 
+        ports:
             - "8000:8000"
         volumes:
             - "./:/code/"                                       # プロジェクトのルートディレクトリからマウントを取る
@@ -12,11 +12,11 @@ services:
             bash -c "python3 manage.py makemigrations --settings=config.settings.local &&
             python3 manage.py migrate --settings=config.settings.local &&
             python3 manage.py runserver 0.0.0.0:8000 --settings=config.settings.local"
-        depends_on: 
+        depends_on:
             - db                                                # 2. docker-compose up時にdbから立ち上げる
 
     db:                                                         # docker-compose up時に1.と2.からdb→back→nginxの順に立ち上げる
-        image: postgres:12.1
+        image: postgres:13.4
         environment:
             - POSTGRES_USER
             - POSTGRES_PASSWORD
@@ -29,9 +29,9 @@ services:
         ports:
             - "80:80"
         volumes:
-            - "./static/:/opt/apps/static/"                     # nginxコンテナにてホストのstaticからコンテナへマウント
+            # - "./static/:/opt/apps/static/"                     # nginxコンテナにてホストのstaticからコンテナへマウント
             - "staticdata:/opt/apps/static/"                    # volumesを用いたnginxとのコンテナ間のリソース共有
-        depends_on: 
+        depends_on:
             - shappar-back                                      # 1. docker-compose up時にbackから立ち上げる
 
 volumes:

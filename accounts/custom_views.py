@@ -54,7 +54,7 @@ class CreateUserView(View):
         num2 = request.POST['num2']
         createuser = CreateUser(num1, num2)
         message = createuser.create()
-        
+
         users = get_user_model().objects.all().order_by('-created_at')
         count = get_user_model().objects.count()
         if count < 10:
@@ -65,7 +65,7 @@ class CreateUserView(View):
             'form': CreateUserForm(),
             'message': message
         }
-        
+
         return render(request, 'account/create_user.html', params)
 
 
@@ -139,12 +139,14 @@ class ConfirmEmailView(TemplateResponseMixin, View):
             user_pk = url_str_to_user_pk(user_pk_str)
         user = confirmation.email_address.user
         if user_pk == user.pk and self.request.user.is_anonymous:
-            return perform_login(self.request,
-                                 user,
-                                 app_settings.EmailVerificationMethod.NONE,
-                                 # passed as callable, as this method
-                                 # depends on the authenticated state
-                                 redirect_url=self.get_redirect_url)
+            return perform_login(
+                self.request,
+                user,
+                app_settings.EmailVerificationMethod.NONE,
+                # passed as callable, as this method
+                # depends on the authenticated state
+                redirect_url=self.get_redirect_url
+                )
 
         return None
 
