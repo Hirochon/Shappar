@@ -182,7 +182,7 @@ AWS_DEFAULT_ACL = None
 # STATIC_ROOT = 'https://%s/static/' % AWS_S3_CUSTOM_DOMAIN                     # AWSで動かすよう
 # STATIC_URL = 'https://%s/static/' % AWS_S3_CUSTOM_DOMAIN                      # AWSで動かすよう
 # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'              # AWSで動かすよう
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_URL = '/static/'               # ローカル環境
 STATIC_ROOT = '/opt/static/'          # ローカル環境
 
