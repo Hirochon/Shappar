@@ -7,7 +7,7 @@ test_images/
 
 .DS_Store
 node_modules
-/dist
+/front/static
 
 # local env files
 .env.local
