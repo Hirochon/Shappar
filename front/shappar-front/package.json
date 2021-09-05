@@ -33,6 +33,7 @@
     "@storybook/addon-links": ">=5.3.0",
     "@storybook/addon-notes": ">=5.3.0",
     "@storybook/vue": ">=5.3.0",
+    "@vue/cli": "^4.5.13",
     "@vue/cli-plugin-babel": "^4.1.0",
     "@vue/cli-plugin-eslint": "^4.1.0",
     "@vue/cli-plugin-pwa": "^4.2.3",
