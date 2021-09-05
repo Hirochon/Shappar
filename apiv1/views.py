@@ -216,34 +216,35 @@ class PostListRankAPIView(views.APIView):
         serializer = PostMainListSerializer(instance=queryset, many=True, pk=unique_id)
 
         i = 0
-        flag_data = serializer.data[0]['total']
-        for datas in serializer.data:
-            if not datas['voted']:
-                datas['selected_num'] = -1
-                for data in datas['options']:
-                    del data['id']
-                    del data['share_id']
-                    data['votes'] = -1
-            else:
-                for data in datas['options']:
-                    flag = Poll.objects.filter(user_id=unique_id, option_id=data['id'])
-                    if len(flag) > 0:
-                        datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
-                    else:
-                        if 'selected_num' not in datas:
-                            datas['selected_num'] = -1
-                    del data['id']
-                    del data['share_id']
-            if flag_data == datas['total']:
-                datas['rank'] = i
-            else:
-                i += 1
-                flag_data = datas['total']
-                datas['rank'] = i
-        seri_datas = serializer.data
-
         response = {}
-        response["posts"] = seri_datas
+        if len(serializer.data) > 0:
+            flag_data = serializer.data[0]['total']
+            for datas in serializer.data:
+                if not datas['voted']:
+                    datas['selected_num'] = -1
+                    for data in datas['options']:
+                        del data['id']
+                        del data['share_id']
+                        data['votes'] = -1
+                else:
+                    for data in datas['options']:
+                        flag = Poll.objects.filter(user_id=unique_id, option_id=data['id'])
+                        if len(flag) > 0:
+                            datas['selected_num'] = Option.objects.get(id=flag[0].option_id).select_num
+                        else:
+                            if 'selected_num' not in datas:
+                                datas['selected_num'] = -1
+                        del data['id']
+                        del data['share_id']
+                if flag_data == datas['total']:
+                    datas['rank'] = i
+                else:
+                    i += 1
+                    flag_data = datas['total']
+                    datas['rank'] = i
+            seri_datas = serializer.data
+            response["posts"] = seri_datas
+        
         return Response(response, status.HTTP_200_OK)
 
 
