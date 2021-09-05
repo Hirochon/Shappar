@@ -167,8 +167,8 @@ ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
 # Amazon Web Services #
 #######################
 
-AWS_ACCESS_KEY_ID = env('ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = env('SECRET_ACCESS_KEY')
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
 
 # Amazon SES settings
 
@@ -180,8 +180,8 @@ DEFAULT_FROM_EMAIL = SERVER_EMAIL = env('DEFAULT_FROM_EMAIL')
 # AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % STORAGE_BUCKET_NAME        # CloudFront無しの場合
 # STATIC_URL = 'https://%s/%s/' % (S3_CUSTOM_DOMAIN, AWS_LOCATION)          # CloudFront無しの場合
 
-AWS_STORAGE_BUCKET_NAME = env('STORAGE_BUCKET_NAME')
-AWS_S3_CUSTOM_DOMAIN = env('S3_CUSTOM_DOMAIN')
+AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_CUSTOM_DOMAIN = env('AWS_S3_CUSTOM_DOMAIN')
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
