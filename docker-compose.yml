@@ -18,8 +18,8 @@ services:
     db:                                                         # docker-compose up時に1.と2.からdb→back→nginxの順に立ち上げる
         image: postgres:13.4
         environment:
-            - POSTGRES_USER
-            - POSTGRES_PASSWORD
+            - POSTGRES_USER=admin
+            - POSTGRES_PASSWORD=password
         ports:
             - "5432:5432"
         volumes:
