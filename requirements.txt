@@ -7,7 +7,7 @@ django-allauth==0.45.0
 django-ses==2.2.1
 django-storages==1.11.1
 django-cleanup==5.2.0
-pillow==8.3.2
+pillow==9.0.0
 djangorestframework==3.12.4
 djangorestframework-simplejwt==4.8.0
 djoser==2.1.0
