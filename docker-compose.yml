@@ -35,7 +35,7 @@ services:
             - shappar-back                                      # 1. docker-compose up時にbackから立ち上げる
 
     shappar-front:
-        build: "./front/shappar-front"
+        build: "./front"
         ports: 
             - "8080:8080"
         volumes:
