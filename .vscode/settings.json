@@ -1,0 +1,15 @@
+{
+    "editor.formatOnSave": false,
+    "liveSassCompile.settings.formats": [ //Sassの出力内容の設定
+        {
+            "format": "compressed", //nested、compact、compressedのどれかを選ぶ
+            "extensionName": ".css", //style.cssとして出力
+            "savePath": "./root_page/css" //cssフォルダの中にstyle.cssを出力
+        }
+    ],
+    "liveSassCompile.settings.excludeList": [ //対象外とするフォルダを指定
+        "**/node_modules/**",
+        ".vscode/**",
+        "./front/**"
+    ]
+}
