@@ -85,7 +85,7 @@ export default {
   },
   methods: {
     imageSelect (icon, e) {
-      var file = e.target.files[0]
+      const file = e.target.files[0]
       const reader = new FileReader()
       if (icon) {
         this.iconimage = e.target.files[0]
@@ -104,7 +104,7 @@ export default {
       }
     },
     updateUser () {
-      var params = new FormData()
+      const params = new FormData()
       if (this.isLoading) return
       this.isLoading = true
       if (!this.allValidate) return
@@ -137,7 +137,7 @@ export default {
       return true
     },
     ...mapGetters('auth', {
-      'before_user_id': 'username'
+      before_user_id: 'username'
     })
   },
   mounted () {

@@ -47,7 +47,7 @@ export default {
       this.$emit('search')
     },
     logout () {
-      var result = window.confirm('ログアウトしてよろしいですか？')
+      const result = window.confirm('ログアウトしてよろしいですか？')
       if (result) {
         this.$store.dispatch('auth/logout')
         this.$store.dispatch('message/setInfoMessage', { message: 'ログアウトしました' })
@@ -63,7 +63,7 @@ export default {
   computed: {
     // 1:storeのuserModule, 2:このコンポーネント内で使えるcomputed, 3:userModuleのgetters
     ...mapGetters('user', {
-      'user': 'getUser'
+      user: 'getUser'
     })
     // 以下の方法でも取って来れるよな stateとgettersって何の差があるのか？
     // user () {

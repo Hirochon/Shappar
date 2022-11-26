@@ -25,7 +25,7 @@ export default {
   created: function () {
     this.axios.get('/api/v1/posts/private')
       .then((response) => {
-        var posts = response.data.posts
+        const posts = response.data.posts
         for (let i = 0; i < posts.length; i++) {
           posts[i].isSelect = 0
           for (let j = 0; j < posts[i].options.length; j++) {

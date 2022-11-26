@@ -25,7 +25,7 @@ export default {
             return ''
           },
           afterBody (tooltipItem, data) {
-            var total = 0
+            let total = 0
             // console.log(data.datasets[0].data)
             // console.log(tooltipItem)
             // console.log(data.datasets[0].data[tooltipItem[0].index])

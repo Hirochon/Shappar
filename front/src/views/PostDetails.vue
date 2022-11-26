@@ -67,9 +67,9 @@ export default {
     getPostData () {
       api.get('/api/v1/posts/' + this.post_id + '/')
         .then((response) => {
-          let data = response.data
+          const data = response.data
           this.total = data.total
-          for (let key in data.voted_sex) {
+          for (const key in data.voted_sex) {
             // console.log(key)
             this.voted_sex.push({
               num: data.voted_sex[key]
@@ -79,7 +79,7 @@ export default {
           this.voted_sex[1].id = '男性'
           this.voted_sex[2].id = 'その他'
           this.voted_sex[3].id = '未回答'
-          for (let key in data.voted_age) {
+          for (const key in data.voted_age) {
             // console.log(key)
             this.voted_age.push({
               id: key[0] * 10 + '代',
@@ -88,14 +88,14 @@ export default {
           }
           this.voted_age[0].id = '10歳未満'
           this.voted_age[6].id += '以降'
-          for (let key in data.voted_month) {
+          for (const key in data.voted_month) {
             // console.log(key)
             this.voted_month.push({
               id: key + '月',
               num: data.voted_month[key]
             })
           }
-          for (let key in data.voted_blood_type) {
+          for (const key in data.voted_blood_type) {
             // console.log(key)
             this.voted_blood_type.push({
               id: key + '型',
@@ -132,14 +132,14 @@ export default {
       this.$emit('switchDetails')
     },
     dataNum (data) {
-      var num = []
+      const num = []
       data.forEach(item => {
         num.push(item.num)
       })
       return num
     },
     dataLabels (data) {
-      var labels = []
+      const labels = []
       data.forEach(item => {
         labels.push(item.id)
       })

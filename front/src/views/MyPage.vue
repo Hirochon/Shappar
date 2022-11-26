@@ -92,7 +92,7 @@ export default {
       }
     },
     logout () {
-      var result = window.confirm('ログアウトしてよろしいですか？')
+      const result = window.confirm('ログアウトしてよろしいですか？')
       if (result) {
         store.dispatch('auth/logout')
         store.dispatch('message/setInfoMessage', { message: 'ログアウトしました' })
@@ -115,11 +115,11 @@ export default {
       if (this.scrollTop() < this.postedTargetHeight) return
       if (this.postedTargetHeight < 0) return
       await (this.postedTargetHeight = -1)// 読み込み中のスクロールで発火するのを避けるためにlockをかける
-      var nextPostId = this.posted[this.posted.length - 1].post_id
+      const nextPostId = this.posted[this.posted.length - 1].post_id
       this.isLoading = true
       await api.get('/api/v1/users/' + this.my_id + '/posted/?pid=' + nextPostId)
         .then((response) => {
-          var posts = response.data.posts
+          const posts = response.data.posts
           posts.forEach(item => {
             item.view = 0
             item.sort = 0
@@ -140,11 +140,11 @@ export default {
       if (this.scrollTop() < this.votedTargetHeight) return
       if (this.votedTargetHeight < 0) return
       await (this.votedTargetHeight = -1)// 読み込み中のスクロールで発火するのを避けるためにlockをかける
-      var nextPostId = this.voted[this.voted.length - 1].post_id
+      const nextPostId = this.voted[this.voted.length - 1].post_id
       this.isLoading = true
       await api.get('/api/v1/users/' + this.my_id + '/voted/?pid=' + nextPostId)
         .then((response) => {
-          var posts = response.data.posts
+          const posts = response.data.posts
           posts.forEach(item => {
             item.view = 0
             item.sort = 0
@@ -174,7 +174,7 @@ export default {
       this.isLoading = true
       await api.get('/api/v1/users/' + this.traget_id + '/posted/')
         .then(async (response) => {
-          var posts = response.data.posts
+          const posts = response.data.posts
           await this.initPosts(true, posts)
           await (this.postedTargetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
           if (this.postedTargetId) this.postedTargetHeight = document.getElementById(this.postedTargetId).offsetTop - window.innerHeight // 次の高さを計測
@@ -185,7 +185,7 @@ export default {
       await api.get('/api/v1/users/' + this.traget_id + '/voted/')
         .then(async (response) => {
           if (response.status === 200) {
-            var posts = response.data.posts
+            const posts = response.data.posts
             await this.initPosts(false, response.data.posts)
             await (this.votedTargetId = posts.length === 10 ? posts[6].post_id : false) // 自動読み込みが可能かどうかを判定（10件ずつ読み込む）
             // tab切り替え前は表示されていないので取得できない
@@ -226,7 +226,7 @@ export default {
       return 'translateX(' + (100 * this.isActive) + '%)'
     },
     ...mapGetters('user', {
-      'my_id': 'user_id'
+      my_id: 'user_id'
     })
   },
   created () {

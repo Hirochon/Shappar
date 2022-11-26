@@ -100,8 +100,8 @@ export default {
       this.Submit(post, post.options)
     },
     Submit (post, options) {
-      var selectsArray = []
-      var j = options.length
+      const selectsArray = []
+      const j = options.length
       for (let i = 0; i < j; i++) {
         if (options[i]) selectsArray[i] = options[i].select_num
       }
@@ -112,7 +112,7 @@ export default {
       })
         .then((response) => {
           post.voted = true
-          var updates = response.data.options.sort((a, b) => {
+          const updates = response.data.options.sort((a, b) => {
             return a.select_num < b.select_num ? -1 : 1
           })
           for (let i = 0; i < j; i++) {
@@ -133,7 +133,7 @@ export default {
       post.view = (post.view + 1) % 2
     },
     async refleshPost (post) {
-      var res
+      let res
       post.isLoading = true
       await api.get('/api/v1/posts/public/' + post.post_id + '/')
         .then((response) => {
@@ -198,7 +198,7 @@ export default {
   },
   computed: {
     ...mapGetters('user', {
-      'username': 'name'
+      username: 'name'
     })
   }
 }

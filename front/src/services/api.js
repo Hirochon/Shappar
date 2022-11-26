@@ -40,7 +40,7 @@ api.interceptors.response.use(function (response) {
     // バリデーションNG
     message = '無効なリクエストです。'
     store.dispatch('message/setErrorMessage', { message: message })
-    let messages = [].concat.apply([], Object.values(error.response.data))
+    const messages = [].concat.apply([], Object.values(error.response.data))
     store.dispatch('message/setWarningMessages', { messages: messages })
   } else if (status === 401) {
     // 認証エラー

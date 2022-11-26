@@ -63,11 +63,11 @@ export default {
       if (this.scrollTop() < this.targetHeight) return
       if (this.targetHeight < 0) return
       await (this.targetHeight = -1)// 読み込み中のスクロールで発火するのを避けるためにlockをかける
-      var nextPostId = this.posts[this.posts.length - 1].post_id
+      const nextPostId = this.posts[this.posts.length - 1].post_id
       this.isLoading = true
       await api.get('/api/v1/posts/public/?pid=' + nextPostId)
         .then((response) => {
-          var posts = response.data.posts
+          const posts = response.data.posts
           posts.forEach(item => {
             item.view = 0
             item.sort = 0
@@ -86,8 +86,8 @@ export default {
     },
     pullToMove () {
       // touchイベントとその他のイベントの統合
-      var e = event.type === 'touchmove' ? event.changedTouches[0] : event
-      var refConf = this.refreshConfig
+      const e = event.type === 'touchmove' ? event.changedTouches[0] : event
+      const refConf = this.refreshConfig
       if (this.scrollTop() > 0 || this.isnewOpen) { // 新規投稿画面使用時に発火しないため
         refConf.isStart = false
         return
@@ -108,7 +108,7 @@ export default {
       }
     },
     async pullToEnd (loaded) {
-      var refConf = this.refreshConfig
+      const refConf = this.refreshConfig
       document.getElementById('PostList').style.transition = '.15s ease-in-out'
       document.getElementById('Pull-to').style.transform = 'translateY(' + 5 * Math.sqrt(refConf.diffY) + 'px)'
       if (!refConf.trigger) {
@@ -158,7 +158,7 @@ export default {
         })
     },
     switchSearch () {
-      var newY = this.scrollTop()
+      const newY = this.scrollTop()
       // 上に行く際は表示・下に行く際は行き始めてから50px超えたら
       if (newY < this.positionY) {
         this.searchShow = true

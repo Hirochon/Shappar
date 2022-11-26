@@ -37,8 +37,8 @@ const authModule = {
     login (context, payload) {
       // alert('auth/login')
       return api.post('/api/v1/auth/jwt/create/', {
-        'username': payload.username,
-        'password': payload.password
+        username: payload.username,
+        password: payload.password
       })
         .then(response => {
           // 認証用トークンをlocalStorageに保存
@@ -115,7 +115,7 @@ const messageModule = {
      */
     setErrorMessage (context, payload) {
       // context.commit('clear')
-      context.commit('set', { 'error': payload.message })
+      context.commit('set', { error: payload.message })
       setTimeout(() => {
         context.dispatch('clearMessages')
         // console.log('in setErrorMessage')
@@ -126,7 +126,7 @@ const messageModule = {
      */
     setWarningMessages (context, payload) {
       // context.commit('clear')
-      context.commit('set', { 'warnings': payload.messages })
+      context.commit('set', { warnings: payload.messages })
       setTimeout(() => {
         context.dispatch('clearMessages')
         // console.log('in setWarningMessages')
@@ -137,7 +137,7 @@ const messageModule = {
      */
     setInfoMessage (context, payload) {
       // context.commit('clear')
-      context.commit('set', { 'info': payload.message })
+      context.commit('set', { info: payload.message })
       setTimeout(() => {
         context.dispatch('clearMessages')
         // console.log('in setInfoMessage')

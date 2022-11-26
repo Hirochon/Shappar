@@ -63,7 +63,7 @@ export default {
     },
     createSamplePosts () {
       for (let i = 0; i < this.postNum; i++) {
-        let random = Math.floor(Math.random(i) * 100) % 8 + 2
+        const random = Math.floor(Math.random(i) * 100) % 8 + 2
         // console.log('random:' + random)
         for (let j = 0; j < random; j++) {
           this.options[j] = {

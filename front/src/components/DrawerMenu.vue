@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     logout () {
-      var result = window.confirm('ログアウトしてよろしいですか？')
+      const result = window.confirm('ログアウトしてよろしいですか？')
       if (result) {
         store.dispatch('auth/logout')
         store.dispatch('user/logout')
@@ -64,7 +64,7 @@ export default {
   computed: {
     // 1:storeのuserModule, 2:このコンポーネント内で使えるcomputed, 3:userModuleのgetters
     ...mapGetters('user', {
-      'user': 'getUser'
+      user: 'getUser'
     })
   }
 }

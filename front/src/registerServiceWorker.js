@@ -3,7 +3,7 @@
 import { register } from 'register-service-worker'
 
 if (process.env.NODE_ENV === 'production') {
-  register(`https://d3ms402csqm2a0.cloudfront.net/static/service-worker.js`, {
+  register('https://d3ms402csqm2a0.cloudfront.net/static/service-worker.js', {
     ready () {
       console.log(
         'App is being served from cache by a service worker.\n' +

@@ -122,7 +122,7 @@ export default {
       }
     },
     delTouchStart (index) {
-      var e = event.type === 'touchstart' ? event.changedTouches[0] : event
+      const e = event.type === 'touchstart' ? event.changedTouches[0] : event
       this.deleteConfig.isStart = true
       this.deleteConfig.trigger = false
       this.deleteConfig.startX = e.clientX
@@ -130,8 +130,8 @@ export default {
     },
     delTouchMove (id) {
       // touchイベントとその他のイベントの統合
-      var e = event.type === 'touchmove' ? event.changedTouches[0] : event
-      var delConf = this.deleteConfig
+      const e = event.type === 'touchmove' ? event.changedTouches[0] : event
+      const delConf = this.deleteConfig
       delConf.diffX = e.clientX - delConf.startX
       delConf.trigger = delConf.diffX < -100 // 左に動いた距離が100pxを常時表示
       if (delConf.diffX < 0) {
@@ -143,7 +143,7 @@ export default {
       }
     },
     delTouchEnd (id) {
-      var delConf = this.deleteConfig
+      const delConf = this.deleteConfig
       if (delConf.trigger) this.deleteOption(delConf.index)
       document.getElementById('option_' + id).style.transition = '.15s ease-in-out'
       document.getElementById('option_' + id).style.transform = null
@@ -156,9 +156,9 @@ export default {
       // 一旦保存
       this.savePost()
       // 送信する情報のみを抽出
-      var serveOptions = []
-      var count = 0
-      for (let item of this.options) {
+      const serveOptions = []
+      let count = 0
+      for (const item of this.options) {
         if (item.answer === '') continue
         item.select_num = count++
         delete item.id
@@ -179,7 +179,7 @@ export default {
         })
     },
     questionValidate () {
-      var question = this.question
+      const question = this.question
       question.length = question.text.length
       question.isValid = question.length <= 150
       return question.isValid
@@ -191,7 +191,7 @@ export default {
     },
     openNew () {
       this.$emit('switchNew')
-      var post = JSON.parse(localStorage.getItem('post'))
+      const post = JSON.parse(localStorage.getItem('post'))
       if (post === null) return
       if (confirm('下書きがあります。使用しますか？')) {
         this.question = post.question
@@ -224,11 +224,11 @@ export default {
       ]
     },
     savePost () {
-      var post = {
+      const post = {
         question: this.question,
         options: this.options
       }
-      var obj = JSON.stringify(post)
+      const obj = JSON.stringify(post)
       localStorage.setItem('post', obj)
     },
     initPost () {
@@ -245,7 +245,7 @@ export default {
     },
     isEmpty () {
       if (this.question.text !== '') return false
-      for (let item of this.options) {
+      for (const item of this.options) {
         if (item.answer !== '') return false
       }
       return true
@@ -253,10 +253,10 @@ export default {
   },
   computed: {
     postValidate () {
-      var count = 0
+      let count = 0
       if (!this.question.isValid) return false
       if (this.question.text === '') return false
-      for (let item of this.options) {
+      for (const item of this.options) {
         if (!this.answerValidate(item)) return false
         if (item.answer !== '' && item.isValid) count++
       }

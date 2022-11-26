@@ -108,8 +108,8 @@ export default {
   },
   computed: {
     ...mapGetters('auth', {
-      'username': 'username',
-      'isLoggedIn': 'isLoggedIn'
+      username: 'username',
+      isLoggedIn: 'isLoggedIn'
     })
   }
 }
