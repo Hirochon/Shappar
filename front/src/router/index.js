@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Public from '@/views/Public.vue'
+import PublicPage from '@/views/PublicPage.vue'
 // import PrivatePage from '@/views/PrivatePage.vue'
 // import NewPage from '@/views/NewPage.vue'
 import MyPage from '@/views/MyPage.vue'
@@ -19,7 +19,7 @@ const routes = [
   },
   {
     path: '/',
-    component: Public,
+    component: PublicPage,
     // metaっていうの作ってあげることで指定できた、正しいかどうかは調査中
     meta: {
       requiresAuth: true

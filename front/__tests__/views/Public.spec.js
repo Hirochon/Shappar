@@ -1,14 +1,14 @@
 /* eslint-disable no-undef */
 
 import { createLocalVue, shallowMount } from '@vue/test-utils'
-import Component from '@/views/Public.vue'
+import Component from '@/views/PublicPage.vue'
 import Vuex from 'vuex'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
 localVue.component('font-awesome-icon', FontAwesomeIcon)
-describe('Public.vue', () => {
+describe('PublicPage.vue', () => {
   let option
   let wrapper
 
@@ -38,8 +38,8 @@ describe('Public.vue', () => {
   // loadingの表示
   it('loading を非表示→表示にする', async () => {
     await (wrapper.vm.$data.isLoading = false)
-    expect(wrapper.find('.Public__loading').exists()).toBe(false)
+    expect(wrapper.find('.PublicPage__loading').exists()).toBe(false)
     await (wrapper.vm.$data.isLoading = true)
-    expect(wrapper.find('.Public__loading').exists()).toBe(true)
+    expect(wrapper.find('.PublicPage__loading').exists()).toBe(true)
   })
 })

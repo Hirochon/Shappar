@@ -95,7 +95,7 @@
     >
       <font-awesome-icon
         icon="spinner"
-        class="Public__loading__icon"
+        class="Mypage__loading__icon"
       />
     </div>
   </div>
@@ -414,8 +414,8 @@ export default {
   }
   &__loading{
     width: 100%;
-    height: 50px;
-    padding: 13px;
+    height: 88px;
+    padding: 32px;
     svg{
       display: block;
       margin: 0 auto;

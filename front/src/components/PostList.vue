@@ -86,7 +86,7 @@
       >
         <font-awesome-icon
           icon="spinner"
-          class="Public__loading__icon"
+          class="Post__loading__icon"
         />
       </div>
       <div class="Post__question">
@@ -465,8 +465,8 @@ $option-height: 32px;
   }
   &__loading{
     width: 100%;
-    height: 50px;
-    padding: 13px;
+    height: 88px;
+    padding: 32px;
     svg{
       display: block;
       margin: 0 auto;

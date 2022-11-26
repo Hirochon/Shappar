@@ -1,6 +1,6 @@
 <template>
   <div
-    class="Public"
+    class="PublicPage"
     @touchmove="pullToMove()"
     @touchend="pullToEnd()"
   >
@@ -25,11 +25,11 @@
     </transition>
     <div
       v-if="isLoading"
-      class="Public__loading"
+      class="PublicPage__loading"
     >
       <font-awesome-icon
         icon="spinner"
-        class="Public__loading__icon"
+        class="PublicPage__loading__icon"
       />
     </div>
     <div
@@ -63,7 +63,7 @@ import DrawerMenu from '@/components/DrawerMenu.vue'
 
 import api from '@/services/api'
 export default {
-  name: 'Public',
+  name: 'PublicPage',
   components: {
     SearchBar,
     PostList,
@@ -241,7 +241,7 @@ export default {
 </script>
 
 <style lang="scss">
-.Public{
+.PublicPage{
   padding-top: 48px;
   height: 100%;
   box-sizing: content-box;
