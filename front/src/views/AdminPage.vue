@@ -63,7 +63,7 @@ export default {
   },
   data: function () {
     return {
-      pageName: 'Adminページ',
+      pageName: 'AdminPage',
       postNum: 0,
       count: 2,
       options: [

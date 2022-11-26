@@ -6,7 +6,7 @@ import Public from '@/views/Public.vue'
 import MyPage from '@/views/MyPage.vue'
 import LoginPage from '@/views/LoginPage'
 import UpdateUser from '@/views/UpdateUser'
-import Admin from '@/views/Admin'
+import AdminPage from '@/views/AdminPage'
 import Home from '@/views/Home'
 import store from '@/store'
 
@@ -68,7 +68,7 @@ if (process.env.NODE_ENV === 'development') {
   routes.unshift({
     name: 'admin',
     path: '/admin',
-    component: Admin,
+    component: AdminPage,
     meta: {
       requiresAuth: true
     }
