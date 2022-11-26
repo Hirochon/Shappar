@@ -5,7 +5,7 @@
       <div class="navbar-brand">{{pageName}}</div>
       <b-navbar-nav class="ml-auto" v-if="$route.meta.requiresAuth">
         <b-nav-item-dropdown right v-if="isLoggedIn">
-          <template slot="button-content">{{ username }}</template>
+          <template v-slot:button-content>{{ username }}</template>
           <b-dropdown-item href="#" @click="clickLogout">ログアウト</b-dropdown-item>
         </b-nav-item-dropdown>
         <b-nav-item href="#" @click="clickLogin" v-else>ログイン</b-nav-item>
