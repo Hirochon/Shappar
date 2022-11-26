@@ -9,11 +9,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@vue/compat": "3.2",
     "axios": "^0.21.2",
     "bootstrap-vue": "^2.4.0",
     "core-js": "^3.4.4",
     "register-service-worker": "^1.6.2",
-    "vue": "^2.6.10",
+    "vue": "3.2",
     "vue-axios": "^2.1.5",
     "vue-pull-to": "^0.1.8",
     "vue-router": "^3.1.3",
