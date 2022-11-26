@@ -1,14 +1,14 @@
 /* eslint-disable no-undef */
 
 import { createLocalVue, shallowMount } from '@vue/test-utils'
-import Component from '@/components/Search.vue'
+import Component from '@/components/SearchBar.vue'
 import Vuex from 'vuex'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
 localVue.component('font-awesome-icon', FontAwesomeIcon)
-describe('Search.vue', () => {
+describe('SearchBar.vue', () => {
   let store
   let option
   let user
@@ -54,26 +54,26 @@ describe('Search.vue', () => {
   })
   it('iconimage の表示?', () => {
     let getUser = user.getters.getUser()
-    expect(wrapper.find('.Search__drawer-switch__img').attributes().src).toBe(getUser.iconimage)
+    expect(wrapper.find('.SearchBar__drawer-switch__img').attributes().src).toBe(getUser.iconimage)
   })
   // it('form 入力でchildQueryが反映されているか', () => {
-  //   wrapper.find('.Search__input').setValue('shappar')
+  //   wrapper.find('.SearchBar__input').setValue('shappar')
   //   expect(wrapper).toBe('shappar')
   // })
   it('switch clickでemitできているか', () => {
-    wrapper.find('.Search__drawer-switch.disp').trigger('click')
+    wrapper.find('.SearchBar__drawer-switch.disp').trigger('click')
     expect(wrapper.emitted('drawerOpen')).toBeTruthy()
   })
   it('form submitでemitできているか', () => {
-    wrapper.find('.Search__form').trigger('submit')
+    wrapper.find('.SearchBar__form').trigger('submit')
     expect(wrapper.emitted('search')).toBeTruthy()
   })
   it('submit clickでemitできているか', () => {
-    wrapper.find('.Search__submit').trigger('click')
+    wrapper.find('.SearchBar__submit').trigger('click')
     expect(wrapper.emitted('search')).toBeTruthy()
   })
   it('button clickでemitできているか', () => {
-    wrapper.find('.Search__button').trigger('click')
+    wrapper.find('.SearchBar__button').trigger('click')
     expect(wrapper.emitted('changeRanking')).toBeTruthy()
   })
 })

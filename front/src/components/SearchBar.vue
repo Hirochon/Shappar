@@ -1,16 +1,16 @@
 <template>
-  <div class="Search">
+  <div class="SearchBar">
     <div
-      class="Search__drawer-switch disp"
+      class="SearchBar__drawer-switch disp"
       @click="$emit('drawerOpen')"
     >
       <img
-        class="Search__drawer-switch__img"
+        class="SearchBar__drawer-switch__img"
         :src="user.iconimage"
         alt=""
       >
     </div>
-    <div class="Search__drawer-switch none">
+    <div class="SearchBar__drawer-switch none">
       <img
         :src="user.iconimage"
         alt=""
@@ -18,42 +18,42 @@
     </div>
     <div
       v-if="user.isRanking"
-      class="Search__rank"
+      class="SearchBar__rank"
     >
       投票数ランキング
     </div>
     <form
       v-else
-      class="Search__form"
+      class="SearchBar__form"
       @submit.prevent="getPost()"
     >
       <label
         for="text-box"
-        class="Search__label"
+        class="SearchBar__label"
       >検索</label>
       <input
         id="text-box"
         v-model="childQuery"
         type="text"
-        class="Search__input"
+        class="SearchBar__input"
       >
       <div
-        class="Search__submit"
+        class="SearchBar__submit"
         @click="getPost()"
       >
         <font-awesome-icon icon="search" />
       </div>
     </form>
     <div
-      class="Search__button"
+      class="SearchBar__button"
       :class="{active: user.isRanking}"
       @click="changeRanking()"
     >
       <font-awesome-icon icon="crown" />
       <!-- <font-awesome-icon icon="crown" @click="isMenuOpen = !isMenuOpen"/> -->
-      <!-- <div class="Search__menu" :class="{on: isMenuOpen}">
-        <div class="Search__menu__item"><router-link to="/settings">設定</router-link></div>
-        <div class="Search__menu__item logout" @click="logout()">ログアウト</div>
+      <!-- <div class="SearchBar__menu" :class="{on: isMenuOpen}">
+        <div class="SearchBar__menu__item"><router-link to="/settings">設定</router-link></div>
+        <div class="SearchBar__menu__item logout" @click="logout()">ログアウト</div>
       </div> -->
     </div>
   </div>
@@ -63,7 +63,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'Search',
+  name: 'SearchBar',
   components: {
   },
   props: {
@@ -112,7 +112,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 @import '@/assets/common.scss';
-.Search{
+.SearchBar{
   position: fixed;
   // top: 8px;
   top: 0;

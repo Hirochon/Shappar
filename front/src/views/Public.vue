@@ -15,7 +15,7 @@
       @refresh="refresh"
     />
     <transition name="search">
-      <Search
+      <SearchBar
         v-show="searchShow && !isNewOpen"
         :query="query"
         @search="search()"
@@ -55,7 +55,7 @@
 
 <script>
 // @ is an alias to /src
-import Search from '@/components/Search.vue'
+import SearchBar from '@/components/SearchBar.vue'
 import PostList from '@/components/PostList.vue'
 import New from '@/views/New.vue'
 import GlobalMessage from '@/components/GlobalMessage.vue'
@@ -65,7 +65,7 @@ import api from '@/services/api'
 export default {
   name: 'Public',
   components: {
-    Search,
+    SearchBar,
     PostList,
     New,
     GlobalMessage,

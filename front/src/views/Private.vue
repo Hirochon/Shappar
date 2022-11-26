@@ -1,19 +1,19 @@
 <template>
   <div class="Private">
-    <Search />
+    <SearchBar />
     <PostList :posts-data="posts" />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import Search from '@/components/Search.vue'
+import SearchBar from '@/components/SearchBar.vue'
 import PostList from '@/components/PostList.vue'
 
 export default {
   name: 'Private',
   components: {
-    Search,
+    SearchBar,
     PostList
   },
   data: function () {
