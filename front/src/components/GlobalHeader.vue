@@ -1,14 +1,38 @@
 <template>
   <!-- ヘッダナビゲーション -->
   <div id="header">
-    <b-navbar type="dark" variant="dark">
-      <div class="navbar-brand">{{pageName}}</div>
-      <b-navbar-nav class="ml-auto" v-if="$route.meta.requiresAuth">
-        <b-nav-item-dropdown right v-if="isLoggedIn">
-          <template v-slot:button-content>{{ username }}</template>
-          <b-dropdown-item href="#" @click="clickLogout">ログアウト</b-dropdown-item>
+    <b-navbar
+      type="dark"
+      variant="dark"
+    >
+      <div class="navbar-brand">
+        {{ pageName }}
+      </div>
+      <b-navbar-nav
+        v-if="$route.meta.requiresAuth"
+        class="ml-auto"
+      >
+        <b-nav-item-dropdown
+          v-if="isLoggedIn"
+          right
+        >
+          <template #button-content>
+            {{ username }}
+          </template>
+          <b-dropdown-item
+            href="#"
+            @click="clickLogout"
+          >
+            ログアウト
+          </b-dropdown-item>
         </b-nav-item-dropdown>
-        <b-nav-item href="#" @click="clickLogin" v-else>ログイン</b-nav-item>
+        <b-nav-item
+          v-else
+          href="#"
+          @click="clickLogin"
+        >
+          ログイン
+        </b-nav-item>
       </b-navbar-nav>
     </b-navbar>
   </div>

@@ -1,19 +1,54 @@
 <template>
-  <div class="Public" @touchmove="pullToMove()" @touchend="pullToEnd()">
-    <GlobalMessage/>
-    <DrawerMenu :isOpen="isDrawerOpen" @close="isDrawerOpen = false"/>
-    <New @switchNew="switchNew()" @refresh="refresh" :isOpen="isNewOpen"/>
+  <div
+    class="Public"
+    @touchmove="pullToMove()"
+    @touchend="pullToEnd()"
+  >
+    <GlobalMessage />
+    <DrawerMenu
+      :is-open="isDrawerOpen"
+      @close="isDrawerOpen = false"
+    />
+    <New
+      :is-open="isNewOpen"
+      @switchNew="switchNew()"
+      @refresh="refresh"
+    />
     <transition name="search">
-      <Search :query="query" @search="search()" @drawerOpen="isDrawerOpen = true" @changeRanking="changeRanking()" v-show="searchShow && !isNewOpen"></Search>
+      <Search
+        v-show="searchShow && !isNewOpen"
+        :query="query"
+        @search="search()"
+        @drawerOpen="isDrawerOpen = true"
+        @changeRanking="changeRanking()"
+      />
     </transition>
-    <div class="Public__loading" v-if="isLoading">
-      <font-awesome-icon icon="spinner" class="Public__loading__icon"/>
+    <div
+      v-if="isLoading"
+      class="Public__loading"
+    >
+      <font-awesome-icon
+        icon="spinner"
+        class="Public__loading__icon"
+      />
     </div>
-    <div class="Pull-to" id="Pull-to">
-      <font-awesome-icon icon="chevron-circle-down" :class="{'Pull-to__on': refreshConfig.trigger}" v-if="refreshConfig.isStart"/>
+    <div
+      id="Pull-to"
+      class="Pull-to"
+    >
+      <font-awesome-icon
+        v-if="refreshConfig.isStart"
+        icon="chevron-circle-down"
+        :class="{'Pull-to__on': refreshConfig.trigger}"
+      />
     </div>
     <transition name="post-list">
-      <PostList :posts="posts" :isLoading="isLoading" @reload="refresh()" v-show="!isNewOpen"></PostList>
+      <PostList
+        v-show="!isNewOpen"
+        :posts="posts"
+        :is-loading="isLoading"
+        @reload="refresh()"
+      />
     </transition>
   </div>
 </template>
@@ -28,7 +63,7 @@ import DrawerMenu from '@/components/DrawerMenu.vue'
 
 import api from '@/services/api'
 export default {
-  name: 'public',
+  name: 'Public',
   components: {
     Search,
     PostList,
@@ -55,6 +90,22 @@ export default {
         diffY: 0
       }
     }
+  },
+  computed: {
+    refreshPath () {
+      // 状態に応じてエンドポイントを変更
+      let path = '/api/v1/posts/public/'
+      path += this.$store.state.user.isRanking ? 'rank/' : ''
+      return path
+    }
+  },
+  created: function () {
+    this.query = ''
+    this.refresh()
+    window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
+  },
+  unmounted () {
+    window.removeEventListener('scroll', this.scrollTriggers)
   },
   methods: {
     async loadMore () {
@@ -185,22 +236,6 @@ export default {
     switchNew () {
       this.isNewOpen = !this.isNewOpen
     }
-  },
-  computed: {
-    refreshPath () {
-      // 状態に応じてエンドポイントを変更
-      let path = '/api/v1/posts/public/'
-      path += this.$store.state.user.isRanking ? 'rank/' : ''
-      return path
-    }
-  },
-  created: function () {
-    this.query = ''
-    this.refresh()
-    window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
-  },
-  destroyed () {
-    window.removeEventListener('scroll', this.scrollTriggers)
   }
 }
 </script>

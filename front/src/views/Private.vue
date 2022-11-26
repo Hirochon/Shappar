@@ -1,7 +1,7 @@
 <template>
   <div class="Private">
-    <Search></Search>
-    <PostList :posts-data="posts"></PostList>
+    <Search />
+    <PostList :posts-data="posts" />
   </div>
 </template>
 
@@ -11,7 +11,7 @@ import Search from '@/components/Search.vue'
 import PostList from '@/components/PostList.vue'
 
 export default {
-  name: 'private',
+  name: 'Private',
   components: {
     Search,
     PostList

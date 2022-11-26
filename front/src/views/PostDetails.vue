@@ -1,33 +1,82 @@
 <template>
-  <div class="PostDetails" id="PostDetails__area" @touchmove.prevent.stop @touchstart.stop @click.stop>
-    <div class="PostDetails__overlay" @click.stop="closeDetails()"></div>
-    <doughnutChart class="PostDetails__chart" :chartData="isActiveChartData"/>
+  <div
+    id="PostDetails__area"
+    class="PostDetails"
+    @touchmove.prevent.stop
+    @touchstart.stop
+    @click.stop
+  >
+    <div
+      class="PostDetails__overlay"
+      @click.stop="closeDetails()"
+    />
+    <doughnutChart
+      class="PostDetails__chart"
+      :chart-data="isActiveChartData"
+    />
     <div class="PostDetails__switch">
-      <div class="PostDetails__wrap" :class="{active: isActive === 0}">
-        <div class="PostDetails__button material-01" @click.stop="isActive = 0" :class="{active: isActive === 0}">
-          <font-awesome-icon icon="venus-mars"/>
+      <div
+        class="PostDetails__wrap"
+        :class="{active: isActive === 0}"
+      >
+        <div
+          class="PostDetails__button material-01"
+          :class="{active: isActive === 0}"
+          @click.stop="isActive = 0"
+        >
+          <font-awesome-icon icon="venus-mars" />
         </div>
       </div>
-      <div class="PostDetails__wrap" :class="{active: isActive === 1}">
-        <div class="PostDetails__button material-02" @click.stop="isActive = 1" :class="{active: isActive === 1}">
-          <div class="PostDetails__age">a</div>
-          <div class="PostDetails__age">g</div>
-          <div class="PostDetails__age">e</div>
+      <div
+        class="PostDetails__wrap"
+        :class="{active: isActive === 1}"
+      >
+        <div
+          class="PostDetails__button material-02"
+          :class="{active: isActive === 1}"
+          @click.stop="isActive = 1"
+        >
+          <div class="PostDetails__age">
+            a
+          </div>
+          <div class="PostDetails__age">
+            g
+          </div>
+          <div class="PostDetails__age">
+            e
+          </div>
         </div>
       </div>
-      <div class="PostDetails__wrap" :class="{active: isActive === 2}">
-        <div class="PostDetails__button material-03" @click.stop="isActive = 2" :class="{active: isActive === 2}">
-          <font-awesome-icon icon="birthday-cake"/>
+      <div
+        class="PostDetails__wrap"
+        :class="{active: isActive === 2}"
+      >
+        <div
+          class="PostDetails__button material-03"
+          :class="{active: isActive === 2}"
+          @click.stop="isActive = 2"
+        >
+          <font-awesome-icon icon="birthday-cake" />
         </div>
       </div>
-      <div class="PostDetails__wrap" :class="{active: isActive === 3}">
-        <div class="PostDetails__button material-04" @click.stop="isActive = 3" :class="{active: isActive === 3}">
+      <div
+        class="PostDetails__wrap"
+        :class="{active: isActive === 3}"
+      >
+        <div
+          class="PostDetails__button material-04"
+          :class="{active: isActive === 3}"
+          @click.stop="isActive = 3"
+        >
           型
         </div>
       </div>
       <div class="PostDetails__wrap">
-        <div class="PostDetails__button material-05" @click.stop="closeDetails()">
-          <font-awesome-icon icon="times"/>
+        <div
+          class="PostDetails__button material-05"
+          @click.stop="closeDetails()"
+        >
+          <font-awesome-icon icon="times" />
         </div>
       </div>
     </div>
@@ -62,6 +111,60 @@ export default {
       maxR: 0,
       isActive: 0
     }
+  },
+  computed: {
+    isActiveData () {
+      switch (this.isActive) {
+        case 0:
+          return this.dataNum(this.voted_sex)
+        case 1:
+          return this.dataNum(this.voted_age)
+        case 2:
+          return this.dataNum(this.voted_month)
+        case 3:
+          return this.dataNum(this.voted_blood_type)
+      }
+      return false
+    },
+    isActivelabels () {
+      switch (this.isActive) {
+        case 0:
+          return this.dataLabels(this.voted_sex)
+        case 1:
+          return this.dataLabels(this.voted_age)
+        case 2:
+          return this.dataLabels(this.voted_month)
+        case 3:
+          return this.dataLabels(this.voted_blood_type)
+      }
+      return false
+    },
+    isActiveChartData () {
+      return {
+        labels: this.isActivelabels,
+        datasets: [{
+          data: this.isActiveData,
+          backgroundColor: [
+            '#FFA726',
+            '#FF7043',
+            '#ef5350',
+            '#EC407A',
+            '#AB47BC',
+            '#7E57C2',
+            '#5C6BC0',
+            '#42A5F5',
+            '#29B6F6',
+            '#26C6DA',
+            '#26A69A',
+            '#66BB6A'
+          ],
+          borderWidth: 0
+        }]
+      }
+    }
+  },
+  created () {
+    this.getPostData()
   },
   methods: {
     getPostData () {
@@ -145,60 +248,6 @@ export default {
       })
       return labels
     }
-  },
-  computed: {
-    isActiveData () {
-      switch (this.isActive) {
-        case 0:
-          return this.dataNum(this.voted_sex)
-        case 1:
-          return this.dataNum(this.voted_age)
-        case 2:
-          return this.dataNum(this.voted_month)
-        case 3:
-          return this.dataNum(this.voted_blood_type)
-      }
-      return false
-    },
-    isActivelabels () {
-      switch (this.isActive) {
-        case 0:
-          return this.dataLabels(this.voted_sex)
-        case 1:
-          return this.dataLabels(this.voted_age)
-        case 2:
-          return this.dataLabels(this.voted_month)
-        case 3:
-          return this.dataLabels(this.voted_blood_type)
-      }
-      return false
-    },
-    isActiveChartData () {
-      return {
-        labels: this.isActivelabels,
-        datasets: [{
-          data: this.isActiveData,
-          backgroundColor: [
-            '#FFA726',
-            '#FF7043',
-            '#ef5350',
-            '#EC407A',
-            '#AB47BC',
-            '#7E57C2',
-            '#5C6BC0',
-            '#42A5F5',
-            '#29B6F6',
-            '#26C6DA',
-            '#26A69A',
-            '#66BB6A'
-          ],
-          borderWidth: 0
-        }]
-      }
-    }
-  },
-  created () {
-    this.getPostData()
   }
 }
 </script>

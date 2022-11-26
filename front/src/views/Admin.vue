@@ -1,27 +1,48 @@
 <template>
   <div id="home-page">
-    <GlobalHeader :pageName="pageName"/>
-    <GlobalMessage/>
+    <GlobalHeader :page-name="pageName" />
+    <GlobalMessage />
 
     <!-- メインエリア -->
     <main class="container">
       <b-form @submit.prevent="createSampleUser">
         <div class="row text-center mt-5">
           <div class="col-sm-12">
-            <b-button type="submit" variant="primary">ユーザー新規作成</b-button>
+            <b-button
+              type="submit"
+              variant="primary"
+            >
+              ユーザー新規作成
+            </b-button>
           </div>
         </div>
       </b-form>
       <b-form @submit.prevent="createSamplePosts">
         <div class="row text-center mt-5">
           <div class="col-sm-12">
-            <input type="num" class="form-control" v-model="postNum">
+            <input
+              v-model="postNum"
+              type="num"
+              class="form-control"
+            >
           </div>
           <div class="col-sm-12">
-            <b-button type="submit" variant="primary">新規投稿作成</b-button>
+            <b-button
+              type="submit"
+              variant="primary"
+            >
+              新規投稿作成
+            </b-button>
           </div>
           <div class="col-sm-12">
-            <b-button variant="success"><router-link to="/" style="color: white">投稿一覧へ</router-link></b-button>
+            <b-button variant="success">
+              <router-link
+                to="/"
+                style="color: white"
+              >
+                投稿一覧へ
+              </router-link>
+            </b-button>
           </div>
         </div>
       </b-form>
@@ -36,6 +57,10 @@ import GlobalMessage from '@/components/GlobalMessage.vue'
 
 import api from '@/services/api'
 export default {
+  components: {
+    GlobalHeader,
+    GlobalMessage
+  },
   data: function () {
     return {
       pageName: 'Adminページ',
@@ -53,9 +78,9 @@ export default {
       ]
     }
   },
-  components: {
-    GlobalHeader,
-    GlobalMessage
+  created: function () {
+    this.unique_id = this.$store.state.auth.unique_id
+    this.user_id = this.$store.state.auth.username
   },
   methods: {
     createSampleUser () {
@@ -96,10 +121,6 @@ export default {
         // ]
       }
     }
-  },
-  created: function () {
-    this.unique_id = this.$store.state.auth.unique_id
-    this.user_id = this.$store.state.auth.username
   }
 }
 </script>

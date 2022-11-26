@@ -1,13 +1,31 @@
 <template>
   <!-- メッセージエリア -->
-  <div id="messages" class="Message">
-    <div v-show="message.error" class="Message__error">
+  <div
+    id="messages"
+    class="Message"
+  >
+    <div
+      v-show="message.error"
+      class="Message__error"
+    >
       {{ message.error }}
     </div>
-    <div v-show="message.warnings.length" class="Message__warnings">
-      <p class="Message__warning" v-for="warning in message.warnings" :key="warning">{{ warning }}</p>
+    <div
+      v-show="message.warnings.length"
+      class="Message__warnings"
+    >
+      <p
+        v-for="warning in message.warnings"
+        :key="warning"
+        class="Message__warning"
+      >
+        {{ warning }}
+      </p>
     </div>
-    <div v-show="message.info" class="Message__info">
+    <div
+      v-show="message.info"
+      class="Message__info"
+    >
       {{ message.info }}
     </div>
   </div>

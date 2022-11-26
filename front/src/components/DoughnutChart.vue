@@ -4,11 +4,6 @@ export default {
   extends: Doughnut,
   mixins: [mixins.reactiveProp],
   props: ['chartData'],
-  methods: {
-    render () {
-      this.renderChart(this.chartData, this.options)
-    }
-  },
   mounted () {
     // console.log('mounted at')
     this.renderChart(this.chartData, {
@@ -40,6 +35,11 @@ export default {
       }
       // responsive: true
     })
+  },
+  methods: {
+    render () {
+      this.renderChart(this.chartData, this.options)
+    }
   }
 }
 </script>

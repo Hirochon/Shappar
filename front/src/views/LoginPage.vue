@@ -1,6 +1,9 @@
 <template>
-  <div id="login-page" class="Login">
-    <GlobalMessage/>
+  <div
+    id="login-page"
+    class="Login"
+  >
+    <GlobalMessage />
     <!-- メインエリア -->
     <div class="Login__header">
       <h1 class="Login__shappar">
@@ -10,38 +13,74 @@
       </h1>
     </div>
     <main class="Login__container">
-      <div class="Login__loading" v-if="isLoading">
-        <font-awesome-icon icon="spinner" class="Login__rotate"/>
+      <div
+        v-if="isLoading"
+        class="Login__loading"
+      >
+        <font-awesome-icon
+          icon="spinner"
+          class="Login__rotate"
+        />
       </div>
-      <form class="Login__form" @submit.prevent="submitLogin(form.username,form.password)">
+      <form
+        class="Login__form"
+        @submit.prevent="submitLogin(form.username,form.password)"
+      >
         <div class="Login__form__group">
-          <label class="Login__form__title" :class="{active: isActive === 0}">ユーザーID</label>
-          <input class="Login__input" type="text" v-model="form.username" required
-          id="username"
-          :class="{active: isActive === 0}"
-          @focus="isActive = 0"
-          @blur="isActive = -1"/>
+          <label
+            class="Login__form__title"
+            :class="{active: isActive === 0}"
+          >ユーザーID</label>
+          <input
+            id="username"
+            v-model="form.username"
+            class="Login__input"
+            type="text"
+            required
+            :class="{active: isActive === 0}"
+            @focus="isActive = 0"
+            @blur="isActive = -1"
+          >
         </div>
         <div class="Login__form__group">
-          <label class="Login__form__title" :class="{active: isActive === 1}">パスワード</label>
-          <input class="Login__input" type="password" v-model="form.password" required
-          id="password"
-          :class="{active: isActive === 1}"
-          @focus="isActive = 1"
-          @blur="isActive = -1"/>
+          <label
+            class="Login__form__title"
+            :class="{active: isActive === 1}"
+          >パスワード</label>
+          <input
+            id="password"
+            v-model="form.password"
+            class="Login__input"
+            type="password"
+            required
+            :class="{active: isActive === 1}"
+            @focus="isActive = 1"
+            @blur="isActive = -1"
+          >
         </div>
         <div class="row text-center">
           <div class="col-sm-12">
             <!-- <b-button type="submit" class="Login__submit">ログイン</b-button> -->
-            <button type="submit" class="Login__submit">ログイン</button>
+            <button
+              type="submit"
+              class="Login__submit"
+            >
+              ログイン
+            </button>
           </div>
         </div>
       </form>
     </main>
-    <div class="Login__test" @click="submitLogin()">
+    <div
+      class="Login__test"
+      @click="submitLogin()"
+    >
       テストユーザーでログイン
     </div>
-    <div class="Login__signup" @click="toSignUp()">
+    <div
+      class="Login__signup"
+      @click="toSignUp()"
+    >
       アカウントを作成
     </div>
   </div>

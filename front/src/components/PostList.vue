@@ -1,64 +1,166 @@
 <template>
-  <div class="PostList" id="PostList">
-    <div class="Post" v-for="(post, index) in posts" :key="post.post_id" :id="post.post_id" :class="{first: post.rank === 0, second: post.rank === 1, third: post.rank === 2, rank: post.rank < 5}">
-      <router-link class="Post__icon" :to="'/mypage/'+ post.user_id + '/'">
-        <img class="Post__icon__img" :src="post.iconimage" :alt="post.user_id+'_icon'">
+  <div
+    id="PostList"
+    class="PostList"
+  >
+    <div
+      v-for="(post, index) in posts"
+      :id="post.post_id"
+      :key="post.post_id"
+      class="Post"
+      :class="{first: post.rank === 0, second: post.rank === 1, third: post.rank === 2, rank: post.rank < 5}"
+    >
+      <router-link
+        class="Post__icon"
+        :to="'/mypage/'+ post.user_id + '/'"
+      >
+        <img
+          class="Post__icon__img"
+          :src="post.iconimage"
+          :alt="post.user_id+'_icon'"
+        >
       </router-link>
       <div class="Post__top">
-        <div class="Post__total" v-if="post.rank != null"
+        <div
+          v-if="post.rank != null"
+          class="Post__total"
           :class="{first: post.rank === 0, second: post.rank === 1, third: post.rank === 2, rank: post.rank < 5}"
-          >
-          <font-awesome-icon icon="crown" v-if="post.rank < 3"/>
-          <font-awesome-icon icon="hand-peace" v-else/>
-          {{post.total}}
+        >
+          <font-awesome-icon
+            v-if="post.rank < 3"
+            icon="crown"
+          />
+          <font-awesome-icon
+            v-else
+            icon="hand-peace"
+          />
+          {{ post.total }}
         </div>
-        <div class="Post__total" v-else>Total：{{post.total}}</div>
-        <div class="Post__buttons" v-show="post.voted">
-          <div class="Post__delete" v-if="post.user_id === username" @click="deletePost(post, index)"><font-awesome-icon icon="trash-alt"/></div>
-          <div class="Post__sort" v-if="post.voted" @click="optionsSort(post, post.options)">
-            <font-awesome-icon icon="list-ol" v-show="post.sort === 0"/>
-            <font-awesome-icon icon="sort-amount-up" v-show="post.sort === 1"/>
-            <font-awesome-icon icon="sort-amount-down-alt" v-show="post.sort === 2"/>
+        <div
+          v-else
+          class="Post__total"
+        >
+          Total：{{ post.total }}
+        </div>
+        <div
+          v-show="post.voted"
+          class="Post__buttons"
+        >
+          <div
+            v-if="post.user_id === username"
+            class="Post__delete"
+            @click="deletePost(post, index)"
+          >
+            <font-awesome-icon icon="trash-alt" />
           </div>
-          <div class="Post__reload" v-if="post.voted" @click="refleshPost(post)"><font-awesome-icon icon="sync-alt"/></div>
+          <div
+            v-if="post.voted"
+            class="Post__sort"
+            @click="optionsSort(post, post.options)"
+          >
+            <font-awesome-icon
+              v-show="post.sort === 0"
+              icon="list-ol"
+            />
+            <font-awesome-icon
+              v-show="post.sort === 1"
+              icon="sort-amount-up"
+            />
+            <font-awesome-icon
+              v-show="post.sort === 2"
+              icon="sort-amount-down-alt"
+            />
+          </div>
+          <div
+            v-if="post.voted"
+            class="Post__reload"
+            @click="refleshPost(post)"
+          >
+            <font-awesome-icon icon="sync-alt" />
+          </div>
         </div>
       </div>
-      <div class="Post__loading" v-if="post.isLoading">
-        <font-awesome-icon icon="spinner" class="Public__loading__icon"/>
+      <div
+        v-if="post.isLoading"
+        class="Post__loading"
+      >
+        <font-awesome-icon
+          icon="spinner"
+          class="Public__loading__icon"
+        />
       </div>
       <div class="Post__question">
-        {{post.question}}
+        {{ post.question }}
       </div>
       <div class="Post__container">
-        <div class="Post__option" v-for="option in post.options" :key="option.select_num"
-          @click="Select(post,option)"
+        <div
+          v-for="option in post.options"
+          :key="option.select_num"
+          class="Post__option"
           :class="{selected: post.voted}"
-          >
+          @click="Select(post,option)"
+        >
           <!-- <div class="Post__option__border" v-show="post.selected_num === option.select_num"></div> -->
-          <div class="Post__result__bar" :style="{width: rate(option.votes, post.total) + '%'}" :class="{selected: post.selected_num === option.select_num}"></div>
-          <div class="Post__result__data" v-show="post.view === 1">
-            <div class="Post__result__num" :class="{isMine: post.user_id === username}">
-              <div>{{option.votes}}</div>
-              <div v-show="post.total">{{Math.floor(rate(option.votes, post.total)) + '%'}}</div>
+          <div
+            class="Post__result__bar"
+            :style="{width: rate(option.votes, post.total) + '%'}"
+            :class="{selected: post.selected_num === option.select_num}"
+          />
+          <div
+            v-show="post.view === 1"
+            class="Post__result__data"
+          >
+            <div
+              class="Post__result__num"
+              :class="{isMine: post.user_id === username}"
+            >
+              <div>{{ option.votes }}</div>
+              <div v-show="post.total">
+                {{ Math.floor(rate(option.votes, post.total)) + '%' }}
+              </div>
             </div>
-            <div class="Post__result__check" v-if="post.selected_num === option.select_num"><font-awesome-icon icon="check"/></div>
+            <div
+              v-if="post.selected_num === option.select_num"
+              class="Post__result__check"
+            >
+              <font-awesome-icon icon="check" />
+            </div>
           </div>
-          <div class="Post__option__answer" v-show="post.view === 0" :class="{voted: post.selected_num === option.select_num, isMine: post.user_id === username}">
-            <div>{{option.answer}}</div>
-            <div class="Post__result__check" v-if="post.selected_num === option.select_num"><font-awesome-icon icon="check"/></div>
+          <div
+            v-show="post.view === 0"
+            class="Post__option__answer"
+            :class="{voted: post.selected_num === option.select_num, isMine: post.user_id === username}"
+          >
+            <div>{{ option.answer }}</div>
+            <div
+              v-if="post.selected_num === option.select_num"
+              class="Post__result__check"
+            >
+              <font-awesome-icon icon="check" />
+            </div>
           </div>
         </div>
       </div>
-      <div class="Post__details" @click="switchDetails(post.post_id)" v-if="post.voted"
-         :class="{first: post.rank === 0, second: post.rank === 1, third: post.rank === 2, rank: post.rank < 5}"
-        >
-        <font-awesome-icon icon="chart-line"/>
+      <div
+        v-if="post.voted"
+        class="Post__details"
+        :class="{first: post.rank === 0, second: post.rank === 1, third: post.rank === 2, rank: post.rank < 5}"
+        @click="switchDetails(post.post_id)"
+      >
+        <font-awesome-icon icon="chart-line" />
       </div>
     </div>
-    <div class="Post__none" v-if="!isLoading && posts.length === 0">
+    <div
+      v-if="!isLoading && posts.length === 0"
+      class="Post__none"
+    >
       該当する投稿はありませんでした
     </div>
-    <PostDetails @switchDetails="switchDetails('')" :post_id="detailsPostId" v-if="isDetailsOpen"/>
+    <PostDetails
+      v-if="isDetailsOpen"
+      :post_id="detailsPostId"
+      @switchDetails="switchDetails('')"
+    />
   </div>
 </template>
 

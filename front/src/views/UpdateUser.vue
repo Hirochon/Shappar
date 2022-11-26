@@ -1,46 +1,124 @@
 <template>
-  <div class="Update" id="Update">
-    <GlobalMessage/>
-    <router-link class="Update__close" :to="'/mypage/'+ before_user_id + '/'"><font-awesome-icon icon="times"/></router-link>
+  <div
+    id="Update"
+    class="Update"
+  >
+    <GlobalMessage />
+    <router-link
+      class="Update__close"
+      :to="'/mypage/'+ before_user_id + '/'"
+    >
+      <font-awesome-icon icon="times" />
+    </router-link>
     <div class="Update__image">
-      <img class="Update__image__img" :src="beforeHomeImage" alt="" id="homeimage">
-      <label class="Update__image__mask" for="home_file">
-        <font-awesome-icon icon="camera"/>
+      <img
+        id="homeimage"
+        class="Update__image__img"
+        :src="beforeHomeImage"
+        alt=""
+      >
+      <label
+        class="Update__image__mask"
+        for="home_file"
+      >
+        <font-awesome-icon icon="camera" />
       </label>
-      <input class="Update__file" id="home_file" type="file" name="homeimage" @change="imageSelect(0, $event)">
+      <input
+        id="home_file"
+        class="Update__file"
+        type="file"
+        name="homeimage"
+        @change="imageSelect(0, $event)"
+      >
     </div>
     <div class="Update__icon">
-      <img class="Update__icon__img" :src="beforeIconImage" alt="" id="iconimage">
-      <label class="Update__icon__mask" for="icon_file"><font-awesome-icon icon="camera"/></label>
-      <input class="Update__file" id="icon_file" type="file" name="iconimage" @change="imageSelect(1, $event)">
+      <img
+        id="iconimage"
+        class="Update__icon__img"
+        :src="beforeIconImage"
+        alt=""
+      >
+      <label
+        class="Update__icon__mask"
+        for="icon_file"
+      ><font-awesome-icon icon="camera" /></label>
+      <input
+        id="icon_file"
+        class="Update__file"
+        type="file"
+        name="iconimage"
+        @change="imageSelect(1, $event)"
+      >
     </div>
     <div class="Update__container">
-      <label class="Update__title" for="user_name" :class="{active: isActive === 0}">
+      <label
+        class="Update__title"
+        for="user_name"
+        :class="{active: isActive === 0}"
+      >
         ユーザー名
-        <span class="Update__num" :class="{hasError:!name.isValid}">{{name.length}}/18</span>
+        <span
+          class="Update__num"
+          :class="{hasError:!name.isValid}"
+        >{{ name.length }}/18</span>
       </label>
-      <input class="Update__input" id="user_name" v-model="name.value" type="text" placeholder="ユーザー名"
+      <input
+        id="user_name"
+        v-model="name.value"
+        class="Update__input"
+        type="text"
+        placeholder="ユーザー名"
         :class="{active: isActive === 0}"
         @input="Validate(name,1,18)"
         @focus="isActive = 0"
-        @blur="isActive = -1">
+        @blur="isActive = -1"
+      >
     </div>
     <div class="Update__container">
-      <label class="Update__title" for="introduction" :class="{active: isActive === 2}">
+      <label
+        class="Update__title"
+        for="introduction"
+        :class="{active: isActive === 2}"
+      >
         紹介文
-        <span class="Update__num" :class="{hasError:!introduction.isValid}">{{introduction.length}}/150</span>
+        <span
+          class="Update__num"
+          :class="{hasError:!introduction.isValid}"
+        >{{ introduction.length }}/150</span>
       </label>
-      <textarea class="Update__introduction" id="introduction" v-model="introduction.value" cols="30" rows="5" placeholder="紹介文"
+      <textarea
+        id="introduction"
+        v-model="introduction.value"
+        class="Update__introduction"
+        cols="30"
+        rows="5"
+        placeholder="紹介文"
         :class="{active: isActive === 2}"
         @input="Validate(introduction,0,150)"
         @focus="isActive = 2"
-        @blur="isActive = -1"></textarea>
+        @blur="isActive = -1"
+      />
     </div>
-    <div class="Update__submit" @click="updateUser()" :class="{hasError:!allValidate}">
-      <div class="Update__loading" v-if="isLoading">
-        <font-awesome-icon icon="spinner" class="Update__loading__icon"/>
+    <div
+      class="Update__submit"
+      :class="{hasError:!allValidate}"
+      @click="updateUser()"
+    >
+      <div
+        v-if="isLoading"
+        class="Update__loading"
+      >
+        <font-awesome-icon
+          icon="spinner"
+          class="Update__loading__icon"
+        />
       </div>
-      <div class="Update__submit__text" v-else>保存</div>
+      <div
+        v-else
+        class="Update__submit__text"
+      >
+        保存
+      </div>
     </div>
   </div>
 </template>
@@ -52,7 +130,7 @@ import { mapGetters } from 'vuex'
 
 import api from '@/services/api'
 export default {
-  name: 'updateUser',
+  name: 'UpdateUser',
   components: {
     GlobalMessage
   },

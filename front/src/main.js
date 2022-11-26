@@ -29,7 +29,7 @@ library.add(
   faVenusMars, faBirthdayCake, faBars, faTrashAlt, faPlus, faPaperPlane,
   faArrowAltCircleLeft, faEdit, faClipboardList, faClipboardCheck, faCrown, faHandPeace
 )
-Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('FontAwesomeIcon', FontAwesomeIcon)
 
 Vue.use(BootstrapVue)
 Vue.use(VueAxios, axios)

@@ -1,37 +1,71 @@
 <template>
   <div class="Drawer">
     <transition name="overlay">
-      <div class="Drawer__overlay" v-if="isOpen"
+      <div
+        v-if="isOpen"
+        class="Drawer__overlay"
         @click.stop="$emit('close')"
         @touchmove.stop.prevent
         @wheel.stop.prevent
-        >
-      </div>
+      />
     </transition>
     <transition name="drawer">
-      <div class="Drawer__container" :class="{open: isOpen}"
+      <div
+        class="Drawer__container"
+        :class="{open: isOpen}"
         @click.stop
         @touchmove.stop.prevent
         @wheel.stop.prevent
+      >
+        <div
+          class="Drawer__close"
+          @click="$emit('close')"
         >
-        <div class="Drawer__close" @click="$emit('close')"><font-awesome-icon icon="times"/></div>
+          <font-awesome-icon icon="times" />
+        </div>
         <div class="Drawer__wrapper">
-          <router-link class="Drawer__icon" :to="'/mypage/'+ user.user_id + '/'">
-            <img class="Drawer__icon__img" :src="user.iconimage" alt="">
+          <router-link
+            class="Drawer__icon"
+            :to="'/mypage/'+ user.user_id + '/'"
+          >
+            <img
+              class="Drawer__icon__img"
+              :src="user.iconimage"
+              alt=""
+            >
           </router-link>
         </div>
         <div class="Drawer__wrapper">
-          <div class="Drawer__name">{{user.name}}</div>
-          <div class="Drawer__user_id">@{{user.user_id}}</div>
+          <div class="Drawer__name">
+            {{ user.name }}
+          </div>
+          <div class="Drawer__user_id">
+            @{{ user.user_id }}
+          </div>
         </div>
         <div class="Drawer__wrapper">
-          <router-link class="Drawer__settings" :to="'/mypage/'+ user.user_id + '/'">マイページ</router-link>
+          <router-link
+            class="Drawer__settings"
+            :to="'/mypage/'+ user.user_id + '/'"
+          >
+            マイページ
+          </router-link>
         </div>
         <div class="Drawer__wrapper">
-          <router-link class="Drawer__settings" to="/settings">設定</router-link>
+          <router-link
+            class="Drawer__settings"
+            to="/settings"
+          >
+            設定
+          </router-link>
         </div>
         <div class="Drawer__wrapper">
-          <div class="Drawer__logout" @click="logout()">ログアウト</div>
+          <div
+            class="Drawer__logout"
+            @click="logout()"
+          >
+            ログアウト
+          </div>
         </div>
       </div>
     </transition>

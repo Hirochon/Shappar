@@ -1,70 +1,134 @@
 <template>
-  <div class="New"
+  <div
+    class="New"
     @touchmove.stop.prevent
     @wheel.stop
+  >
+    <transition
+      name="container"
+      @touchmove.stop
     >
-    <transition name="container" @touchmove.stop>
-      <div class="New__container" v-if="isOpen" @touchmove.stop.prevent>
+      <div
+        v-if="isOpen"
+        class="New__container"
+        @touchmove.stop.prevent
+      >
         <div class="Top">
           <h2 class="Top__header">
-            <div class="Top__close" @click.stop="closeNew()">
-              <font-awesome-icon icon="times"/>
+            <div
+              class="Top__close"
+              @click.stop="closeNew()"
+            >
+              <font-awesome-icon icon="times" />
             </div>
             <div class="Top__data">
-              <div class="Top__data__question" :class="{hasError:!question.isValid}">{{question.length}}/150</div>
-              <div class="Top__data__options">{{options.length}}</div>
+              <div
+                class="Top__data__question"
+                :class="{hasError:!question.isValid}"
+              >
+                {{ question.length }}/150
+              </div>
+              <div class="Top__data__options">
+                {{ options.length }}
+              </div>
             </div>
           </h2>
           <div class="Top__question">
             <textarea
-              v-model="question.text" cols="30" rows="2" placeholder="質問"
+              v-model="question.text"
+              cols="30"
+              rows="2"
+              placeholder="質問"
               @input="questionValidate()"
-              >
-            </textarea>
+            />
           </div>
         </div>
-        <draggable v-model="options" handle=".New__option__handle" @touchmove.prevent.stop>
-          <transition-group name="option" @touchmove.stop>
-            <div class="New__option__container"
-              v-for="(option, index) in options" :key="option.id"
+        <draggable
+          v-model="options"
+          handle=".New__option__handle"
+          @touchmove.prevent.stop
+        >
+          <transition-group
+            name="option"
+            @touchmove.stop
+          >
+            <div
+              v-for="(option, index) in options"
+              :key="option.id"
+              class="New__option__container"
               @touchmove.stop.prevent
+            >
+              <div
+                :id="'option_'+option.id"
+                class="New__option__wrapper"
+                @touchmove.stop.prevent
               >
-              <div class="New__option__wrapper" :id="'option_'+option.id" @touchmove.stop.prevent>
                 <div class="New__option__data">
                   <div class="New__option__controll">
-                    <div class="New__delete" @click="deleteOption(index)"><font-awesome-icon icon="times"/></div>
-                    <div class="New__option__num" :class="{hasError:!option.isValid}" @touchmove.stop.prevent>{{option.length}}/40</div>
+                    <div
+                      class="New__delete"
+                      @click="deleteOption(index)"
+                    >
+                      <font-awesome-icon icon="times" />
+                    </div>
+                    <div
+                      class="New__option__num"
+                      :class="{hasError:!option.isValid}"
+                      @touchmove.stop.prevent
+                    >
+                      {{ option.length }}/40
+                    </div>
                   </div>
-                  <textarea class="New__option__text" cols="30" rows="3" v-model="option.answer" :placeholder="'回答'+(index+1)"
+                  <textarea
+                    v-model="option.answer"
+                    class="New__option__text"
+                    cols="30"
+                    rows="3"
+                    :placeholder="'回答'+(index+1)"
                     @touchstart="delTouchStart(index)"
                     @touchmove.stop="delTouchMove(option.id)"
                     @touchend.stop="delTouchEnd(option.id)"
                     @input="answerValidate(option)"
-                    >
-                  </textarea>
+                  />
                 </div>
-                <div class="New__option__handle"><font-awesome-icon icon="bars"/></div>
+                <div class="New__option__handle">
+                  <font-awesome-icon icon="bars" />
+                </div>
               </div>
-              <div class="New__delete__behind"
+              <div
+                class="New__delete__behind"
                 :class="{on:deleteConfig.trigger}"
                 @touchmove.stop.prevent
-                >
-                <font-awesome-icon icon="trash-alt"/>
+              >
+                <font-awesome-icon icon="trash-alt" />
               </div>
             </div>
           </transition-group>
         </draggable>
         <div class="Buttons">
-          <div class="Buttons__add-option" @click.stop="addOption" :class="{hasError: options.length === 10}">
-            <font-awesome-icon icon="plus"/>
+          <div
+            class="Buttons__add-option"
+            :class="{hasError: options.length === 10}"
+            @click.stop="addOption"
+          >
+            <font-awesome-icon icon="plus" />
           </div>
-          <div class="Buttons__submit" @click.stop="servePost" :class="{hasError:!postValidate}">
-            <font-awesome-icon icon="paper-plane"/>
+          <div
+            class="Buttons__submit"
+            :class="{hasError:!postValidate}"
+            @click.stop="servePost"
+          >
+            <font-awesome-icon icon="paper-plane" />
           </div>
         </div>
       </div>
     </transition>
-    <div class="New__FAB" @click="openNew()"><font-awesome-icon icon="plus"/></div>
+    <div
+      class="New__FAB"
+      @click="openNew()"
+    >
+      <font-awesome-icon icon="plus" />
+    </div>
   </div>
 </template>
 
@@ -103,6 +167,27 @@ export default {
         diffX: 0
       }
     }
+  },
+  computed: {
+    postValidate () {
+      let count = 0
+      if (!this.question.isValid) return false
+      if (this.question.text === '') return false
+      for (const item of this.options) {
+        if (!this.answerValidate(item)) return false
+        if (item.answer !== '' && item.isValid) count++
+      }
+      if (count < 2) return false
+      return true
+    }
+  },
+  created () {
+    // Publicができる時（※開いたときではない）
+    this.initPost()
+    this.question.isValid = this.questionValidate()
+    this.options.forEach(item => {
+      item.isValid = this.answerValidate(item)
+    })
   },
   methods: {
     addOption () {
@@ -250,27 +335,6 @@ export default {
       }
       return true
     }
-  },
-  computed: {
-    postValidate () {
-      let count = 0
-      if (!this.question.isValid) return false
-      if (this.question.text === '') return false
-      for (const item of this.options) {
-        if (!this.answerValidate(item)) return false
-        if (item.answer !== '' && item.isValid) count++
-      }
-      if (count < 2) return false
-      return true
-    }
-  },
-  created () {
-    // Publicができる時（※開いたときではない）
-    this.initPost()
-    this.question.isValid = this.questionValidate()
-    this.options.forEach(item => {
-      item.isValid = this.answerValidate(item)
-    })
   }
 }
 </script>

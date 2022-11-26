@@ -1,45 +1,102 @@
 <template>
-  <div class="MyPage" id="MyPage">
-    <GlobalMessage/>
+  <div
+    id="MyPage"
+    class="MyPage"
+  >
+    <GlobalMessage />
     <div class="Mypage__main">
       <div class="Mypage__to-public">
-        <router-link to="/public"><font-awesome-icon icon="arrow-alt-circle-left"/></router-link>
+        <router-link to="/public">
+          <font-awesome-icon icon="arrow-alt-circle-left" />
+        </router-link>
       </div>
       <div class="Mypage__image">
-        <img class="Mypage__image__img" :src="user.homeimage" alt="">
+        <img
+          class="Mypage__image__img"
+          :src="user.homeimage"
+          alt=""
+        >
       </div>
       <!-- <div class="Mypage__logout" @click="logout">ログアウト</div> -->
       <div class="Mypage__container">
         <div class="Mypage__icon">
-          <img class="Mypage__icon__img" :src="user.iconimage" alt="">
+          <img
+            class="Mypage__icon__img"
+            :src="user.iconimage"
+            alt=""
+          >
         </div>
         <div class="Mypage__settings">
-          <router-link to="/settings" v-if="this.my_id === this.traget_id"><font-awesome-icon icon="edit"/></router-link>
+          <router-link
+            v-if="my_id === traget_id"
+            to="/settings"
+          >
+            <font-awesome-icon icon="edit" />
+          </router-link>
         </div>
-        <h2 class="Mypage__name">{{user.name}}</h2>
-        <h2 class="Mypage__user_id">@{{user.user_id}}</h2>
+        <h2 class="Mypage__name">
+          {{ user.name }}
+        </h2>
+        <h2 class="Mypage__user_id">
+          @{{ user.user_id }}
+        </h2>
         <div class="Mypage__introduction">
-          {{user.introduction}}
+          {{ user.introduction }}
         </div>
       </div>
     </div>
     <div class="PostSwitch">
-      <div class="PostSwitch__button" @click="changeActive(0)" :class="{'active': isActive === 0}">
-        <font-awesome-icon icon="clipboard-list"/>
+      <div
+        class="PostSwitch__button"
+        :class="{'active': isActive === 0}"
+        @click="changeActive(0)"
+      >
+        <font-awesome-icon icon="clipboard-list" />
       </div>
-      <div class="PostSwitch__button" v-if="my_id === traget_id" @click="changeActive(1)" :class="{'active': isActive === 1}">
-        <font-awesome-icon icon="clipboard-check"/>
+      <div
+        v-if="my_id === traget_id"
+        class="PostSwitch__button"
+        :class="{'active': isActive === 1}"
+        @click="changeActive(1)"
+      >
+        <font-awesome-icon icon="clipboard-check" />
       </div>
-      <div class="PostSwitch__bar" :class="{other: my_id !== traget_id}" :style="{transform:tabBar}"></div>
+      <div
+        class="PostSwitch__bar"
+        :class="{other: my_id !== traget_id}"
+        :style="{transform:tabBar}"
+      />
     </div>
-    <div class="Container Posted" v-show="isActive === 0" :class="{'active': isActive === 0}">
-      <PostList :posts="posted" :isLoading="isLoading" @reload="loadPosts()"></PostList>
+    <div
+      v-show="isActive === 0"
+      class="Container Posted"
+      :class="{'active': isActive === 0}"
+    >
+      <PostList
+        :posts="posted"
+        :is-loading="isLoading"
+        @reload="loadPosts()"
+      />
     </div>
-    <div class="Container Voted" v-show="isActive === 1" :class="{'active': isActive === 1}">
-      <PostList :posts="voted" :isLoading="isLoading" @reload="loadPosts()"></PostList>
+    <div
+      v-show="isActive === 1"
+      class="Container Voted"
+      :class="{'active': isActive === 1}"
+    >
+      <PostList
+        :posts="voted"
+        :is-loading="isLoading"
+        @reload="loadPosts()"
+      />
     </div>
-    <div class="Mypage__loading" v-if="isLoading">
-      <font-awesome-icon icon="spinner" class="Public__loading__icon"/>
+    <div
+      v-if="isLoading"
+      class="Mypage__loading"
+    >
+      <font-awesome-icon
+        icon="spinner"
+        class="Public__loading__icon"
+      />
     </div>
   </div>
 </template>
@@ -232,7 +289,7 @@ export default {
   created () {
     this.initComponent()
   },
-  destroyed () {
+  unmounted () {
     window.removeEventListener('scroll', this.scrollTriggers)
   }
 }
