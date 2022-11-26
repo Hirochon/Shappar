@@ -1,51 +1,63 @@
 version: "3.8"
 services:
-    shappar-back:
-        build: "./"
-        ports:
-            - "8000:8000"
-        volumes:
-            - "./:/code/"                                       # プロジェクトのルートディレクトリからマウントを取る
-            - "staticdata:/opt/static/"                        # volumesを用いたnginxとのコンテナ間のリソース共有
+  shappar-server:
+    build:
+      context: ./go-server
+    container_name: shappar-server
+    working_dir: /go/src/go-server
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./go-server:/go/src/go-server
+    ports:
+      - 8040:8040
 
-        command: >
-            bash -c "python3 manage.py makemigrations --settings=config.settings.local &&
-            python3 manage.py migrate --settings=config.settings.local &&
-            python3 manage.py runserver 0.0.0.0:8000 --settings=config.settings.local"
-        depends_on:
-            - db                                                # 2. docker-compose up時にdbから立ち上げる
+  shappar-back:
+    build: "./"
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./:/code/" # プロジェクトのルートディレクトリからマウントを取る
+      - "staticdata:/opt/static/" # volumesを用いたnginxとのコンテナ間のリソース共有
 
-    db:                                                         # docker-compose up時に1.と2.からdb→back→nginxの順に立ち上げる
-        image: postgres:13.4
-        environment:
-            - POSTGRES_USER=admin
-            - POSTGRES_PASSWORD=password
-        ports:
-            - "5432:5432"
-        volumes:
-            - "dbdata:/var/lib/postgresql/data/"                 # dbの永続化→dbdata
-    nginx:
-        build: "./nginx/"
-        ports:
-            - "80:80"
-        volumes:
-            # - "./static/:/opt/apps/static/"                     # nginxコンテナにてホストのstaticからコンテナへマウント
-            - "staticdata:/opt/apps/static/"                    # volumesを用いたnginxとのコンテナ間のリソース共有
-        depends_on:
-            - shappar-back                                      # 1. docker-compose up時にbackから立ち上げる
+    command: >
+      bash -c "python3 manage.py makemigrations --settings=config.settings.local &&
+      python3 manage.py migrate --settings=config.settings.local &&
+      python3 manage.py runserver 0.0.0.0:8000 --settings=config.settings.local"
+    depends_on:
+      - db # 2. docker-compose up時にdbから立ち上げる
 
-    shappar-front:
-        build: "./front"
-        ports: 
-            - "8080:8080"
-        volumes:
-            - "./front:/front/"
-        command: "yarn serve -p 8080"
+  db: # docker-compose up時に1.と2.からdb→back→nginxの順に立ち上げる
+    image: postgres:13.4
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - "dbdata:/var/lib/postgresql/data/" # dbの永続化→dbdata
+  nginx:
+    build: "./nginx/"
+    ports:
+      - "80:80"
+    volumes:
+      # - "./static/:/opt/apps/static/"                     # nginxコンテナにてホストのstaticからコンテナへマウント
+      - "staticdata:/opt/apps/static/" # volumesを用いたnginxとのコンテナ間のリソース共有
+    depends_on:
+      - shappar-back # 1. docker-compose up時にbackから立ち上げる
+
+  shappar-front:
+      build: "./front"
+      ports: 
+          - "8080:8080"
+      volumes:
+          - "./front:/front/"
+      command: "yarn serve -p 8080"
 
 volumes:
-    dbdata:
-        driver: local
-    staticdata:
-        driver: local
-    node_modules:
-        driver: local
+  dbdata:
+    driver: local
+  staticdata:
+    driver: local
+  node_modules:
+    driver: local
