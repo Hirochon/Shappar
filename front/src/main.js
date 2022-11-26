@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
@@ -29,14 +29,14 @@ library.add(
   faVenusMars, faBirthdayCake, faBars, faTrashAlt, faPlus, faPaperPlane,
   faArrowAltCircleLeft, faEdit, faClipboardList, faClipboardCheck, faCrown, faHandPeace
 )
-Vue.component('FontAwesomeIcon', FontAwesomeIcon)
 
-Vue.use(BootstrapVue)
-Vue.use(VueAxios, axios)
-Vue.config.productionTip = false
+const app = createApp(App)
 
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
+app.component('FontAwesomeIcon', FontAwesomeIcon)
+
+app.use(router)
+app.use(store)
+app.use(BootstrapVue)
+app.use(VueAxios, axios)
+
+app.mount('#app')
