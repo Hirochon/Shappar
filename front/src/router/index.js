@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import PublicPage from '@/views/PublicPage.vue'
 // import PrivatePage from '@/views/PrivatePage.vue'
 // import NewPage from '@/views/NewPage.vue'
@@ -9,8 +8,6 @@ import UpdateUser from '@/views/UpdateUser'
 import AdminPage from '@/views/AdminPage'
 import HomePage from '@/views/HomePage'
 import store from '@/store'
-
-Vue.use(VueRouter)
 
 const routes = [
   {
@@ -75,9 +72,8 @@ if (process.env.NODE_ENV === 'development') {
   })
 }
 
-const router = new VueRouter({
-  mode: 'history',
-  base: './',
+const router = createRouter({
+  history: createWebHistory('./'),
   routes
 })
 
