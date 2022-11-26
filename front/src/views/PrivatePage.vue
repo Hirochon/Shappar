@@ -1,5 +1,5 @@
 <template>
-  <div class="Private">
+  <div class="PrivatePage">
     <SearchBar />
     <PostList :posts-data="posts" />
   </div>
@@ -11,7 +11,7 @@ import SearchBar from '@/components/SearchBar.vue'
 import PostList from '@/components/PostList.vue'
 
 export default {
-  name: 'Private',
+  name: 'PrivatePage',
   components: {
     SearchBar,
     PostList
@@ -40,7 +40,7 @@ export default {
 </script>
 
 <style lang="scss">
-.Private{
+.PrivatePage{
   padding-top: 48px;
 }
 </style>

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Public from '@/views/Public.vue'
-// import Private from '@/views/Private.vue'
+// import PrivatePage from '@/views/PrivatePage.vue'
 // import NewPage from '@/views/NewPage.vue'
 import MyPage from '@/views/MyPage.vue'
 import LoginPage from '@/views/LoginPage'
@@ -30,8 +30,8 @@ const routes = [
     component: HomePage
   },
   // {
-  //   path: '/Private',
-  //   component: Private
+  //   path: '/PrivatePage',
+  //   component: PrivatePage
   // },
   // {
   //   path: '/NewPage',
