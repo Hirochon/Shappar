@@ -1,49 +1,49 @@
 <template>
-  <div class="Home">
+  <div class="HomePage">
     <GlobalMessage />
     <!-- メインエリア -->
-    <div class="Home__header">
-      <h1 class="Home__shappar">
+    <div class="HomePage__header">
+      <h1 class="HomePage__shappar">
         Shappar
       </h1>
-      <div class="Home__links">
+      <div class="HomePage__links">
         <div
-          class="Home__link signup"
+          class="HomePage__link signup"
           @click="toSignUp()"
         >
           <a>アカウント作成</a>
         </div>
-        <div class="Home__link">
+        <div class="HomePage__link">
           <router-link to="/login">
             ログイン
           </router-link>
         </div>
       </div>
     </div>
-    <div class="Home__container">
-      <div class="Home__catch">
+    <div class="HomePage__container">
+      <div class="HomePage__catch">
         気軽にアンケートを<br>集めよう！
       </div>
-      <p class="Home__description">
+      <p class="HomePage__description">
         SNS型アンケートサービス
       </p>
       <div
-        class="Home__button"
+        class="HomePage__button"
         @click="toSignUp()"
       >
         アカウントを作成
       </div>
-      <div class="Home__links-inner">
-        <div class="Home__link-inner">
+      <div class="HomePage__links-inner">
+        <div class="HomePage__link-inner">
           <a href="#introduction">Shapparとは？</a>
         </div>
-        <div class="Home__link-inner">
+        <div class="HomePage__link-inner">
           <a href="#feature">機能紹介</a>
         </div>
       </div>
     </div>
-    <div class="Home__container white">
-      <div class="Home__phone-img top">
+    <div class="HomePage__container white">
+      <div class="HomePage__phone-img top">
         <img
           src="https://d3ms402csqm2a0.cloudfront.net/static/img/images/home_003.jpg"
           alt=""
@@ -51,89 +51,89 @@
       </div>
       <h2
         id="introduction"
-        class="Home__title"
+        class="HomePage__title"
       >
         Shapparとは？
       </h2>
-      <!-- <img class="Home__full-img" src="https://d3ms402csqm2a0.cloudfront.net/static/img/images/home_001.jpg" alt=""> -->
+      <!-- <img class="HomePage__full-img" src="https://d3ms402csqm2a0.cloudfront.net/static/img/images/home_001.jpg" alt=""> -->
       <img
-        class="Home__img"
+        class="HomePage__img"
         src="https://d3ms402csqm2a0.cloudfront.net/static/img/images/home_002.png"
         alt=""
       >
-      <div class="Home__card">
-        <div class="Home__card__title">
+      <div class="HomePage__card">
+        <div class="HomePage__card__title">
           かんたんに質問
         </div>
-        <div class="Home__card__detail">
+        <div class="HomePage__card__detail">
           ちょっとしたアンケートでも
         </div>
-        <div class="Home__card__detail">
+        <div class="HomePage__card__detail">
           直感的に作れる
         </div>
       </div>
-      <div class="Home__card">
-        <div class="Home__card__title">
+      <div class="HomePage__card">
+        <div class="HomePage__card__title">
           ワンタップで投票
         </div>
-        <div class="Home__card__detail">
+        <div class="HomePage__card__detail">
           分かりやすい使い方で
         </div>
-        <div class="Home__card__detail">
+        <div class="HomePage__card__detail">
           次々に投票できる
         </div>
       </div>
-      <div class="Home__card">
-        <div class="Home__card__title">
+      <div class="HomePage__card">
+        <div class="HomePage__card__title">
           結果が集まる！
         </div>
-        <div class="Home__card__detail">
+        <div class="HomePage__card__detail">
           質問や投票した結果は
         </div>
-        <div class="Home__card__detail">
+        <div class="HomePage__card__detail">
           その場で確認できる
         </div>
       </div>
       <h2
         id="feature"
-        class="Home__title"
+        class="HomePage__title"
       >
         機能紹介
       </h2>
-      <div class="Home__phone-img">
+      <div class="HomePage__phone-img">
         <img
           src="https://d3ms402csqm2a0.cloudfront.net/static/img/images/home_004.jpg"
           alt=""
         >
       </div>
-      <div class="Home__card">
-        <div class="Home__card__title">
+      <div class="HomePage__card">
+        <div class="HomePage__card__title">
           アンケート結果の詳細
         </div>
-        <div class="Home__card__detail">
+        <div class="HomePage__card__detail">
           投票者の情報を集めて
         </div>
-        <div class="Home__card__detail">
+        <div class="HomePage__card__detail">
           結果をグラフで表示
         </div>
       </div>
-      <div class="Home__phone-img">
+      <div class="HomePage__phone-img">
         <img
           src="https://d3ms402csqm2a0.cloudfront.net/static/img/images/home_005.jpg"
           alt=""
         >
       </div>
-      <div class="Home__card">
-        <div class="Home__card__title">
+      <div class="HomePage__card">
+        <div class="HomePage__card__title">
           ランキング機能
         </div>
-        <div class="Home__card__detail">
+        <div class="HomePage__card__detail">
           いま話題の投稿を確認できる
         </div>
       </div>
     </div>
     <div
-      class="Home__button bottom"
+      class="HomePage__button bottom"
       @click="toSignUp()"
     >
       さっそく始めてみる
@@ -158,7 +158,7 @@ export default {
 
 <style lang="scss">
 @import '@/assets/common.scss';
-.Home{
+.HomePage{
   width: 100%;
   height: 100%;
   display: flex;
