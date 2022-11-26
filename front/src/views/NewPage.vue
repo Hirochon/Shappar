@@ -1,6 +1,6 @@
 <template>
   <div
-    class="New"
+    class="NewPage"
     @touchmove.stop.prevent
     @wheel.stop
   >
@@ -10,7 +10,7 @@
     >
       <div
         v-if="isOpen"
-        class="New__container"
+        class="NewPage__container"
         @touchmove.stop.prevent
       >
         <div class="Top">
@@ -45,7 +45,7 @@
         </div>
         <draggable
           v-model="options"
-          handle=".New__option__handle"
+          handle=".NewPage__option__handle"
           @touchmove.prevent.stop
         >
           <transition-group
@@ -55,24 +55,24 @@
             <div
               v-for="(option, index) in options"
               :key="option.id"
-              class="New__option__container"
+              class="NewPage__option__container"
               @touchmove.stop.prevent
             >
               <div
                 :id="'option_'+option.id"
-                class="New__option__wrapper"
+                class="NewPage__option__wrapper"
                 @touchmove.stop.prevent
               >
-                <div class="New__option__data">
-                  <div class="New__option__controll">
+                <div class="NewPage__option__data">
+                  <div class="NewPage__option__controll">
                     <div
-                      class="New__delete"
+                      class="NewPage__delete"
                       @click="deleteOption(index)"
                     >
                       <font-awesome-icon icon="times" />
                     </div>
                     <div
-                      class="New__option__num"
+                      class="NewPage__option__num"
                       :class="{hasError:!option.isValid}"
                       @touchmove.stop.prevent
                     >
@@ -81,7 +81,7 @@
                   </div>
                   <textarea
                     v-model="option.answer"
-                    class="New__option__text"
+                    class="NewPage__option__text"
                     cols="30"
                     rows="3"
                     :placeholder="'回答'+(index+1)"
@@ -91,12 +91,12 @@
                     @input="answerValidate(option)"
                   />
                 </div>
-                <div class="New__option__handle">
+                <div class="NewPage__option__handle">
                   <font-awesome-icon icon="bars" />
                 </div>
               </div>
               <div
-                class="New__delete__behind"
+                class="NewPage__delete__behind"
                 :class="{on:deleteConfig.trigger}"
                 @touchmove.stop.prevent
               >
@@ -124,7 +124,7 @@
       </div>
     </transition>
     <div
-      class="New__FAB"
+      class="NewPage__FAB"
       @click="openNew()"
     >
       <font-awesome-icon icon="plus" />
@@ -137,7 +137,7 @@ import draggable from 'vuedraggable'
 
 import api from '@/services/api'
 export default {
-  name: 'New',
+  name: 'NewPage',
   components: {
     draggable
   },
@@ -341,7 +341,7 @@ export default {
 
 <style lang="scss">
 @import '@/assets/common.scss';
-.New{
+.NewPage{
   // position: absolute;
   width: 100%;
   max-width: 700px;

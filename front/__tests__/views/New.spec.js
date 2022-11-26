@@ -1,14 +1,14 @@
 /* eslint-disable no-undef */
 
 import { createLocalVue, shallowMount } from '@vue/test-utils'
-import Component from '@/views/New.vue'
+import Component from '@/views/NewPage.vue'
 import Vuex from 'vuex'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
 localVue.component('font-awesome-icon', FontAwesomeIcon)
-describe('New.vue', () => {
+describe('NewPage.vue', () => {
   let option
   let wrapper
 
@@ -29,7 +29,7 @@ describe('New.vue', () => {
   it('is a Vue instance', () => {
     expect(wrapper.isVueInstance).toBeTruthy()
   })
-  it('New__container isOpen => falseで非表示', () => {
+  it('NewPage__container isOpen => falseで非表示', () => {
     option = {
       localVue,
       propsData: {
@@ -37,13 +37,13 @@ describe('New.vue', () => {
       }
     }
     wrapper = shallowMount(Component, option)
-    expect(wrapper.find('.New__container').exists()).toBe(false)
+    expect(wrapper.find('.NewPage__container').exists()).toBe(false)
   })
-  it('New__container isOpen => trueで表示', () => {
-    expect(wrapper.find('.New__container').exists()).toBe(true)
+  it('NewPage__container isOpen => trueで表示', () => {
+    expect(wrapper.find('.NewPage__container').exists()).toBe(true)
   })
-  it('New__FAB clickでemitできているか', () => {
-    wrapper.find('.New__FAB').trigger('click')
+  it('NewPage__FAB clickでemitできているか', () => {
+    wrapper.find('.NewPage__FAB').trigger('click')
     expect(wrapper.emitted('switchNew'))
   })
   it('Top__close clickでemitできているか', () => {
@@ -71,28 +71,28 @@ describe('New.vue', () => {
     expect(wrapper.find('.Top__data__question.hasError').exists()).toBe(true)
   })
   it('option の数', () => {
-    expect(wrapper.findAll('.New__option__container').length).toBe(2)
+    expect(wrapper.findAll('.NewPage__option__container').length).toBe(2)
   })
   it('option の数(右上)', () => {
     expect(wrapper.find('.Top__data__options').text()).toBe('2')
   })
   it('option の表示', async () => {
     let answer = 'test answer'
-    let textarea = wrapper.find('.New__option__text').element
+    let textarea = wrapper.find('.NewPage__option__text').element
     expect(textarea.value).toBe('')
     await (wrapper.vm.$data.options[0].answer = answer)
-    expect(wrapper.find('.New__option__text').exists()).toBe(true)
+    expect(wrapper.find('.NewPage__option__text').exists()).toBe(true)
     expect(textarea.value).toBe(answer)
   })
   it('option のエラー', async () => {
     let text = 'a'.repeat(41)
-    let textarea = wrapper.find('.New__option__text')
+    let textarea = wrapper.find('.NewPage__option__text')
     let answer = wrapper.vm.$data.options[0]
     expect(answer.isValid).toBe(true)
     textarea.element.value = text
     await (textarea.trigger('input'))
     expect(answer.isValid).toBe(false)
-    expect(wrapper.find('.New__option__num.hasError').exists()).toBe(true)
+    expect(wrapper.find('.NewPage__option__num.hasError').exists()).toBe(true)
   })
   it('Buttons__add-option の状態', (done) => {
     let button = wrapper.find('.Buttons__add-option')
@@ -100,7 +100,7 @@ describe('New.vue', () => {
     for (let i = 0; i < 8; i++) button.trigger('click')
     // console.log(wrapper.vm.$data.options.length)
     setTimeout(() => {
-      expect(wrapper.findAll('.New__option__container').length).toBe(10)
+      expect(wrapper.findAll('.NewPage__option__container').length).toBe(10)
       expect(wrapper.find('.Buttons__add-option.hasError').exists()).toBe(true)
       done()
     }, 10)

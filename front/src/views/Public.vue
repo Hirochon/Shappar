@@ -9,7 +9,7 @@
       :is-open="isDrawerOpen"
       @close="isDrawerOpen = false"
     />
-    <New
+    <NewPage
       :is-open="isNewOpen"
       @switchNew="switchNew()"
       @refresh="refresh"
@@ -57,7 +57,7 @@
 // @ is an alias to /src
 import SearchBar from '@/components/SearchBar.vue'
 import PostList from '@/components/PostList.vue'
-import New from '@/views/New.vue'
+import NewPage from '@/views/NewPage.vue'
 import GlobalMessage from '@/components/GlobalMessage.vue'
 import DrawerMenu from '@/components/DrawerMenu.vue'
 
@@ -67,7 +67,7 @@ export default {
   components: {
     SearchBar,
     PostList,
-    New,
+    NewPage,
     GlobalMessage,
     DrawerMenu
   },

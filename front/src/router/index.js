@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Public from '@/views/Public.vue'
 // import Private from '@/views/Private.vue'
-// import New from '@/views/New.vue'
+// import NewPage from '@/views/NewPage.vue'
 import MyPage from '@/views/MyPage.vue'
 import LoginPage from '@/views/LoginPage'
 import UpdateUser from '@/views/UpdateUser'
@@ -34,8 +34,8 @@ const routes = [
   //   component: Private
   // },
   // {
-  //   path: '/New',
-  //   component: New,
+  //   path: '/NewPage',
+  //   component: NewPage,
   //   meta: {
   //     requiresAuth: true
   //   }
