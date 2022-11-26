@@ -47,12 +47,12 @@ services:
       - shappar-back # 1. docker-compose up時にbackから立ち上げる
 
   shappar-front:
-    build: "./front/shappar-front"
-    ports:
-      - "8080:8080"
-    volumes:
-      - "./front:/front/"
-    command: "yarn serve -p 8080"
+      build: "./front"
+      ports: 
+          - "8080:8080"
+      volumes:
+          - "./front:/front/"
+      command: "yarn serve -p 8080"
 
 volumes:
   dbdata:
