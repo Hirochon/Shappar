@@ -53,7 +53,7 @@ const routes = [
   },
   {
     // pathにないやつ来たら強制送還！
-    path: '*',
+    path: '/:catchAll(.*)',
     redirect: '/',
     meta: {
       requiresAuth: true
