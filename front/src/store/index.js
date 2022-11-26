@@ -1,8 +1,5 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import api from '@/services/api'
-
-Vue.use(Vuex)
 
 // 認証情報
 const authModule = {
@@ -221,7 +218,7 @@ const userModule = {
   }
 }
 
-const store = new Vuex.Store({
+const store = createStore({
   modules: {
     auth: authModule,
     message: messageModule,
