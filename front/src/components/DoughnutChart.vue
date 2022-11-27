@@ -5,7 +5,6 @@ export default {
   mixins: [mixins.reactiveProp],
   props: ['chartData'],
   mounted () {
-    // console.log('mounted at')
     this.renderChart(this.chartData, {
       legend: {
         labels: {
@@ -13,27 +12,19 @@ export default {
         }
       },
       tooltips: {
-        // enabled: false
-        // position: 'average'
         callbacks: {
           title: function (tooltipItem, data) {
             return ''
           },
           afterBody (tooltipItem, data) {
             let total = 0
-            // console.log(data.datasets[0].data)
-            // console.log(tooltipItem)
-            // console.log(data.datasets[0].data[tooltipItem[0].index])
             data.datasets[0].data.forEach(item => {
               total += item
             })
-            // console.log(total)
-            // console.log(data.datasets[0].data[tooltipItem[0].index] / total * 100)
             return Math.floor(data.datasets[0].data[tooltipItem[0].index] / total * 100) + '%'
           }
         }
       }
-      // responsive: true
     })
   },
   methods: {
