@@ -3,7 +3,12 @@ import { Doughnut, mixins } from 'vue-chartjs'
 export default {
   extends: Doughnut,
   mixins: [mixins.reactiveProp],
-  props: ['chartData'],
+  props: {
+    chartData: {
+      type: Object,
+      required: true
+    }
+  },
   mounted () {
     this.renderChart(this.chartData, {
       legend: {
