@@ -78,6 +78,16 @@ export default {
       isMenuOpen: false
     }
   },
+  computed: {
+    // 1:storeのuserModule, 2:このコンポーネント内で使えるcomputed, 3:userModuleのgetters
+    ...mapGetters('user', {
+      user: 'getUser'
+    })
+    // 以下の方法でも取って来れるよな stateとgettersって何の差があるのか？
+    // user () {
+    //   return this.$store.state.user
+    // }
+  },
   methods: {
     getPost () {
       this.$parent.query = this.childQuery
@@ -96,16 +106,6 @@ export default {
       this.$emit('changeRanking')
       // this.$store.dispatch('message/setInfoMessage', { message: 'ランキングモード' })
     }
-  },
-  computed: {
-    // 1:storeのuserModule, 2:このコンポーネント内で使えるcomputed, 3:userModuleのgetters
-    ...mapGetters('user', {
-      user: 'getUser'
-    })
-    // 以下の方法でも取って来れるよな stateとgettersって何の差があるのか？
-    // user () {
-    //   return this.$store.state.user
-    // }
   }
 }
 </script>

@@ -105,6 +105,12 @@ export default {
       error: {}
     }
   },
+  computed: {
+    ...mapGetters('auth', {
+      username: 'username',
+      isLoggedIn: 'isLoggedIn'
+    })
+  },
   methods: {
     // ログインボタン押下
     submitLogin (username = 'sample1', password = 'shappar1') {
@@ -144,12 +150,6 @@ export default {
       const path = process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : 'https://shappar.site'
       window.location.href = path + '/accounts/signup/'
     }
-  },
-  computed: {
-    ...mapGetters('auth', {
-      username: 'username',
-      isLoggedIn: 'isLoggedIn'
-    })
   }
 }
 </script>

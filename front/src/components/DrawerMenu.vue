@@ -85,6 +85,12 @@ export default {
     }
   },
   emits: ['close'],
+  computed: {
+    // 1:storeのuserModule, 2:このコンポーネント内で使えるcomputed, 3:userModuleのgetters
+    ...mapGetters('user', {
+      user: 'getUser'
+    })
+  },
   methods: {
     logout () {
       const result = window.confirm('ログアウトしてよろしいですか？')
@@ -95,12 +101,6 @@ export default {
         this.$router.replace('/login')
       }
     }
-  },
-  computed: {
-    // 1:storeのuserModule, 2:このコンポーネント内で使えるcomputed, 3:userModuleのgetters
-    ...mapGetters('user', {
-      user: 'getUser'
-    })
   }
 }
 </script>

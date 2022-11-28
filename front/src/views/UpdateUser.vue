@@ -161,6 +161,35 @@ export default {
       beforeIconImage: null
     }
   },
+  computed: {
+    allValidate () {
+      // if (!this.user_id.isValid) return false
+      if (!this.name.isValid) return false
+      if (!this.introduction.isValid) return false
+      return true
+    },
+    ...mapGetters('auth', {
+      before_user_id: 'username'
+    })
+  },
+  mounted () {
+    // this.user_id.value = this.before_user_id
+    this.isLoading = true
+    this.$store.dispatch('user/load', { user_id: this.before_user_id })
+      .then((resUser) => {
+        // console.log(resUser)
+        this.name.value = resUser.name
+        this.introduction.value = resUser.introduction
+        this.beforeHomeImage = resUser.homeimage
+        this.beforeIconImage = resUser.iconimage
+      })
+      .then(() => {
+        this.name.isValid = this.Validate(this.name, 1, 18)
+        // this.user_id.isValid = this.Validate(this.user_id, 1, 18)
+        this.introduction.isValid = this.Validate(this.introduction, 0, 150)
+        this.isLoading = false
+      })
+  },
   methods: {
     imageSelect (icon, e) {
       const file = e.target.files[0]
@@ -206,35 +235,6 @@ export default {
       option.isValid = (option.length >= min && option.length <= max)
       return option.isValid
     }
-  },
-  computed: {
-    allValidate () {
-      // if (!this.user_id.isValid) return false
-      if (!this.name.isValid) return false
-      if (!this.introduction.isValid) return false
-      return true
-    },
-    ...mapGetters('auth', {
-      before_user_id: 'username'
-    })
-  },
-  mounted () {
-    // this.user_id.value = this.before_user_id
-    this.isLoading = true
-    this.$store.dispatch('user/load', { user_id: this.before_user_id })
-      .then((resUser) => {
-        // console.log(resUser)
-        this.name.value = resUser.name
-        this.introduction.value = resUser.introduction
-        this.beforeHomeImage = resUser.homeimage
-        this.beforeIconImage = resUser.iconimage
-      })
-      .then(() => {
-        this.name.isValid = this.Validate(this.name, 1, 18)
-        // this.user_id.isValid = this.Validate(this.user_id, 1, 18)
-        this.introduction.isValid = this.Validate(this.introduction, 0, 150)
-        this.isLoading = false
-      })
   }
 }
 </script>

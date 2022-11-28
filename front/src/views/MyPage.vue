@@ -129,6 +129,14 @@ export default {
       voted: []
     }
   },
+  computed: {
+    tabBar () {
+      return 'translateX(' + (100 * this.isActive) + '%)'
+    },
+    ...mapGetters('user', {
+      my_id: 'user_id'
+    })
+  },
   watch: {
     '$route' (to, from) {
       // ルートの変更の検知...他の人のマイページへ移る時
@@ -136,6 +144,12 @@ export default {
       this.initComponent()
       // console.log('after init')
     }
+  },
+  created () {
+    this.initComponent()
+  },
+  unmounted () {
+    window.removeEventListener('scroll', this.scrollTriggers)
   },
   methods: {
     changeActive (num) {
@@ -277,20 +291,6 @@ export default {
       this.isLoading = false
       window.addEventListener('scroll', this.scrollTriggers)// scrollによるトリガーの追加
     }
-  },
-  computed: {
-    tabBar () {
-      return 'translateX(' + (100 * this.isActive) + '%)'
-    },
-    ...mapGetters('user', {
-      my_id: 'user_id'
-    })
-  },
-  created () {
-    this.initComponent()
-  },
-  unmounted () {
-    window.removeEventListener('scroll', this.scrollTriggers)
   }
 }
 </script>

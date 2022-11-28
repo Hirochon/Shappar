@@ -193,6 +193,11 @@ export default {
       error: {}
     }
   },
+  computed: {
+    ...mapGetters('user', {
+      username: 'name'
+    })
+  },
   methods: {
     Select (post, option) {
       if (post.voted) {
@@ -298,11 +303,6 @@ export default {
       this.detailsPostId = id
       this.isDetailsOpen = !this.isDetailsOpen
     }
-  },
-  computed: {
-    ...mapGetters('user', {
-      username: 'name'
-    })
   }
 }
 </script>
