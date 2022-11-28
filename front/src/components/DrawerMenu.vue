@@ -84,6 +84,7 @@ export default {
       required: true
     }
   },
+  emits: ['close'],
   methods: {
     logout () {
       const result = window.confirm('ログアウトしてよろしいですか？')

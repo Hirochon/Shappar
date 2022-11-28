@@ -184,6 +184,7 @@ export default {
       required: true
     }
   },
+  emits: ['reload'],
   data () {
     return {
       res: null,

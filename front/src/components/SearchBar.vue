@@ -71,6 +71,7 @@ export default {
       type: String
     }
   },
+  emits: { drawerOpen: null, search: null, changeRanking: null },
   data () {
     return {
       childQuery: '',

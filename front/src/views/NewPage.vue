@@ -147,6 +147,7 @@ export default {
       required: true
     }
   },
+  emits: ['switchNew', 'refresh'],
   data: function () {
     return {
       question: {},

@@ -98,6 +98,7 @@ export default {
       required: true
     }
   },
+  emits: ['switchDetails'],
   data () {
     return {
       voted_sex: [],
