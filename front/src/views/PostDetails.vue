@@ -93,7 +93,7 @@ export default {
     doughnutChart
   },
   props: {
-    post_id: {
+    postId: {
       type: String,
       required: true
     }
@@ -169,7 +169,7 @@ export default {
   },
   methods: {
     getPostData () {
-      api.get('/api/v1/posts/' + this.post_id + '/')
+      api.get('/api/v1/posts/' + this.postId + '/')
         .then((response) => {
           const data = response.data
           this.total = data.total
