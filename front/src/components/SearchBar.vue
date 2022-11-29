@@ -68,7 +68,8 @@ export default {
   },
   props: {
     query: {
-      type: String
+      type: String,
+      required: true
     }
   },
   emits: { drawerOpen: null, search: null, changeRanking: null },
