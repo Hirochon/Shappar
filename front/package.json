@@ -2,6 +2,9 @@
   "name": "shappar-front",
   "version": "0.1.0",
   "private": true,
+  "resolutions": {
+    "autoprefixer": "10.4.5"
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -40,6 +43,7 @@
     "@vue/eslint-config-standard": "^6.1.0",
     "@vue/test-utils": "^1.0.0-beta.31",
     "acorn": ">=6.4.1",
+    "autoprefixer": "10.4.5",
     "babel-jest": "^25.1.0",
     "babel-preset-env": "^1.7.0",
     "chart.js": "^2.9.3",
