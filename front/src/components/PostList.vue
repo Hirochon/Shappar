@@ -159,7 +159,7 @@
     <PostDetails
       v-if="isDetailsOpen"
       :post_id="detailsPostId"
-      @switchDetails="switchDetails('')"
+      @switch-details="switchDetails('')"
     />
   </div>
 </template>

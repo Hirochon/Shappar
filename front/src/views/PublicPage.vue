@@ -11,7 +11,7 @@
     />
     <NewPage
       :is-open="isNewOpen"
-      @switchNew="switchNew()"
+      @switch-new="switchNew()"
       @refresh="refresh"
     />
     <transition name="search">
@@ -19,8 +19,8 @@
         v-show="searchShow && !isNewOpen"
         :query="query"
         @search="search()"
-        @drawerOpen="isDrawerOpen = true"
-        @changeRanking="changeRanking()"
+        @drawer-open="isDrawerOpen = true"
+        @change-ranking="changeRanking()"
       />
     </transition>
     <div
