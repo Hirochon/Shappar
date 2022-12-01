@@ -9,7 +9,8 @@ RUN apk update && \
     apk del tzdata && \
     rm -rf /var/cache/apk/*
 
-RUN go install golang.org/x/tools/gopls@latest
+RUN go install golang.org/x/tools/gopls@latest && \
+    go install github.com/go-delve/delve/cmd/dlv@latest
     # go install github.com/kyleconroy/sqlc/cmd/sqlc@v1.14.0 && \
     # go install github.com/rubenv/sql-migrate/...@v1.2.0
 
