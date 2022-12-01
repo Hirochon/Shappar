@@ -2,6 +2,7 @@
 
 ## Pythonサーバーの起動
 
+1. 開発メンバーから環境変数をもらいましょう
 1. Shapparのルートdirで、docker compose down // 変なの立ち上がってたらdownさせる
 1. docker compose build shappar-back --no-cache
 1. make migrations
