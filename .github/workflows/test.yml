@@ -1,0 +1,20 @@
+name: go-test
+
+on:
+  pull_request:
+
+jobs:
+  go-test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      # ベース(マージ先)となるブランチの情報を github.base_ref で取得できる
+      - run: git fetch origin ${{ github.base_ref }} --depth=1
+      # git diff: 差分チェック -> --name-only: 変更ファイルの名前だけ -> マージ先の -> go-server配下だけ -> wc: 行数を数える
+      - id: diff
+        run: echo "::set-output name=changed::$(git diff --name-only origin/${{ github.base_ref }} HEAD --relative ./go-server/ | wc -l)"
+      - name: build & test
+        if: ${{ steps.diff.outputs.changed != '0' }}
+        run: |
+          docker compose build shappar-server
+          docker compose run --rm shappar-server go test ./... -cover
