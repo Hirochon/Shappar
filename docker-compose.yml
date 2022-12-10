@@ -1,9 +1,9 @@
 version: "3.8"
 services:
-  shappar-server:
+  go-server:
     build:
       context: ./go-server
-    container_name: shappar-server
+    container_name: go-server
     working_dir: /go/src/go-server
     tty: true
     stdin_open: true
