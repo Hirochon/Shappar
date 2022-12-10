@@ -11,8 +11,8 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version-file: go-server/go.mod
-          cache: true
           # まだ使わないからコメントアウト
+          # cache: true
           # cache-dependency-path: go-server/go.sum
       # ベース(マージ先)となるブランチの情報を github.base_ref で取得できる
       - run: git fetch origin ${{ github.base_ref }} --depth=1
