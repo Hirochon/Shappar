@@ -17,7 +17,6 @@ paths:
   /api/v1/posts:
     post:
       summary: ''
-      operationId: post-api-posts
       responses:
         '201':
           description: Created
@@ -86,7 +85,7 @@ paths:
           description: request body
       tags:
         - posts
-  '/api/v1/posts/{post_id}':
+  /api/v1/posts/{post_id}:
     parameters:
       - type: string
         name: post_id
@@ -217,10 +216,8 @@ paths:
             example-1:
               detail: 存在しない投稿IDです。
       description: get post details
-      operationId: get-api-v1-posts-post_id
     delete:
       summary: ''
-      operationId: delete-api-v1-posts-post_id
       responses:
         '204':
           description: No Content
@@ -249,7 +246,7 @@ paths:
       description: delete post
       tags:
         - posts
-  '/api/v1/posts/{post_id}/polls':
+  /api/v1/posts/{post_id}/polls:
     parameters:
       - type: string
         name: post_id
@@ -257,7 +254,6 @@ paths:
         required: true
     post:
       summary: ''
-      operationId: post-api-v1-posts-postId-polls-pollId
       responses:
         '201':
           description: Created
@@ -357,7 +353,6 @@ paths:
           examples:
             example-1:
               detail: 存在しない投稿IDです。
-      operationId: get-api-v1-posts-public
       description: get public posts
       parameters:
         - type: string
@@ -381,14 +376,13 @@ paths:
             $ref: '#/definitions/Posts'
           examples:
             $ref: '#/definitions/Posts/x-examples'
-      operationId: get-api-v1-posts-private
       description: get private posts
       parameters:
         - type: string
           in: query
           name: q
           description: 検索キーワード
-  '/api/v1/posts/public/{post_id}':
+  /api/v1/posts/public/{post_id}:
     parameters:
       - type: string
         name: post_id
@@ -415,7 +409,6 @@ paths:
           examples:
             example-1:
               detail: 存在しない投稿IDです。
-      operationId: get-api-v1-posts-postId
       description: get post details
   /api/v1/users:
     get:
@@ -429,11 +422,9 @@ paths:
             $ref: '#/definitions/Users'
           examples:
             $ref: '#/definitions/Users/x-examples'
-      operationId: get-api-v1-users
       description: get users list
     post:
       summary: ''
-      operationId: post-api-v1-users
       responses:
         '200':
           description: OK
@@ -444,7 +435,7 @@ paths:
       description: create new user
       tags:
         - users
-  '/api/v1/users/{user_id}':
+  /api/v1/users/{user_id}:
     parameters:
       - type: string
         name: user_id
@@ -461,11 +452,9 @@ paths:
             $ref: '#/definitions/User'
           examples:
             $ref: '#/definitions/User/x-examples'
-      operationId: get-api-v1-users-userId
       description: get user details
     patch:
       summary: ''
-      operationId: put-api-v1-users-userId
       responses:
         '200':
           description: OK
@@ -495,7 +484,6 @@ paths:
           description: update user infomation
     delete:
       summary: ''
-      operationId: delete-api-v1-users-userId
       responses:
         '200':
           description: OK
@@ -506,7 +494,7 @@ paths:
       description: delete user
       tags:
         - users
-  '/api/v1/users/{user_id}/settings':
+  /api/v1/users/{user_id}/settings:
     parameters:
       - type: string
         name: user_id
@@ -514,7 +502,6 @@ paths:
         required: true
     put:
       summary: ''
-      operationId: put-api-v1-users-userId-settings
       responses:
         '200':
           description: OK
@@ -527,7 +514,6 @@ paths:
       description: update user settings
     get:
       summary: ''
-      operationId: get-api-v1-users-userId-settings
       responses:
         '200':
           description: OK
@@ -545,7 +531,7 @@ paths:
       description: get user settings
       tags:
         - users
-  '/api/v1/users/{user_id}/posted':
+  /api/v1/users/{user_id}/posted:
     parameters:
       - type: string
         name: user_id
@@ -562,9 +548,8 @@ paths:
             $ref: '#/definitions/Posts'
           examples:
             $ref: '#/definitions/Posts/x-examples'
-      operationId: get-api-v1-users-userId-posts
       description: get user posted posts
-  '/api/v1/users/{user_id}/voted':
+  /api/v1/users/{user_id}/voted:
     parameters:
       - type: string
         name: user_id
@@ -588,12 +573,10 @@ paths:
             properties: {}
           examples:
             example-1: {}
-      operationId: get-api-v1-users-userId-voted
       description: user voted posts
-  '/api/v1/friendships/{userId}':
+  /api/v1/friendships/{userId}:
     post:
       summary: ''
-      operationId: post-api-v1-friendships
       responses:
         '200':
           description: OK
@@ -606,7 +589,6 @@ paths:
       description: create friendships
     put:
       summary: ''
-      operationId: put-api-v1-friendships
       responses:
         '200':
           description: OK
@@ -619,7 +601,6 @@ paths:
       description: update friendship
     delete:
       summary: ''
-      operationId: delete-api-v1-friendships
       responses:
         '200':
           description: OK
@@ -636,7 +617,7 @@ paths:
         in: path
         required: true
         description: ユーザーが設定できるuserID
-  '/api/v1/frendships/{userId}/following':
+  /api/v1/frendships/{userId}/following:
     parameters:
       - type: string
         name: userId
@@ -654,9 +635,8 @@ paths:
             $ref: '#/definitions/Users'
           examples:
             $ref: '#/definitions/Users/x-examples'
-      operationId: get-api-v1-frendships-userId-following
       description: get following users
-  '/api/v1/frendships/{userId}/followers':
+  /api/v1/frendships/{userId}/followers:
     parameters:
       - type: string
         name: userId
@@ -674,7 +654,6 @@ paths:
             $ref: '#/definitions/Users'
           examples:
             $ref: '#/definitions/Users/x-examples'
-      operationId: get-api-v1-frendships-userId-followers
       description: get followers
   /api/v1/posts/public/rank:
     get:
@@ -688,7 +667,6 @@ paths:
             $ref: '#/definitions/Posts'
           examples:
             $ref: '#/definitions/Posts/x-examples'
-      operationId: get-api-v1-posts-public-rank
       description: get post ranking
     parameters: []
 definitions:
@@ -910,7 +888,6 @@ definitions:
         type: string
       user_id:
         type: string
-        default: false
       iconimage:
         type: string
       question:
