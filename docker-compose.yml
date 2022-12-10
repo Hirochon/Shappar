@@ -11,6 +11,14 @@ services:
       - ./go-server:/go/src/go-server
     ports:
       - 8040:8040
+  go-swagger:
+    image: quay.io/goswagger/swagger
+    container_name: go-swagger
+    working_dir: /go/src/go-swagger
+    volumes:
+      - ./:/go/src/go-swagger
+      - node_modules:/front/node_modules
+    command: generate server --exclude-main --strict-additional-properties -t ./go-server/internal/ui/gen -s restapiv1 -f ./Swagger/swagger_api_v1.yml
 
   shappar-back:
     build: "./"
