@@ -23,4 +23,7 @@ jobs:
         if: ${{ steps.diff.outputs.changed != '0' }}
         working-directory: ./go-server
         run: |
-          go test ./internal/... -cover
+          go test ./internal/... -coverprofile=coverage.out
+      - name: coverage report
+        if: ${{ steps.diff.outputs.changed != '0' }}
+        uses: k1LoW/octocov-action@v0
