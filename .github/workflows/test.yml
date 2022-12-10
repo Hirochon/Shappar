@@ -1,0 +1,29 @@
+name: go-test
+
+on:
+  pull_request:
+
+jobs:
+  go-test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: go-server/go.mod
+          # まだ使わないからコメントアウト
+          # cache: true
+          # cache-dependency-path: go-server/go.sum
+      # ベース(マージ先)となるブランチの情報を github.base_ref で取得できる
+      - run: git fetch origin ${{ github.base_ref }} --depth=1
+      # git diff: 差分チェック -> --name-only: 変更ファイルの名前だけ -> マージ先の -> go-server配下だけ -> wc: 行数を数える
+      - id: diff
+        run: echo "changed=$(git diff --name-only origin/${{ github.base_ref }} HEAD --relative ./go-server/ | wc -l)" >> $GITHUB_OUTPUT
+      - name: build & test
+        if: ${{ steps.diff.outputs.changed != '0' }}
+        working-directory: ./go-server
+        run: |
+          go test ./internal/... -coverprofile=coverage.out
+      - name: coverage report
+        if: ${{ steps.diff.outputs.changed != '0' }}
+        uses: k1LoW/octocov-action@v0

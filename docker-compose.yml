@@ -19,7 +19,6 @@ services:
     volumes:
       - "./:/code/" # プロジェクトのルートディレクトリからマウントを取る
       - "staticdata:/opt/static/" # volumesを用いたnginxとのコンテナ間のリソース共有
-
     command: >
       bash -c "python3 manage.py makemigrations --settings=config.settings.local &&
       python3 manage.py migrate --settings=config.settings.local &&
@@ -48,7 +47,7 @@ services:
 
   shappar-front:
       build: "./front"
-      ports: 
+      ports:
           - "8080:8080"
       volumes:
           - "./front:/front/"
