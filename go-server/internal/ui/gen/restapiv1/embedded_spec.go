@@ -159,6 +159,25 @@ func init() {
         }
       ]
     },
+    "/api/v1/health": {
+      "get": {
+        "description": "health check",
+        "tags": [
+          "health"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/HealthCheck"
+            },
+            "examples": {
+              "$ref": "#/definitions/HealthCheck/x-examples"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/posts": {
       "post": {
         "description": "new post",
@@ -1042,6 +1061,15 @@ func init() {
     }
   },
   "definitions": {
+    "HealthCheck": {
+      "type": "object",
+      "title": "HealthCheck",
+      "x-examples": {
+        "HealthCheck": {
+          "status": "OK"
+        }
+      }
+    },
     "Post": {
       "type": "object",
       "title": "Post",
@@ -1491,6 +1519,9 @@ func init() {
     },
     {
       "name": "friendships"
+    },
+    {
+      "name": "operations"
     }
   ]
 }`))
@@ -1635,6 +1666,25 @@ func init() {
           "required": true
         }
       ]
+    },
+    "/api/v1/health": {
+      "get": {
+        "description": "health check",
+        "tags": [
+          "health"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/HealthCheck"
+            },
+            "examples": {
+              "$ref": "#/definitions/HealthCheck/x-examples"
+            }
+          }
+        }
+      }
     },
     "/api/v1/posts": {
       "post": {
@@ -2602,14 +2652,20 @@ func init() {
         }
       }
     },
+    "HealthCheck": {
+      "type": "object",
+      "title": "HealthCheck",
+      "x-examples": {
+        "HealthCheck": {
+          "status": "OK"
+        }
+      }
+    },
     "OptionsItems0": {
       "type": "object",
       "properties": {
-        "select_num": {
-          "type": "integer"
-        },
-        "votes": {
-          "type": "integer"
+        "answer": {
+          "type": "string"
         }
       }
     },
@@ -3073,6 +3129,9 @@ func init() {
     },
     {
       "name": "friendships"
+    },
+    {
+      "name": "operations"
     }
   ]
 }`))

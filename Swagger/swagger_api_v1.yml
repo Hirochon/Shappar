@@ -669,6 +669,18 @@ paths:
             $ref: '#/definitions/Posts/x-examples'
       description: get post ranking
     parameters: []
+  /api/v1/health:
+    get:
+      description: health check
+      tags:
+        - health
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/HealthCheck'
+          examples:
+            $ref: '#/definitions/HealthCheck/x-examples'
 definitions:
   Posts:
     title: Posts
@@ -977,8 +989,15 @@ definitions:
             followers: 100
             follow: 100
             followed: true
+  HealthCheck:
+    title: HealthCheck
+    type: object
+    x-examples:
+      HealthCheck:
+        status: OK
 securityDefinitions: {}
 tags:
   - name: posts
   - name: users
   - name: friendships
+  - name: operations
