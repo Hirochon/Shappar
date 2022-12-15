@@ -11,7 +11,7 @@ services:
       - ./go-server:/go/src/go-server
     ports:
       - 8040:8040
-  go-swagger:
+  swagger-generate-go-code:
     image: quay.io/goswagger/swagger
     container_name: go-swagger
     working_dir: /go/src/go-swagger
