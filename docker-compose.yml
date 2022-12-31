@@ -1,9 +1,9 @@
 version: "3.8"
 services:
-  shappar-server:
+  go-server:
     build:
       context: ./go-server
-    container_name: shappar-server
+    container_name: go-server
     working_dir: /go/src/go-server
     tty: true
     stdin_open: true
@@ -11,6 +11,7 @@ services:
       - ./go-server:/go/src/go-server
     ports:
       - 8040:8040
+
   shappar-mysql:
     ## PlanetScaleのMySQLが`8.0.23`であるため
     image: mysql:8.0.23
@@ -21,6 +22,15 @@ services:
       - MYSQL_DATABASE=shappar_db
     ports:
       - 3306:3306
+
+  swagger-generate-go-code:
+    image: quay.io/goswagger/swagger
+    container_name: go-swagger
+    working_dir: /go/src/go-swagger
+    volumes:
+      - ./:/go/src/go-swagger
+      - node_modules:/front/node_modules
+    command: generate server --exclude-main --strict-additional-properties -t ./go-server/internal/ui/gen -s restapiv1 -f ./Swagger/swagger_api_v1.yml
 
   shappar-back:
     build: "./"
