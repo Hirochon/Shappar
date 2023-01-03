@@ -11,6 +11,18 @@ services:
       - ./go-server:/go/src/go-server
     ports:
       - 8040:8040
+
+  shappar-mysql:
+    ## PlanetScaleのMySQLが`8.0.23`であるため
+    image: mysql:8.0.23
+    environment:
+      - MYSQL_USER=user
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=shappar_db
+    ports:
+      - 3306:3306
+
   swagger-generate-go-code:
     image: quay.io/goswagger/swagger
     container_name: go-swagger
