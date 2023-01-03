@@ -3,7 +3,7 @@ services:
   go-server:
     build:
       context: ./go-server
-    container_name: go-server
+    container_name: shappar-go-server
     working_dir: /go/src/go-server
     tty: true
     stdin_open: true
@@ -25,7 +25,7 @@ services:
 
   swagger-generate-go-code:
     image: quay.io/goswagger/swagger
-    container_name: go-swagger
+    container_name: shappar-go-swagger
     working_dir: /go/src/go-swagger
     volumes:
       - ./:/go/src/go-swagger
