@@ -11,6 +11,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 
 	"github.com/Hirochon/Shappar/go-server/internal/ui/gen/restapiv1/operations"
+	"github.com/Hirochon/Shappar/go-server/internal/ui/gen/restapiv1/operations/administrations"
 	"github.com/Hirochon/Shappar/go-server/internal/ui/gen/restapiv1/operations/friendships"
 	"github.com/Hirochon/Shappar/go-server/internal/ui/gen/restapiv1/operations/posts"
 	"github.com/Hirochon/Shappar/go-server/internal/ui/gen/restapiv1/operations/users"
@@ -63,6 +64,11 @@ func configureAPI(api *operations.ShapparAPI) http.Handler {
 	if api.FriendshipsGetAPIV1FrendshipsUserIDFollowingHandler == nil {
 		api.FriendshipsGetAPIV1FrendshipsUserIDFollowingHandler = friendships.GetAPIV1FrendshipsUserIDFollowingHandlerFunc(func(params friendships.GetAPIV1FrendshipsUserIDFollowingParams) middleware.Responder {
 			return middleware.NotImplemented("operation friendships.GetAPIV1FrendshipsUserIDFollowing has not yet been implemented")
+		})
+	}
+	if api.AdministrationsGetAPIV1HealthHandler == nil {
+		api.AdministrationsGetAPIV1HealthHandler = administrations.GetAPIV1HealthHandlerFunc(func(params administrations.GetAPIV1HealthParams) middleware.Responder {
+			return middleware.NotImplemented("operation administrations.GetAPIV1Health has not yet been implemented")
 		})
 	}
 	if api.PostsGetAPIV1PostsPostIDHandler == nil {

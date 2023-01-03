@@ -19,8 +19,8 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
+	"github.com/Hirochon/Shappar/go-server/internal/ui/gen/restapiv1/operations/administrations"
 	"github.com/Hirochon/Shappar/go-server/internal/ui/gen/restapiv1/operations/friendships"
-	"github.com/Hirochon/Shappar/go-server/internal/ui/gen/restapiv1/operations/health"
 	"github.com/Hirochon/Shappar/go-server/internal/ui/gen/restapiv1/operations/posts"
 	"github.com/Hirochon/Shappar/go-server/internal/ui/gen/restapiv1/operations/users"
 )
@@ -62,8 +62,8 @@ func NewShapparAPI(spec *loads.Document) *ShapparAPI {
 		FriendshipsGetAPIV1FrendshipsUserIDFollowingHandler: friendships.GetAPIV1FrendshipsUserIDFollowingHandlerFunc(func(params friendships.GetAPIV1FrendshipsUserIDFollowingParams) middleware.Responder {
 			return middleware.NotImplemented("operation friendships.GetAPIV1FrendshipsUserIDFollowing has not yet been implemented")
 		}),
-		HealthGetAPIV1HealthHandler: health.GetAPIV1HealthHandlerFunc(func(params health.GetAPIV1HealthParams) middleware.Responder {
-			return middleware.NotImplemented("operation health.GetAPIV1Health has not yet been implemented")
+		AdministrationsGetAPIV1HealthHandler: administrations.GetAPIV1HealthHandlerFunc(func(params administrations.GetAPIV1HealthParams) middleware.Responder {
+			return middleware.NotImplemented("operation administrations.GetAPIV1Health has not yet been implemented")
 		}),
 		PostsGetAPIV1PostsPostIDHandler: posts.GetAPIV1PostsPostIDHandlerFunc(func(params posts.GetAPIV1PostsPostIDParams) middleware.Responder {
 			return middleware.NotImplemented("operation posts.GetAPIV1PostsPostID has not yet been implemented")
@@ -162,8 +162,8 @@ type ShapparAPI struct {
 	FriendshipsGetAPIV1FrendshipsUserIDFollowersHandler friendships.GetAPIV1FrendshipsUserIDFollowersHandler
 	// FriendshipsGetAPIV1FrendshipsUserIDFollowingHandler sets the operation handler for the get API v1 frendships user ID following operation
 	FriendshipsGetAPIV1FrendshipsUserIDFollowingHandler friendships.GetAPIV1FrendshipsUserIDFollowingHandler
-	// HealthGetAPIV1HealthHandler sets the operation handler for the get API v1 health operation
-	HealthGetAPIV1HealthHandler health.GetAPIV1HealthHandler
+	// AdministrationsGetAPIV1HealthHandler sets the operation handler for the get API v1 health operation
+	AdministrationsGetAPIV1HealthHandler administrations.GetAPIV1HealthHandler
 	// PostsGetAPIV1PostsPostIDHandler sets the operation handler for the get API v1 posts post ID operation
 	PostsGetAPIV1PostsPostIDHandler posts.GetAPIV1PostsPostIDHandler
 	// PostsGetAPIV1PostsPrivateHandler sets the operation handler for the get API v1 posts private operation
@@ -290,8 +290,8 @@ func (o *ShapparAPI) Validate() error {
 	if o.FriendshipsGetAPIV1FrendshipsUserIDFollowingHandler == nil {
 		unregistered = append(unregistered, "friendships.GetAPIV1FrendshipsUserIDFollowingHandler")
 	}
-	if o.HealthGetAPIV1HealthHandler == nil {
-		unregistered = append(unregistered, "health.GetAPIV1HealthHandler")
+	if o.AdministrationsGetAPIV1HealthHandler == nil {
+		unregistered = append(unregistered, "administrations.GetAPIV1HealthHandler")
 	}
 	if o.PostsGetAPIV1PostsPostIDHandler == nil {
 		unregistered = append(unregistered, "posts.GetAPIV1PostsPostIDHandler")
@@ -455,7 +455,7 @@ func (o *ShapparAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/v1/health"] = health.NewGetAPIV1Health(o.context, o.HealthGetAPIV1HealthHandler)
+	o.handlers["GET"]["/api/v1/health"] = administrations.NewGetAPIV1Health(o.context, o.AdministrationsGetAPIV1HealthHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
