@@ -671,12 +671,13 @@ paths:
     parameters: []
   /api/v1/health:
     get:
+      summary: 疎通確認でHealthCheck
       description: health check
       tags:
-        - health
+        - administrations
       responses:
         200:
-          description: OK
+          description: HealthCheckをする
           schema:
             $ref: '#/definitions/HealthCheck'
           examples:
@@ -990,14 +991,16 @@ definitions:
             follow: 100
             followed: true
   HealthCheck:
-    title: HealthCheck
     type: object
     x-examples:
       HealthCheck:
         status: OK
+    properties:
+      status:
+        type: string
 securityDefinitions: {}
 tags:
   - name: posts
   - name: users
   - name: friendships
-  - name: operations
+  - name: administrations
