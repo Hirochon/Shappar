@@ -163,11 +163,12 @@ func init() {
       "get": {
         "description": "health check",
         "tags": [
-          "health"
+          "administrations"
         ],
+        "summary": "疎通確認でHealthCheck",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "HealthCheckをする",
             "schema": {
               "$ref": "#/definitions/HealthCheck"
             },
@@ -1063,7 +1064,11 @@ func init() {
   "definitions": {
     "HealthCheck": {
       "type": "object",
-      "title": "HealthCheck",
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      },
       "x-examples": {
         "HealthCheck": {
           "status": "OK"
@@ -1521,7 +1526,7 @@ func init() {
       "name": "friendships"
     },
     {
-      "name": "operations"
+      "name": "administrations"
     }
   ]
 }`))
@@ -1671,11 +1676,12 @@ func init() {
       "get": {
         "description": "health check",
         "tags": [
-          "health"
+          "administrations"
         ],
+        "summary": "疎通確認でHealthCheck",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "HealthCheckをする",
             "schema": {
               "$ref": "#/definitions/HealthCheck"
             },
@@ -2654,7 +2660,11 @@ func init() {
     },
     "HealthCheck": {
       "type": "object",
-      "title": "HealthCheck",
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      },
       "x-examples": {
         "HealthCheck": {
           "status": "OK"
@@ -2664,8 +2674,11 @@ func init() {
     "OptionsItems0": {
       "type": "object",
       "properties": {
-        "answer": {
-          "type": "string"
+        "select_num": {
+          "type": "integer"
+        },
+        "votes": {
+          "type": "integer"
         }
       }
     },
@@ -3131,7 +3144,7 @@ func init() {
       "name": "friendships"
     },
     {
-      "name": "operations"
+      "name": "administrations"
     }
   ]
 }`))
