@@ -1,0 +1,4 @@
+development:
+  dialect: mysql
+  datasource: ${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(${MYSQL_HOST})/${MYSQL_DATABASE}?parseTime=true${MYSQL_EXTRA_PROPERTIES}
+  dir: internal/infrastructure/migration/schema
