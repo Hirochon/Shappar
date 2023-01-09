@@ -1,8 +1,14 @@
 version: "3.8"
 services:
-  go-server:
+  shappar-go-server:
     build:
       context: ./go-server
+      args:
+        MYSQL_USER: 'user'
+        MYSQL_PASSWORD: 'password'
+        MYSQL_DATABASE: 'shappar_db'
+        MYSQL_HOST: 'shappar-mysql'
+        MYSQL_PROPERTIES: ''
     container_name: shappar-go-server
     working_dir: /go/src/go-server
     tty: true
@@ -11,6 +17,8 @@ services:
       - ./go-server:/go/src/go-server
     ports:
       - 8040:8040
+    depends_on:
+      - shappar-mysql
 
   shappar-mysql:
     ## PlanetScaleのMySQLが`8.0.23`であるため
