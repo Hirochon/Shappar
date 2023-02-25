@@ -2,6 +2,9 @@ package firebaseuser
 
 import (
 	"fmt"
+	"net/http"
+
+	"github.com/Hirochon/Shappar/go-server/internal/pkg/customerror"
 )
 
 type firebaseUserUID string
@@ -16,7 +19,7 @@ func (f firebaseUserUID) String() string {
 
 func checkFirebaseUID(value string) error {
 	if value == "" {
-		return fmt.Errorf("firebaseUserUIDが空です")
+		return customerror.NewCustomError(http.StatusBadRequest, fmt.Errorf("firebaseUserUIDが空です"))
 	}
 	return nil
 }

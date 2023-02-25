@@ -2,7 +2,10 @@ package firebaseuser
 
 import (
 	"fmt"
+	"net/http"
 	"time"
+
+	"github.com/Hirochon/Shappar/go-server/internal/pkg/customerror"
 )
 
 type firebaseTokenVerificationVerifiedTime time.Time
@@ -17,7 +20,7 @@ func (f firebaseTokenVerificationVerifiedTime) Time() time.Time {
 
 func checkVerifiedTime(value time.Time) error {
 	if value.IsZero() {
-		return fmt.Errorf("検証日時が空です")
+		return customerror.NewCustomError(http.StatusBadRequest, fmt.Errorf("検証日時が空です"))
 	}
 	return nil
 }

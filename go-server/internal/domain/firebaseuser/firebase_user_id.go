@@ -2,7 +2,9 @@ package firebaseuser
 
 import (
 	"fmt"
+	"net/http"
 
+	"github.com/Hirochon/Shappar/go-server/internal/pkg/customerror"
 	"github.com/oklog/ulid/v2"
 )
 
@@ -24,7 +26,7 @@ func (f firebaseUserID) String() string {
 func NewFirebaseUserID(id string) (FirebaseUserID, error) {
 	ulid, err := ulid.Parse(id)
 	if err != nil {
-		return nil, fmt.Errorf("firebase user idが不正です: %w", err)
+		return nil, customerror.NewCustomError(http.StatusBadRequest, fmt.Errorf("firebase user idが不正です: %w", err))
 	}
 	return firebaseUserID(ulid), nil
 }
