@@ -19,7 +19,7 @@ func checkToken(token string) error {
 	return nil
 }
 
-func NewFirebaseTokenVerificationToken(token string) (FirebaseTokenVerificationToken, error) {
+func newFirebaseTokenVerificationToken(token string) (FirebaseTokenVerificationToken, error) {
 	if err := checkToken(token); err != nil {
 		return nil, err
 	}

@@ -21,11 +21,11 @@ func (f firebaseTokenVerification) VerifiedTime() FirebaseTokenVerificationVerif
 }
 
 func NewFirebaseTokenVerification(token string, verifiedTime time.Time) (FirebaseTokenVerification, error) {
-	firebaseTokenVerificationToken, err := NewFirebaseTokenVerificationToken(token)
+	firebaseTokenVerificationToken, err := newFirebaseTokenVerificationToken(token)
 	if err != nil {
 		return nil, err
 	}
-	firebaseTokenVerificationVerifiedTime, err := NewFirebaseTokenVerificationVerifiedTime(verifiedTime)
+	firebaseTokenVerificationVerifiedTime, err := newFirebaseTokenVerificationVerifiedTime(verifiedTime)
 	if err != nil {
 		return nil, err
 	}

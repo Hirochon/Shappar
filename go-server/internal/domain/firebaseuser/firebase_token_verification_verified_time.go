@@ -22,7 +22,7 @@ func checkVerifiedTime(value time.Time) error {
 	return nil
 }
 
-func NewFirebaseTokenVerificationVerifiedTime(value time.Time) (FirebaseTokenVerificationVerifiedTime, error) {
+func newFirebaseTokenVerificationVerifiedTime(value time.Time) (FirebaseTokenVerificationVerifiedTime, error) {
 	if err := checkVerifiedTime(value); err != nil {
 		return nil, err
 	}
