@@ -1,6 +1,11 @@
 package firebaseuser
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/Hirochon/Shappar/go-server/internal/pkg/customerror"
+)
 
 type firebaseTokenVerificationToken string
 
@@ -14,7 +19,7 @@ func (f firebaseTokenVerificationToken) String() string {
 
 func checkToken(token string) error {
 	if token == "" {
-		return fmt.Errorf("トークンが空です")
+		return customerror.NewCustomError(http.StatusBadRequest, fmt.Errorf("トークンが空です"))
 	}
 	return nil
 }
