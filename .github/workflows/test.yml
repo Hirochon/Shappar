@@ -40,6 +40,7 @@ jobs:
           MYSQL_DATABASE: shappar_db
           MYSQL_EXTRA_PROPERTIES: ""
         run: |
+          make migrate-up
           go test ./internal/... -coverprofile=coverage.out
       - name: coverage report
         if: ${{ steps.diff.outputs.changed != '0' }}
