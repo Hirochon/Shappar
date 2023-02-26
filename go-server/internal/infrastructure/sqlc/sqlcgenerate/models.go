@@ -4,10 +4,28 @@
 
 package sqlcgenerate
 
-import ()
+import (
+	"time"
+)
 
-// リソース: 投稿
-type Post struct {
-	// 投稿の一意な識別子ULID
+// イベント: Firebaseトークンの確認
+type FirebaseTokenVerify struct {
+	// Firebaseユーザーの一意な識別子ULID
+	FirebaseUserID string `json:"firebaseUserID"`
+	// FirebaseのユーザーID
+	Uid string `json:"uid"`
+	// Firebaseユーザーのメールアドレス
+	Email string `json:"email"`
+	// Firebaseトークンの確認日時
+	VerifiedTime time.Time `json:"verifiedTime"`
+}
+
+// リソース: サービスに接続しているFirebaseユーザー
+type FirebaseUser struct {
+	// Firebaseユーザーの一意な識別子ULID
 	ID string `json:"id"`
+	// FirebaseのユーザーID
+	Uid string `json:"uid"`
+	// Firebaseユーザーのメールアドレス
+	Email string `json:"email"`
 }
