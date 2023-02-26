@@ -5,6 +5,17 @@ on:
 
 jobs:
   go-test:
+    services:
+      mysql:
+        image: mysql:8.0.23
+        env:
+          MYSQL_USER: user
+          MYSQL_ROOT_PASSWORD: root_password
+          MYSQL_PASSWORD: password
+          MYSQL_DATABASE: shappar_db
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -22,6 +33,12 @@ jobs:
       - name: build & test
         if: ${{ steps.diff.outputs.changed != '0' }}
         working-directory: ./go-server
+        env:
+          MYSQL_USER: user
+          MYSQL_PASSWORD: password
+          MYSQL_HOST: localhost
+          MYSQL_DATABASE: shappar_db
+          MYSQL_EXTRA_PROPERTIES: ""
         run: |
           go test ./internal/... -coverprofile=coverage.out
       - name: coverage report
