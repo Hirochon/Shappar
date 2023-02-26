@@ -4,7 +4,9 @@ import (
 	"context"
 	"os"
 	"testing"
+	"time"
 
+	"github.com/Hirochon/Shappar/go-server/internal/domain/firebaseuser"
 	"github.com/Hirochon/Shappar/go-server/internal/infrastructure/externalconnection/firebaseconnection"
 	"github.com/Hirochon/Shappar/go-server/internal/infrastructure/externalconnection/planetscaleconnection"
 	"github.com/Hirochon/Shappar/go-server/internal/pkg/logger"
@@ -33,21 +35,27 @@ func TestFirebaseUserRepositoryVerifyIDTokenSuccess(t *testing.T) {
 	}
 	firebaseUserRepository := NewFirebaseUserRepository(firebaseClient, planetScaleClient, shapparLogger)
 	cases := []struct {
-		scenario  string
-		token     string
-		wantUID   string
-		wantEmail string
+		scenario     string
+		token        string
+		verifiedTime time.Time
+		wantUID      string
+		wantEmail    string
 	}{
 		{
-			scenario:  "正常系 正常なトークンで認証できる",
-			token:     "constToken",
-			wantUID:   "hogeUID",
-			wantEmail: "sample@example.com",
+			scenario:     "正常系 正常なトークンで認証できる",
+			token:        "constToken",
+			verifiedTime: time.Date(2023, 1, 1, 0, 0, 0, 0, time.Local),
+			wantUID:      "hogeUID",
+			wantEmail:    "sample@example.com",
 		},
 	}
 	for _, c := range cases {
 		t.Run(c.scenario, func(t *testing.T) {
-			uid, email, err := firebaseUserRepository.VerifyIDToken(ctx, c.token)
+			firebaseTokenVerification, err := firebaseuser.NewFirebaseTokenVerification(c.token, c.verifiedTime)
+			if err != nil {
+				t.Fatalf("正しい引数に対して、責務外エラーが発生しました: %s", err)
+			}
+			uid, email, err := firebaseUserRepository.VerifyIDToken(ctx, firebaseTokenVerification)
 			if err != nil {
 				t.Errorf("正しい引数に対して、エラーが発生しました: %s", err)
 			}
@@ -84,21 +92,28 @@ func TestFirebaseUserRepositoryVerifyIDTokenFailed(t *testing.T) {
 	}
 	firebaseUserRepository := NewFirebaseUserRepository(firebaseClient, planetScaleClient, shapparLogger)
 	cases := []struct {
-		scenario string
-		token    string
+		scenario     string
+		token        string
+		verifiedTime time.Time
 	}{
 		{
-			scenario: "異常系 異常なトークンでfirebase側でエラーが発生する",
-			token:    "invalidToken",
+			scenario:     "異常系 異常なトークンでfirebase側でエラーが発生する",
+			token:        "invalidToken",
+			verifiedTime: time.Date(2023, 1, 1, 0, 0, 0, 0, time.Local),
 		},
 		{
-			scenario: "異常系 firebaseから返ってきた値にemailが含まれていない",
-			token:    "NoEmailToken",
+			scenario:     "異常系 firebaseから返ってきた値にemailが含まれていない",
+			token:        "NoEmailToken",
+			verifiedTime: time.Date(2023, 1, 1, 0, 0, 0, 0, time.Local),
 		},
 	}
 	for _, c := range cases {
 		t.Run(c.scenario, func(t *testing.T) {
-			_, _, err := firebaseUserRepository.VerifyIDToken(ctx, c.token)
+			firebaseTokenVerification, err := firebaseuser.NewFirebaseTokenVerification(c.token, c.verifiedTime)
+			if err != nil {
+				t.Fatalf("正しい引数に対して、責務外エラーが発生しました: %s", err)
+			}
+			_, _, err = firebaseUserRepository.VerifyIDToken(ctx, firebaseTokenVerification)
 			if err == nil {
 				t.Errorf("異常な引数に対して、エラーが発生しませんでした")
 			}

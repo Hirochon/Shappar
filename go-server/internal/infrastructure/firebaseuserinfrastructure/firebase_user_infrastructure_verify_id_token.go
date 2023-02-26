@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Hirochon/Shappar/go-server/internal/domain/firebaseuser"
 	"github.com/Hirochon/Shappar/go-server/internal/pkg/customerror"
 )
 
-func (f firebaseUserRepository) VerifyIDToken(ctx context.Context, idToken string) (string, string, error) {
-	token, err := f.firebaseClient.VerifyIDToken(ctx, idToken)
+func (f firebaseUserRepository) VerifyIDToken(ctx context.Context, firebaseTokenVerification firebaseuser.FirebaseTokenVerification) (string, string, error) {
+	token, err := f.firebaseClient.VerifyIDToken(ctx, firebaseTokenVerification.Token().String())
 	if err != nil {
 		return "", "", err
 	}
