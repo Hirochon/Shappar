@@ -5,24 +5,46 @@ on:
 
 jobs:
   go-test:
+    services:
+      mysql:
+        image: mysql:8.0.23
+        env:
+          MYSQL_USER: user
+          MYSQL_ROOT_PASSWORD: root_password
+          MYSQL_PASSWORD: password
+          MYSQL_DATABASE: shappar_db
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version-file: go-server/go.mod
-          # まだ使わないからコメントアウト
-          # cache: true
-          # cache-dependency-path: go-server/go.sum
+          cache: true
+          cache-dependency-path: go-server/go.sum
       # ベース(マージ先)となるブランチの情報を github.base_ref で取得できる
-      - run: git fetch origin ${{ github.base_ref }} --depth=1
+      - name: ベースブランチの情報を取得
+        run: git fetch origin ${{ github.base_ref }} --depth=1
       # git diff: 差分チェック -> --name-only: 変更ファイルの名前だけ -> マージ先の -> go-server配下だけ -> wc: 行数を数える
-      - id: diff
+      - name: 行数を数えてテスト実行するか否か調べる
+        id: diff
         run: echo "changed=$(git diff --name-only origin/${{ github.base_ref }} HEAD --relative ./go-server/ | wc -l)" >> $GITHUB_OUTPUT
+      - name: go install
+        if: ${{ steps.diff.outputs.changed != '0' }}
+        run: go install github.com/rubenv/sql-migrate/...@v1.2.0
       - name: build & test
         if: ${{ steps.diff.outputs.changed != '0' }}
         working-directory: ./go-server
+        env:
+          MYSQL_USER: user
+          MYSQL_PASSWORD: password
+          MYSQL_HOST: localhost
+          MYSQL_DATABASE: shappar_db
+          MYSQL_EXTRA_PROPERTIES: ""
         run: |
+          make migrate-up
           go test ./internal/... -coverprofile=coverage.out
       - name: coverage report
         if: ${{ steps.diff.outputs.changed != '0' }}
