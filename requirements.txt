@@ -1,4 +1,4 @@
-django==3.2.19
+django==3.2.20
 gunicorn==20.1.0
 psycopg2-binary==2.9.1
 boto==2.49.0
