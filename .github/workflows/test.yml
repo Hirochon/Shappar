@@ -1,4 +1,12 @@
-# name: go-test
+name: go-test
+
+# 一旦無効化したい
+on:
+    workflow_dispatch:
+
+jobs:
+    go-test:
+        runs-on: ubuntu-latest
 
 # on:
 #   pull_request:
