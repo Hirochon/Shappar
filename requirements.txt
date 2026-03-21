@@ -3,7 +3,7 @@ gunicorn==20.1.0
 psycopg2-binary==2.9.1
 boto==2.49.0
 boto3==1.18.35
-django-allauth==0.45.0
+django-allauth==65.14.1
 django-ses==3.5.0
 django-storages==1.11.1
 django-cleanup==5.2.0
