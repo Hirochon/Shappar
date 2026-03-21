@@ -1,12 +1,15 @@
-## 📝 関連issue / Related Issues
-- #
-- #
-- #
+## 概要
+
+## 変更点
+
+## 背景 / 目的
+
+## 影響範囲
+
+## スクリーンショット
+
+## 関連issue
+
+## 補足
 
 close #
-
-## :point_up: 背景 / Background
-
-## ⛏ 変更内容 / Details of Changes
-
-## 📸 スクリーンショット / Screenshots
