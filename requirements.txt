@@ -9,7 +9,7 @@ django-storages==1.11.1
 django-cleanup==5.2.0
 pillow==9.3.0
 djangorestframework==3.15.2
-djangorestframework-simplejwt==4.8.0
+djangorestframework-simplejwt==5.5.1
 djoser==2.3.0
 django-cors-headers==3.8.0
 django-environ==0.5.0
