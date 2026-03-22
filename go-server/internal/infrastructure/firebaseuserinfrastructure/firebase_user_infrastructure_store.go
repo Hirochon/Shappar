@@ -11,12 +11,12 @@ import (
 )
 
 func (f firebaseUserRepository) Store(ctx context.Context, firebaseUser firebaseuser.FirebaseUser) error {
-	tx, err := f.planetScaleClient.Begin()
+	tx, err := f.txBeginner.Begin()
 	if err != nil { // ここに入ってくるテストケースが考えられないため、テストは無し
 		f.shapparLogger.Error(err, "トランザクションの開始に失敗しました", "requestID", ctx.Value("requestID"))
 		return customerror.NewCustomError(http.StatusInternalServerError, fmt.Errorf("トランザクションの開始に失敗しました"))
 	}
-	qtx := sqlc.New(tx)
+	qtx := f.newStoreQueries(tx)
 	if err := qtx.CreateFirebaseUser(ctx, sqlc.CreateFirebaseUserParams{
 		ID:    firebaseUser.ID().String(),
 		Uid:   firebaseUser.UID().String(),
