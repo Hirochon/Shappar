@@ -1,39 +1,14 @@
 package firebaseuserinfrastructure
 
 import (
-	"context"
-	"os"
 	"testing"
 	"time"
 
 	"github.com/Hirochon/Shappar/go-server/internal/domain/firebaseuser"
-	"github.com/Hirochon/Shappar/go-server/internal/infrastructure/externalconnection/firebaseconnection"
-	"github.com/Hirochon/Shappar/go-server/internal/infrastructure/externalconnection/planetscaleconnection"
-	"github.com/Hirochon/Shappar/go-server/internal/pkg/logger"
 )
 
 func TestFirebaseUserRepositoryVerifyIDTokenSuccess(t *testing.T) {
 	t.Parallel()
-	ctx := context.Background()
-	shapparLogger, err := logger.New()
-	if err != nil {
-		t.Fatalf("failed to create logger: %s", err)
-	}
-	planetScaleClient, err := planetscaleconnection.NewPlanetScaleClient(os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"), os.Getenv("MYSQL_DATABASE"), os.Getenv("MYSQL_EXTRA_PROPERTIES"))
-	if err != nil {
-		t.Fatalf("failed to create mock MySQL(PlaneScale) client: %s", err)
-	}
-	t.Cleanup(func() {
-		err := planetScaleClient.Close()
-		if err != nil {
-			t.Fatalf("failed to close mysql client: %s", err)
-		}
-	})
-	firebaseClient, err := firebaseconnection.NewMockFirebaseClient(ctx)
-	if err != nil {
-		t.Fatalf("failed to create mock firebase client: %s", err)
-	}
-	firebaseUserRepository := NewFirebaseUserRepository(firebaseClient, planetScaleClient, shapparLogger)
 	cases := []struct {
 		scenario     string
 		token        string
@@ -51,6 +26,7 @@ func TestFirebaseUserRepositoryVerifyIDTokenSuccess(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.scenario, func(t *testing.T) {
+			firebaseUserRepository, _, _, ctx := newTestFirebaseUserRepository(t)
 			firebaseTokenVerification, err := firebaseuser.NewFirebaseTokenVerification(c.token, c.verifiedTime)
 			if err != nil {
 				t.Fatalf("正しい引数に対して、責務外エラーが発生しました: %s", err)
@@ -71,26 +47,6 @@ func TestFirebaseUserRepositoryVerifyIDTokenSuccess(t *testing.T) {
 
 func TestFirebaseUserRepositoryVerifyIDTokenFailed(t *testing.T) {
 	t.Parallel()
-	ctx := context.Background()
-	shapparLogger, err := logger.New()
-	if err != nil {
-		t.Fatalf("failed to create logger: %s", err)
-	}
-	planetScaleClient, err := planetscaleconnection.NewPlanetScaleClient(os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"), os.Getenv("MYSQL_DATABASE"), os.Getenv("MYSQL_EXTRA_PROPERTIES"))
-	if err != nil {
-		t.Fatalf("failed to create mock MySQL(PlaneScale) client: %s", err)
-	}
-	t.Cleanup(func() {
-		err := planetScaleClient.Close()
-		if err != nil {
-			t.Fatalf("failed to close mysql client: %s", err)
-		}
-	})
-	firebaseClient, err := firebaseconnection.NewMockFirebaseClient(ctx)
-	if err != nil {
-		t.Fatalf("failed to create mock firebase client: %s", err)
-	}
-	firebaseUserRepository := NewFirebaseUserRepository(firebaseClient, planetScaleClient, shapparLogger)
 	cases := []struct {
 		scenario     string
 		token        string
@@ -109,6 +65,7 @@ func TestFirebaseUserRepositoryVerifyIDTokenFailed(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.scenario, func(t *testing.T) {
+			firebaseUserRepository, _, _, ctx := newTestFirebaseUserRepository(t)
 			firebaseTokenVerification, err := firebaseuser.NewFirebaseTokenVerification(c.token, c.verifiedTime)
 			if err != nil {
 				t.Fatalf("正しい引数に対して、責務外エラーが発生しました: %s", err)
