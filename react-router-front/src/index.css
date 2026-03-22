@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+:root {
+  color: #10212b;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(255, 159, 67, 0.16),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(29, 127, 108, 0.18),
+      transparent 28%
+    ),
+    #f6efe6;
+  font-family: "Avenir Next", "Hiragino Sans", "Segoe UI", sans-serif;
+  font-synthesis: none;
+  line-height: 1.5;
+  font-weight: 400;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+a {
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+button:hover,
+a:hover {
+  transform: translateY(-1px);
+}
+
+::selection {
+  background: rgba(255, 159, 67, 0.3);
+}
+
+@layer components {
+  .panel {
+    @apply rounded-[28px] border border-slate-950/10 bg-white/80 p-6 shadow-[0_24px_80px_-40px_rgba(15,23,42,0.55)] backdrop-blur-sm;
+  }
+
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.28em] text-[#1d7f6c];
+  }
+
+  .nav-chip {
+    @apply rounded-full border border-slate-950/10 px-4 py-2 text-sm font-medium text-slate-700;
+  }
+
+  .nav-chip-active {
+    @apply border-[#1d7f6c] bg-[#1d7f6c] text-white shadow-lg shadow-[#1d7f6c]/20;
+  }
+}
