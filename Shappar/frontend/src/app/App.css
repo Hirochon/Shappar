@@ -1,0 +1,116 @@
+.page {
+  min-height: 100vh;
+  padding: clamp(24px, 5vw, 56px);
+  display: grid;
+  gap: 24px;
+}
+
+.hero,
+.panel {
+  border: 1px solid rgba(20, 33, 61, 0.12);
+  border-radius: 28px;
+  background: rgba(255, 252, 247, 0.84);
+  box-shadow: 0 20px 60px rgba(20, 33, 61, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.hero {
+  padding: clamp(28px, 6vw, 56px);
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #c86b38;
+}
+
+.hero h1,
+.panel h2 {
+  margin: 0;
+  color: #14213d;
+}
+
+.hero h1 {
+  font-size: clamp(2.4rem, 7vw, 4.8rem);
+  line-height: 0.95;
+}
+
+.lead {
+  max-width: 42rem;
+  margin: 20px 0 0;
+  font-size: 1.05rem;
+  color: #475569;
+}
+
+.panel {
+  padding: clamp(24px, 4vw, 32px);
+}
+
+.panel-header {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.panel-header p {
+  margin: 0;
+  color: #52606d;
+}
+
+.directory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.directory-card {
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(20, 33, 61, 0.08);
+  display: grid;
+  gap: 12px;
+}
+
+.directory-card code,
+.command-list code {
+  font-family: 'SFMono-Regular', 'Fira Code', Consolas, monospace;
+  font-size: 0.95rem;
+  color: #0f766e;
+}
+
+.directory-card code {
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(15, 118, 110, 0.1);
+}
+
+.directory-card p {
+  margin: 0;
+  color: #52606d;
+}
+
+.command-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.command-list li {
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(20, 33, 61, 0.08);
+}
+
+@media (max-width: 640px) {
+  .hero h1 {
+    font-size: 2.8rem;
+  }
+}
