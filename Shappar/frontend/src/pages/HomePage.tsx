@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 
 const directories = [
   {
@@ -33,9 +33,9 @@ const directories = [
     name: 'test',
     description: 'テストユーティリティとセットアップを配置します。',
   },
-] as const
+] as const;
 
-const commands = ['npm install', 'npm run dev', 'npm run build'] as const
+const commands = ['npm install', 'npm run dev', 'npm run build'] as const;
 const verificationPillars = [
   {
     label: 'Tailwind utility',
@@ -49,7 +49,7 @@ const verificationPillars = [
     label: 'Theme tokens',
     detail: 'CSS variables flow through `bg-background`, `text-foreground`, and Button variants.',
   },
-] as const
+] as const;
 
 export function HomePage() {
   return (
@@ -167,5 +167,5 @@ export function HomePage() {
         </section>
       </div>
     </main>
-  )
+  );
 }
