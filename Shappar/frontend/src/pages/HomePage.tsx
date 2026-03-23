@@ -31,9 +31,9 @@ const directories = [
     name: 'test',
     description: 'テストユーティリティとセットアップを配置します。',
   },
-] as const
+] as const;
 
-const commands = ['npm install', 'npm run dev', 'npm run build'] as const
+const commands = ['npm install', 'npm run dev', 'npm run build'] as const;
 
 export function HomePage() {
   return (
@@ -42,8 +42,8 @@ export function HomePage() {
         <p className="eyebrow">Shappar frontend</p>
         <h1>Vite + React + TypeScript の土台を作成</h1>
         <p className="lead">
-          `Shappar/frontend` を今後の実装開始点として使えるように、strict
-          な TypeScript 設定と機能分割しやすい `src/` 構成を先に整えています。
+          `Shappar/frontend` を今後の実装開始点として使えるように、strict な
+          TypeScript 設定と機能分割しやすい `src/` 構成を先に整えています。
         </p>
       </section>
 
@@ -78,5 +78,5 @@ export function HomePage() {
         </article>
       </section>
     </main>
-  )
+  );
 }
