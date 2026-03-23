@@ -1,0 +1,160 @@
+:root {
+  font-family:
+    'Avenir Next', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic',
+    sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #102542;
+  background:
+    radial-gradient(circle at top, rgba(198, 159, 68, 0.24), transparent 42%),
+    linear-gradient(180deg, #fcf9f2 0%, #e6edf5 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+code {
+  font-family: 'SFMono-Regular', 'Fira Code', Consolas, monospace;
+}
+
+.shell {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: clamp(32px, 6vw, 64px) 0;
+  display: grid;
+  gap: 24px;
+}
+
+.hero-card,
+.panel {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(16, 37, 66, 0.1);
+  border-radius: 28px;
+  box-shadow: 0 24px 80px rgba(16, 37, 66, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.hero-card {
+  padding: clamp(28px, 6vw, 56px);
+}
+
+.eyebrow {
+  margin: 0 0 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #9a6b06;
+}
+
+.hero-card h1,
+.panel h2 {
+  margin: 0;
+  color: #102542;
+}
+
+.hero-card h1 {
+  max-width: 12ch;
+  font-size: clamp(2.6rem, 8vw, 5rem);
+  line-height: 0.94;
+}
+
+.lead {
+  max-width: 44rem;
+  margin: 18px 0 0;
+  font-size: 1.05rem;
+  color: #415a77;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 24px;
+}
+
+.panel {
+  padding: clamp(24px, 4vw, 32px);
+}
+
+.panel-header {
+  margin-bottom: 18px;
+}
+
+.panel-header p {
+  margin: 10px 0 0;
+  color: #5c6f82;
+}
+
+.directory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.directory-card,
+.command-list li {
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(248, 250, 252, 0.88);
+  border: 1px solid rgba(16, 37, 66, 0.08);
+}
+
+.directory-card p,
+.command-list {
+  margin: 0;
+}
+
+.directory-card p {
+  margin-top: 12px;
+  color: #52606d;
+}
+
+.directory-card code,
+.command-list code {
+  font-size: 0.94rem;
+  color: #0f766e;
+}
+
+.command-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+@media (max-width: 860px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .shell {
+    width: min(100% - 20px, 1120px);
+  }
+}
