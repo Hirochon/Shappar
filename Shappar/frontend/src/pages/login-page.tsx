@@ -59,7 +59,9 @@ export function LoginPage() {
             <Button
               className="h-12 w-full rounded-xl text-base font-semibold shadow-lg shadow-slate-950/10"
               disabled={isLoading}
-              onClick={handleGoogleLogin}
+              onClick={() => {
+                void handleGoogleLogin();
+              }}
               type="button"
             >
               {isLoading ? (
