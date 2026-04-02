@@ -1,4 +1,5 @@
 import { HttpResponse, http } from 'msw';
+import { postHandlers } from '@/mocks/handlers/posts';
 
 const mockAuthUser = {
   unique_id: 'unique-user-123',
@@ -22,4 +23,5 @@ export const handlers = [
   http.get('/api/v1/health', () => {
     return HttpResponse.json({ status: 'ok' });
   }),
+  ...postHandlers,
 ];

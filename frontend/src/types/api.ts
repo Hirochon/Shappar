@@ -4,6 +4,19 @@ export interface PostOption {
   votes?: number;
 }
 
+export interface CreatePostOptionRequest {
+  answer: string;
+}
+
+export interface CreatePostRequest {
+  question: string;
+  options: CreatePostOptionRequest[];
+}
+
+export interface CreatePostResponse {
+  post_id: string;
+}
+
 export interface Post {
   post_id: string;
   user_id: string;
