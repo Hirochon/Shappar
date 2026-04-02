@@ -12,6 +12,12 @@ const authStoreMocks = vi.hoisted(() => {
   return { initAuthListener, routerProvider, unsubscribe };
 });
 
+vi.mock('firebase/auth', () => import('@/test/mocks/firebase'));
+vi.mock('@/lib/firebase', async () => {
+  const { mockAuth } = await import('@/test/mocks/firebase');
+
+  return { auth: mockAuth };
+});
 vi.mock('@/stores/auth-store', () => ({
   useAuthStore: (selector: (state: { initAuthListener: () => () => void }) => unknown) =>
     selector({ initAuthListener: authStoreMocks.initAuthListener }),
