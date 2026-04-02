@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	// "github.com/ca-pigg/amphora-server/apps/auth-api/gateway/oas"
+	"github.com/Hirochon/Shappar/apps/shappar-api/gateway/oas"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/riandyrn/otelchi"
@@ -28,17 +28,10 @@ func newServer(injected *injected) *http.Server {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	// h := oas.HandlerWithOptions(injected.handler, oas.ChiServerOptions{
-	// 	BaseURL:    "/v1",
-	// 	BaseRouter: r,
-	// 	Middlewares: []oas.MiddlewareFunc{
-	// 		injected.middleware.Authenticate,
-	// 		injected.middleware.AccessLogger,
-	// 		injected.middleware.SetClient,
-	// 	},
-	// })
-
-	h := r
+	h := oas.HandlerWithOptions(injected.handler, oas.ChiServerOptions{
+		BaseURL:    "/v1",
+		BaseRouter: r,
+	})
 
 	return &http.Server{
 		Addr:    fmt.Sprintf(":%d", injected.httpConf.Port),
