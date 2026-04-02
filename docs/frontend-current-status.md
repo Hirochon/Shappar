@@ -2,47 +2,137 @@
 
 ## 結論
 
-- 元々の Vue SPA は README 上では前提として残っているが、現行 repo には Vue の実装ファイルやビルド設定が存在しない
-- React への書き換えは `react-front/` で着手されているが、現状は Next.js のひな形に近い構成と Firebase ログイン試作がある段階で、既存アプリ全体の置き換えには至っていない
-- Django 側は SPA を返す前提のルーティングをまだ持っている一方で、その受け皿である `index.html` は repo 内に存在しない
-- そのため、現在の repo 上のフロントエンドは「Vue 本体は消えている」「React は分離した試作段階」「本体導線は未統合」という状態
+- 現行 repo で確認できる frontend 実装は repo 直下の `frontend/` であり、旧ドキュメントが前提にしていた別 frontend ディレクトリは存在しない
+- `frontend/` は Vite + React + TypeScript を土台に、React Router、TanStack Query、Zustand、Firebase Auth、Tailwind CSS、Vitest を組み合わせた構成になっている
+- `.github/workflows/frontend-ci.yml` が `frontend/**` を対象に `npm ci`、lint、test、build を実行しており、現行 repo で確認できる frontend の CI 導線は GitHub Actions である
+- 一方で、`django-server/config/urls.py` は引き続き `index.html` を返す SPA ルートを持つが、repo 内に `django-server/templates/index.html` は見当たらない。Django 配信導線と `frontend/` の build 成果物の接続方法は、この repo だけでは未確認
 
 ## 調査対象
 
 - `README.md`
-- `config/urls.py`
-- `config/views.py`
-- `templates/`
-- `accounts/`
-- `react-front/`
+- `docs/frontend-current-status.md`
+- `frontend/`
+- `.github/workflows/frontend-ci.yml`
+- `django-server/config/urls.py`
+- `django-server/config/views.py`
+- `django-server/templates/`
+- `django-server/accounts/`
 - `docker-compose.yml`
 - `Makefile`
 
 ## 現状サマリ
 
-### 1. 旧 Vue 構成はドキュメント上にだけ残っている
+### 1. README には旧 Vue SPA の説明が残っている
 
 `README.md` には以下の説明が残っている。
 
-- Vue.js 2.6.11
-- Vue CLI 4.1.2
-- Storybook
-- Vue.js x Django REST Framework の SPA
-- VueCLI でビルドした静的ファイルを S3 / CloudFront に配置
+- Vue.js + Django REST Framework の SPA
+- Vue CLI でビルドした静的ファイルを S3 / CloudFront に配置
+- Storybook を含む frontend 構成
 
-一方で、repo 内には以下が見当たらない。
+一方で、この workspace では以下を確認できなかった。
 
 - `.vue` ファイル
-- `vue.config.js`
-- Vue 用の `package.json`
+- Vue 用の `package.json` や `vue.config.js`
 - Storybook 設定
 - Vue のビルド成果物
 
-このため、README が説明している Vue フロントは、少なくともこの repo では再現できない。
+このため、README の Vue 記述は現行 repo の実装状況というより、過去構成の説明として読むのが安全である。
 
-### 2. Django はまだ「SPA を配る側」の前提を持っている
+### 2. 現行 frontend は `frontend/` の Vite アプリ
 
-`config/urls.py` では以下のルートが `TemplateView(template_name='index.html')` に向いている。
+`frontend/package.json` から、現行 frontend は Vite ベースの React + TypeScript プロジェクトとして管理されている。
+
+- scripts
+  - `npm run dev`
+  - `npm run build` (`tsc -b && vite build`)
+  - `npm run lint`
+  - `npm run test`
+  - `npm run test:coverage`
+  - `npm run preview`
+- runtime 依存
+  - `react`
+  - `react-dom`
+  - `react-router-dom`
+  - `@tanstack/react-query`
+  - `zustand`
+  - `firebase`
+- 開発ツール
+  - `vite`
+  - `typescript`
+  - `vitest`
+  - `@testing-library/*`
+  - `msw`
+  - `eslint`
+  - `prettier`
+  - `tailwindcss`
+
+実体として確認できる主なファイルは次のとおり。
+
+- `frontend/src/main.tsx`
+  - Vite の entrypoint
+  - 開発時に `VITE_ENABLE_MOCKS=true` のときだけ MSW を起動する
+- `frontend/src/App.tsx`
+  - `QueryClientProvider` と `RouterProvider` を束ねる
+  - `useAuthStore` の `initAuthListener()` で認証状態監視を開始する
+- `frontend/src/router.tsx`
+  - `/login`
+  - `/`
+  - `*`
+  の 3 系統を定義する
+  - 未認証ユーザーは `ProtectedRoute` から `/login` へリダイレクトされる
+- `frontend/src/pages/login-page.tsx`
+  - Firebase Auth の Google ログイン popup を起点に認証を開始する
+  - ログイン後は `useAuthMutation()` で backend 側の認証導線に繋ぐ実装になっている
+- `frontend/src/pages/home-page.tsx`
+  - 「投票一覧などの内容は後続イシューで追加します」と表示するプレースホルダ画面
+
+現時点で repo から確認できる frontend は、「別ディレクトリに置かれた独立試作」ではなく、「Vite ベースで再構築が進んでいる app shell と認証導線の土台」である。
+
+### 3. frontend CI は GitHub Actions にある
+
+`.github/workflows/frontend-ci.yml` では、frontend 用の CI が GitHub Actions として定義されている。
+
+- trigger
+  - `push` on `main`
+  - `pull_request`
+  - いずれも `frontend/**` または `.github/workflows/frontend-ci.yml` の変更時のみ実行
+- 実行環境
+  - `ubuntu-latest`
+  - `actions/setup-node@v4`
+  - Node.js `24`
+  - working directory は `frontend`
+- 実行内容
+  - `npm ci`
+  - `npm run lint`
+  - `npm run test -- --coverage`
+  - `npm run build`
+
+少なくとも現行 repo で確認できる frontend CI 導線は、この GitHub Actions workflow である。README に残る CircleCI の説明が現在も使われているかどうかは、この repo だけでは断定できない。
+
+### 4. frontend のローカル実行導線は root の Docker 導線と分かれている
+
+root の `docker-compose.yml` には以下の service がある。
+
+- `shappar-back`
+- `db`
+- `nginx`
+- `swagger-generate-go-code`
+
+一方で、`frontend/` を起動する service は定義されていない。
+
+`Makefile` にも frontend 用のコマンドはなく、定義されているのは Django 管理コマンド群だけである。
+
+そのため、repo から確認できる現行の frontend 開発導線は、
+
+- Docker / Makefile ベースの backend 導線
+- `frontend/` で個別に `npm run dev` などを使う frontend 導線
+
+の 2 本に分かれていると読むのが自然である。
+
+### 5. Django 側には SPA 前提と server-rendered 画面が混在している
+
+`django-server/config/urls.py` では、以下のルートが `TemplateView(template_name='index.html')` に向いている。
 
 - `/`
 - `/mypage/*`
@@ -50,115 +140,38 @@
 - `/login/*`
 - `/home/*`
 
-これは、もともとの SPA ルーティングを Django が受けて `index.html` を返す構成だったことを示している。
+これは Django 側に SPA 入口を返す前提が残っていることを示している。
 
-ただし、repo 内に `templates/index.html` は存在しない。つまり、Django 側には SPA を返す前提だけが残っており、実体のテンプレートは欠けている。
+一方で、repo 内には `django-server/templates/index.html` が存在しない。
 
-また、`templates/base.html` と `templates/home.html` は `static/css/style.min.css` を参照しているが、そのファイルも repo 内では確認できなかった。旧フロントの静的成果物や配信方法が失われている可能性が高い。
+また、以下の Django テンプレートは現在も存在する。
 
-### 3. React 版は `react-front/` に分離して存在する
+- `django-server/templates/account/*.html`
+- `django-server/templates/home.html`
 
-`react-front/package.json` から、現在の React 実装は Next.js ベースで管理されている。
+つまり現在の repo は、
 
-- `next`
-- `react`
-- `react-dom`
-- `firebase`
+- Django 側に旧来の SPA 入口前提が残っている
+- 認証や補助画面の一部は server-rendered template が残っている
+- ただし SPA 入口 `index.html` の実体や `frontend/` build との接続は repo 内では確認できない
 
-構成はかなり小さく、現時点で確認できた画面は以下のみ。
+という状態にある。
 
-- `react-front/pages/index.js`
-  - `/login` へのリンクだけを持つトップページ
-- `react-front/pages/login.js`
-  - Firebase Auth の Google ログイン、ログイン確認、ログアウト
+## 進捗の見方
 
-`react-front/README.md` も Next.js のサンプル README がほぼそのまま残っている。また、`react-front/.env.example` は Firebase 向けの環境変数だけを持ち、`react-front/Dockerfile` も単体で Next.js を build/run する内容になっている。つまり `react-front/` は既存 Django 配信導線に繋がった本番フロントというより、独立した試作ディレクトリとして置かれている。
+### repo から確認できること
 
-### 4. React 版はローカル実行導線にまだ乗っていない
+- 旧ドキュメントが前提にしていた別 frontend 試作ではなく、`frontend/` の Vite + React + TypeScript app が存在する
+- Firebase Auth を使った Google ログイン導線、auth guard、router、query client、test 基盤が実装されている
+- frontend CI は `.github/workflows/frontend-ci.yml` にあり、lint / test / build まで自動化されている
 
-ルートの `docker-compose.yml` には以下のサービスはある。
+### repo からは未確認なこと
 
-- Django (`shappar-back`)
-- PostgreSQL (`db`)
-- Go server (`shappar-go-server`)
-- MySQL (`shappar-mysql`)
-- nginx
-
-一方で `react-front/` を起動する service は存在しない。
-
-`Makefile` にも React / Next.js 用の起動コマンドはなく、Django 管理コマンドだけが定義されている。
-
-つまり、repo のメインの開発導線はまだバックエンド寄りで、React フロントは分離して置かれているだけの状態。
-
-### 5. サーバーレンダリングの画面は一部残っている
-
-完全に React へ置き換わった状態ではなく、Django テンプレートもまだ生きている。
-
-- `templates/account/*.html`
-  - allauth ベースのログイン、パスワード再設定など
-- `templates/home.html`
-  - サインアップ直後のメール確認促進画面
-- `templates/account/create_user.html`
-  - 管理向けのユーザー自動作成画面
-
-`accounts/urls.py` と `config/views.py` を見る限り、認証まわりや一部補助画面は Django テンプレートが担当し続けている。
-
-## React 移行の進捗評価
-
-### できていること
-
-- React / Next.js プロジェクトが repo 内に作られている
-- Firebase を使った Google ログインの試作がある
-- Dockerfile もあり、`react-front/` 単体ではコンテナ化を想定している
-
-### まだできていないこと
-
-- 旧 Vue からどの画面が移行済みかを示す実装は見当たらない
-- 投稿一覧、投稿作成、マイページ、設定など README にある主要画面は React 側で未確認
-- Django のルーティングと `react-front/` の接続がない
-- `docker-compose.yml` や `Makefile` に React 実行導線がない
-- SPA の入口として期待される `index.html` が repo にない
-
-### 現在地の判断
-
-現状は「Vue 版が残っている」のではなく、「Vue 版の説明と前提だけが残り、実体は repo から外れている」状態に近い。そこに対して `react-front/` が新しく作られているが、まだログイン試作レベルで、アプリ本体を置き換える段階までは進んでいない。
-
-## 現在地フロー図
-
-```mermaid
-flowchart TD
-    U[利用者 / ブラウザ] --> DJ[Django URL ルーティング]
-
-    DJ -->|/api/v1/*| API[Django REST API<br/>apiv1]
-    DJ -->|/accounts/*| ACC[Django templates<br/>templates/account/*]
-    DJ -->|/sent_email/| MAIL[templates/home.html]
-    DJ -->|/, /mypage/*, /settings/*,<br/>/login/*, /home/*| SPA[index.html を返す前提]
-
-    SPA --> GAP[repo 内に index.html が存在しない]
-
-    RN[react-front/ Next.js] --> TOP[pages/index.js]
-    RN --> LOGIN[pages/login.js]
-    LOGIN --> FB[Firebase Auth]
-
-    RN -. docker-compose / Django routes に未接続 .-> GAP2[既存導線へ未統合]
-```
-
-## いま把握できるフロントエンド責務
-
-| 領域 | 現状 | 進捗の見方 | 根拠 |
-| --- | --- | --- | --- |
-| 旧メイン SPA | 実体不明 / repo には不在 | README の説明だけ残っており、実装確認はできない | `README.md` には Vue 記述があるが、Vue 実装が無い |
-| Django 直配信 SPA 導線 | 前提だけ残存 | URL は残っているが、入口テンプレートが欠けている | `config/urls.py` が `index.html` を返す一方、repo に `index.html` が無い |
-| 認証系テンプレート | 生存 | 一部画面はまだ Django テンプレートで成立している | `templates/account/*`, `accounts/urls.py`, `templates/home.html` |
-| React 置き換え | 着手済みだが限定的 | Next.js プロジェクト作成と Firebase ログイン試作まで | `react-front/pages/index.js`, `react-front/pages/login.js`, `react-front/FirebaseApp.js` |
-| React の統合運用 | 未着手 | 開発導線やサーバー接続にまだ入っていない | `docker-compose.yml`, `Makefile` に組み込み無し |
-
-## repo 外で不明な点
-
-- 旧 Vue 資産が別 repo / 別ブランチ / S3 配信物としてだけ残っているのかは、この repo 単体では判断できない
-- `config/urls.py` が期待している `index.html` が、過去のビルド生成物なのか、別デプロイ経路から供給される前提なのかは不明
-- `react-front/` が将来の本命フロントなのか、単独検証用のプロトタイプなのかを示す設計メモや移行計画は repo 内では確認できなかった
+- `frontend/` の build 成果物を Django / nginx が本番でどう配信しているか
+- README に残る旧 Vue 資産が別 repo、別 branch、外部ストレージのどこにあるか
+- 現行 `frontend/` が投稿一覧、投稿作成、マイページ、設定など旧 README 記載の主要画面をどこまで置き換えているか
+- `frontend/README.md` に書かれたディレクトリ構成のうち、将来用の空ディレクトリと運用中の実装境界がどこか
 
 ## 補足
 
-この repo だけを見る限り、「Vue から React へ書き換えが進行している」というより、「旧 Vue 資産が repo から抜け落ちたあとに、別ディレクトリで Next.js を立ち上げ始めた」状態に見える。移行の途中という理解は妥当だが、repo 内で確認できる進捗は「React プロジェクト作成とログイン試作」までで、既存導線との統合はまだかなり手前にある。
+この repo だけを見る限り、frontend の現在地は「別ディレクトリの試作 frontend」ではない。実際には `frontend/` に Vite ベースの新しい frontend があり、認証導線と app shell を先に固めつつ、backend 側の旧導線との接続方法はまだ repo から断定できない段階にある。
