@@ -178,7 +178,7 @@ describe('PollDetailPage', () => {
     expect(screen.queryByText('投票する')).not.toBeInTheDocument();
   });
 
-  it('shows the loading state while the detail query is pending', async () => {
+  it('shows the loading state while the detail query is pending', () => {
     server.use(
       http.get(`${API_BASE_URL}/api/v1/posts/post-unvoted`, async () => {
         await delay(200);
