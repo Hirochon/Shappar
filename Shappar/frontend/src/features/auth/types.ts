@@ -7,6 +7,16 @@ export interface AuthUser {
   homeimage: string;
 }
 
-export interface AuthResponse {
+export interface NestedAuthResponse {
   user: AuthUser;
+}
+
+export type AuthResponse = AuthUser | NestedAuthResponse;
+
+export function extractAuthUser(response: AuthResponse): AuthUser {
+  if ('user' in response) {
+    return response.user;
+  }
+
+  return response;
 }

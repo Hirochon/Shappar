@@ -14,7 +14,7 @@ vi.mock('@/lib/firebase', async () => {
 });
 
 import { useAuthMutation } from '@/features/auth/use-auth-mutation';
-import type { AuthUser } from '@/features/auth/types';
+import type { AuthResponse, AuthUser } from '@/features/auth/types';
 import { createQueryClient } from '@/lib/query-client';
 import { useAuthStore } from '@/stores/auth-store';
 import { server } from '@/test/mocks/server';
@@ -65,7 +65,7 @@ describe('useAuthMutation', () => {
 
     server.use(
       http.post(`${API_BASE_URL}/api/v1/auth`, () => {
-        return HttpResponse.json({ user: mockAuthUser });
+        return HttpResponse.json(mockAuthUser);
       }),
     );
   });
@@ -79,7 +79,7 @@ describe('useAuthMutation', () => {
       http.post(`${API_BASE_URL}/api/v1/auth`, ({ request }) => {
         authorizationHeader = request.headers.get('authorization');
 
-        return HttpResponse.json({ user: mockAuthUser });
+        return HttpResponse.json(mockAuthUser);
       }),
     );
 
@@ -88,9 +88,7 @@ describe('useAuthMutation', () => {
     });
 
     let response:
-      | {
-          user: AuthUser;
-        }
+      | AuthUser
       | undefined;
 
     await act(async () => {
@@ -104,7 +102,7 @@ describe('useAuthMutation', () => {
     expect(getIdToken).toHaveBeenCalledTimes(1);
     expect(getIdToken).toHaveBeenCalledWith(firebaseUser);
     expect(authorizationHeader).toBe('Bearer valid-id-token');
-    expect(response).toEqual({ user: mockAuthUser });
+    expect(response).toEqual(mockAuthUser);
   });
 
   it('stores the authenticated user in the auth store on success', async () => {
@@ -123,6 +121,37 @@ describe('useAuthMutation', () => {
     await waitFor(() => {
       expect(useAuthStore.getState().authUser).toEqual(mockAuthUser);
     });
+  });
+
+  it('accepts a nested user payload from the auth API', async () => {
+    const firebaseUser = createMockFirebaseUser();
+
+    vi.mocked(getIdToken).mockResolvedValueOnce('valid-id-token');
+    server.use(
+      http.post(`${API_BASE_URL}/api/v1/auth`, () => {
+        return HttpResponse.json({
+          user: mockAuthUser,
+        } satisfies AuthResponse);
+      }),
+    );
+
+    const { result } = renderHook(() => useAuthMutation(), {
+      wrapper: createWrapper(),
+    });
+
+    let response:
+      | AuthUser
+      | undefined;
+
+    await act(async () => {
+      response = await result.current.mutateAsync(firebaseUser);
+    });
+
+    await waitFor(() => {
+      expect(useAuthStore.getState().authUser).toEqual(mockAuthUser);
+    });
+
+    expect(response).toEqual(mockAuthUser);
   });
 
   it('surfaces an unauthorized error when the idToken is invalid', async () => {

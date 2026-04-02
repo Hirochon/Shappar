@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { getIdToken, type User as FirebaseUser } from 'firebase/auth';
-import type { AuthResponse } from '@/features/auth/types';
+import { extractAuthUser, type AuthResponse } from '@/features/auth/types';
 import { apiClient } from '@/lib/api-client';
 import { useAuthStore } from '@/stores/auth-store';
 
@@ -14,14 +14,15 @@ export function useAuthMutation() {
     },
     mutationFn: async (firebaseUser: FirebaseUser) => {
       const idToken = await getIdToken(firebaseUser);
-
-      return apiClient<AuthResponse>('/api/v1/auth', {
+      const response = await apiClient<AuthResponse>('/api/v1/auth', {
         method: 'POST',
         idToken,
       });
+
+      return extractAuthUser(response);
     },
-    onSuccess: (response) => {
-      setAuthUser(response.user);
+    onSuccess: (authUser) => {
+      setAuthUser(authUser);
     },
   });
 }

@@ -17,7 +17,7 @@ export const handlers = [
       return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    return HttpResponse.json({ user: mockAuthUser });
+    return HttpResponse.json(mockAuthUser);
   }),
   http.get('/api/v1/health', () => {
     return HttpResponse.json({ status: 'ok' });
