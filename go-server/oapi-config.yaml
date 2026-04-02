@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/oapi-codegen/oapi-codegen/HEAD/configuration-schema.json
+package: oas
+output: apps/shappar-api/gateway/oas/oas.gen.go
+generate:
+  models: true
+  chi-server: true
+compatibility:
+  always-prefix-enum-values: true
+  apply-chi-middleware-first-to-last: true

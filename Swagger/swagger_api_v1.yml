@@ -1,703 +1,1788 @@
-swagger: '2.0'
+---
+openapi: 3.0.3
 info:
   title: shappar
   version: '1.0'
   contact:
     name: Fujiya
   description: shappar api
-host: 'localhost:3000'
-schemes:
-  - http
-  - https
-produces:
-  - application/json
-consumes:
-  - application/json
+servers:
+- url: http://localhost:3000
+- url: https://localhost:3000
 paths:
-  /api/v1/posts:
+  "/api/v1/posts":
     post:
       summary: ''
+      description: new post
+      tags:
+      - posts
+      requestBody:
+        description: request body
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+                options:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      select_num:
+                        type: integer
+                      answer:
+                        type: string
+            examples:
+              201 Created:
+                value: {}
+              400 Bad Request:
+                value:
+                  unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
+                  question: ''
+                  options:
+                  - select_num: 1
+                    answer: ''
+                  - select_num: 2
+                    answer: ''
+              example-2:
+                value: {}
       responses:
         '201':
           description: Created
-          schema:
-            type: object
-          examples:
-            201 Created: {}
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                201 Created:
+                  value: {}
         '400':
           description: Bad Request
-          schema:
-            type: object
-            properties:
-              question:
-                type: string
-              options:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    answer:
-                      type: string
-          examples:
-            400 Bad Request:
-              question:
-                - この項目は空にできません。
-              options:
-                - answer:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  question:
+                    type: string
+                  options:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        answer:
+                          type: string
+              examples:
+                400 Bad Request:
+                  value:
+                    question:
                     - この項目は空にできません。
-            example-2:
-              options:
-                - answer:
-                    - 回答は10個以下にしてください
-            example-3:
-              options:
-                - answer:
-                    - 回答は2個以上にしてください
-      description: new post
-      parameters:
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties:
-              question:
-                type: string
-              options:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    select_num:
-                      type: integer
-                    answer:
-                      type: string
-          x-examples:
-            201 Created: {}
-            400 Bad Request:
-              unique_id: 86f455ff-5029-4207-9300-b9dea5fe9d37
-              question: ''
-              options:
-                - select_num: 1
-                  answer: ''
-                - select_num: 2
-                  answer: ''
-            example-2: {}
-          description: request body
-      tags:
-        - posts
-  /api/v1/posts/{post_id}:
+                    options:
+                    - answer:
+                      - この項目は空にできません。
+                example-2:
+                  value:
+                    options:
+                    - answer:
+                      - 回答は10個以下にしてください
+                example-3:
+                  value:
+                    options:
+                    - answer:
+                      - 回答は2個以上にしてください
+  "/api/v1/posts/{post_id}":
     parameters:
-      - type: string
-        name: post_id
-        in: path
-        required: true
+    - name: post_id
+      in: path
+      required: true
+      schema:
+        type: string
     get:
       summary: Your GET endpoint
       tags:
-        - posts
+      - posts
+      description: get post details
       responses:
         '200':
           description: OK
-          schema:
-            type: object
-            properties:
-              voted_sex:
+          content:
+            application/json:
+              schema:
                 type: object
                 properties:
-                  woman:
+                  voted_sex:
+                    type: object
+                    properties:
+                      woman:
+                        type: integer
+                      man:
+                        type: integer
+                      others:
+                        type: integer
+                      'null':
+                        type: integer
+                  voted_blood_type:
+                    type: object
+                    properties:
+                      A:
+                        type: integer
+                      B:
+                        type: integer
+                      O:
+                        type: integer
+                      AB:
+                        type: integer
+                      others:
+                        type: integer
+                  voted_age:
+                    type: object
+                    properties:
+                      0-10:
+                        type: integer
+                      10-20:
+                        type: integer
+                      20-30:
+                        type: integer
+                      30-40:
+                        type: integer
+                      40-50:
+                        type: integer
+                      50-60:
+                        type: integer
+                      60-:
+                        type: integer
+                  voted_month:
+                    type: object
+                    properties:
+                      '1':
+                        type: integer
+                      '2':
+                        type: integer
+                      '3':
+                        type: integer
+                      '4':
+                        type: integer
+                      '5':
+                        type: integer
+                      '6':
+                        type: integer
+                      '7':
+                        type: integer
+                      '8':
+                        type: integer
+                      '9':
+                        type: integer
+                      '10':
+                        type: integer
+                      '11':
+                        type: integer
+                      '12':
+                        type: integer
+                  total:
                     type: integer
-                  man:
-                    type: integer
-                  others:
-                    type: integer
-                  'null':
-                    type: integer
-              voted_blood_type:
-                type: object
-                properties:
-                  A:
-                    type: integer
-                  B:
-                    type: integer
-                  O:
-                    type: integer
-                  AB:
-                    type: integer
-                  others:
-                    type: integer
-              voted_age:
-                type: object
-                properties:
-                  0-10:
-                    type: integer
-                  10-20:
-                    type: integer
-                  20-30:
-                    type: integer
-                  30-40:
-                    type: integer
-                  40-50:
-                    type: integer
-                  50-60:
-                    type: integer
-                  60-:
-                    type: integer
-              voted_month:
-                type: object
-                properties:
-                  '1':
-                    type: integer
-                  '2':
-                    type: integer
-                  '3':
-                    type: integer
-                  '4':
-                    type: integer
-                  '5':
-                    type: integer
-                  '6':
-                    type: integer
-                  '7':
-                    type: integer
-                  '8':
-                    type: integer
-                  '9':
-                    type: integer
-                  '10':
-                    type: integer
-                  '11':
-                    type: integer
-                  '12':
-                    type: integer
-              total:
-                type: integer
-          examples:
-            200 OK:
-              voted_sex:
-                woman: 4
-                others: 1
-                man: 6
-                'null': 0
-              voted_blood_type:
-                A: 3
-                B: 4
-                AB: 3
-                others: 1
-              voted_age:
-                0-10: 0
-                10-20: 5
-                20-30: 4
-                30-40: 1
-                40-50: 0
-                50-60: 1
-                60-: 0
-              voted_month:
-                '1': 0
-                '2': 2
-                '3': 1
-                '4': 0
-                '5': 0
-                '6': 2
-                '7': 1
-                '8': 0
-                '9': 1
-                '10': 1
-                '11': 2
-                '12': 1
-              total: 11
+              examples:
+                200 OK:
+                  value:
+                    voted_sex:
+                      woman: 4
+                      others: 1
+                      man: 6
+                      'null': 0
+                    voted_blood_type:
+                      A: 3
+                      B: 4
+                      AB: 3
+                      others: 1
+                    voted_age:
+                      0-10: 0
+                      10-20: 5
+                      20-30: 4
+                      30-40: 1
+                      40-50: 0
+                      50-60: 1
+                      60-: 0
+                    voted_month:
+                      '1': 0
+                      '2': 2
+                      '3': 1
+                      '4': 0
+                      '5': 0
+                      '6': 2
+                      '7': 1
+                      '8': 0
+                      '9': 1
+                      '10': 1
+                      '11': 2
+                      '12': 1
+                    total: 11
         '404':
           description: Not Found
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-          examples:
-            example-1:
-              detail: 存在しない投稿IDです。
-      description: get post details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    detail: 存在しない投稿IDです。
     delete:
       summary: ''
-      responses:
-        '204':
-          description: No Content
-          schema:
-            type: object
-        '401':
-          description: Unauthorized
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-          examples:
-            example-1:
-              detail: 権限がありません。
-        '404':
-          description: Not Found
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-          examples:
-            example-1:
-              detail: 存在しない投稿IDです。
       description: delete post
       tags:
-        - posts
-  /api/v1/posts/{post_id}/polls:
+      - posts
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    detail: 権限がありません。
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    detail: 存在しない投稿IDです。
+  "/api/v1/posts/{post_id}/polls":
     parameters:
-      - type: string
-        name: post_id
-        in: path
-        required: true
+    - name: post_id
+      in: path
+      required: true
+      schema:
+        type: string
     post:
       summary: ''
-      responses:
-        '201':
-          description: Created
-          schema:
-            type: object
-            properties:
-              id:
-                type: integer
-              options:
-                type: array
-                items:
+      description: vote post
+      tags:
+      - posts
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                option:
                   type: object
                   properties:
                     select_num:
                       type: integer
-                    votes:
-                      type:
-                        - integer
-              selected_num:
-                type: integer
-              total:
-                type: integer
-          examples:
-            201 Created:
-              options:
-                - select_num: 2
-                  votes: 0
-                - select_num: 3
-                  votes: 0
-                - select_num: 4
-                  votes: 0
-                - select_num: 1
-                  votes: 1
-              selected_num: 1
-        '400':
-          description: Bad Request
-          schema:
-            type: object
-            properties:
-              non_field_errors:
-                type: string
-          examples:
-            example-1:
-              non_field_errors:
-                - 同ユーザーの投稿への投票は一度のみです。
-            example-2:
-              non_field_errors:
-                - 自身が投稿した投稿への投票はできません。
-        '404':
-          description: Not Found
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-          examples:
-            example-1:
-              detail: 存在しない投稿IDです。
-      description: vote post
-      tags:
-        - posts
-      parameters:
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties:
-              option:
+            examples:
+              201 Created:
+                value:
+                  option:
+                    select_num: 1
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
                 type: object
                 properties:
-                  select_num:
+                  id:
                     type: integer
-          x-examples:
-            201 Created:
-              option:
-                select_num: 1
-          description: ''
-  /api/v1/posts/public:
+                  options:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        select_num:
+                          type: integer
+                        votes:
+                          type:
+                          - integer
+                  selected_num:
+                    type: integer
+                  total:
+                    type: integer
+              examples:
+                201 Created:
+                  value:
+                    options:
+                    - select_num: 2
+                      votes: 0
+                    - select_num: 3
+                      votes: 0
+                    - select_num: 4
+                      votes: 0
+                    - select_num: 1
+                      votes: 1
+                    selected_num: 1
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  non_field_errors:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    non_field_errors:
+                    - 同ユーザーの投稿への投票は一度のみです。
+                example-2:
+                  value:
+                    non_field_errors:
+                    - 自身が投稿した投稿への投票はできません。
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    detail: 存在しない投稿IDです。
+  "/api/v1/posts/public":
     get:
       summary: Your GET endpoint
       tags:
-        - posts
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/Posts'
-          examples:
-            $ref: '#/definitions/Posts/x-examples'
-        '404':
-          description: Not Found
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-          examples:
-            example-1:
-              detail: 存在しない投稿IDです。
+      - posts
       description: get public posts
       parameters:
-        - type: string
-          in: query
-          name: q
-          description: 検索ワード
-        - type: string
-          in: query
-          name: pid
-          description: 追加読み込みの基準
-    parameters: []
-  /api/v1/posts/private:
-    get:
-      summary: Your GET endpoint
-      tags:
-        - posts
+      - name: q
+        in: query
+        description: 検索ワード
+        schema:
+          type: string
+      - name: pid
+        in: query
+        description: 追加読み込みの基準
+        schema:
+          type: string
       responses:
         '200':
           description: OK
-          schema:
-            $ref: '#/definitions/Posts'
-          examples:
-            $ref: '#/definitions/Posts/x-examples'
-      description: get private posts
-      parameters:
-        - type: string
-          in: query
-          name: q
-          description: 検索キーワード
-  /api/v1/posts/public/{post_id}:
-    parameters:
-      - type: string
-        name: post_id
-        in: path
-        required: true
-    get:
-      summary: Your GET endpoint
-      tags:
-        - posts
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/Post'
-          examples:
-            $ref: '#/definitions/Post/x-examples'
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Posts"
+              examples:
+                example-1:
+                  value:
+                    posts:
+                    - post_id: 67bf28ab-f884-44ca-b752-c2c7251acc0d
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: a
+                      voted: true
+                      options:
+                      - select_num: 1
+                        answer: a
+                        votes: 0
+                      created_at: '2020-03-13T17:55:17.891461Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 2001a2db-4822-4c6f-a4ed-5e5a7be7b92d
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: question
+                      voted: true
+                      options:
+                      - select_num: 1
+                        answer: answer_1
+                        votes: 0
+                      - select_num: 2
+                        answer: answer_2
+                        votes: 0
+                      - select_num: 3
+                        answer: answer_3
+                        votes: 0
+                      - select_num: 4
+                        answer: answer_4
+                        votes: 0
+                      created_at: '2020-03-13T17:40:19.553968Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 63c5b7f9-f56a-43ad-a695-44f05c642077
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: question
+                      voted: true
+                      options:
+                      - select_num: 1
+                        answer: kirito
+                        votes: 0
+                      - select_num: 2
+                        answer: kirito
+                        votes: 0
+                      - select_num: 3
+                        answer: kirito
+                        votes: 0
+                      - select_num: 4
+                        answer: kirito
+                        votes: 0
+                      created_at: '2020-03-13T17:30:11.554054Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 24ef1774-1736-4144-9bca-44f20b0a2cb0
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: aaaaaaaa
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: aaa
+                        votes: -1
+                      - select_num: 1
+                        answer: aaaaa
+                        votes: -1
+                      created_at: '2020-03-13T02:01:39.338914Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 9330901b-d3c0-4124-b20a-a9c8a2947eb4
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: a
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: a
+                        votes: -1
+                      - select_num: 1
+                        answer: a
+                        votes: -1
+                      created_at: '2020-03-13T01:26:55.137217Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: c167024e-e6af-4c0f-8801-c676ff4b9188
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: aaa
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: aaa
+                        votes: -1
+                      - select_num: 1
+                        answer: aaa
+                        votes: -1
+                      created_at: '2020-03-12T23:13:51.137237Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: d585c607-406e-4cbe-957a-ead618ed7030
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: aaaaaaaaaaaaaa
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: aaaaaaaaaa
+                        votes: -1
+                      - select_num: 1
+                        answer: aaaaaaaaaaaa
+                        votes: -1
+                      created_at: '2020-03-12T22:56:06.112986Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 6bd42c66-fe71-4f96-8914-9284ab805e95
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: いいい
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: いいい
+                        votes: -1
+                      - select_num: 1
+                        answer: いいい
+                        votes: -1
+                      created_at: '2020-03-12T22:04:26.748594Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: d3e10edc-4137-4178-b82a-f0561ffbb8ca
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: あああ
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: あああ
+                        votes: -1
+                      - select_num: 1
+                        answer: あああ
+                        votes: -1
+                      created_at: '2020-03-12T22:02:26.179814Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 2c84f4bf-2034-4b90-9b74-59a6b6cc0e81
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: もう一回やるで！
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: もう聞かんといて...
+                        votes: -1
+                      - select_num: 1
+                        answer: 別にええで！
+                        votes: -1
+                      created_at: '2020-03-12T22:01:28.697258Z'
+                      selected_num: -1
+                      total: 0
         '404':
           description: Not Found
-          schema:
-            type: object
-            properties:
-              detail:
-                type: string
-          examples:
-            example-1:
-              detail: 存在しない投稿IDです。
-      description: get post details
-  /api/v1/users:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    detail: 存在しない投稿IDです。
+  "/api/v1/posts/private":
     get:
       summary: Your GET endpoint
       tags:
-        - users
+      - posts
+      description: get private posts
+      parameters:
+      - name: q
+        in: query
+        description: 検索キーワード
+        schema:
+          type: string
       responses:
         '200':
           description: OK
-          schema:
-            $ref: '#/definitions/Users'
-          examples:
-            $ref: '#/definitions/Users/x-examples'
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Posts"
+              examples:
+                example-1:
+                  value:
+                    posts:
+                    - post_id: 67bf28ab-f884-44ca-b752-c2c7251acc0d
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: a
+                      voted: true
+                      options:
+                      - select_num: 1
+                        answer: a
+                        votes: 0
+                      created_at: '2020-03-13T17:55:17.891461Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 2001a2db-4822-4c6f-a4ed-5e5a7be7b92d
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: question
+                      voted: true
+                      options:
+                      - select_num: 1
+                        answer: answer_1
+                        votes: 0
+                      - select_num: 2
+                        answer: answer_2
+                        votes: 0
+                      - select_num: 3
+                        answer: answer_3
+                        votes: 0
+                      - select_num: 4
+                        answer: answer_4
+                        votes: 0
+                      created_at: '2020-03-13T17:40:19.553968Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 63c5b7f9-f56a-43ad-a695-44f05c642077
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: question
+                      voted: true
+                      options:
+                      - select_num: 1
+                        answer: kirito
+                        votes: 0
+                      - select_num: 2
+                        answer: kirito
+                        votes: 0
+                      - select_num: 3
+                        answer: kirito
+                        votes: 0
+                      - select_num: 4
+                        answer: kirito
+                        votes: 0
+                      created_at: '2020-03-13T17:30:11.554054Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 24ef1774-1736-4144-9bca-44f20b0a2cb0
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: aaaaaaaa
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: aaa
+                        votes: -1
+                      - select_num: 1
+                        answer: aaaaa
+                        votes: -1
+                      created_at: '2020-03-13T02:01:39.338914Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 9330901b-d3c0-4124-b20a-a9c8a2947eb4
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: a
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: a
+                        votes: -1
+                      - select_num: 1
+                        answer: a
+                        votes: -1
+                      created_at: '2020-03-13T01:26:55.137217Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: c167024e-e6af-4c0f-8801-c676ff4b9188
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: aaa
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: aaa
+                        votes: -1
+                      - select_num: 1
+                        answer: aaa
+                        votes: -1
+                      created_at: '2020-03-12T23:13:51.137237Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: d585c607-406e-4cbe-957a-ead618ed7030
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: aaaaaaaaaaaaaa
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: aaaaaaaaaa
+                        votes: -1
+                      - select_num: 1
+                        answer: aaaaaaaaaaaa
+                        votes: -1
+                      created_at: '2020-03-12T22:56:06.112986Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 6bd42c66-fe71-4f96-8914-9284ab805e95
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: いいい
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: いいい
+                        votes: -1
+                      - select_num: 1
+                        answer: いいい
+                        votes: -1
+                      created_at: '2020-03-12T22:04:26.748594Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: d3e10edc-4137-4178-b82a-f0561ffbb8ca
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: あああ
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: あああ
+                        votes: -1
+                      - select_num: 1
+                        answer: あああ
+                        votes: -1
+                      created_at: '2020-03-12T22:02:26.179814Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 2c84f4bf-2034-4b90-9b74-59a6b6cc0e81
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: もう一回やるで！
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: もう聞かんといて...
+                        votes: -1
+                      - select_num: 1
+                        answer: 別にええで！
+                        votes: -1
+                      created_at: '2020-03-12T22:01:28.697258Z'
+                      selected_num: -1
+                      total: 0
+  "/api/v1/posts/public/{post_id}":
+    parameters:
+    - name: post_id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Your GET endpoint
+      tags:
+      - posts
+      description: get post details
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Post"
+              examples:
+                Post:
+                  value:
+                    post_id: 67bf28ab-f884-44ca-b752-c2c7251acc0d
+                    user_id: user_id
+                    iconimage: icon_url
+                    question: a
+                    voted: true
+                    options:
+                    - select_num: 1
+                      answer: a
+                      votes: 0
+                    - select_num: 2
+                      answer: a
+                      votes: 0
+                    created_at: '2020-03-13T17:55:17.891461Z'
+                    selected_num: -1
+                    total: 0
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    detail: 存在しない投稿IDです。
+  "/api/v1/users":
+    get:
+      summary: Your GET endpoint
+      tags:
+      - users
       description: get users list
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Users"
+              examples:
+                Users:
+                  value:
+                    users:
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
     post:
       summary: ''
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-          examples:
-            example-1: {}
       description: create new user
       tags:
-        - users
-  /api/v1/users/{user_id}:
-    parameters:
-      - type: string
-        name: user_id
-        in: path
-        required: true
-    get:
-      summary: Your GET endpoint
-      tags:
-        - users
+      - users
       responses:
         '200':
           description: OK
-          schema:
-            $ref: '#/definitions/User'
-          examples:
-            $ref: '#/definitions/User/x-examples'
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-1:
+                  value: {}
+  "/api/v1/users/{user_id}":
+    parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Your GET endpoint
+      tags:
+      - users
       description: get user details
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/User"
+              examples:
+                User:
+                  value:
+                    unique_id: UUID_string
+                    user_id: sample_user_001
+                    name: sumple_user_name
+                    introduction: text text text text text text text
+                    iconimage: http://example.com/iconURL
+                    homeimage: http://example.com/homeImageURL
     patch:
       summary: ''
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-          examples:
-            example-1: {}
       description: user detail update
       tags:
-        - users
-      parameters:
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties:
-              user_id:
-                type: string
-              name:
-                type: string
-              introduction:
-                type: string
-              homeimage:
-                type: string
-              iconimage:
-                type: string
-          description: update user infomation
-    delete:
-      summary: ''
+      - users
+      requestBody:
+        description: update user infomation
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                name:
+                  type: string
+                introduction:
+                  type: string
+                homeimage:
+                  type: string
+                iconimage:
+                  type: string
       responses:
         '200':
           description: OK
-          schema:
-            type: object
-          examples:
-            example-1: {}
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-1:
+                  value: {}
+    delete:
+      summary: ''
       description: delete user
       tags:
-        - users
-  /api/v1/users/{user_id}/settings:
+      - users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-1:
+                  value: {}
+  "/api/v1/users/{user_id}/settings":
     parameters:
-      - type: string
-        name: user_id
-        in: path
-        required: true
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
     put:
       summary: ''
+      tags:
+      - users
+      description: update user settings
       responses:
         '200':
           description: OK
-          examples:
-            example-1: {}
-          schema:
-            type: object
-      tags:
-        - users
-      description: update user settings
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-1:
+                  value: {}
     get:
       summary: ''
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              push:
-                type: boolean
-              darkmode:
-                type: boolean
-          examples:
-            example-1:
-              push: true
-              darkmode: false
       description: get user settings
       tags:
-        - users
-  /api/v1/users/{user_id}/posted:
-    parameters:
-      - type: string
-        name: user_id
-        in: path
-        required: true
-    get:
-      summary: Your GET endpoint
-      tags:
-        - users
+      - users
       responses:
         '200':
           description: OK
-          schema:
-            $ref: '#/definitions/Posts'
-          examples:
-            $ref: '#/definitions/Posts/x-examples'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  push:
+                    type: boolean
+                  darkmode:
+                    type: boolean
+              examples:
+                example-1:
+                  value:
+                    push: true
+                    darkmode: false
+  "/api/v1/users/{user_id}/posted":
+    parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Your GET endpoint
+      tags:
+      - users
       description: get user posted posts
-  /api/v1/users/{user_id}/voted:
-    parameters:
-      - type: string
-        name: user_id
-        in: path
-        required: true
-    get:
-      summary: Your GET endpoint
-      tags:
-        - users
       responses:
         '200':
           description: OK
-          schema:
-            $ref: '#/definitions/Posts'
-          examples:
-            $ref: '#/definitions/Posts/x-examples'
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Posts"
+              examples:
+                example-1:
+                  value:
+                    posts:
+                    - post_id: 67bf28ab-f884-44ca-b752-c2c7251acc0d
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: a
+                      voted: true
+                      options:
+                      - select_num: 1
+                        answer: a
+                        votes: 0
+                      created_at: '2020-03-13T17:55:17.891461Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 2001a2db-4822-4c6f-a4ed-5e5a7be7b92d
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: question
+                      voted: true
+                      options:
+                      - select_num: 1
+                        answer: answer_1
+                        votes: 0
+                      - select_num: 2
+                        answer: answer_2
+                        votes: 0
+                      - select_num: 3
+                        answer: answer_3
+                        votes: 0
+                      - select_num: 4
+                        answer: answer_4
+                        votes: 0
+                      created_at: '2020-03-13T17:40:19.553968Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 63c5b7f9-f56a-43ad-a695-44f05c642077
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: question
+                      voted: true
+                      options:
+                      - select_num: 1
+                        answer: kirito
+                        votes: 0
+                      - select_num: 2
+                        answer: kirito
+                        votes: 0
+                      - select_num: 3
+                        answer: kirito
+                        votes: 0
+                      - select_num: 4
+                        answer: kirito
+                        votes: 0
+                      created_at: '2020-03-13T17:30:11.554054Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 24ef1774-1736-4144-9bca-44f20b0a2cb0
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: aaaaaaaa
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: aaa
+                        votes: -1
+                      - select_num: 1
+                        answer: aaaaa
+                        votes: -1
+                      created_at: '2020-03-13T02:01:39.338914Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 9330901b-d3c0-4124-b20a-a9c8a2947eb4
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: a
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: a
+                        votes: -1
+                      - select_num: 1
+                        answer: a
+                        votes: -1
+                      created_at: '2020-03-13T01:26:55.137217Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: c167024e-e6af-4c0f-8801-c676ff4b9188
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: aaa
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: aaa
+                        votes: -1
+                      - select_num: 1
+                        answer: aaa
+                        votes: -1
+                      created_at: '2020-03-12T23:13:51.137237Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: d585c607-406e-4cbe-957a-ead618ed7030
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: aaaaaaaaaaaaaa
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: aaaaaaaaaa
+                        votes: -1
+                      - select_num: 1
+                        answer: aaaaaaaaaaaa
+                        votes: -1
+                      created_at: '2020-03-12T22:56:06.112986Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 6bd42c66-fe71-4f96-8914-9284ab805e95
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: いいい
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: いいい
+                        votes: -1
+                      - select_num: 1
+                        answer: いいい
+                        votes: -1
+                      created_at: '2020-03-12T22:04:26.748594Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: d3e10edc-4137-4178-b82a-f0561ffbb8ca
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: あああ
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: あああ
+                        votes: -1
+                      - select_num: 1
+                        answer: あああ
+                        votes: -1
+                      created_at: '2020-03-12T22:02:26.179814Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 2c84f4bf-2034-4b90-9b74-59a6b6cc0e81
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: もう一回やるで！
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: もう聞かんといて...
+                        votes: -1
+                      - select_num: 1
+                        answer: 別にええで！
+                        votes: -1
+                      created_at: '2020-03-12T22:01:28.697258Z'
+                      selected_num: -1
+                      total: 0
+  "/api/v1/users/{user_id}/voted":
+    parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Your GET endpoint
+      tags:
+      - users
+      description: user voted posts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Posts"
+              examples:
+                example-1:
+                  value:
+                    posts:
+                    - post_id: 67bf28ab-f884-44ca-b752-c2c7251acc0d
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: a
+                      voted: true
+                      options:
+                      - select_num: 1
+                        answer: a
+                        votes: 0
+                      created_at: '2020-03-13T17:55:17.891461Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 2001a2db-4822-4c6f-a4ed-5e5a7be7b92d
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: question
+                      voted: true
+                      options:
+                      - select_num: 1
+                        answer: answer_1
+                        votes: 0
+                      - select_num: 2
+                        answer: answer_2
+                        votes: 0
+                      - select_num: 3
+                        answer: answer_3
+                        votes: 0
+                      - select_num: 4
+                        answer: answer_4
+                        votes: 0
+                      created_at: '2020-03-13T17:40:19.553968Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 63c5b7f9-f56a-43ad-a695-44f05c642077
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: question
+                      voted: true
+                      options:
+                      - select_num: 1
+                        answer: kirito
+                        votes: 0
+                      - select_num: 2
+                        answer: kirito
+                        votes: 0
+                      - select_num: 3
+                        answer: kirito
+                        votes: 0
+                      - select_num: 4
+                        answer: kirito
+                        votes: 0
+                      created_at: '2020-03-13T17:30:11.554054Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 24ef1774-1736-4144-9bca-44f20b0a2cb0
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: aaaaaaaa
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: aaa
+                        votes: -1
+                      - select_num: 1
+                        answer: aaaaa
+                        votes: -1
+                      created_at: '2020-03-13T02:01:39.338914Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 9330901b-d3c0-4124-b20a-a9c8a2947eb4
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: a
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: a
+                        votes: -1
+                      - select_num: 1
+                        answer: a
+                        votes: -1
+                      created_at: '2020-03-13T01:26:55.137217Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: c167024e-e6af-4c0f-8801-c676ff4b9188
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: aaa
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: aaa
+                        votes: -1
+                      - select_num: 1
+                        answer: aaa
+                        votes: -1
+                      created_at: '2020-03-12T23:13:51.137237Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: d585c607-406e-4cbe-957a-ead618ed7030
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: aaaaaaaaaaaaaa
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: aaaaaaaaaa
+                        votes: -1
+                      - select_num: 1
+                        answer: aaaaaaaaaaaa
+                        votes: -1
+                      created_at: '2020-03-12T22:56:06.112986Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 6bd42c66-fe71-4f96-8914-9284ab805e95
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: いいい
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: いいい
+                        votes: -1
+                      - select_num: 1
+                        answer: いいい
+                        votes: -1
+                      created_at: '2020-03-12T22:04:26.748594Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: d3e10edc-4137-4178-b82a-f0561ffbb8ca
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: あああ
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: あああ
+                        votes: -1
+                      - select_num: 1
+                        answer: あああ
+                        votes: -1
+                      created_at: '2020-03-12T22:02:26.179814Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 2c84f4bf-2034-4b90-9b74-59a6b6cc0e81
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: もう一回やるで！
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: もう聞かんといて...
+                        votes: -1
+                      - select_num: 1
+                        answer: 別にええで！
+                        votes: -1
+                      created_at: '2020-03-12T22:01:28.697258Z'
+                      selected_num: -1
+                      total: 0
         '204':
           description: No Content
-          schema:
-            type: object
-            properties: {}
-          examples:
-            example-1: {}
-      description: user voted posts
-  /api/v1/friendships/{userId}:
+  "/api/v1/friendships/{userId}":
+    parameters:
+    - name: userId
+      in: path
+      description: ユーザーが設定できるuserID
+      required: true
+      schema:
+        type: string
     post:
       summary: ''
+      tags:
+      - friendships
+      description: create friendships
       responses:
         '200':
           description: OK
-          schema:
-            type: object
-          examples:
-            example-1: {}
-      tags:
-        - friendships
-      description: create friendships
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-1:
+                  value: {}
     put:
       summary: ''
+      tags:
+      - friendships
+      description: update friendship
       responses:
         '200':
           description: OK
-          examples:
-            example-1: {}
-          schema:
-            type: object
-      tags:
-        - friendships
-      description: update friendship
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-1:
+                  value: {}
     delete:
       summary: ''
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-          examples:
-            example-1: {}
       tags:
-        - friendships
+      - friendships
       description: delete friendship
-    parameters:
-      - type: string
-        name: userId
-        in: path
-        required: true
-        description: ユーザーが設定できるuserID
-  /api/v1/frendships/{userId}/following:
-    parameters:
-      - type: string
-        name: userId
-        in: path
-        required: true
-        description: ユーザーが設定できるuserID
-    get:
-      summary: Your GET endpoint
-      tags:
-        - friendships
       responses:
         '200':
           description: OK
-          schema:
-            $ref: '#/definitions/Users'
-          examples:
-            $ref: '#/definitions/Users/x-examples'
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-1:
+                  value: {}
+  "/api/v1/frendships/{userId}/following":
+    parameters:
+    - name: userId
+      in: path
+      description: ユーザーが設定できるuserID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Your GET endpoint
+      tags:
+      - friendships
       description: get following users
-  /api/v1/frendships/{userId}/followers:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Users"
+              examples:
+                Users:
+                  value:
+                    users:
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+  "/api/v1/frendships/{userId}/followers":
     parameters:
-      - type: string
-        name: userId
-        in: path
-        required: true
-        description: ユーザーが設定できるuserID
+    - name: userId
+      in: path
+      description: ユーザーが設定できるuserID
+      required: true
+      schema:
+        type: string
     get:
       summary: Your GET endpoint
       tags:
-        - friendships
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/Users'
-          examples:
-            $ref: '#/definitions/Users/x-examples'
+      - friendships
       description: get followers
-  /api/v1/posts/public/rank:
-    get:
-      summary: Your GET endpoint
-      tags:
-        - posts
       responses:
         '200':
           description: OK
-          schema:
-            $ref: '#/definitions/Posts'
-          examples:
-            $ref: '#/definitions/Posts/x-examples'
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Users"
+              examples:
+                Users:
+                  value:
+                    users:
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+                    - unique_id: UUID_string
+                      user_id: sample_user_001
+                      name: sumple_user_name
+                      introduction: text text text text text text text
+                      iconimage: http://example.com/iconURL
+                      homeimage: http://example.com/homeImageURL
+                      followers: 100
+                      follow: 100
+                      followed: true
+  "/api/v1/posts/public/rank":
+    get:
+      summary: Your GET endpoint
+      tags:
+      - posts
       description: get post ranking
-    parameters: []
-  /api/v1/health:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Posts"
+              examples:
+                example-1:
+                  value:
+                    posts:
+                    - post_id: 67bf28ab-f884-44ca-b752-c2c7251acc0d
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: a
+                      voted: true
+                      options:
+                      - select_num: 1
+                        answer: a
+                        votes: 0
+                      created_at: '2020-03-13T17:55:17.891461Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 2001a2db-4822-4c6f-a4ed-5e5a7be7b92d
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: question
+                      voted: true
+                      options:
+                      - select_num: 1
+                        answer: answer_1
+                        votes: 0
+                      - select_num: 2
+                        answer: answer_2
+                        votes: 0
+                      - select_num: 3
+                        answer: answer_3
+                        votes: 0
+                      - select_num: 4
+                        answer: answer_4
+                        votes: 0
+                      created_at: '2020-03-13T17:40:19.553968Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 63c5b7f9-f56a-43ad-a695-44f05c642077
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: question
+                      voted: true
+                      options:
+                      - select_num: 1
+                        answer: kirito
+                        votes: 0
+                      - select_num: 2
+                        answer: kirito
+                        votes: 0
+                      - select_num: 3
+                        answer: kirito
+                        votes: 0
+                      - select_num: 4
+                        answer: kirito
+                        votes: 0
+                      created_at: '2020-03-13T17:30:11.554054Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 24ef1774-1736-4144-9bca-44f20b0a2cb0
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: aaaaaaaa
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: aaa
+                        votes: -1
+                      - select_num: 1
+                        answer: aaaaa
+                        votes: -1
+                      created_at: '2020-03-13T02:01:39.338914Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 9330901b-d3c0-4124-b20a-a9c8a2947eb4
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: a
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: a
+                        votes: -1
+                      - select_num: 1
+                        answer: a
+                        votes: -1
+                      created_at: '2020-03-13T01:26:55.137217Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: c167024e-e6af-4c0f-8801-c676ff4b9188
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: aaa
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: aaa
+                        votes: -1
+                      - select_num: 1
+                        answer: aaa
+                        votes: -1
+                      created_at: '2020-03-12T23:13:51.137237Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: d585c607-406e-4cbe-957a-ead618ed7030
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: aaaaaaaaaaaaaa
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: aaaaaaaaaa
+                        votes: -1
+                      - select_num: 1
+                        answer: aaaaaaaaaaaa
+                        votes: -1
+                      created_at: '2020-03-12T22:56:06.112986Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 6bd42c66-fe71-4f96-8914-9284ab805e95
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: いいい
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: いいい
+                        votes: -1
+                      - select_num: 1
+                        answer: いいい
+                        votes: -1
+                      created_at: '2020-03-12T22:04:26.748594Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: d3e10edc-4137-4178-b82a-f0561ffbb8ca
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: あああ
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: あああ
+                        votes: -1
+                      - select_num: 1
+                        answer: あああ
+                        votes: -1
+                      created_at: '2020-03-12T22:02:26.179814Z'
+                      selected_num: -1
+                      total: 0
+                    - post_id: 2c84f4bf-2034-4b90-9b74-59a6b6cc0e81
+                      user_id: user_id
+                      iconimage: icon_url
+                      question: もう一回やるで！
+                      voted: false
+                      options:
+                      - select_num: 0
+                        answer: もう聞かんといて...
+                        votes: -1
+                      - select_num: 1
+                        answer: 別にええで！
+                        votes: -1
+                      created_at: '2020-03-12T22:01:28.697258Z'
+                      selected_num: -1
+                      total: 0
+  "/api/v1/health":
     get:
       summary: 疎通確認でHealthCheck
       description: health check
       tags:
-        - administrations
+      - administrations
       responses:
-        200:
+        '200':
           description: HealthCheckをする
-          schema:
-            $ref: '#/definitions/HealthCheck'
-          examples:
-            $ref: '#/definitions/HealthCheck/x-examples'
-definitions:
-  Posts:
-    title: Posts
-    type: object
-    x-examples:
-      example-1:
-        posts:
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/HealthCheck"
+              examples:
+                HealthCheck:
+                  value:
+                    status: OK
+components:
+  schemas:
+    Posts:
+      title: Posts
+      type: object
+      x-examples:
+        example-1:
+          posts:
           - post_id: 67bf28ab-f884-44ca-b752-c2c7251acc0d
             user_id: user_id
             iconimage: icon_url
             question: a
             voted: true
             options:
-              - select_num: 1
-                answer: a
-                votes: 0
+            - select_num: 1
+              answer: a
+              votes: 0
             created_at: '2020-03-13T17:55:17.891461Z'
             selected_num: -1
             total: 0
@@ -707,18 +1792,18 @@ definitions:
             question: question
             voted: true
             options:
-              - select_num: 1
-                answer: answer_1
-                votes: 0
-              - select_num: 2
-                answer: answer_2
-                votes: 0
-              - select_num: 3
-                answer: answer_3
-                votes: 0
-              - select_num: 4
-                answer: answer_4
-                votes: 0
+            - select_num: 1
+              answer: answer_1
+              votes: 0
+            - select_num: 2
+              answer: answer_2
+              votes: 0
+            - select_num: 3
+              answer: answer_3
+              votes: 0
+            - select_num: 4
+              answer: answer_4
+              votes: 0
             created_at: '2020-03-13T17:40:19.553968Z'
             selected_num: -1
             total: 0
@@ -728,18 +1813,18 @@ definitions:
             question: question
             voted: true
             options:
-              - select_num: 1
-                answer: kirito
-                votes: 0
-              - select_num: 2
-                answer: kirito
-                votes: 0
-              - select_num: 3
-                answer: kirito
-                votes: 0
-              - select_num: 4
-                answer: kirito
-                votes: 0
+            - select_num: 1
+              answer: kirito
+              votes: 0
+            - select_num: 2
+              answer: kirito
+              votes: 0
+            - select_num: 3
+              answer: kirito
+              votes: 0
+            - select_num: 4
+              answer: kirito
+              votes: 0
             created_at: '2020-03-13T17:30:11.554054Z'
             selected_num: -1
             total: 0
@@ -749,12 +1834,12 @@ definitions:
             question: aaaaaaaa
             voted: false
             options:
-              - select_num: 0
-                answer: aaa
-                votes: -1
-              - select_num: 1
-                answer: aaaaa
-                votes: -1
+            - select_num: 0
+              answer: aaa
+              votes: -1
+            - select_num: 1
+              answer: aaaaa
+              votes: -1
             created_at: '2020-03-13T02:01:39.338914Z'
             selected_num: -1
             total: 0
@@ -764,12 +1849,12 @@ definitions:
             question: a
             voted: false
             options:
-              - select_num: 0
-                answer: a
-                votes: -1
-              - select_num: 1
-                answer: a
-                votes: -1
+            - select_num: 0
+              answer: a
+              votes: -1
+            - select_num: 1
+              answer: a
+              votes: -1
             created_at: '2020-03-13T01:26:55.137217Z'
             selected_num: -1
             total: 0
@@ -779,12 +1864,12 @@ definitions:
             question: aaa
             voted: false
             options:
-              - select_num: 0
-                answer: aaa
-                votes: -1
-              - select_num: 1
-                answer: aaa
-                votes: -1
+            - select_num: 0
+              answer: aaa
+              votes: -1
+            - select_num: 1
+              answer: aaa
+              votes: -1
             created_at: '2020-03-12T23:13:51.137237Z'
             selected_num: -1
             total: 0
@@ -794,12 +1879,12 @@ definitions:
             question: aaaaaaaaaaaaaa
             voted: false
             options:
-              - select_num: 0
-                answer: aaaaaaaaaa
-                votes: -1
-              - select_num: 1
-                answer: aaaaaaaaaaaa
-                votes: -1
+            - select_num: 0
+              answer: aaaaaaaaaa
+              votes: -1
+            - select_num: 1
+              answer: aaaaaaaaaaaa
+              votes: -1
             created_at: '2020-03-12T22:56:06.112986Z'
             selected_num: -1
             total: 0
@@ -809,12 +1894,12 @@ definitions:
             question: いいい
             voted: false
             options:
-              - select_num: 0
-                answer: いいい
-                votes: -1
-              - select_num: 1
-                answer: いいい
-                votes: -1
+            - select_num: 0
+              answer: いいい
+              votes: -1
+            - select_num: 1
+              answer: いいい
+              votes: -1
             created_at: '2020-03-12T22:04:26.748594Z'
             selected_num: -1
             total: 0
@@ -824,12 +1909,12 @@ definitions:
             question: あああ
             voted: false
             options:
-              - select_num: 0
-                answer: あああ
-                votes: -1
-              - select_num: 1
-                answer: あああ
-                votes: -1
+            - select_num: 0
+              answer: あああ
+              votes: -1
+            - select_num: 1
+              answer: あああ
+              votes: -1
             created_at: '2020-03-12T22:02:26.179814Z'
             selected_num: -1
             total: 0
@@ -839,109 +1924,109 @@ definitions:
             question: もう一回やるで！
             voted: false
             options:
-              - select_num: 0
-                answer: もう聞かんといて...
-                votes: -1
-              - select_num: 1
-                answer: 別にええで！
-                votes: -1
+            - select_num: 0
+              answer: もう聞かんといて...
+              votes: -1
+            - select_num: 1
+              answer: 別にええで！
+              votes: -1
             created_at: '2020-03-12T22:01:28.697258Z'
             selected_num: -1
             total: 0
-    description: ''
-    properties:
-      posts:
-        type: array
-        items:
-          $ref: '#/definitions/Post'
-  User:
-    title: User
-    type: object
-    x-examples:
-      User:
-        unique_id: UUID_string
-        user_id: sample_user_001
-        name: sumple_user_name
-        introduction: text text text text text text text
-        iconimage: 'http://example.com/iconURL'
-        homeimage: 'http://example.com/homeImageURL'
-    properties:
-      user_id:
-        type: string
-      name:
-        type: string
-      introduction:
-        type: string
-      homeImage:
-        type: string
-      iconimage:
-        type: string
-  Post:
-    title: Post
-    type: object
-    x-examples:
-      Post:
-        post_id: 67bf28ab-f884-44ca-b752-c2c7251acc0d
-        user_id: user_id
-        iconimage: icon_url
-        question: a
-        voted: true
-        options:
+      description: ''
+      properties:
+        posts:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Post"
+    User:
+      title: User
+      type: object
+      x-examples:
+        User:
+          unique_id: UUID_string
+          user_id: sample_user_001
+          name: sumple_user_name
+          introduction: text text text text text text text
+          iconimage: http://example.com/iconURL
+          homeimage: http://example.com/homeImageURL
+      properties:
+        user_id:
+          type: string
+        name:
+          type: string
+        introduction:
+          type: string
+        homeImage:
+          type: string
+        iconimage:
+          type: string
+    Post:
+      title: Post
+      type: object
+      x-examples:
+        Post:
+          post_id: 67bf28ab-f884-44ca-b752-c2c7251acc0d
+          user_id: user_id
+          iconimage: icon_url
+          question: a
+          voted: true
+          options:
           - select_num: 1
             answer: a
             votes: 0
           - select_num: 2
             answer: a
             votes: 0
-        created_at: '2020-03-13T17:55:17.891461Z'
-        selected_num: -1
-        total: 0
-    properties:
-      post_id:
-        type: string
-      user_id:
-        type: string
-      iconimage:
-        type: string
-      question:
-        type: string
-      voted:
-        type: boolean
-      options:
-        type: array
-        items:
-          type: object
-          properties:
-            select_num:
-              type: integer
-            answer:
-              type: string
-            votes:
-              type:
+          created_at: '2020-03-13T17:55:17.891461Z'
+          selected_num: -1
+          total: 0
+      properties:
+        post_id:
+          type: string
+        user_id:
+          type: string
+        iconimage:
+          type: string
+        question:
+          type: string
+        voted:
+          type: boolean
+        options:
+          type: array
+          items:
+            type: object
+            properties:
+              select_num:
+                type: integer
+              answer:
+                type: string
+              votes:
+                type:
                 - integer
-      created_at:
-        type: string
-      selected_num:
-        type: integer
-      total:
-        type: integer
-  Users:
-    title: Users
-    type: object
-    properties:
-      users:
-        type: array
-        items:
-          $ref: '#/definitions/User'
-    x-examples:
-      Users:
+        created_at:
+          type: string
+        selected_num:
+          type: integer
+        total:
+          type: integer
+    Users:
+      title: Users
+      type: object
+      properties:
         users:
+          type: array
+          items:
+            "$ref": "#/components/schemas/User"
+      x-examples:
+        Users:
+          users:
           - unique_id: UUID_string
             user_id: sample_user_001
             name: sumple_user_name
             introduction: text text text text text text text
-            iconimage: 'http://example.com/iconURL'
-            homeimage: 'http://example.com/homeImageURL'
+            iconimage: http://example.com/iconURL
+            homeimage: http://example.com/homeImageURL
             followers: 100
             follow: 100
             followed: true
@@ -949,8 +2034,8 @@ definitions:
             user_id: sample_user_001
             name: sumple_user_name
             introduction: text text text text text text text
-            iconimage: 'http://example.com/iconURL'
-            homeimage: 'http://example.com/homeImageURL'
+            iconimage: http://example.com/iconURL
+            homeimage: http://example.com/homeImageURL
             followers: 100
             follow: 100
             followed: true
@@ -958,8 +2043,8 @@ definitions:
             user_id: sample_user_001
             name: sumple_user_name
             introduction: text text text text text text text
-            iconimage: 'http://example.com/iconURL'
-            homeimage: 'http://example.com/homeImageURL'
+            iconimage: http://example.com/iconURL
+            homeimage: http://example.com/homeImageURL
             followers: 100
             follow: 100
             followed: true
@@ -967,8 +2052,8 @@ definitions:
             user_id: sample_user_001
             name: sumple_user_name
             introduction: text text text text text text text
-            iconimage: 'http://example.com/iconURL'
-            homeimage: 'http://example.com/homeImageURL'
+            iconimage: http://example.com/iconURL
+            homeimage: http://example.com/homeImageURL
             followers: 100
             follow: 100
             followed: true
@@ -976,8 +2061,8 @@ definitions:
             user_id: sample_user_001
             name: sumple_user_name
             introduction: text text text text text text text
-            iconimage: 'http://example.com/iconURL'
-            homeimage: 'http://example.com/homeImageURL'
+            iconimage: http://example.com/iconURL
+            homeimage: http://example.com/homeImageURL
             followers: 100
             follow: 100
             followed: true
@@ -985,22 +2070,21 @@ definitions:
             user_id: sample_user_001
             name: sumple_user_name
             introduction: text text text text text text text
-            iconimage: 'http://example.com/iconURL'
-            homeimage: 'http://example.com/homeImageURL'
+            iconimage: http://example.com/iconURL
+            homeimage: http://example.com/homeImageURL
             followers: 100
             follow: 100
             followed: true
-  HealthCheck:
-    type: object
-    x-examples:
-      HealthCheck:
-        status: OK
-    properties:
-      status:
-        type: string
-securityDefinitions: {}
+    HealthCheck:
+      type: object
+      x-examples:
+        HealthCheck:
+          status: OK
+      properties:
+        status:
+          type: string
 tags:
-  - name: posts
-  - name: users
-  - name: friendships
-  - name: administrations
+- name: posts
+- name: users
+- name: friendships
+- name: administrations
