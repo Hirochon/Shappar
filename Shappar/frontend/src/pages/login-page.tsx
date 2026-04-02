@@ -8,10 +8,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { useAuthMutation } from '@/features/auth/use-auth-mutation';
+import { ApiError } from '@/lib/api-client';
 import { auth, googleProvider } from '@/lib/firebase';
 
-const DEFAULT_ERROR_MESSAGE =
+const DEFAULT_LOGIN_ERROR_MESSAGE =
   'Google ログインに失敗しました。時間をおいて再度お試しください。';
+const DEFAULT_AUTH_ERROR_MESSAGE =
+  'ログイン後の認証に失敗しました。時間をおいて再度お試しください。';
+const UNAUTHORIZED_AUTH_ERROR_MESSAGE =
+  'ログイン後の認証に失敗しました。もう一度お試しください。';
 
 function shouldIgnoreAuthError(error: unknown) {
   if (!error || typeof error !== 'object' || !('code' in error)) {
@@ -21,22 +27,41 @@ function shouldIgnoreAuthError(error: unknown) {
   return String(error.code).endsWith('popup-closed-by-user');
 }
 
+function getAuthErrorMessage(error: unknown) {
+  if (error instanceof ApiError && error.status === 401) {
+    return UNAUTHORIZED_AUTH_ERROR_MESSAGE;
+  }
+
+  return DEFAULT_AUTH_ERROR_MESSAGE;
+}
+
 export function LoginPage() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { mutateAsync: authenticateUser, isPending: isAuthenticating } =
+    useAuthMutation();
+  const isLoading = isLoggingIn || isAuthenticating;
 
   const handleGoogleLogin = async () => {
-    setIsLoading(true);
+    setIsLoggingIn(true);
     setError(null);
 
     try {
-      await signInWithPopup(auth, googleProvider);
+      const credentials = await signInWithPopup(auth, googleProvider);
+
+      setIsLoggingIn(false);
+
+      await authenticateUser(credentials.user);
     } catch (loginError) {
       if (!shouldIgnoreAuthError(loginError)) {
-        setError(DEFAULT_ERROR_MESSAGE);
+        setError(
+          loginError instanceof ApiError || loginError instanceof TypeError
+            ? getAuthErrorMessage(loginError)
+            : DEFAULT_LOGIN_ERROR_MESSAGE,
+        );
       }
     } finally {
-      setIsLoading(false);
+      setIsLoggingIn(false);
     }
   };
 
@@ -87,7 +112,11 @@ export function LoginPage() {
                       fill="currentColor"
                     />
                   </svg>
-                  <span>ログイン中...</span>
+                  <span>
+                    {isAuthenticating
+                      ? '認証情報を確認中...'
+                      : 'ログイン中...'}
+                  </span>
                 </>
               ) : (
                 'Google でログイン'
