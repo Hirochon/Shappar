@@ -28,9 +28,16 @@ vi.mock('@/stores/auth-store', () => ({
 
 function LoginLocationProbe() {
   const location = useLocation();
-  const from = location.state?.from as
-    | { hash?: string; pathname?: string; search?: string }
-    | undefined;
+  const state = location.state as
+    | {
+        from?: {
+          hash?: string;
+          pathname?: string;
+          search?: string;
+        };
+      }
+    | null;
+  const from = state?.from;
 
   return (
     <main>

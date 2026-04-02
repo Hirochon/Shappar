@@ -3,9 +3,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const authStoreMocks = vi.hoisted(() => {
   const unsubscribe = vi.fn();
   const initAuthListener = vi.fn(() => unsubscribe);
-  const routerProvider = vi.fn((_router: unknown) => (
-    <div data-testid="router-provider" />
-  ));
+  const routerProvider = vi.fn((router: unknown) => {
+    void router;
+
+    return <div data-testid="router-provider" />;
+  });
 
   return { initAuthListener, routerProvider, unsubscribe };
 });
@@ -17,7 +19,7 @@ vi.mock('@/stores/auth-store', () => ({
 vi.mock('@/router', () => ({
   router: { id: 'app-router' },
 }));
-vi.mock('react-router-dom', async () => ({
+vi.mock('react-router-dom', () => ({
   RouterProvider: ({
     router,
   }: {
