@@ -11,9 +11,17 @@ vi.mock('@/stores/auth-store', () => ({
   useAuthStore: (selector: (state: { initAuthListener: () => () => void }) => unknown) =>
     selector({ initAuthListener: authStoreMocks.initAuthListener }),
 }));
+vi.mock('@/pages/login-page', () => ({
+  LoginPage: () => (
+    <main>
+      <h1>Shappar</h1>
+      <button type="button">Google でログイン</button>
+    </main>
+  ),
+}));
 
 import App from '@/App';
-import { render, screen, userEvent } from '@/test/test-utils';
+import { render, screen } from '@/test/test-utils';
 
 describe('App', () => {
   beforeEach(() => {
@@ -22,26 +30,19 @@ describe('App', () => {
     authStoreMocks.initAuthListener.mockReturnValue(authStoreMocks.unsubscribe);
   });
 
-  it('renders the home page and supports a basic user interaction', async () => {
-    const user = userEvent.setup();
-
+  it('renders the login page', () => {
     render(<App />);
 
     expect(
       screen.getByRole('heading', {
-        name: 'UI foundation for the next screens.',
+        name: 'Shappar',
       }),
     ).toBeInTheDocument();
-
-    expect(screen.getByText('bg-blue-500 utility active')).toBeInTheDocument();
-
-    const primaryButton = screen.getByRole('button', {
-      name: 'Primary action',
-    });
-
-    await user.click(primaryButton);
-
-    expect(primaryButton).toHaveFocus();
+    expect(
+      screen.getByRole('button', {
+        name: 'Google でログイン',
+      }),
+    ).toBeInTheDocument();
   });
 
   it('starts the auth listener on mount and cleans it up on unmount', () => {

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { HomePage } from '@/pages/HomePage';
+import { LoginPage } from '@/pages/login-page';
 import { useAuthStore } from '@/stores/auth-store';
 
 function App() {
@@ -9,7 +9,7 @@ function App() {
     return initAuthListener();
   }, [initAuthListener]);
 
-  return <HomePage />;
+  return <LoginPage />;
 }
 
 export default App;
