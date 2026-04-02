@@ -1,5 +1,6 @@
 import { HttpResponse, http } from 'msw';
 import { postHandlers } from '@/mocks/handlers/posts';
+import { userHandlers } from '@/mocks/handlers/users';
 import { MOCK_AUTH_USER_ID } from '@/mocks/poll-data';
 
 const mockAuthUser = {
@@ -25,4 +26,5 @@ export const handlers = [
     return HttpResponse.json({ status: 'ok' });
   }),
   ...postHandlers,
+  ...userHandlers,
 ];
