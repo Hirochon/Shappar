@@ -5,6 +5,50 @@ import { defineConfig } from 'vitest/config';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      output: {
+        // Split heavy vendors so the app entry bundle stays below Vite's warning threshold.
+        manualChunks(id) {
+          if (!id.includes('node_modules')) {
+            return undefined;
+          }
+
+          if (id.includes('/@firebase/') || id.includes('/firebase/')) {
+            return 'vendor-firebase';
+          }
+
+          if (id.includes('/react-router/') || id.includes('/react-router-dom/')) {
+            return 'vendor-router';
+          }
+
+          if (
+            id.includes('/@radix-ui/') ||
+            id.includes('/@floating-ui/') ||
+            id.includes('/class-variance-authority/') ||
+            id.includes('/clsx/') ||
+            id.includes('/tailwind-merge/')
+          ) {
+            return 'vendor-ui';
+          }
+
+          if (id.includes('/@tanstack/')) {
+            return 'vendor-query';
+          }
+
+          if (
+            id.includes('/react/') ||
+            id.includes('/react-dom/') ||
+            id.includes('/scheduler/')
+          ) {
+            return 'vendor-react';
+          }
+
+          return 'vendor-misc';
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
