@@ -9,23 +9,45 @@ import {
   type RenderOptions,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { PropsWithChildren, ReactElement } from 'react';
+import { MemoryRouter } from 'react-router-dom';
+import type { ComponentProps, PropsWithChildren, ReactElement } from 'react';
 
-function render(ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) {
+type ExtendedRenderOptions = Omit<RenderOptions, 'wrapper'> & {
+  initialEntries?: ComponentProps<typeof MemoryRouter>['initialEntries'];
+  initialIndex?: number;
+};
+
+function renderWithProviders(
+  ui: ReactElement,
+  options: ExtendedRenderOptions = {},
+) {
+  const { initialEntries, initialIndex, ...renderOptions } = options;
+
   function Wrapper({ children }: PropsWithChildren) {
-    return <>{children}</>;
+    if (!initialEntries) {
+      return <>{children}</>;
+    }
+
+    return (
+      <MemoryRouter initialEntries={initialEntries} initialIndex={initialIndex}>
+        {children}
+      </MemoryRouter>
+    );
   }
 
   return rtlRender(ui, {
     wrapper: Wrapper,
-    ...options,
+    ...renderOptions,
   });
 }
+
+const render = renderWithProviders;
 
 export {
   cleanup,
   fireEvent,
   render,
+  renderWithProviders,
   renderHook,
   screen,
   userEvent,
