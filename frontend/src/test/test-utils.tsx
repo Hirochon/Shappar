@@ -10,6 +10,8 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
+import { Toaster } from '@/components/ui/toaster';
+import { ToastContextProvider } from '@/hooks/use-toast';
 import type { ComponentProps, PropsWithChildren, ReactElement } from 'react';
 
 type ExtendedRenderOptions = Omit<RenderOptions, 'wrapper'> & {
@@ -24,14 +26,19 @@ function renderWithProviders(
   const { initialEntries, initialIndex, ...renderOptions } = options;
 
   function Wrapper({ children }: PropsWithChildren) {
-    if (!initialEntries) {
-      return <>{children}</>;
-    }
-
-    return (
+    const content = initialEntries ? (
       <MemoryRouter initialEntries={initialEntries} initialIndex={initialIndex}>
         {children}
       </MemoryRouter>
+    ) : (
+      children
+    );
+
+    return (
+      <ToastContextProvider>
+        {content}
+        <Toaster />
+      </ToastContextProvider>
     );
   }
 
