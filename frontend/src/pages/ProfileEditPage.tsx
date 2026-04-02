@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ErrorDisplay } from '@/components/error-display';
 import { Button } from '@/components/ui/button';
@@ -28,11 +28,6 @@ export function ProfileEditPage() {
   const [nameError, setNameError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  useEffect(() => {
-    setName(authUser?.name ?? '');
-    setIntroduction(authUser?.introduction ?? '');
-  }, [authUser?.introduction, authUser?.name]);
-
   if (!authUser) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-8">
@@ -52,7 +47,7 @@ export function ProfileEditPage() {
     void navigate(profilePath);
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const normalizedName = name.trim();
