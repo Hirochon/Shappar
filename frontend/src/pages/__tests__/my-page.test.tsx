@@ -83,20 +83,22 @@ function mockMyPageApi({
 } = {}) {
   server.use(
     http.get(`${API_BASE_URL}/api/v1/users/:userId`, async ({ params }) => {
+      const resolvedUserId = String(params.userId ?? userId);
+
       if (responseDelayMs > 0) {
         await delay(responseDelayMs);
       }
 
       return HttpResponse.json({
-        unique_id: `unique-${params.userId}`,
-        user_id: params.userId,
-        name: params.userId === userId ? userName : `${params.userId}さん`,
-        introduction: `${params.userId} introduction`,
-        iconimage: `https://example.com/${params.userId}.png`,
-        homeimage: `https://example.com/${params.userId}-home.png`,
+        unique_id: `unique-${resolvedUserId}`,
+        user_id: resolvedUserId,
+        name: resolvedUserId === userId ? userName : `${resolvedUserId}さん`,
+        introduction: `${resolvedUserId} introduction`,
+        iconimage: `https://example.com/${resolvedUserId}.png`,
+        homeimage: `https://example.com/${resolvedUserId}-home.png`,
         followers: 12,
         follow: 7,
-        followed: params.userId !== userId,
+        followed: resolvedUserId !== userId,
       });
     }),
     http.get(`${API_BASE_URL}/api/v1/users/:userId/posted`, async () => {
@@ -199,7 +201,7 @@ describe('My Page', () => {
       ],
     });
     server.use(
-      http.get(`${API_BASE_URL}/api/v1/users/:userId/voted`, async () => {
+      http.get(`${API_BASE_URL}/api/v1/users/:userId/voted`, () => {
         votedRequests += 1;
 
         return HttpResponse.json({
