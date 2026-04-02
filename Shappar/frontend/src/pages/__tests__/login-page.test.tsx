@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { signInWithPopup } from 'firebase/auth';
 
+const authMutationMocks = vi.hoisted(() => ({
+  isPending: false,
+  mutateAsync: vi.fn(),
+}));
+
 vi.mock('firebase/auth', () => import('@/test/mocks/firebase'));
 vi.mock('@/lib/firebase', async () => {
   const { GoogleAuthProvider, mockAuth } = await import('@/test/mocks/firebase');
@@ -10,6 +15,12 @@ vi.mock('@/lib/firebase', async () => {
     googleProvider: new GoogleAuthProvider(),
   };
 });
+vi.mock('@/features/auth/use-auth-mutation', () => ({
+  useAuthMutation: () => ({
+    isPending: authMutationMocks.isPending,
+    mutateAsync: authMutationMocks.mutateAsync,
+  }),
+}));
 
 import { auth, googleProvider } from '@/lib/firebase';
 import { LoginPage } from '@/pages/login-page';
@@ -35,6 +46,8 @@ describe('LoginPage', () => {
   beforeEach(async () => {
     const { resetFirebaseAuthMocks } = await import('@/test/mocks/firebase');
     resetFirebaseAuthMocks();
+    authMutationMocks.isPending = false;
+    authMutationMocks.mutateAsync.mockReset();
   });
 
   it('renders the login page', () => {
@@ -63,8 +76,14 @@ describe('LoginPage', () => {
     ).toBeInTheDocument();
   });
 
-  it('calls signInWithPopup when the Google login button is clicked', async () => {
+  it('calls signInWithPopup and authenticates the user when login succeeds', async () => {
     const user = userEvent.setup();
+    const firebaseUser = { uid: 'firebase-user-123' };
+
+    authMutationMocks.mutateAsync.mockResolvedValueOnce(undefined);
+    vi.mocked(signInWithPopup).mockResolvedValueOnce({
+      user: firebaseUser,
+    } as never);
 
     render(<LoginPage />);
 
@@ -76,6 +95,9 @@ describe('LoginPage', () => {
 
     expect(signInWithPopup).toHaveBeenCalledTimes(1);
     expect(signInWithPopup).toHaveBeenCalledWith(auth, googleProvider);
+    await waitFor(() => {
+      expect(authMutationMocks.mutateAsync).toHaveBeenCalledWith(firebaseUser);
+    });
   });
 
   it('shows a loading state while login is in progress', async () => {
@@ -105,6 +127,19 @@ describe('LoginPage', () => {
     });
   });
 
+  it('shows the auth API loading state while user information is being fetched', () => {
+    authMutationMocks.isPending = true;
+
+    render(<LoginPage />);
+
+    expect(
+      screen.getByRole('button', {
+        name: '認証情報を確認中...',
+      }),
+    ).toBeDisabled();
+    expect(screen.getByTestId('google-login-spinner')).toBeInTheDocument();
+  });
+
   it('shows an error message when login fails', async () => {
     const user = userEvent.setup();
 
@@ -123,6 +158,32 @@ describe('LoginPage', () => {
     await waitFor(() => {
       expect(screen.getByRole('alert')).toHaveTextContent(
         'Google ログインに失敗しました。時間をおいて再度お試しください。',
+      );
+    });
+  });
+
+  it('shows an auth API error message when server authentication fails', async () => {
+    const user = userEvent.setup();
+    const firebaseUser = { uid: 'firebase-user-123' };
+
+    authMutationMocks.mutateAsync.mockRejectedValueOnce(
+      new TypeError('fetch failed'),
+    );
+    vi.mocked(signInWithPopup).mockResolvedValueOnce({
+      user: firebaseUser,
+    } as never);
+
+    render(<LoginPage />);
+
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Google でログイン',
+      }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        'ログイン後の認証に失敗しました。時間をおいて再度お試しください。',
       );
     });
   });

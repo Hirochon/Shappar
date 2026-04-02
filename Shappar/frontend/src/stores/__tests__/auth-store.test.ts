@@ -47,6 +47,7 @@ describe('auth store', () => {
 
     expect(useAuthStore.getState()).toMatchObject({
       firebaseUser: null,
+      authUser: null,
       isAuthenticated: false,
       isLoading: true,
     });
@@ -60,6 +61,7 @@ describe('auth store', () => {
 
     expect(useAuthStore.getState()).toMatchObject({
       firebaseUser: user,
+      authUser: null,
       isAuthenticated: true,
       isLoading: true,
     });
@@ -74,9 +76,30 @@ describe('auth store', () => {
 
     expect(useAuthStore.getState()).toMatchObject({
       firebaseUser: null,
+      authUser: null,
       isAuthenticated: false,
       isLoading: true,
     });
+  });
+
+  it('stores and clears the authenticated API user separately from Firebase auth', async () => {
+    const { useAuthStore } = await loadAuthStore();
+    const authUser = {
+      unique_id: 'unique-123',
+      user_id: 'user-123',
+      name: 'Auth User',
+      introduction: 'Hello',
+      iconimage: 'https://example.com/icon.png',
+      homeimage: 'https://example.com/home.png',
+    };
+
+    useAuthStore.getState().setAuthUser(authUser);
+
+    expect(useAuthStore.getState().authUser).toEqual(authUser);
+
+    useAuthStore.getState().clearAuthUser();
+
+    expect(useAuthStore.getState().authUser).toBeNull();
   });
 
   it('updates the loading flag', async () => {
@@ -123,6 +146,7 @@ describe('auth store', () => {
 
     expect(useAuthStore.getState()).toMatchObject({
       firebaseUser: user,
+      authUser: null,
       isAuthenticated: true,
       isLoading: false,
     });
