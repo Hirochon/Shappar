@@ -1,6 +1,7 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { LoginPage } from '@/pages/login-page';
+import { RouterProvider } from 'react-router-dom';
+import { router } from '@/router';
 import { queryClient } from '@/lib/query-client';
 import { useAuthStore } from '@/stores/auth-store';
 
@@ -13,7 +14,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <LoginPage />
+      <RouterProvider router={router} />
     </QueryClientProvider>
   );
 }
