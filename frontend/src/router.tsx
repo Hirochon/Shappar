@@ -5,7 +5,7 @@ import { CreatePage } from '@/pages/create-page';
 import { HomePage } from '@/pages/home-page';
 import { LoginPage } from '@/pages/login-page';
 import { NotFoundPage } from '@/pages/not-found-page';
-import { PollDetailPage } from '@/pages/poll-detail-page';
+import { PollDetailPage } from '@/pages/PollDetailPage';
 
 export const appRoutes: RouteObject[] = [
   {
