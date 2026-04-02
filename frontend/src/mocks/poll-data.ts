@@ -1,4 +1,4 @@
-import type { Post, VoteResponse } from '@/types/api';
+import type { Post, UserProfile, VoteResponse } from '@/types/api';
 
 export const MOCK_AUTH_USER_ID = 'user-123';
 
@@ -50,11 +50,62 @@ const initialPollPosts: Record<string, Post> = {
   },
 };
 
+const initialUserProfiles: Record<string, UserProfile> = {
+  [MOCK_AUTH_USER_ID]: {
+    unique_id: 'unique-user-123',
+    user_id: MOCK_AUTH_USER_ID,
+    name: 'Shappar User',
+    introduction: 'I love taking pictures with friends.',
+    iconimage: 'https://example.com/icon.png',
+    homeimage: 'https://example.com/home.png',
+    followers: 12,
+    follow: 7,
+    followed: false,
+  },
+  'creator-001': {
+    unique_id: 'unique-creator-001',
+    user_id: 'creator-001',
+    name: 'Creator 001',
+    introduction: 'ロケーション探しが好きなフォトグラファーです。',
+    iconimage: 'https://example.com/creator-001.png',
+    homeimage: 'https://example.com/creator-001-home.png',
+    followers: 18,
+    follow: 6,
+    followed: true,
+  },
+  'creator-002': {
+    unique_id: 'unique-creator-002',
+    user_id: 'creator-002',
+    name: 'Creator 002',
+    introduction: '街歩きスナップの投票をよく作っています。',
+    iconimage: 'https://example.com/creator-002.png',
+    homeimage: 'https://example.com/creator-002-home.png',
+    followers: 21,
+    follow: 9,
+    followed: true,
+  },
+  'friend-001': {
+    unique_id: 'unique-friend-001',
+    user_id: 'friend-001',
+    name: 'Friend 001',
+    introduction: '週末はカメラを持って旅をしています。',
+    iconimage: 'https://example.com/friend-001.png',
+    homeimage: 'https://example.com/friend-001-home.png',
+    followers: 5,
+    follow: 11,
+    followed: false,
+  },
+};
+
 let pollPosts = structuredClone(initialPollPosts);
 let createdPollCount = 0;
 
 function clonePost(post: Post) {
   return structuredClone(post);
+}
+
+function cloneUserProfile(profile: UserProfile) {
+  return structuredClone(profile);
 }
 
 function getNormalizedVotes(votes: number | undefined) {
@@ -70,6 +121,46 @@ export function getMockPollPost(postId: string) {
   const post = pollPosts[postId];
 
   return post ? clonePost(post) : null;
+}
+
+export function getMockUserProfile(userId: string) {
+  const profile = initialUserProfiles[userId];
+
+  if (profile) {
+    return cloneUserProfile(profile);
+  }
+
+  return {
+    unique_id: `unique-${userId}`,
+    user_id: userId,
+    name: `${userId}さん`,
+    introduction: '写真の記録を楽しんでいるユーザーです。',
+    iconimage: `https://example.com/${userId}.png`,
+    homeimage: `https://example.com/${userId}-home.png`,
+    followers: 0,
+    follow: 0,
+    followed: userId !== MOCK_AUTH_USER_ID,
+  };
+}
+
+export function getMockUserPostedPosts(userId: string) {
+  return Object.values(pollPosts)
+    .filter((post) => post.user_id === userId)
+    .sort((left, right) => right.created_at.localeCompare(left.created_at))
+    .map((post) => clonePost(post));
+}
+
+export function getMockUserVotedPosts(userId: string) {
+  if (userId !== MOCK_AUTH_USER_ID) {
+    return [];
+  }
+
+  return Object.values(pollPosts)
+    .filter(
+      (post) => post.user_id !== userId && post.voted && post.selected_num >= 0,
+    )
+    .sort((left, right) => right.created_at.localeCompare(left.created_at))
+    .map((post) => clonePost(post));
 }
 
 export function createMockPollPost(

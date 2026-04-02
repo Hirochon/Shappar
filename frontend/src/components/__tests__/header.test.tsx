@@ -96,6 +96,24 @@ describe('Header', () => {
     expect(screen.getByText('ログアウト')).toBeInTheDocument();
   });
 
+  it('shows a My Page link in the user menu', async () => {
+    const user = userEvent.setup();
+
+    render(<Header />, { initialEntries: ['/'] });
+
+    await user.click(
+      screen.getByRole('button', {
+        name: 'ユーザーメニュー',
+      }),
+    );
+
+    expect(
+      screen.getByRole('menuitem', {
+        name: 'マイページ',
+      }),
+    ).toHaveAttribute('href', '/profile');
+  });
+
   it('calls Firebase signOut when the logout action is clicked', async () => {
     const user = userEvent.setup();
 

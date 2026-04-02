@@ -46,6 +46,18 @@ export interface VoteResponse {
   total: number;
 }
 
+export interface UserProfile {
+  unique_id: string;
+  user_id: string;
+  name: string;
+  introduction: string;
+  homeimage: string;
+  iconimage: string;
+  followers?: number;
+  follow?: number;
+  followed?: boolean;
+}
+
 export interface User {
   user_id: string;
   name: string;

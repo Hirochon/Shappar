@@ -6,6 +6,7 @@ import { HomePage } from '@/pages/home-page';
 import { LoginPage } from '@/pages/login-page';
 import { NotFoundPage } from '@/pages/not-found-page';
 import { PollDetailPage } from '@/pages/PollDetailPage';
+import { ProfilePage } from '@/pages/profile-page';
 
 export const appRoutes: RouteObject[] = [
   {
@@ -36,6 +37,14 @@ export const appRoutes: RouteObject[] = [
           {
             path: 'polls/:pollId',
             element: <PollDetailPage />,
+          },
+          {
+            path: 'profile',
+            element: <ProfilePage />,
+          },
+          {
+            path: 'profile/:userId',
+            element: <ProfilePage />,
           },
           {
             path: 'posts/:postId',
