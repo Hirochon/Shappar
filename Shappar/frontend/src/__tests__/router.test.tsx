@@ -5,19 +5,36 @@ import { render, screen } from '@/test/test-utils';
 
 const authStoreState = vi.hoisted(() => ({
   initAuthListener: vi.fn(() => vi.fn()),
+  authUser: null as {
+    unique_id: string;
+    user_id: string;
+    name: string;
+    introduction: string;
+    iconimage: string;
+    homeimage: string;
+  } | null,
+  clearUser: vi.fn(),
   isAuthenticated: false,
   isLoading: false,
 }));
 
+vi.mock('firebase/auth', () => import('@/test/mocks/firebase'));
+vi.mock('@/lib/firebase', async () => {
+  const { mockAuth } = await import('@/test/mocks/firebase');
+
+  return {
+    auth: mockAuth,
+  };
+});
 vi.mock('@/stores/auth-store', () => ({
   useAuthStore: (
-    selector: (
-      state: {
-        initAuthListener: () => () => void;
-        isAuthenticated: boolean;
-        isLoading: boolean;
-      },
-    ) => unknown,
+    selector: (state: {
+      initAuthListener: () => () => void;
+      authUser: typeof authStoreState.authUser;
+      clearUser: typeof authStoreState.clearUser;
+      isAuthenticated: boolean;
+      isLoading: boolean;
+    }) => unknown,
   ) => selector(authStoreState),
 }));
 
@@ -43,6 +60,15 @@ function renderRouter(pathname: string) {
 
 describe('app router', () => {
   beforeEach(() => {
+    authStoreState.authUser = {
+      unique_id: 'user-1',
+      user_id: 'user-1',
+      name: '山田 太郎',
+      introduction: 'hello',
+      iconimage: 'https://example.com/icon.png',
+      homeimage: 'https://example.com/home.png',
+    };
+    authStoreState.clearUser.mockReset();
     authStoreState.isAuthenticated = false;
     authStoreState.isLoading = false;
   });
