@@ -1,4 +1,5 @@
 import { createBrowserRouter, type RouteObject } from 'react-router-dom';
+import { AppLayout } from '@/components/app-layout';
 import { ProtectedRoute, PublicRoute } from '@/components/auth-guard';
 import { HomePage } from '@/pages/home-page';
 import { LoginPage } from '@/pages/login-page';
@@ -20,8 +21,13 @@ export const appRoutes: RouteObject[] = [
     element: <ProtectedRoute />,
     children: [
       {
-        index: true,
-        element: <HomePage />,
+        element: <AppLayout />,
+        children: [
+          {
+            index: true,
+            element: <HomePage />,
+          },
+        ],
       },
     ],
   },
