@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { signInWithPopup } from 'firebase/auth';
+import {
+  auth,
+  googleProvider,
+  signInWithPopup,
+} from '@/lib/firebase-auth';
 
 const authMutationMocks = vi.hoisted(() => ({
   isPending: false,
@@ -7,22 +11,13 @@ const authMutationMocks = vi.hoisted(() => ({
 }));
 
 vi.mock('firebase/auth', () => import('@/test/mocks/firebase'));
-vi.mock('@/lib/firebase', async () => {
-  const { GoogleAuthProvider, mockAuth } = await import('@/test/mocks/firebase');
-
-  return {
-    auth: mockAuth,
-    googleProvider: new GoogleAuthProvider(),
-  };
-});
+vi.mock('@/lib/firebase-auth', () => import('@/test/mocks/firebase-auth'));
 vi.mock('@/features/auth/use-auth-mutation', () => ({
   useAuthMutation: () => ({
     isPending: authMutationMocks.isPending,
     mutateAsync: authMutationMocks.mutateAsync,
   }),
 }));
-
-import { auth, googleProvider } from '@/lib/firebase';
 import { LoginPage } from '@/pages/login-page';
 import { render, screen, userEvent, waitFor } from '@/test/test-utils';
 
