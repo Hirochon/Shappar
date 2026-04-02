@@ -4,6 +4,7 @@ import { ProtectedRoute, PublicRoute } from '@/components/auth-guard';
 import { HomePage } from '@/pages/home-page';
 import { LoginPage } from '@/pages/login-page';
 import { NotFoundPage } from '@/pages/not-found-page';
+import { PollDetailPage } from '@/pages/PollDetailPage';
 
 export const appRoutes: RouteObject[] = [
   {
@@ -26,6 +27,10 @@ export const appRoutes: RouteObject[] = [
           {
             index: true,
             element: <HomePage />,
+          },
+          {
+            path: 'polls/:id',
+            element: <PollDetailPage />,
           },
         ],
       },
