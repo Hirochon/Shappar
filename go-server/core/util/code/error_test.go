@@ -132,14 +132,14 @@ func TestUnwrapError(t *testing.T) {
 			wantErr: "",
 		},
 		{
-			name:    "not amphora error",
+			name:    "not shappar error",
 			err:     errors.New("error"),
 			hasErr:  true,
 			wantErr: "error",
 		},
 		{
-			name:    "amphora error",
-			err:     WrapError(errors.New("original error"), Unknown, "amphora error"),
+			name:    "shappar error",
+			err:     WrapError(errors.New("original error"), Unknown, "shappar error"),
 			hasErr:  true,
 			wantErr: "original error",
 		},
@@ -171,14 +171,14 @@ func TestGetCode(t *testing.T) {
 			want: OK,
 		},
 		{
-			name: "amphora error",
+			name: "shappar error",
 			err: &ShapparError{
 				code: Internal,
 			},
 			want: Internal,
 		},
 		{
-			name: "not amphora error",
+			name: "not shappar error",
 			err:  errors.New("error"),
 			want: Unknown,
 		},
@@ -206,14 +206,14 @@ func TestGetMessage(t *testing.T) {
 			want: "",
 		},
 		{
-			name: "amphora error",
+			name: "shappar error",
 			err: &ShapparError{
 				message: "m",
 			},
 			want: "m",
 		},
 		{
-			name: "not amphora error",
+			name: "not shappar error",
 			err:  errors.New("error"),
 			want: "error",
 		},
@@ -241,12 +241,12 @@ func TestGetStack(t *testing.T) {
 			hasStack: false,
 		},
 		{
-			name:     "amphora error",
+			name:     "shappar error",
 			err:      NewError(Internal, "error"),
 			hasStack: true,
 		},
 		{
-			name:     "not amphora error",
+			name:     "not shappar error",
 			err:      errors.New("error"),
 			hasStack: false,
 		},
@@ -274,17 +274,17 @@ func TestGetAttrs(t *testing.T) {
 			want: nil,
 		},
 		{
-			name: "not amphora error",
+			name: "not shappar error",
 			err:  errors.New("error"),
 			want: nil,
 		},
 		{
-			name: "new amphora error without attributes",
+			name: "new shappar error without attributes",
 			err:  NewError(Internal, "error"),
 			want: nil,
 		},
 		{
-			name: "new amphora error with attributes",
+			name: "new shappar error with attributes",
 			err: NewError(Internal, "error",
 				WithAttr("key1", "value1"),
 				WithAttr("key2", "value2"), // 上書きされる
@@ -299,7 +299,7 @@ func TestGetAttrs(t *testing.T) {
 			},
 		},
 		{
-			name: "wrap not amphora error with attributes",
+			name: "wrap not shappar error with attributes",
 			err: func() error {
 				e := errors.New("error")
 				return WrapError(e, Internal, "error",
@@ -314,7 +314,7 @@ func TestGetAttrs(t *testing.T) {
 			},
 		},
 		{
-			name: "wrap amphora error with attributes",
+			name: "wrap shappar error with attributes",
 			err: func() error {
 				e := NewError(Internal, "e1",
 					WithAttr("key1", "value1"),
