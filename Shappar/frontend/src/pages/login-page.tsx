@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { signInWithPopup } from 'firebase/auth';
+import { ErrorDisplay } from '@/components/error-display';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -123,12 +124,12 @@ export function LoginPage() {
               )}
             </Button>
             {error ? (
-              <p
-                className="rounded-lg border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive"
-                role="alert"
-              >
-                {error}
-              </p>
+              <ErrorDisplay
+                message={error}
+                onRetry={() => {
+                  void handleGoogleLogin();
+                }}
+              />
             ) : null}
           </CardContent>
         </Card>
