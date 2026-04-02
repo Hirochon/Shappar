@@ -1,11 +1,11 @@
 import { createBrowserRouter, type RouteObject } from 'react-router-dom';
 import { AppLayout } from '@/components/app-layout';
 import { ProtectedRoute, PublicRoute } from '@/components/auth-guard';
-import { CreatePollPage } from '@/pages/CreatePollPage';
+import { CreatePage } from '@/pages/create-page';
 import { HomePage } from '@/pages/home-page';
 import { LoginPage } from '@/pages/login-page';
 import { NotFoundPage } from '@/pages/not-found-page';
-import { PostDetailPage } from '@/pages/post-detail-page';
+import { PollDetailPage } from '@/pages/PollDetailPage';
 
 export const appRoutes: RouteObject[] = [
   {
@@ -31,11 +31,15 @@ export const appRoutes: RouteObject[] = [
           },
           {
             path: 'create',
-            element: <CreatePollPage />,
+            element: <CreatePage />,
+          },
+          {
+            path: 'polls/:pollId',
+            element: <PollDetailPage />,
           },
           {
             path: 'posts/:postId',
-            element: <PostDetailPage />,
+            element: <PollDetailPage />,
           },
         ],
       },

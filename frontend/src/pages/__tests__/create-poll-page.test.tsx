@@ -36,6 +36,7 @@ vi.mock('@/stores/auth-store', () => ({
 
 import { appRoutes } from '@/router';
 import { createQueryClient } from '@/lib/query-client';
+import { createMockPollPost, resetMockPollPosts } from '@/mocks/poll-data';
 import { server } from '@/test/mocks/server';
 import {
   render,
@@ -84,6 +85,7 @@ describe('CreatePollPage', () => {
     authStoreState.clearUser.mockReset();
     authStoreState.isAuthenticated = true;
     authStoreState.isLoading = false;
+    resetMockPollPosts();
   });
 
   it('renders the question input field', async () => {
@@ -206,6 +208,11 @@ describe('CreatePollPage', () => {
     server.use(
       http.post(`${API_BASE_URL}/api/v1/posts`, async ({ request }) => {
         requestBody = (await request.json()) as typeof requestBody;
+        createMockPollPost(
+          requestBody?.question ?? '',
+          requestBody?.options ?? [],
+          'post-123',
+        );
 
         return HttpResponse.json({ post_id: 'post-123' }, { status: 201 });
       }),
@@ -229,12 +236,6 @@ describe('CreatePollPage', () => {
   });
 
   it('navigates to the poll detail page after a successful submission', async () => {
-    server.use(
-      http.post(`${API_BASE_URL}/api/v1/posts`, () => {
-        return HttpResponse.json({ post_id: 'post-123' }, { status: 201 });
-      }),
-    );
-
     renderCreatePollPage();
 
     const user = await fillValidForm();
@@ -246,9 +247,13 @@ describe('CreatePollPage', () => {
 
     expect(
       await screen.findByRole('heading', {
-        name: '投票詳細',
+        name: '次に行きたい撮影スポットは？',
       }),
     ).toBeInTheDocument();
-    expect(screen.getByText('post-123')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', {
+        name: '削除',
+      }),
+    ).toBeInTheDocument();
   });
 });

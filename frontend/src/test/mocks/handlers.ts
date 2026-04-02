@@ -1,9 +1,10 @@
 import { HttpResponse, http } from 'msw';
 import { postHandlers } from '@/mocks/handlers/posts';
+import { MOCK_AUTH_USER_ID } from '@/mocks/poll-data';
 
 const mockAuthUser = {
   unique_id: 'unique-user-123',
-  user_id: 'user-123',
+  user_id: MOCK_AUTH_USER_ID,
   name: 'Shappar User',
   introduction: 'I love taking pictures with friends.',
   iconimage: 'https://example.com/icon.png',

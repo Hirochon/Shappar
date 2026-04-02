@@ -177,12 +177,7 @@ export function CreatePollPage() {
         throw new Error('Created poll response did not include post_id');
       }
 
-      await navigate(`/posts/${response.post_id}`, {
-        state: {
-          question: trimmedQuestion,
-          options: normalizedOptions,
-        },
-      });
+      await navigate(`/polls/${response.post_id}`);
     } catch (error) {
       setSubmitError(getSubmitErrorMessage(error));
     }

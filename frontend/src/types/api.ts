@@ -1,7 +1,7 @@
 export interface PostOption {
   select_num: number;
   answer: string;
-  votes?: number;
+  votes: number;
 }
 
 export interface CreatePostOptionRequest {
@@ -25,6 +25,23 @@ export interface Post {
   voted: boolean;
   options: PostOption[];
   created_at: string;
+  selected_num: number;
+  total: number;
+}
+
+export interface VoteOption {
+  select_num: number;
+  votes: number;
+}
+
+export interface VotePayload {
+  option: {
+    select_num: number;
+  };
+}
+
+export interface VoteResponse {
+  options: VoteOption[];
   selected_num: number;
   total: number;
 }
