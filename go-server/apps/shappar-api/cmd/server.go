@@ -13,10 +13,10 @@ import (
 
 func newServer(injected *injected) *http.Server {
 	r := chi.NewRouter()
-	// r.Use(injected.middleware.Recoverer)
+	r.Use(injected.middleware.Recoverer)
 	r.Use(middleware.Timeout(30 * time.Second))
 	r.Use(middleware.RealIP)
-	// r.Use(injected.middleware.CORS)
+	r.Use(injected.middleware.CORS)
 	r.Use(otelchi.Middleware("shappar-api", otelchi.WithChiRoutes(r),
 		otelchi.WithFilter(func(req *http.Request) bool {
 			if req.URL.Path == "/health" {
@@ -31,6 +31,10 @@ func newServer(injected *injected) *http.Server {
 	h := oas.HandlerWithOptions(injected.handler, oas.ChiServerOptions{
 		BaseURL:    "/v1",
 		BaseRouter: r,
+		Middlewares: []oas.MiddlewareFunc{
+			injected.middleware.AccessLogger,
+			injected.middleware.SetClient,
+		},
 	})
 
 	return &http.Server{
