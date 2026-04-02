@@ -129,7 +129,7 @@ export function PollDetailPage() {
   }
 
   const isOwner = authUser?.user_id === post.user_id;
-  const showResults = post.voted;
+  const showResults = post.voted || isOwner;
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-6">

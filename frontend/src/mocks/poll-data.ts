@@ -51,6 +51,7 @@ const initialPollPosts: Record<string, Post> = {
 };
 
 let pollPosts = structuredClone(initialPollPosts);
+let createdPollCount = 0;
 
 function clonePost(post: Post) {
   return structuredClone(post);
@@ -62,12 +63,42 @@ function getNormalizedVotes(votes: number | undefined) {
 
 export function resetMockPollPosts() {
   pollPosts = structuredClone(initialPollPosts);
+  createdPollCount = 0;
 }
 
 export function getMockPollPost(postId: string) {
   const post = pollPosts[postId];
 
   return post ? clonePost(post) : null;
+}
+
+export function createMockPollPost(
+  question: string,
+  options: Array<{ answer: string }>,
+  postId?: string,
+) {
+  createdPollCount += 1;
+
+  const resolvedPostId = postId ?? `mock-post-${createdPollCount}`;
+  const createdPost: Post = {
+    post_id: resolvedPostId,
+    user_id: MOCK_AUTH_USER_ID,
+    iconimage: 'https://example.com/user-123.png',
+    question,
+    voted: false,
+    options: options.map((option, index) => ({
+      select_num: index,
+      answer: option.answer,
+      votes: 0,
+    })),
+    created_at: new Date().toISOString(),
+    selected_num: -1,
+    total: 0,
+  };
+
+  pollPosts[resolvedPostId] = createdPost;
+
+  return clonePost(createdPost);
 }
 
 export function voteMockPollPost(

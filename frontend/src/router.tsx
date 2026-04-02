@@ -37,6 +37,10 @@ export const appRoutes: RouteObject[] = [
             path: 'polls/:pollId',
             element: <PollDetailPage />,
           },
+          {
+            path: 'posts/:postId',
+            element: <PollDetailPage />,
+          },
         ],
       },
     ],
