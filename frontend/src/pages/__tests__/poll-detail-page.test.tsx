@@ -56,7 +56,7 @@ function renderPollDetailPage(postId: string) {
     <QueryClientProvider client={queryClient}>
       <MemoryRouter initialEntries={[`/polls/${postId}`]}>
         <Routes>
-          <Route element={<PollDetailPage />} path="/polls/:id" />
+          <Route element={<PollDetailPage />} path="/polls/:pollId" />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>,

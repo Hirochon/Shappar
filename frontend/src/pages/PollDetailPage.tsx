@@ -56,7 +56,8 @@ function LoadingState() {
 }
 
 export function PollDetailPage() {
-  const { id = '' } = useParams();
+  const { id = '', pollId = '' } = useParams();
+  const postId = pollId || id;
   const navigate = useNavigate();
   const authUser = useAuthStore((state) => state.authUser);
   const {
@@ -65,10 +66,10 @@ export function PollDetailPage() {
     isError: isPollDetailError,
     isLoading,
     refetch,
-  } = usePollDetail(id);
-  const voteMutation = useVote(id);
+  } = usePollDetail(postId);
+  const voteMutation = useVote(postId);
   const deleteMutation = useMutation({
-    mutationFn: () => apiClient.delete(`/api/v1/posts/${id}`),
+    mutationFn: () => apiClient.delete(`/api/v1/posts/${postId}`),
     onSuccess: () => {
       void navigate('/', { replace: true });
     },
@@ -97,7 +98,7 @@ export function PollDetailPage() {
     voteMutation.isError,
   ]);
 
-  if (!id) {
+  if (!postId) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-10">
         <ErrorDisplay

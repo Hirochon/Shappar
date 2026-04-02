@@ -1,6 +1,7 @@
 import { createBrowserRouter, type RouteObject } from 'react-router-dom';
 import { AppLayout } from '@/components/app-layout';
 import { ProtectedRoute, PublicRoute } from '@/components/auth-guard';
+import { CreatePage } from '@/pages/create-page';
 import { HomePage } from '@/pages/home-page';
 import { LoginPage } from '@/pages/login-page';
 import { NotFoundPage } from '@/pages/not-found-page';
@@ -29,7 +30,11 @@ export const appRoutes: RouteObject[] = [
             element: <HomePage />,
           },
           {
-            path: 'polls/:id',
+            path: 'create',
+            element: <CreatePage />,
+          },
+          {
+            path: 'polls/:pollId',
             element: <PollDetailPage />,
           },
         ],
