@@ -67,7 +67,7 @@ export function HomePage() {
                 UI foundation for the next screens.
               </h1>
               <p className="max-w-2xl text-base leading-7 text-slate-600 md:text-lg">
-                Shappar/frontend に Tailwind CSS v3 と shadcn/ui の基盤を追加し、
+                frontend に Tailwind CSS v3 と shadcn/ui の基盤を追加し、
                 以降のログイン画面や共通レイアウトで共有できる UI レイヤーを先に整えています。
               </p>
             </div>

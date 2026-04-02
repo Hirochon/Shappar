@@ -1,6 +1,6 @@
 # Shappar Frontend
 
-`Shappar/frontend` は `npm create vite@latest -- --template react-ts` で生成した
+`frontend` は `npm create vite@latest -- --template react-ts` で生成した
 Vite + React + TypeScript の初期プロジェクトを、Shappar 向けのフロントエンド土台として整えたものです。
 
 ## Scripts
