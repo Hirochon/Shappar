@@ -14,10 +14,15 @@ export function useAuthMutation() {
     },
     mutationFn: async (firebaseUser: FirebaseUser) => {
       const idToken = await getIdToken(firebaseUser);
-      const response = await apiClient<AuthResponse>('/api/v1/auth', {
-        method: 'POST',
-        idToken,
-      });
+      const response = await apiClient.post<AuthResponse>(
+        '/api/v1/auth',
+        undefined,
+        {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        },
+      );
 
       return extractAuthUser(response);
     },
