@@ -10,7 +10,59 @@ servers:
 - url: http://localhost:3000
 - url: https://localhost:3000
 paths:
-  "/api/v1/posts":
+  "/auth/sign":
+    post:
+      summary: ''
+      description: sign in with id token
+      tags:
+      - auth
+      parameters:
+      - name: idToken
+        in: header
+        required: true
+        description: 認証に利用するIDトークン
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          headers:
+            jwt:
+              description: 認証成功時に返却するアプリケーション用JWT
+              schema:
+                type: string
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AuthSignResponse"
+              examples:
+                ExistingUser:
+                  value:
+                    registered: true
+                    user:
+                      id: 86f455ff-5029-4207-9300-b9dea5fe9d37
+                      name: sample_user_name
+                      unique_id: sample_user_001
+                      thumbnail_url: http://example.com/iconURL
+                NewUser:
+                  value:
+                    registered: false
+                    user: null
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    detail: IDトークンが不正です。
+  "/v1/posts":
     post:
       summary: ''
       description: new post
@@ -92,7 +144,7 @@ paths:
                     options:
                     - answer:
                       - 回答は2個以上にしてください
-  "/api/v1/posts/{post_id}":
+  "/v1/posts/{post_id}":
     parameters:
     - name: post_id
       in: path
@@ -264,7 +316,7 @@ paths:
                 example-1:
                   value:
                     detail: 存在しない投稿IDです。
-  "/api/v1/posts/{post_id}/polls":
+  "/v1/posts/{post_id}/polls":
     parameters:
     - name: post_id
       in: path
@@ -311,8 +363,7 @@ paths:
                         select_num:
                           type: integer
                         votes:
-                          type:
-                          - integer
+                          type: integer
                   selected_num:
                     type: integer
                   total:
@@ -361,7 +412,7 @@ paths:
                 example-1:
                   value:
                     detail: 存在しない投稿IDです。
-  "/api/v1/posts/public":
+  "/v1/posts/public":
     get:
       summary: Your GET endpoint
       tags:
@@ -561,7 +612,7 @@ paths:
                 example-1:
                   value:
                     detail: 存在しない投稿IDです。
-  "/api/v1/posts/private":
+  "/v1/posts/private":
     get:
       summary: Your GET endpoint
       tags:
@@ -743,7 +794,7 @@ paths:
                       created_at: '2020-03-12T22:01:28.697258Z'
                       selected_num: -1
                       total: 0
-  "/api/v1/posts/public/{post_id}":
+  "/v1/posts/public/{post_id}":
     parameters:
     - name: post_id
       in: path
@@ -793,7 +844,7 @@ paths:
                 example-1:
                   value:
                     detail: 存在しない投稿IDです。
-  "/api/v1/users":
+  "/v1/users":
     get:
       summary: Your GET endpoint
       tags:
@@ -879,7 +930,7 @@ paths:
               examples:
                 example-1:
                   value: {}
-  "/api/v1/users/{user_id}":
+  "/v1/users/{user_id}":
     parameters:
     - name: user_id
       in: path
@@ -954,7 +1005,7 @@ paths:
               examples:
                 example-1:
                   value: {}
-  "/api/v1/users/{user_id}/settings":
+  "/v1/users/{user_id}/settings":
     parameters:
     - name: user_id
       in: path
@@ -998,7 +1049,7 @@ paths:
                   value:
                     push: true
                     darkmode: false
-  "/api/v1/users/{user_id}/posted":
+  "/v1/users/{user_id}/posted":
     parameters:
     - name: user_id
       in: path
@@ -1180,7 +1231,7 @@ paths:
                       created_at: '2020-03-12T22:01:28.697258Z'
                       selected_num: -1
                       total: 0
-  "/api/v1/users/{user_id}/voted":
+  "/v1/users/{user_id}/voted":
     parameters:
     - name: user_id
       in: path
@@ -1364,7 +1415,7 @@ paths:
                       total: 0
         '204':
           description: No Content
-  "/api/v1/friendships/{userId}":
+  "/v1/friendships/{userId}":
     parameters:
     - name: userId
       in: path
@@ -1417,7 +1468,7 @@ paths:
               examples:
                 example-1:
                   value: {}
-  "/api/v1/frendships/{userId}/following":
+  "/v1/frendships/{userId}/following":
     parameters:
     - name: userId
       in: path
@@ -1495,7 +1546,7 @@ paths:
                       followers: 100
                       follow: 100
                       followed: true
-  "/api/v1/frendships/{userId}/followers":
+  "/v1/frendships/{userId}/followers":
     parameters:
     - name: userId
       in: path
@@ -1573,7 +1624,7 @@ paths:
                       followers: 100
                       follow: 100
                       followed: true
-  "/api/v1/posts/public/rank":
+  "/v1/posts/public/rank":
     get:
       summary: Your GET endpoint
       tags:
@@ -1749,7 +1800,7 @@ paths:
                       created_at: '2020-03-12T22:01:28.697258Z'
                       selected_num: -1
                       total: 0
-  "/api/v1/health":
+  "/v1/health":
     get:
       summary: 疎通確認でHealthCheck
       description: health check
@@ -1768,6 +1819,59 @@ paths:
                     status: OK
 components:
   schemas:
+    AuthSignResponse:
+      title: AuthSignResponse
+      type: object
+      required:
+      - registered
+      properties:
+        registered:
+          type: boolean
+          description: ユーザー作成済みかどうか
+        user:
+          nullable: true
+          allOf:
+          - "$ref": "#/components/schemas/AuthSignedUser"
+      x-examples:
+        ExistingUser:
+          registered: true
+          user:
+            id: 86f455ff-5029-4207-9300-b9dea5fe9d37
+            name: sample_user_name
+            unique_id: sample_user_001
+            thumbnail_url: http://example.com/iconURL
+        NewUser:
+          registered: false
+          user: null
+    AuthSignedUser:
+      title: AuthSignedUser
+      type: object
+      required:
+      - id
+      - name
+      - unique_id
+      - thumbnail_url
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ユーザーUUID
+        name:
+          type: string
+          description: 表示名
+        unique_id:
+          type: string
+          description: ユーザーが設定する任意ID
+        thumbnail_url:
+          type: string
+          format: uri
+          description: サムネイル画像URL
+      x-examples:
+        AuthSignedUser:
+          id: 86f455ff-5029-4207-9300-b9dea5fe9d37
+          name: sample_user_name
+          unique_id: sample_user_001
+          thumbnail_url: http://example.com/iconURL
     Posts:
       title: Posts
       type: object
@@ -2002,8 +2106,7 @@ components:
               answer:
                 type: string
               votes:
-                type:
-                - integer
+                type: integer
         created_at:
           type: string
         selected_num:
@@ -2084,6 +2187,7 @@ components:
         status:
           type: string
 tags:
+- name: auth
 - name: posts
 - name: users
 - name: friendships

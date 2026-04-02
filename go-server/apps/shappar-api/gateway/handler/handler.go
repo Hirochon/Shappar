@@ -14,118 +14,123 @@ type Handler struct {
 	// uc usecase.Usecase
 }
 
-// DeleteApiV1FriendshipsUserId implements [oas.ServerInterface].
-func (h *Handler) DeleteApiV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// PostAuthSign implements [oas.ServerInterface].
+func (h *Handler) PostAuthSign(w http.ResponseWriter, r *http.Request, params oas.PostAuthSignParams) {
 	panic("unimplemented")
 }
 
-// DeleteApiV1PostsPostId implements [oas.ServerInterface].
-func (h *Handler) DeleteApiV1PostsPostId(w http.ResponseWriter, r *http.Request, postId string) {
+// DeleteV1FriendshipsUserId implements [oas.ServerInterface].
+func (h *Handler) DeleteV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// DeleteApiV1UsersUserId implements [oas.ServerInterface].
-func (h *Handler) DeleteApiV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// DeleteV1PostsPostId implements [oas.ServerInterface].
+func (h *Handler) DeleteV1PostsPostId(w http.ResponseWriter, r *http.Request, postId string) {
 	panic("unimplemented")
 }
 
-// GetApiV1FrendshipsUserIdFollowers implements [oas.ServerInterface].
-func (h *Handler) GetApiV1FrendshipsUserIdFollowers(w http.ResponseWriter, r *http.Request, userId string) {
+// DeleteV1UsersUserId implements [oas.ServerInterface].
+func (h *Handler) DeleteV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// GetApiV1FrendshipsUserIdFollowing implements [oas.ServerInterface].
-func (h *Handler) GetApiV1FrendshipsUserIdFollowing(w http.ResponseWriter, r *http.Request, userId string) {
+// GetV1FrendshipsUserIdFollowers implements [oas.ServerInterface].
+func (h *Handler) GetV1FrendshipsUserIdFollowers(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// GetApiV1Health implements [oas.ServerInterface].
-func (h *Handler) GetApiV1Health(w http.ResponseWriter, r *http.Request) {
+// GetV1FrendshipsUserIdFollowing implements [oas.ServerInterface].
+func (h *Handler) GetV1FrendshipsUserIdFollowing(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// GetApiV1PostsPostId implements [oas.ServerInterface].
-func (h *Handler) GetApiV1PostsPostId(w http.ResponseWriter, r *http.Request, postId string) {
+// GetV1Health implements [oas.ServerInterface].
+func (h *Handler) GetV1Health(w http.ResponseWriter, r *http.Request) {
 	panic("unimplemented")
 }
 
-// GetApiV1PostsPrivate implements [oas.ServerInterface].
-func (h *Handler) GetApiV1PostsPrivate(w http.ResponseWriter, r *http.Request, params oas.GetApiV1PostsPrivateParams) {
+// GetV1PostsPostId implements [oas.ServerInterface].
+func (h *Handler) GetV1PostsPostId(w http.ResponseWriter, r *http.Request, postId string) {
 	panic("unimplemented")
 }
 
-// GetApiV1PostsPublic implements [oas.ServerInterface].
-func (h *Handler) GetApiV1PostsPublic(w http.ResponseWriter, r *http.Request, params oas.GetApiV1PostsPublicParams) {
+// GetV1PostsPrivate implements [oas.ServerInterface].
+func (h *Handler) GetV1PostsPrivate(w http.ResponseWriter, r *http.Request, params oas.GetV1PostsPrivateParams) {
 	panic("unimplemented")
 }
 
-// GetApiV1PostsPublicPostId implements [oas.ServerInterface].
-func (h *Handler) GetApiV1PostsPublicPostId(w http.ResponseWriter, r *http.Request, postId string) {
+// GetV1PostsPublic implements [oas.ServerInterface].
+func (h *Handler) GetV1PostsPublic(w http.ResponseWriter, r *http.Request, params oas.GetV1PostsPublicParams) {
 	panic("unimplemented")
 }
 
-// GetApiV1PostsPublicRank implements [oas.ServerInterface].
-func (h *Handler) GetApiV1PostsPublicRank(w http.ResponseWriter, r *http.Request) {
+// GetV1PostsPublicPostId implements [oas.ServerInterface].
+func (h *Handler) GetV1PostsPublicPostId(w http.ResponseWriter, r *http.Request, postId string) {
 	panic("unimplemented")
 }
 
-// GetApiV1Users implements [oas.ServerInterface].
-func (h *Handler) GetApiV1Users(w http.ResponseWriter, r *http.Request) {
+// GetV1PostsPublicRank implements [oas.ServerInterface].
+func (h *Handler) GetV1PostsPublicRank(w http.ResponseWriter, r *http.Request) {
 	panic("unimplemented")
 }
 
-// GetApiV1UsersUserId implements [oas.ServerInterface].
-func (h *Handler) GetApiV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// GetV1Users implements [oas.ServerInterface].
+func (h *Handler) GetV1Users(w http.ResponseWriter, r *http.Request) {
 	panic("unimplemented")
 }
 
-// GetApiV1UsersUserIdPosted implements [oas.ServerInterface].
-func (h *Handler) GetApiV1UsersUserIdPosted(w http.ResponseWriter, r *http.Request, userId string) {
+// GetV1UsersUserId implements [oas.ServerInterface].
+func (h *Handler) GetV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// GetApiV1UsersUserIdSettings implements [oas.ServerInterface].
-func (h *Handler) GetApiV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string) {
+// GetV1UsersUserIdPosted implements [oas.ServerInterface].
+func (h *Handler) GetV1UsersUserIdPosted(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// GetApiV1UsersUserIdVoted implements [oas.ServerInterface].
-func (h *Handler) GetApiV1UsersUserIdVoted(w http.ResponseWriter, r *http.Request, userId string) {
+// GetV1UsersUserIdSettings implements [oas.ServerInterface].
+func (h *Handler) GetV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// PatchApiV1UsersUserId implements [oas.ServerInterface].
-func (h *Handler) PatchApiV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// GetV1UsersUserIdVoted implements [oas.ServerInterface].
+func (h *Handler) GetV1UsersUserIdVoted(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// PostApiV1FriendshipsUserId implements [oas.ServerInterface].
-func (h *Handler) PostApiV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// PatchV1UsersUserId implements [oas.ServerInterface].
+func (h *Handler) PatchV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// PostApiV1Posts implements [oas.ServerInterface].
-func (h *Handler) PostApiV1Posts(w http.ResponseWriter, r *http.Request) {
+// PostV1FriendshipsUserId implements [oas.ServerInterface].
+func (h *Handler) PostV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// PostApiV1PostsPostIdPolls implements [oas.ServerInterface].
-func (h *Handler) PostApiV1PostsPostIdPolls(w http.ResponseWriter, r *http.Request, postId string) {
+// PostV1Posts implements [oas.ServerInterface].
+func (h *Handler) PostV1Posts(w http.ResponseWriter, r *http.Request) {
 	panic("unimplemented")
 }
 
-// PostApiV1Users implements [oas.ServerInterface].
-func (h *Handler) PostApiV1Users(w http.ResponseWriter, r *http.Request) {
+// PostV1PostsPostIdPolls implements [oas.ServerInterface].
+func (h *Handler) PostV1PostsPostIdPolls(w http.ResponseWriter, r *http.Request, postId string) {
 	panic("unimplemented")
 }
 
-// PutApiV1FriendshipsUserId implements [oas.ServerInterface].
-func (h *Handler) PutApiV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// PostV1Users implements [oas.ServerInterface].
+func (h *Handler) PostV1Users(w http.ResponseWriter, r *http.Request) {
 	panic("unimplemented")
 }
 
-// PutApiV1UsersUserIdSettings implements [oas.ServerInterface].
-func (h *Handler) PutApiV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string) {
+// PutV1FriendshipsUserId implements [oas.ServerInterface].
+func (h *Handler) PutV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
+	panic("unimplemented")
+}
+
+// PutV1UsersUserIdSettings implements [oas.ServerInterface].
+func (h *Handler) PutV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
