@@ -94,6 +94,7 @@ export function MyPage({
 }) {
   const [activeTab, setActiveTab] = useState<MyPageTab>('posted');
   const postedQuery = usePostedPolls(userId);
+  // Voted history is private and only needs fetching when the user opens that tab.
   const votedQuery = useVotedPolls(userId, {
     enabled: isOwnPage && activeTab === 'voted',
   });
