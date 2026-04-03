@@ -36,16 +36,20 @@ export const appRoutes: RouteObject[] = [
             element: <CreatePage />,
           },
           {
+            path: 'polls/:pollId',
+            element: <PollDetailPage />,
+          },
+          {
+            path: 'profile',
+            element: <ProfilePage />,
+          },
+          {
             path: 'profile/edit',
             element: <ProfileEditPage />,
           },
           {
             path: 'profile/:userId',
             element: <ProfilePage />,
-          },
-          {
-            path: 'polls/:pollId',
-            element: <PollDetailPage />,
           },
           {
             path: 'posts/:postId',
