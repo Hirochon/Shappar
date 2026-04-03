@@ -1,9 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { ErrorDisplay } from '@/components/error-display';
-import {
-  Avatar,
-  AvatarFallback,
-} from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { getApiErrorMessage } from '@/hooks/use-api-error-handler';

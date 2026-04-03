@@ -25,6 +25,6 @@ export const handlers = [
   http.get('/api/health', () => {
     return HttpResponse.json({ status: 'ok' });
   }),
-  ...postHandlers,
   ...userHandlers,
+  ...postHandlers,
 ];

@@ -35,7 +35,7 @@ function createMockPost(userId: string, postId: string, question: string): Post 
   };
 }
 
-const mockUsers: Record<string, MockUserRecord> = {
+const initialMockUsers: Record<string, MockUserRecord> = {
   [MOCK_AUTH_USER_ID]: {
     profile: {
       unique_id: 'unique-user-123',
@@ -78,6 +78,8 @@ const mockUsers: Record<string, MockUserRecord> = {
   },
 };
 
+let mockUsers = structuredClone(initialMockUsers);
+
 function getUserRecord(userId: string) {
   return mockUsers[userId] ?? null;
 }
@@ -87,6 +89,10 @@ function notFoundResponse() {
     { detail: '存在しないユーザーです。' },
     { status: 404 },
   );
+}
+
+export function resetMockUsers() {
+  mockUsers = structuredClone(initialMockUsers);
 }
 
 export const userHandlers = [
@@ -116,5 +122,33 @@ export const userHandlers = [
     }
 
     return HttpResponse.json({ posts: user.voted });
+  }),
+  http.patch(`${API_BASE_URL}/api/v1/users/:userId`, async ({ params, request }) => {
+    const user = getUserRecord(String(params.userId));
+
+    if (!user) {
+      return notFoundResponse();
+    }
+
+    const body = (await request.json()) as {
+      name?: string;
+      introduction?: string;
+    };
+    const nextName = body.name?.trim();
+
+    if (!nextName) {
+      return HttpResponse.json(
+        { detail: '名前を入力してください。' },
+        { status: 400 },
+      );
+    }
+
+    user.profile = {
+      ...user.profile,
+      name: nextName,
+      introduction: body.introduction?.trim() ?? '',
+    };
+
+    return HttpResponse.json({}, { status: 200 });
   }),
 ];
