@@ -1,7 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ErrorDisplay } from '@/components/error-display';
+import { ShareButton } from '@/components/ShareButton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { usePollDetail } from '@/hooks/usePollDetail';
@@ -58,6 +59,7 @@ function LoadingState() {
 export function PollDetailPage() {
   const { id = '', pollId = '' } = useParams();
   const postId = pollId || id;
+  const location = useLocation();
   const navigate = useNavigate();
   const authUser = useAuthStore((state) => state.authUser);
   const {
@@ -130,6 +132,7 @@ export function PollDetailPage() {
 
   const isOwner = authUser?.user_id === post.user_id;
   const showResults = post.voted || isOwner;
+  const shareUrl = new URL(location.pathname, window.location.origin).toString();
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-6">
@@ -152,33 +155,36 @@ export function PollDetailPage() {
                   </p>
                 </div>
               </div>
-              {isOwner ? (
-                <Button
-                  className="gap-2 self-start"
-                  disabled={deleteMutation.isPending}
-                  onClick={() => {
-                    deleteMutation.mutate();
-                  }}
-                  type="button"
-                  variant="outline"
-                >
-                  <svg
-                    aria-hidden="true"
-                    className="size-4"
-                    viewBox="0 0 24 24"
+              <div className="flex flex-wrap gap-2 self-start">
+                <ShareButton question={post.question} url={shareUrl} />
+                {isOwner ? (
+                  <Button
+                    className="gap-2"
+                    disabled={deleteMutation.isPending}
+                    onClick={() => {
+                      deleteMutation.mutate();
+                    }}
+                    type="button"
+                    variant="outline"
                   >
-                    <path
-                      d="M3 6h18M8 6V4h8v2m-7 3v8m6-8v8M6 6l1 14h10l1-14"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="1.8"
-                    />
-                  </svg>
-                  {deleteMutation.isPending ? '削除中...' : '削除'}
-                </Button>
-              ) : null}
+                    <svg
+                      aria-hidden="true"
+                      className="size-4"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M3 6h18M8 6V4h8v2m-7 3v8m6-8v8M6 6l1 14h10l1-14"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="1.8"
+                      />
+                    </svg>
+                    {deleteMutation.isPending ? '削除中...' : '削除'}
+                  </Button>
+                ) : null}
+              </div>
             </div>
           </div>
           <CardContent className="space-y-6 p-6">

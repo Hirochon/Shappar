@@ -13,6 +13,8 @@ import {
   resetMockPollPosts,
   voteMockPollPost,
 } from '@/mocks/poll-data';
+import { Toaster } from '@/components/ui/toaster';
+import { ToastContextProvider } from '@/hooks/use-toast';
 import { PollDetailPage } from '@/pages/PollDetailPage';
 import { useAuthStore } from '@/stores/auth-store';
 import { server } from '@/test/mocks/server';
@@ -47,13 +49,16 @@ function renderPollDetailPage(postId: string) {
   });
 
   return render(
-    <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={[`/polls/${postId}`]}>
-        <Routes>
-          <Route element={<PollDetailPage />} path="/polls/:pollId" />
-        </Routes>
-      </MemoryRouter>
-    </QueryClientProvider>,
+    <ToastContextProvider>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={[`/polls/${postId}`]}>
+          <Routes>
+            <Route element={<PollDetailPage />} path="/polls/:pollId" />
+          </Routes>
+        </MemoryRouter>
+        <Toaster />
+      </QueryClientProvider>
+    </ToastContextProvider>,
   );
 }
 
@@ -85,6 +90,14 @@ describe('PollDetailPage', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: /夜景スポット.*投票する/u }),
+    ).toBeInTheDocument();
+  });
+
+  it('shows the share button in the page header', async () => {
+    renderPollDetailPage('post-unvoted');
+
+    expect(
+      await screen.findByRole('button', { name: 'シェア' }),
     ).toBeInTheDocument();
   });
 
