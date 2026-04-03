@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { signInWithPopup } from 'firebase/auth';
 import { ErrorDisplay } from '@/components/error-display';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,7 +10,7 @@ import {
 } from '@/components/ui/card';
 import { useAuthMutation } from '@/features/auth/use-auth-mutation';
 import { ApiError } from '@/lib/api-client';
-import { auth, googleProvider } from '@/lib/firebase';
+import { auth, googleProvider, signInWithPopup } from '@/lib/firebase-auth';
 
 const DEFAULT_LOGIN_ERROR_MESSAGE =
   'Google ログインに失敗しました。時間をおいて再度お試しください。';

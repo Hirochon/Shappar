@@ -1,13 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('firebase/auth', () => import('@/test/mocks/firebase'));
-vi.mock('@/lib/firebase', async () => {
-  const { mockAuth } = await import('@/test/mocks/firebase');
-
-  return {
-    auth: mockAuth,
-  };
-});
+vi.mock('@/lib/firebase-auth', () => import('@/test/mocks/firebase-auth'));
 
 const authStoreState = vi.hoisted(() => ({
   authUser: {
@@ -30,7 +24,7 @@ vi.mock('@/stores/auth-store', () => ({
   ) => selector(authStoreState),
 }));
 
-import { signOut } from 'firebase/auth';
+import { signOut } from '@/lib/firebase-auth';
 import { Header } from '@/components/header';
 import { render, screen, userEvent, waitFor } from '@/test/test-utils';
 

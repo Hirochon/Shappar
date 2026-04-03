@@ -3,11 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 const clearUserMock = vi.hoisted(() => vi.fn());
 
 vi.mock('firebase/auth', () => import('@/test/mocks/firebase'));
-vi.mock('@/lib/firebase', async () => {
-  const { mockAuth } = await import('@/test/mocks/firebase');
-
-  return { auth: mockAuth };
-});
+vi.mock('@/lib/firebase-auth', () => import('@/test/mocks/firebase-auth'));
 vi.mock('@/stores/auth-store', () => {
   const useAuthStore = Object.assign(
     (selector: (state: { clearUser: () => void }) => unknown) =>
