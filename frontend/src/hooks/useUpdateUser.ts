@@ -1,6 +1,8 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
+import { userQueryKey } from '@/hooks/useUser';
 import { useAuthStore } from '@/stores/auth-store';
+import type { UserProfile } from '@/types/api';
 
 export interface UpdateUserInput {
   userId: string;
@@ -9,6 +11,7 @@ export interface UpdateUserInput {
 }
 
 export function useUpdateUser() {
+  const queryClient = useQueryClient();
   const setAuthUser = useAuthStore((state) => state.setAuthUser);
 
   return useMutation({
@@ -24,7 +27,7 @@ export function useUpdateUser() {
         introduction,
       } satisfies UpdateUserInput;
     },
-    onSuccess: ({ name, introduction }) => {
+    onSuccess: ({ userId, name, introduction }) => {
       const authUser = useAuthStore.getState().authUser;
 
       if (!authUser) {
@@ -35,6 +38,21 @@ export function useUpdateUser() {
         ...authUser,
         name,
         introduction,
+      });
+
+      queryClient.setQueryData(
+        userQueryKey(userId),
+        (current: UserProfile | undefined) =>
+          current
+            ? {
+                ...current,
+                name,
+                introduction,
+              }
+            : current,
+      );
+      void queryClient.invalidateQueries({
+        queryKey: userQueryKey(userId),
       });
     },
   });

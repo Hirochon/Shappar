@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ErrorDisplay } from '@/components/error-display';
@@ -12,8 +13,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { getApiErrorMessage } from '@/hooks/use-api-error-handler';
+import { userQueryKey } from '@/hooks/useUser';
 import { useUpdateUser } from '@/hooks/useUpdateUser';
 import { useAuthStore } from '@/stores/auth-store';
+import type { UserProfile } from '@/types/api';
 
 function getProfilePath(userId: string) {
   return `/profile/${userId}`;
@@ -21,10 +24,16 @@ function getProfilePath(userId: string) {
 
 export function ProfileEditPage() {
   const authUser = useAuthStore((state) => state.authUser);
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const updateUserMutation = useUpdateUser();
-  const [name, setName] = useState(authUser?.name ?? '');
-  const [introduction, setIntroduction] = useState(authUser?.introduction ?? '');
+  const cachedProfile = authUser
+    ? queryClient.getQueryData<UserProfile>(userQueryKey(authUser.user_id))
+    : null;
+  const [name, setName] = useState(cachedProfile?.name ?? authUser?.name ?? '');
+  const [introduction, setIntroduction] = useState(
+    cachedProfile?.introduction ?? authUser?.introduction ?? '',
+  );
   const [nameError, setNameError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 

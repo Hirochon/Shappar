@@ -2,11 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { User as FirebaseUser } from 'firebase/auth';
 
 vi.mock('firebase/auth', () => import('@/test/mocks/firebase'));
-vi.mock('@/lib/firebase', async () => {
-  const { mockAuth } = await import('@/test/mocks/firebase');
-
-  return { auth: mockAuth };
-});
+vi.mock('@/lib/firebase-auth', () => import('@/test/mocks/firebase-auth'));
 
 async function loadAuthStore() {
   return import('@/stores/auth-store');
@@ -112,8 +108,7 @@ describe('auth store', () => {
 
   it('registers the Firebase auth listener and returns its unsubscribe handle', async () => {
     const { useAuthStore } = await loadAuthStore();
-    const { onAuthStateChanged } = await import('firebase/auth');
-    const { auth } = await import('@/lib/firebase');
+    const { onAuthStateChanged, auth } = await import('@/lib/firebase-auth');
     const unsubscribe = vi.fn();
 
     vi.mocked(onAuthStateChanged).mockImplementationOnce((_auth, callback) => {
@@ -133,7 +128,7 @@ describe('auth store', () => {
 
   it('stores the Firebase user when the auth listener reports a login', async () => {
     const { useAuthStore } = await loadAuthStore();
-    const { auth } = await import('@/lib/firebase');
+    const { auth } = await import('@/lib/firebase-auth');
     const user = createMockUser({
       uid: 'firebase-user',
       email: 'firebase@example.com',

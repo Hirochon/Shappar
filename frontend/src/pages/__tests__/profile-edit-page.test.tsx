@@ -15,10 +15,12 @@ vi.mock('@/lib/firebase', async () => {
 });
 
 import { appRoutes } from '@/router';
+import { userQueryKey } from '@/hooks/useUser';
 import { createQueryClient } from '@/lib/query-client';
 import { useAuthStore } from '@/stores/auth-store';
 import { server } from '@/test/mocks/server';
 import { render, screen, userEvent, waitFor } from '@/test/test-utils';
+import type { UserProfile } from '@/types/api';
 
 const API_BASE_URL = 'http://localhost:8040';
 
@@ -33,8 +35,25 @@ function createAuthUser() {
   };
 }
 
-function renderProfileEditPage(initialEntry = '/profile/edit') {
+function createCachedProfile(overrides: Partial<UserProfile> = {}): UserProfile {
+  return {
+    ...createAuthUser(),
+    postedCount: 3,
+    votedCount: 4,
+    ...overrides,
+  };
+}
+
+function renderProfileEditPage(
+  initialEntry = '/profile/edit',
+  cachedProfile?: UserProfile,
+) {
   const queryClient = createQueryClient();
+
+  if (cachedProfile) {
+    queryClient.setQueryData(userQueryKey(cachedProfile.user_id), cachedProfile);
+  }
+
   const router = createMemoryRouter(appRoutes, {
     initialEntries: [initialEntry],
   });
@@ -182,10 +201,45 @@ describe('ProfileEditPage', () => {
 
     expect(
       await screen.findByRole('heading', {
-        name: 'プロフィール',
+        name: '山田 太郎',
       }),
     ).toBeInTheDocument();
     expect(screen.getByText('@user-123')).toBeInTheDocument();
+  });
+
+  it('updates the cached profile when save succeeds after editing from the profile screen', async () => {
+    const user = userEvent.setup();
+
+    renderProfileEditPage(
+      '/profile/edit',
+      createCachedProfile({
+        name: '古い表示名',
+        introduction: '古い自己紹介',
+      }),
+    );
+
+    const nameInput = await screen.findByLabelText('名前');
+    const introductionInput = screen.getByLabelText('説明文');
+
+    expect(nameInput).toHaveValue('古い表示名');
+    expect(introductionInput).toHaveValue('古い自己紹介');
+
+    await user.clear(nameInput);
+    await user.type(nameInput, '更新後の表示名');
+    await user.clear(introductionInput);
+    await user.type(introductionInput, '更新後の自己紹介');
+    await user.click(
+      screen.getByRole('button', {
+        name: '保存',
+      }),
+    );
+
+    expect(
+      await screen.findByRole('heading', {
+        name: '更新後の表示名',
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByText('更新後の自己紹介')).toBeInTheDocument();
   });
 
   it('shows a validation error when the name is empty', async () => {

@@ -29,6 +29,28 @@ export interface Post {
   total: number;
 }
 
+export interface User {
+  unique_id?: string;
+  user_id: string;
+  name: string;
+  introduction: string;
+  homeimage?: string;
+  homeImage?: string;
+  iconimage: string;
+  followers?: number;
+  follow?: number;
+  followed?: boolean;
+}
+
+export interface UserPostsResponse {
+  posts: Post[];
+}
+
+export interface UserProfile extends User {
+  postedCount: number;
+  votedCount: number;
+}
+
 export interface VoteOption {
   select_num: number;
   votes: number;
@@ -44,15 +66,4 @@ export interface VoteResponse {
   options: VoteOption[];
   selected_num: number;
   total: number;
-}
-
-export interface User {
-  user_id: string;
-  name: string;
-  introduction: string;
-  homeImage: string;
-  iconimage: string;
-  followers: number;
-  follow: number;
-  followed: boolean;
 }
