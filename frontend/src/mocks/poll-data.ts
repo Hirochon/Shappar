@@ -1,4 +1,4 @@
-import type { Post, UserProfile, VoteResponse } from '@/types/api';
+import type { Post, User, VoteResponse } from '@/types/api';
 
 export const MOCK_AUTH_USER_ID = 'user-123';
 
@@ -50,7 +50,7 @@ const initialPollPosts: Record<string, Post> = {
   },
 };
 
-const initialUserProfiles: Record<string, UserProfile> = {
+const initialUserProfiles: Record<string, User> = {
   [MOCK_AUTH_USER_ID]: {
     unique_id: 'unique-user-123',
     user_id: MOCK_AUTH_USER_ID,
@@ -104,7 +104,7 @@ function clonePost(post: Post) {
   return structuredClone(post);
 }
 
-function cloneUserProfile(profile: UserProfile) {
+function cloneUserProfile(profile: User) {
   return structuredClone(profile);
 }
 

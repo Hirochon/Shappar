@@ -1,12 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { getIdToken, type User as FirebaseUser } from 'firebase/auth';
+import { getIdToken, type FirebaseUser } from '@/lib/firebase-auth';
 
 vi.mock('firebase/auth', () => import('@/test/mocks/firebase'));
-vi.mock('@/lib/firebase', async () => {
-  const { mockAuth } = await import('@/test/mocks/firebase');
-
-  return { auth: mockAuth };
-});
+vi.mock('@/lib/firebase-auth', () => import('@/test/mocks/firebase-auth'));
 
 import { ApiError, apiClient } from '@/lib/api-client';
 import { mockAuth, resetFirebaseAuthMocks } from '@/test/mocks/firebase';

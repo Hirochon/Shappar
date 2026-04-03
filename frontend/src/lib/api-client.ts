@@ -1,5 +1,4 @@
-import { getIdToken } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth, getIdToken } from '@/lib/firebase-auth';
 
 const DEFAULT_API_BASE_URL = 'http://localhost:8040';
 

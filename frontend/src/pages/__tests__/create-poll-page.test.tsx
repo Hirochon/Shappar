@@ -1,5 +1,4 @@
 import { QueryClientProvider } from '@tanstack/react-query';
-import { getIdToken } from 'firebase/auth';
 import { HttpResponse, http } from 'msw';
 import { RouterProvider, createMemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -20,14 +19,7 @@ const authStoreState = vi.hoisted(() => ({
 }));
 
 vi.mock('firebase/auth', () => import('@/test/mocks/firebase'));
-vi.mock('@/lib/firebase', async () => {
-  const { GoogleAuthProvider, mockAuth } = await import('@/test/mocks/firebase');
-
-  return {
-    auth: mockAuth,
-    googleProvider: new GoogleAuthProvider(),
-  };
-});
+vi.mock('@/lib/firebase-auth', () => import('@/test/mocks/firebase-auth'));
 vi.mock('@/stores/auth-store', () => ({
   useAuthStore: (
     selector: (state: typeof authStoreState) => unknown,
@@ -35,6 +27,7 @@ vi.mock('@/stores/auth-store', () => ({
 }));
 
 import { appRoutes } from '@/router';
+import { getIdToken } from '@/lib/firebase-auth';
 import { createQueryClient } from '@/lib/query-client';
 import { createMockPollPost, resetMockPollPosts } from '@/mocks/poll-data';
 import { server } from '@/test/mocks/server';

@@ -19,13 +19,7 @@ const authStoreState = vi.hoisted(() => ({
 }));
 
 vi.mock('firebase/auth', () => import('@/test/mocks/firebase'));
-vi.mock('@/lib/firebase', async () => {
-  const { mockAuth } = await import('@/test/mocks/firebase');
-
-  return {
-    auth: mockAuth,
-  };
-});
+vi.mock('@/lib/firebase-auth', () => import('@/test/mocks/firebase-auth'));
 vi.mock('@/stores/auth-store', () => ({
   useAuthStore: (
     selector: (state: {
@@ -48,6 +42,14 @@ vi.mock('@/pages/home-page', () => ({
 
 vi.mock('@/pages/not-found-page', () => ({
   NotFoundPage: () => <h1>Mock Not Found Page</h1>,
+}));
+
+vi.mock('@/pages/ProfileEditPage', () => ({
+  ProfileEditPage: () => <h1>Mock Profile Edit Page</h1>,
+}));
+
+vi.mock('@/pages/ProfilePage', () => ({
+  ProfilePage: () => <h1>Mock Profile Page</h1>,
 }));
 
 function renderRouter(pathname: string) {
@@ -101,6 +103,30 @@ describe('app router', () => {
     expect(
       screen.getByRole('heading', {
         name: 'Mock Not Found Page',
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it('routes authenticated users on /profile/:userId to the profile page', () => {
+    authStoreState.isAuthenticated = true;
+
+    renderRouter('/profile/user-1');
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Mock Profile Page',
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it('routes authenticated users on /profile/edit to the static profile edit page', () => {
+    authStoreState.isAuthenticated = true;
+
+    renderRouter('/profile/edit');
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Mock Profile Edit Page',
       }),
     ).toBeInTheDocument();
   });

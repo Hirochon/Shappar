@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { signOut } from 'firebase/auth';
 import { Link } from 'react-router-dom';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -11,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { auth } from '@/lib/firebase';
+import { auth, signOut } from '@/lib/firebase-auth';
 import { useAuthStore } from '@/stores/auth-store';
 
 function getAvatarFallback(name: string) {

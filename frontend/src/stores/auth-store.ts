@@ -1,7 +1,10 @@
 import { create } from 'zustand';
-import { onAuthStateChanged, type User as FirebaseUser } from 'firebase/auth';
 import type { AuthUser } from '@/features/auth/types';
-import { auth } from '@/lib/firebase';
+import {
+  auth,
+  onAuthStateChanged,
+  type FirebaseUser,
+} from '@/lib/firebase-auth';
 
 export interface AuthState {
   firebaseUser: FirebaseUser | null;

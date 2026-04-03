@@ -1,18 +1,14 @@
 import { act } from '@testing-library/react';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { getIdToken, type User as FirebaseUser } from 'firebase/auth';
 import { HttpResponse, http } from 'msw';
 import { createElement } from 'react';
 import type { PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('firebase/auth', () => import('@/test/mocks/firebase'));
-vi.mock('@/lib/firebase', async () => {
-  const { mockAuth } = await import('@/test/mocks/firebase');
+vi.mock('@/lib/firebase-auth', () => import('@/test/mocks/firebase-auth'));
 
-  return { auth: mockAuth };
-});
-
+import { getIdToken, type FirebaseUser } from '@/lib/firebase-auth';
 import { useAuthMutation } from '@/features/auth/use-auth-mutation';
 import type { AuthResponse, AuthUser } from '@/features/auth/types';
 import { createQueryClient } from '@/lib/query-client';

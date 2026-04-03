@@ -1,17 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
-import type { UserProfile } from '@/types/api';
+import type { User } from '@/types/api';
 
 interface UseUserProfileOptions {
   enabled?: boolean;
 }
 
 async function fetchUserProfile(userId: string) {
-  return apiClient.get<UserProfile>(`/api/v1/users/${userId}`);
+  return apiClient.get<User>(`/api/v1/users/${userId}`);
 }
 
 export function userProfileQueryKey(userId: string) {
-  return ['user-profile', userId] as const;
+  return ['user-basic-profile', userId] as const;
 }
 
 export function useUserProfile(
