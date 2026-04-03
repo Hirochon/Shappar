@@ -92,7 +92,9 @@ export function Header() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem disabled>マイページ</DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/profile">マイページ</Link>
+              </DropdownMenuItem>
               <DropdownMenuItem
                 disabled={isSigningOut}
                 onSelect={() => void handleSignOut()}
