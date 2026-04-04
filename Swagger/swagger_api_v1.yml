@@ -62,7 +62,7 @@ paths:
                 example-1:
                   value:
                     detail: IDトークンが不正です。
-  "/v1/posts":
+  "/posts":
     post:
       summary: ''
       description: new post
@@ -144,7 +144,7 @@ paths:
                     options:
                     - answer:
                       - 回答は2個以上にしてください
-  "/v1/posts/{post_id}":
+  "/posts/{post_id}":
     parameters:
     - name: post_id
       in: path
@@ -316,7 +316,7 @@ paths:
                 example-1:
                   value:
                     detail: 存在しない投稿IDです。
-  "/v1/posts/{post_id}/polls":
+  "/posts/{post_id}/polls":
     parameters:
     - name: post_id
       in: path
@@ -412,7 +412,7 @@ paths:
                 example-1:
                   value:
                     detail: 存在しない投稿IDです。
-  "/v1/posts/public":
+  "/posts/public":
     get:
       summary: Your GET endpoint
       tags:
@@ -612,7 +612,7 @@ paths:
                 example-1:
                   value:
                     detail: 存在しない投稿IDです。
-  "/v1/posts/private":
+  "/posts/private":
     get:
       summary: Your GET endpoint
       tags:
@@ -794,7 +794,7 @@ paths:
                       created_at: '2020-03-12T22:01:28.697258Z'
                       selected_num: -1
                       total: 0
-  "/v1/posts/public/{post_id}":
+  "/posts/public/{post_id}":
     parameters:
     - name: post_id
       in: path
@@ -844,7 +844,7 @@ paths:
                 example-1:
                   value:
                     detail: 存在しない投稿IDです。
-  "/v1/users":
+  "/users":
     get:
       summary: Your GET endpoint
       tags:
@@ -930,7 +930,7 @@ paths:
               examples:
                 example-1:
                   value: {}
-  "/v1/users/{user_id}":
+  "/users/{user_id}":
     parameters:
     - name: user_id
       in: path
@@ -1005,7 +1005,7 @@ paths:
               examples:
                 example-1:
                   value: {}
-  "/v1/users/{user_id}/settings":
+  "/users/{user_id}/settings":
     parameters:
     - name: user_id
       in: path
@@ -1049,7 +1049,7 @@ paths:
                   value:
                     push: true
                     darkmode: false
-  "/v1/users/{user_id}/posted":
+  "/users/{user_id}/posted":
     parameters:
     - name: user_id
       in: path
@@ -1231,7 +1231,7 @@ paths:
                       created_at: '2020-03-12T22:01:28.697258Z'
                       selected_num: -1
                       total: 0
-  "/v1/users/{user_id}/voted":
+  "/users/{user_id}/voted":
     parameters:
     - name: user_id
       in: path
@@ -1415,7 +1415,7 @@ paths:
                       total: 0
         '204':
           description: No Content
-  "/v1/friendships/{userId}":
+  "/friendships/{userId}":
     parameters:
     - name: userId
       in: path
@@ -1468,7 +1468,7 @@ paths:
               examples:
                 example-1:
                   value: {}
-  "/v1/frendships/{userId}/following":
+  "/frendships/{userId}/following":
     parameters:
     - name: userId
       in: path
@@ -1546,7 +1546,7 @@ paths:
                       followers: 100
                       follow: 100
                       followed: true
-  "/v1/frendships/{userId}/followers":
+  "/frendships/{userId}/followers":
     parameters:
     - name: userId
       in: path
@@ -1624,7 +1624,7 @@ paths:
                       followers: 100
                       follow: 100
                       followed: true
-  "/v1/posts/public/rank":
+  "/posts/public/rank":
     get:
       summary: Your GET endpoint
       tags:
@@ -1800,23 +1800,6 @@ paths:
                       created_at: '2020-03-12T22:01:28.697258Z'
                       selected_num: -1
                       total: 0
-  "/v1/health":
-    get:
-      summary: 疎通確認でHealthCheck
-      description: health check
-      tags:
-      - administrations
-      responses:
-        '200':
-          description: HealthCheckをする
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/HealthCheck"
-              examples:
-                HealthCheck:
-                  value:
-                    status: OK
 components:
   schemas:
     AuthSignResponse:

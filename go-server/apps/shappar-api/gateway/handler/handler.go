@@ -1,9 +1,12 @@
 package handler
 
 import (
+	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/Hirochon/Shappar/apps/shappar-api/gateway/oas"
+	"github.com/Hirochon/Shappar/core/util/log"
 	"github.com/samber/do"
 )
 
@@ -16,121 +19,122 @@ type Handler struct {
 
 // PostAuthSign implements [oas.ServerInterface].
 func (h *Handler) PostAuthSign(w http.ResponseWriter, r *http.Request, params oas.PostAuthSignParams) {
+	log.Info(r.Context(), "PostAuthSign", slog.String("params", fmt.Sprintf("%+v", params)))
 	panic("unimplemented")
 }
 
-// DeleteV1FriendshipsUserId implements [oas.ServerInterface].
-func (h *Handler) DeleteV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// DeleteFriendshipsUserId implements [oas.ServerInterface].
+func (h *Handler) DeleteFriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// DeleteV1PostsPostId implements [oas.ServerInterface].
-func (h *Handler) DeleteV1PostsPostId(w http.ResponseWriter, r *http.Request, postId string) {
+// DeletePostsPostId implements [oas.ServerInterface].
+func (h *Handler) DeletePostsPostId(w http.ResponseWriter, r *http.Request, postId string) {
 	panic("unimplemented")
 }
 
-// DeleteV1UsersUserId implements [oas.ServerInterface].
-func (h *Handler) DeleteV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// DeleteUsersUserId implements [oas.ServerInterface].
+func (h *Handler) DeleteUsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// GetV1FrendshipsUserIdFollowers implements [oas.ServerInterface].
-func (h *Handler) GetV1FrendshipsUserIdFollowers(w http.ResponseWriter, r *http.Request, userId string) {
+// GetFrendshipsUserIdFollowers implements [oas.ServerInterface].
+func (h *Handler) GetFrendshipsUserIdFollowers(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// GetV1FrendshipsUserIdFollowing implements [oas.ServerInterface].
-func (h *Handler) GetV1FrendshipsUserIdFollowing(w http.ResponseWriter, r *http.Request, userId string) {
+// GetFrendshipsUserIdFollowing implements [oas.ServerInterface].
+func (h *Handler) GetFrendshipsUserIdFollowing(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// GetV1Health implements [oas.ServerInterface].
-func (h *Handler) GetV1Health(w http.ResponseWriter, r *http.Request) {
+// GetHealth implements [oas.ServerInterface].
+func (h *Handler) GetHealth(w http.ResponseWriter, r *http.Request) {
 	panic("unimplemented")
 }
 
-// GetV1PostsPostId implements [oas.ServerInterface].
-func (h *Handler) GetV1PostsPostId(w http.ResponseWriter, r *http.Request, postId string) {
+// GetPostsPostId implements [oas.ServerInterface].
+func (h *Handler) GetPostsPostId(w http.ResponseWriter, r *http.Request, postId string) {
 	panic("unimplemented")
 }
 
-// GetV1PostsPrivate implements [oas.ServerInterface].
-func (h *Handler) GetV1PostsPrivate(w http.ResponseWriter, r *http.Request, params oas.GetV1PostsPrivateParams) {
+// GetPostsPrivate implements [oas.ServerInterface].
+func (h *Handler) GetPostsPrivate(w http.ResponseWriter, r *http.Request, params oas.GetPostsPrivateParams) {
 	panic("unimplemented")
 }
 
-// GetV1PostsPublic implements [oas.ServerInterface].
-func (h *Handler) GetV1PostsPublic(w http.ResponseWriter, r *http.Request, params oas.GetV1PostsPublicParams) {
+// GetPostsPublic implements [oas.ServerInterface].
+func (h *Handler) GetPostsPublic(w http.ResponseWriter, r *http.Request, params oas.GetPostsPublicParams) {
 	panic("unimplemented")
 }
 
-// GetV1PostsPublicPostId implements [oas.ServerInterface].
-func (h *Handler) GetV1PostsPublicPostId(w http.ResponseWriter, r *http.Request, postId string) {
+// GetPostsPublicPostId implements [oas.ServerInterface].
+func (h *Handler) GetPostsPublicPostId(w http.ResponseWriter, r *http.Request, postId string) {
 	panic("unimplemented")
 }
 
-// GetV1PostsPublicRank implements [oas.ServerInterface].
-func (h *Handler) GetV1PostsPublicRank(w http.ResponseWriter, r *http.Request) {
+// GetPostsPublicRank implements [oas.ServerInterface].
+func (h *Handler) GetPostsPublicRank(w http.ResponseWriter, r *http.Request) {
 	panic("unimplemented")
 }
 
-// GetV1Users implements [oas.ServerInterface].
-func (h *Handler) GetV1Users(w http.ResponseWriter, r *http.Request) {
+// GetUsers implements [oas.ServerInterface].
+func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	panic("unimplemented")
 }
 
-// GetV1UsersUserId implements [oas.ServerInterface].
-func (h *Handler) GetV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// GetUsersUserId implements [oas.ServerInterface].
+func (h *Handler) GetUsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// GetV1UsersUserIdPosted implements [oas.ServerInterface].
-func (h *Handler) GetV1UsersUserIdPosted(w http.ResponseWriter, r *http.Request, userId string) {
+// GetUsersUserIdPosted implements [oas.ServerInterface].
+func (h *Handler) GetUsersUserIdPosted(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// GetV1UsersUserIdSettings implements [oas.ServerInterface].
-func (h *Handler) GetV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string) {
+// GetUsersUserIdSettings implements [oas.ServerInterface].
+func (h *Handler) GetUsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// GetV1UsersUserIdVoted implements [oas.ServerInterface].
-func (h *Handler) GetV1UsersUserIdVoted(w http.ResponseWriter, r *http.Request, userId string) {
+// GetUsersUserIdVoted implements [oas.ServerInterface].
+func (h *Handler) GetUsersUserIdVoted(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// PatchV1UsersUserId implements [oas.ServerInterface].
-func (h *Handler) PatchV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// PatchUsersUserId implements [oas.ServerInterface].
+func (h *Handler) PatchUsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// PostV1FriendshipsUserId implements [oas.ServerInterface].
-func (h *Handler) PostV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// PostFriendshipsUserId implements [oas.ServerInterface].
+func (h *Handler) PostFriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// PostV1Posts implements [oas.ServerInterface].
-func (h *Handler) PostV1Posts(w http.ResponseWriter, r *http.Request) {
+// PostPosts implements [oas.ServerInterface].
+func (h *Handler) PostPosts(w http.ResponseWriter, r *http.Request) {
 	panic("unimplemented")
 }
 
-// PostV1PostsPostIdPolls implements [oas.ServerInterface].
-func (h *Handler) PostV1PostsPostIdPolls(w http.ResponseWriter, r *http.Request, postId string) {
+// PostPostsPostIdPolls implements [oas.ServerInterface].
+func (h *Handler) PostPostsPostIdPolls(w http.ResponseWriter, r *http.Request, postId string) {
 	panic("unimplemented")
 }
 
-// PostV1Users implements [oas.ServerInterface].
-func (h *Handler) PostV1Users(w http.ResponseWriter, r *http.Request) {
+// PostUsers implements [oas.ServerInterface].
+func (h *Handler) PostUsers(w http.ResponseWriter, r *http.Request) {
 	panic("unimplemented")
 }
 
-// PutV1FriendshipsUserId implements [oas.ServerInterface].
-func (h *Handler) PutV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// PutFriendshipsUserId implements [oas.ServerInterface].
+func (h *Handler) PutFriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
-// PutV1UsersUserIdSettings implements [oas.ServerInterface].
-func (h *Handler) PutV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string) {
+// PutUsersUserIdSettings implements [oas.ServerInterface].
+func (h *Handler) PutUsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string) {
 	panic("unimplemented")
 }
 
