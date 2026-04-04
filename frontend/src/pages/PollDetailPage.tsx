@@ -57,8 +57,8 @@ function LoadingState() {
 }
 
 export function PollDetailPage() {
-  const { id = '', pollId = '' } = useParams();
-  const postId = pollId || id;
+  const { pollId = '', postId: routePostId = '' } = useParams();
+  const postId = routePostId || pollId;
   const location = useLocation();
   const navigate = useNavigate();
   const authUser = useAuthStore((state) => state.authUser);
