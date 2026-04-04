@@ -34,7 +34,12 @@ function createAuthUser(overrides: Partial<ReturnType<typeof useAuthStore.getSta
   };
 }
 
-function renderPollDetailPage(postId: string) {
+type PollDetailRoute = '/polls/:pollId' | '/posts/:postId';
+
+function renderPollDetailPage(
+  postId: string,
+  routePath: PollDetailRoute = '/polls/:pollId',
+) {
   const queryClient = createQueryClient();
   const defaultOptions = queryClient.getDefaultOptions();
 
@@ -51,9 +56,11 @@ function renderPollDetailPage(postId: string) {
   return render(
     <ToastContextProvider>
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={[`/polls/${postId}`]}>
+        <MemoryRouter
+          initialEntries={[routePath.replace(':pollId', postId).replace(':postId', postId)]}
+        >
           <Routes>
-            <Route element={<PollDetailPage />} path="/polls/:pollId" />
+            <Route element={<PollDetailPage />} path={routePath} />
           </Routes>
         </MemoryRouter>
         <Toaster />
@@ -98,6 +105,16 @@ describe('PollDetailPage', () => {
 
     expect(
       await screen.findByRole('button', { name: 'シェア' }),
+    ).toBeInTheDocument();
+  });
+
+  it('supports the /posts/:postId route shape', async () => {
+    renderPollDetailPage('post-unvoted', '/posts/:postId');
+
+    expect(
+      await screen.findByRole('heading', {
+        name: '次にみんなで撮りに行くならどこ？',
+      }),
     ).toBeInTheDocument();
   });
 
