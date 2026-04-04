@@ -29,3 +29,9 @@ test_views:
 
 test_serializers:
 	docker-compose run --rm shappar-back python3 manage.py test apiv1.tests.test_serializers --settings=config.settings.local
+
+generate-go-server-gateway:
+	cd go-server && go tool oapi-codegen -config oapi-config.yaml ../Swagger/swagger_api_v1.yml
+
+run-go-server:
+	cd go-server && go run ./apps/shappar-api/cmd/...
