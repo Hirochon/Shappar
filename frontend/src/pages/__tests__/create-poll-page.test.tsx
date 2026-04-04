@@ -171,6 +171,35 @@ describe('CreatePollPage', () => {
     ).toBeInTheDocument();
   });
 
+  it('keeps validation errors on untouched empty options when another option changes', async () => {
+    const user = userEvent.setup();
+
+    renderCreatePollPage();
+
+    await user.type(await screen.findByLabelText('質問'), '次に行きたい場所は？');
+    await user.click(
+      screen.getByRole('button', {
+        name: '選択肢を追加',
+      }),
+    );
+    await user.type(screen.getByLabelText('選択肢 2'), '海');
+    await user.click(
+      screen.getByRole('button', {
+        name: '投票を作成',
+      }),
+    );
+
+    expect(
+      await screen.findAllByText('選択肢を入力してください。'),
+    ).toHaveLength(2);
+
+    await user.type(screen.getByLabelText('選択肢 2'), '辺');
+
+    await waitFor(() => {
+      expect(screen.getAllByText('選択肢を入力してください。')).toHaveLength(2);
+    });
+  });
+
   it('shows a validation error when duplicate options are entered', async () => {
     const user = userEvent.setup();
 
