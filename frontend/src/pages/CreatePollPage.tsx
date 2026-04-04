@@ -122,7 +122,9 @@ export function CreatePollPage() {
     setSubmitError(null);
     setErrors((current) => ({
       ...current,
-      options: current.options.map(() => ''),
+      options: current.options.map((error, index) =>
+        index === optionIndex ? '' : error,
+      ),
     }));
   };
 
