@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
 import { pollDetailQueryKey } from '@/hooks/usePollDetail';
@@ -7,8 +8,17 @@ interface VoteVariables {
   selectNum: number;
 }
 
+interface VoteContext {
+  previousPost?: Post;
+  skipped?: boolean;
+}
+
 function getNormalizedVotes(votes: number | undefined) {
   return Math.max(votes ?? 0, 0);
+}
+
+function isDuplicateVote(post: Post | undefined, selectNum: number) {
+  return post?.voted === true && post.selected_num === selectNum;
 }
 
 function createOptimisticPost(post: Post, selectNum: number): Post {
@@ -45,18 +55,28 @@ function mergeVoteResponse(post: Post, response: VoteResponse) {
 export function useVote(postId: string) {
   const queryClient = useQueryClient();
   const queryKey = pollDetailQueryKey(postId);
+  const skippedSelectNumRef = useRef<number | null>(null);
 
-  return useMutation({
+  return useMutation<VoteResponse | null, unknown, VoteVariables, VoteContext>({
     mutationFn: ({ selectNum }: VoteVariables) =>
-      apiClient.post<VoteResponse>(`/api/v1/posts/${postId}/polls`, {
-        option: {
-          select_num: selectNum,
-        },
-      } satisfies VotePayload),
+      skippedSelectNumRef.current === selectNum
+        ? Promise.resolve(null)
+        : apiClient.post<VoteResponse>(`/api/v1/posts/${postId}/polls`, {
+            option: {
+              select_num: selectNum,
+            },
+          } satisfies VotePayload),
     onMutate: async ({ selectNum }) => {
       await queryClient.cancelQueries({ queryKey });
 
       const previousPost = queryClient.getQueryData<Post>(queryKey);
+
+      if (isDuplicateVote(previousPost, selectNum)) {
+        skippedSelectNumRef.current = selectNum;
+        return { previousPost, skipped: true };
+      }
+
+      skippedSelectNumRef.current = null;
 
       if (previousPost) {
         queryClient.setQueryData(queryKey, createOptimisticPost(previousPost, selectNum));
@@ -65,18 +85,28 @@ export function useVote(postId: string) {
       return { previousPost };
     },
     onError: (_error, _variables, context) => {
-      if (context?.previousPost) {
+      if (!context?.skipped && context?.previousPost) {
         queryClient.setQueryData(queryKey, context.previousPost);
       }
     },
-    onSuccess: (response) => {
+    onSuccess: (response, _variables, context) => {
+      if (context?.skipped || !response) {
+        return;
+      }
+
       const currentPost = queryClient.getQueryData<Post>(queryKey);
 
       if (currentPost) {
         queryClient.setQueryData(queryKey, mergeVoteResponse(currentPost, response));
       }
     },
-    onSettled: () => {
+    onSettled: (_data, _error, _variables, context) => {
+      skippedSelectNumRef.current = null;
+
+      if (context?.skipped) {
+        return;
+      }
+
       void queryClient.invalidateQueries({ queryKey });
     },
   });
