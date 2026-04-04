@@ -9,7 +9,30 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/oapi-codegen/runtime"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
+
+// AuthSignResponse defines model for AuthSignResponse.
+type AuthSignResponse struct {
+	// Registered ユーザー作成済みかどうか
+	Registered bool            `json:"registered"`
+	User       *AuthSignedUser `json:"user,omitempty"`
+}
+
+// AuthSignedUser defines model for AuthSignedUser.
+type AuthSignedUser struct {
+	// Id ユーザーUUID
+	Id openapi_types.UUID `json:"id"`
+
+	// Name 表示名
+	Name string `json:"name"`
+
+	// ThumbnailUrl サムネイル画像URL
+	ThumbnailUrl string `json:"thumbnail_url"`
+
+	// UniqueId ユーザーが設定する任意ID
+	UniqueId string `json:"unique_id"`
+}
 
 // HealthCheck defines model for HealthCheck.
 type HealthCheck struct {
@@ -52,8 +75,14 @@ type Users struct {
 	Users *[]User `json:"users,omitempty"`
 }
 
-// PostApiV1PostsJSONBody defines parameters for PostApiV1Posts.
-type PostApiV1PostsJSONBody struct {
+// PostAuthSignParams defines parameters for PostAuthSign.
+type PostAuthSignParams struct {
+	// IdToken 認証に利用するIDトークン
+	IdToken string `json:"idToken"`
+}
+
+// PostV1PostsJSONBody defines parameters for PostV1Posts.
+type PostV1PostsJSONBody struct {
 	Options *[]struct {
 		Answer    *string `json:"answer,omitempty"`
 		SelectNum *int    `json:"select_num,omitempty"`
@@ -61,14 +90,14 @@ type PostApiV1PostsJSONBody struct {
 	Question *string `json:"question,omitempty"`
 }
 
-// GetApiV1PostsPrivateParams defines parameters for GetApiV1PostsPrivate.
-type GetApiV1PostsPrivateParams struct {
+// GetV1PostsPrivateParams defines parameters for GetV1PostsPrivate.
+type GetV1PostsPrivateParams struct {
 	// Q 検索キーワード
 	Q *string `form:"q,omitempty" json:"q,omitempty"`
 }
 
-// GetApiV1PostsPublicParams defines parameters for GetApiV1PostsPublic.
-type GetApiV1PostsPublicParams struct {
+// GetV1PostsPublicParams defines parameters for GetV1PostsPublic.
+type GetV1PostsPublicParams struct {
 	// Q 検索ワード
 	Q *string `form:"q,omitempty" json:"q,omitempty"`
 
@@ -76,15 +105,15 @@ type GetApiV1PostsPublicParams struct {
 	Pid *string `form:"pid,omitempty" json:"pid,omitempty"`
 }
 
-// PostApiV1PostsPostIdPollsJSONBody defines parameters for PostApiV1PostsPostIdPolls.
-type PostApiV1PostsPostIdPollsJSONBody struct {
+// PostV1PostsPostIdPollsJSONBody defines parameters for PostV1PostsPostIdPolls.
+type PostV1PostsPostIdPollsJSONBody struct {
 	Option *struct {
 		SelectNum *int `json:"select_num,omitempty"`
 	} `json:"option,omitempty"`
 }
 
-// PatchApiV1UsersUserIdJSONBody defines parameters for PatchApiV1UsersUserId.
-type PatchApiV1UsersUserIdJSONBody struct {
+// PatchV1UsersUserIdJSONBody defines parameters for PatchV1UsersUserId.
+type PatchV1UsersUserIdJSONBody struct {
 	Homeimage    *string `json:"homeimage,omitempty"`
 	Iconimage    *string `json:"iconimage,omitempty"`
 	Introduction *string `json:"introduction,omitempty"`
@@ -92,216 +121,224 @@ type PatchApiV1UsersUserIdJSONBody struct {
 	UserId       *string `json:"user_id,omitempty"`
 }
 
-// PostApiV1PostsJSONRequestBody defines body for PostApiV1Posts for application/json ContentType.
-type PostApiV1PostsJSONRequestBody PostApiV1PostsJSONBody
+// PostV1PostsJSONRequestBody defines body for PostV1Posts for application/json ContentType.
+type PostV1PostsJSONRequestBody PostV1PostsJSONBody
 
-// PostApiV1PostsPostIdPollsJSONRequestBody defines body for PostApiV1PostsPostIdPolls for application/json ContentType.
-type PostApiV1PostsPostIdPollsJSONRequestBody PostApiV1PostsPostIdPollsJSONBody
+// PostV1PostsPostIdPollsJSONRequestBody defines body for PostV1PostsPostIdPolls for application/json ContentType.
+type PostV1PostsPostIdPollsJSONRequestBody PostV1PostsPostIdPollsJSONBody
 
-// PatchApiV1UsersUserIdJSONRequestBody defines body for PatchApiV1UsersUserId for application/json ContentType.
-type PatchApiV1UsersUserIdJSONRequestBody PatchApiV1UsersUserIdJSONBody
+// PatchV1UsersUserIdJSONRequestBody defines body for PatchV1UsersUserId for application/json ContentType.
+type PatchV1UsersUserIdJSONRequestBody PatchV1UsersUserIdJSONBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+
+	// (POST /auth/sign)
+	PostAuthSign(w http.ResponseWriter, r *http.Request, params PostAuthSignParams)
 	// Your GET endpoint
-	// (GET /api/v1/frendships/{userId}/followers)
-	GetApiV1FrendshipsUserIdFollowers(w http.ResponseWriter, r *http.Request, userId string)
+	// (GET /v1/frendships/{userId}/followers)
+	GetV1FrendshipsUserIdFollowers(w http.ResponseWriter, r *http.Request, userId string)
 	// Your GET endpoint
-	// (GET /api/v1/frendships/{userId}/following)
-	GetApiV1FrendshipsUserIdFollowing(w http.ResponseWriter, r *http.Request, userId string)
+	// (GET /v1/frendships/{userId}/following)
+	GetV1FrendshipsUserIdFollowing(w http.ResponseWriter, r *http.Request, userId string)
 
-	// (DELETE /api/v1/friendships/{userId})
-	DeleteApiV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string)
+	// (DELETE /v1/friendships/{userId})
+	DeleteV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string)
 
-	// (POST /api/v1/friendships/{userId})
-	PostApiV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string)
+	// (POST /v1/friendships/{userId})
+	PostV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string)
 
-	// (PUT /api/v1/friendships/{userId})
-	PutApiV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string)
+	// (PUT /v1/friendships/{userId})
+	PutV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string)
 	// 疎通確認でHealthCheck
-	// (GET /api/v1/health)
-	GetApiV1Health(w http.ResponseWriter, r *http.Request)
+	// (GET /v1/health)
+	GetV1Health(w http.ResponseWriter, r *http.Request)
 
-	// (POST /api/v1/posts)
-	PostApiV1Posts(w http.ResponseWriter, r *http.Request)
+	// (POST /v1/posts)
+	PostV1Posts(w http.ResponseWriter, r *http.Request)
 	// Your GET endpoint
-	// (GET /api/v1/posts/private)
-	GetApiV1PostsPrivate(w http.ResponseWriter, r *http.Request, params GetApiV1PostsPrivateParams)
+	// (GET /v1/posts/private)
+	GetV1PostsPrivate(w http.ResponseWriter, r *http.Request, params GetV1PostsPrivateParams)
 	// Your GET endpoint
-	// (GET /api/v1/posts/public)
-	GetApiV1PostsPublic(w http.ResponseWriter, r *http.Request, params GetApiV1PostsPublicParams)
+	// (GET /v1/posts/public)
+	GetV1PostsPublic(w http.ResponseWriter, r *http.Request, params GetV1PostsPublicParams)
 	// Your GET endpoint
-	// (GET /api/v1/posts/public/rank)
-	GetApiV1PostsPublicRank(w http.ResponseWriter, r *http.Request)
+	// (GET /v1/posts/public/rank)
+	GetV1PostsPublicRank(w http.ResponseWriter, r *http.Request)
 	// Your GET endpoint
-	// (GET /api/v1/posts/public/{post_id})
-	GetApiV1PostsPublicPostId(w http.ResponseWriter, r *http.Request, postId string)
+	// (GET /v1/posts/public/{post_id})
+	GetV1PostsPublicPostId(w http.ResponseWriter, r *http.Request, postId string)
 
-	// (DELETE /api/v1/posts/{post_id})
-	DeleteApiV1PostsPostId(w http.ResponseWriter, r *http.Request, postId string)
+	// (DELETE /v1/posts/{post_id})
+	DeleteV1PostsPostId(w http.ResponseWriter, r *http.Request, postId string)
 	// Your GET endpoint
-	// (GET /api/v1/posts/{post_id})
-	GetApiV1PostsPostId(w http.ResponseWriter, r *http.Request, postId string)
+	// (GET /v1/posts/{post_id})
+	GetV1PostsPostId(w http.ResponseWriter, r *http.Request, postId string)
 
-	// (POST /api/v1/posts/{post_id}/polls)
-	PostApiV1PostsPostIdPolls(w http.ResponseWriter, r *http.Request, postId string)
+	// (POST /v1/posts/{post_id}/polls)
+	PostV1PostsPostIdPolls(w http.ResponseWriter, r *http.Request, postId string)
 	// Your GET endpoint
-	// (GET /api/v1/users)
-	GetApiV1Users(w http.ResponseWriter, r *http.Request)
+	// (GET /v1/users)
+	GetV1Users(w http.ResponseWriter, r *http.Request)
 
-	// (POST /api/v1/users)
-	PostApiV1Users(w http.ResponseWriter, r *http.Request)
+	// (POST /v1/users)
+	PostV1Users(w http.ResponseWriter, r *http.Request)
 
-	// (DELETE /api/v1/users/{user_id})
-	DeleteApiV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string)
+	// (DELETE /v1/users/{user_id})
+	DeleteV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string)
 	// Your GET endpoint
-	// (GET /api/v1/users/{user_id})
-	GetApiV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string)
+	// (GET /v1/users/{user_id})
+	GetV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string)
 
-	// (PATCH /api/v1/users/{user_id})
-	PatchApiV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string)
+	// (PATCH /v1/users/{user_id})
+	PatchV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string)
 	// Your GET endpoint
-	// (GET /api/v1/users/{user_id}/posted)
-	GetApiV1UsersUserIdPosted(w http.ResponseWriter, r *http.Request, userId string)
+	// (GET /v1/users/{user_id}/posted)
+	GetV1UsersUserIdPosted(w http.ResponseWriter, r *http.Request, userId string)
 
-	// (GET /api/v1/users/{user_id}/settings)
-	GetApiV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string)
+	// (GET /v1/users/{user_id}/settings)
+	GetV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string)
 
-	// (PUT /api/v1/users/{user_id}/settings)
-	PutApiV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string)
+	// (PUT /v1/users/{user_id}/settings)
+	PutV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string)
 	// Your GET endpoint
-	// (GET /api/v1/users/{user_id}/voted)
-	GetApiV1UsersUserIdVoted(w http.ResponseWriter, r *http.Request, userId string)
+	// (GET /v1/users/{user_id}/voted)
+	GetV1UsersUserIdVoted(w http.ResponseWriter, r *http.Request, userId string)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
 
 type Unimplemented struct{}
 
-// Your GET endpoint
-// (GET /api/v1/frendships/{userId}/followers)
-func (_ Unimplemented) GetApiV1FrendshipsUserIdFollowers(w http.ResponseWriter, r *http.Request, userId string) {
+// (POST /auth/sign)
+func (_ Unimplemented) PostAuthSign(w http.ResponseWriter, r *http.Request, params PostAuthSignParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Your GET endpoint
-// (GET /api/v1/frendships/{userId}/following)
-func (_ Unimplemented) GetApiV1FrendshipsUserIdFollowing(w http.ResponseWriter, r *http.Request, userId string) {
+// (GET /v1/frendships/{userId}/followers)
+func (_ Unimplemented) GetV1FrendshipsUserIdFollowers(w http.ResponseWriter, r *http.Request, userId string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// (DELETE /api/v1/friendships/{userId})
-func (_ Unimplemented) DeleteApiV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// Your GET endpoint
+// (GET /v1/frendships/{userId}/following)
+func (_ Unimplemented) GetV1FrendshipsUserIdFollowing(w http.ResponseWriter, r *http.Request, userId string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// (POST /api/v1/friendships/{userId})
-func (_ Unimplemented) PostApiV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// (DELETE /v1/friendships/{userId})
+func (_ Unimplemented) DeleteV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// (PUT /api/v1/friendships/{userId})
-func (_ Unimplemented) PutApiV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// (POST /v1/friendships/{userId})
+func (_ Unimplemented) PostV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (PUT /v1/friendships/{userId})
+func (_ Unimplemented) PutV1FriendshipsUserId(w http.ResponseWriter, r *http.Request, userId string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // 疎通確認でHealthCheck
-// (GET /api/v1/health)
-func (_ Unimplemented) GetApiV1Health(w http.ResponseWriter, r *http.Request) {
+// (GET /v1/health)
+func (_ Unimplemented) GetV1Health(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// (POST /api/v1/posts)
-func (_ Unimplemented) PostApiV1Posts(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// Your GET endpoint
-// (GET /api/v1/posts/private)
-func (_ Unimplemented) GetApiV1PostsPrivate(w http.ResponseWriter, r *http.Request, params GetApiV1PostsPrivateParams) {
+// (POST /v1/posts)
+func (_ Unimplemented) PostV1Posts(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Your GET endpoint
-// (GET /api/v1/posts/public)
-func (_ Unimplemented) GetApiV1PostsPublic(w http.ResponseWriter, r *http.Request, params GetApiV1PostsPublicParams) {
+// (GET /v1/posts/private)
+func (_ Unimplemented) GetV1PostsPrivate(w http.ResponseWriter, r *http.Request, params GetV1PostsPrivateParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Your GET endpoint
-// (GET /api/v1/posts/public/rank)
-func (_ Unimplemented) GetApiV1PostsPublicRank(w http.ResponseWriter, r *http.Request) {
+// (GET /v1/posts/public)
+func (_ Unimplemented) GetV1PostsPublic(w http.ResponseWriter, r *http.Request, params GetV1PostsPublicParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Your GET endpoint
-// (GET /api/v1/posts/public/{post_id})
-func (_ Unimplemented) GetApiV1PostsPublicPostId(w http.ResponseWriter, r *http.Request, postId string) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// (DELETE /api/v1/posts/{post_id})
-func (_ Unimplemented) DeleteApiV1PostsPostId(w http.ResponseWriter, r *http.Request, postId string) {
+// (GET /v1/posts/public/rank)
+func (_ Unimplemented) GetV1PostsPublicRank(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Your GET endpoint
-// (GET /api/v1/posts/{post_id})
-func (_ Unimplemented) GetApiV1PostsPostId(w http.ResponseWriter, r *http.Request, postId string) {
+// (GET /v1/posts/public/{post_id})
+func (_ Unimplemented) GetV1PostsPublicPostId(w http.ResponseWriter, r *http.Request, postId string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// (POST /api/v1/posts/{post_id}/polls)
-func (_ Unimplemented) PostApiV1PostsPostIdPolls(w http.ResponseWriter, r *http.Request, postId string) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// Your GET endpoint
-// (GET /api/v1/users)
-func (_ Unimplemented) GetApiV1Users(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// (POST /api/v1/users)
-func (_ Unimplemented) PostApiV1Users(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// (DELETE /api/v1/users/{user_id})
-func (_ Unimplemented) DeleteApiV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// (DELETE /v1/posts/{post_id})
+func (_ Unimplemented) DeleteV1PostsPostId(w http.ResponseWriter, r *http.Request, postId string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Your GET endpoint
-// (GET /api/v1/users/{user_id})
-func (_ Unimplemented) GetApiV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// (GET /v1/posts/{post_id})
+func (_ Unimplemented) GetV1PostsPostId(w http.ResponseWriter, r *http.Request, postId string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// (PATCH /api/v1/users/{user_id})
-func (_ Unimplemented) PatchApiV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// Your GET endpoint
-// (GET /api/v1/users/{user_id}/posted)
-func (_ Unimplemented) GetApiV1UsersUserIdPosted(w http.ResponseWriter, r *http.Request, userId string) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// (GET /api/v1/users/{user_id}/settings)
-func (_ Unimplemented) GetApiV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// (PUT /api/v1/users/{user_id}/settings)
-func (_ Unimplemented) PutApiV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string) {
+// (POST /v1/posts/{post_id}/polls)
+func (_ Unimplemented) PostV1PostsPostIdPolls(w http.ResponseWriter, r *http.Request, postId string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // Your GET endpoint
-// (GET /api/v1/users/{user_id}/voted)
-func (_ Unimplemented) GetApiV1UsersUserIdVoted(w http.ResponseWriter, r *http.Request, userId string) {
+// (GET /v1/users)
+func (_ Unimplemented) GetV1Users(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (POST /v1/users)
+func (_ Unimplemented) PostV1Users(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (DELETE /v1/users/{user_id})
+func (_ Unimplemented) DeleteV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Your GET endpoint
+// (GET /v1/users/{user_id})
+func (_ Unimplemented) GetV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (PATCH /v1/users/{user_id})
+func (_ Unimplemented) PatchV1UsersUserId(w http.ResponseWriter, r *http.Request, userId string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Your GET endpoint
+// (GET /v1/users/{user_id}/posted)
+func (_ Unimplemented) GetV1UsersUserIdPosted(w http.ResponseWriter, r *http.Request, userId string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /v1/users/{user_id}/settings)
+func (_ Unimplemented) GetV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (PUT /v1/users/{user_id}/settings)
+func (_ Unimplemented) PutV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request, userId string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Your GET endpoint
+// (GET /v1/users/{user_id}/voted)
+func (_ Unimplemented) GetV1UsersUserIdVoted(w http.ResponseWriter, r *http.Request, userId string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -314,166 +351,210 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(http.Handler) http.Handler
 
-// GetApiV1FrendshipsUserIdFollowers operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1FrendshipsUserIdFollowers(w http.ResponseWriter, r *http.Request) {
-
-	var err error
-
-	// ------------- Path parameter "userId" -------------
-	var userId string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "userId", chi.URLParam(r, "userId"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userId", Err: err})
-		return
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1FrendshipsUserIdFollowers(w, r, userId)
-	}))
-
-	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
-		handler = siw.HandlerMiddlewares[i](handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
-// GetApiV1FrendshipsUserIdFollowing operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1FrendshipsUserIdFollowing(w http.ResponseWriter, r *http.Request) {
-
-	var err error
-
-	// ------------- Path parameter "userId" -------------
-	var userId string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "userId", chi.URLParam(r, "userId"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userId", Err: err})
-		return
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1FrendshipsUserIdFollowing(w, r, userId)
-	}))
-
-	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
-		handler = siw.HandlerMiddlewares[i](handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
-// DeleteApiV1FriendshipsUserId operation middleware
-func (siw *ServerInterfaceWrapper) DeleteApiV1FriendshipsUserId(w http.ResponseWriter, r *http.Request) {
-
-	var err error
-
-	// ------------- Path parameter "userId" -------------
-	var userId string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "userId", chi.URLParam(r, "userId"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userId", Err: err})
-		return
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.DeleteApiV1FriendshipsUserId(w, r, userId)
-	}))
-
-	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
-		handler = siw.HandlerMiddlewares[i](handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
-// PostApiV1FriendshipsUserId operation middleware
-func (siw *ServerInterfaceWrapper) PostApiV1FriendshipsUserId(w http.ResponseWriter, r *http.Request) {
-
-	var err error
-
-	// ------------- Path parameter "userId" -------------
-	var userId string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "userId", chi.URLParam(r, "userId"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userId", Err: err})
-		return
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostApiV1FriendshipsUserId(w, r, userId)
-	}))
-
-	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
-		handler = siw.HandlerMiddlewares[i](handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
-// PutApiV1FriendshipsUserId operation middleware
-func (siw *ServerInterfaceWrapper) PutApiV1FriendshipsUserId(w http.ResponseWriter, r *http.Request) {
-
-	var err error
-
-	// ------------- Path parameter "userId" -------------
-	var userId string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "userId", chi.URLParam(r, "userId"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userId", Err: err})
-		return
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PutApiV1FriendshipsUserId(w, r, userId)
-	}))
-
-	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
-		handler = siw.HandlerMiddlewares[i](handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
-// GetApiV1Health operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1Health(w http.ResponseWriter, r *http.Request) {
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1Health(w, r)
-	}))
-
-	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
-		handler = siw.HandlerMiddlewares[i](handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
-// PostApiV1Posts operation middleware
-func (siw *ServerInterfaceWrapper) PostApiV1Posts(w http.ResponseWriter, r *http.Request) {
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostApiV1Posts(w, r)
-	}))
-
-	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
-		handler = siw.HandlerMiddlewares[i](handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
-// GetApiV1PostsPrivate operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1PostsPrivate(w http.ResponseWriter, r *http.Request) {
+// PostAuthSign operation middleware
+func (siw *ServerInterfaceWrapper) PostAuthSign(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
 	// Parameter object where we will unmarshal all parameters from the context
-	var params GetApiV1PostsPrivateParams
+	var params PostAuthSignParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "idToken" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("idToken")]; found {
+		var IdToken string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "idToken", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "idToken", valueList[0], &IdToken, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "idToken", Err: err})
+			return
+		}
+
+		params.IdToken = IdToken
+
+	} else {
+		err := fmt.Errorf("Header parameter idToken is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "idToken", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostAuthSign(w, r, params)
+	}))
+
+	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
+		handler = siw.HandlerMiddlewares[i](handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetV1FrendshipsUserIdFollowers operation middleware
+func (siw *ServerInterfaceWrapper) GetV1FrendshipsUserIdFollowers(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "userId" -------------
+	var userId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "userId", chi.URLParam(r, "userId"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetV1FrendshipsUserIdFollowers(w, r, userId)
+	}))
+
+	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
+		handler = siw.HandlerMiddlewares[i](handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetV1FrendshipsUserIdFollowing operation middleware
+func (siw *ServerInterfaceWrapper) GetV1FrendshipsUserIdFollowing(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "userId" -------------
+	var userId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "userId", chi.URLParam(r, "userId"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetV1FrendshipsUserIdFollowing(w, r, userId)
+	}))
+
+	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
+		handler = siw.HandlerMiddlewares[i](handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DeleteV1FriendshipsUserId operation middleware
+func (siw *ServerInterfaceWrapper) DeleteV1FriendshipsUserId(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "userId" -------------
+	var userId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "userId", chi.URLParam(r, "userId"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteV1FriendshipsUserId(w, r, userId)
+	}))
+
+	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
+		handler = siw.HandlerMiddlewares[i](handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostV1FriendshipsUserId operation middleware
+func (siw *ServerInterfaceWrapper) PostV1FriendshipsUserId(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "userId" -------------
+	var userId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "userId", chi.URLParam(r, "userId"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostV1FriendshipsUserId(w, r, userId)
+	}))
+
+	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
+		handler = siw.HandlerMiddlewares[i](handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PutV1FriendshipsUserId operation middleware
+func (siw *ServerInterfaceWrapper) PutV1FriendshipsUserId(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// ------------- Path parameter "userId" -------------
+	var userId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "userId", chi.URLParam(r, "userId"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "userId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PutV1FriendshipsUserId(w, r, userId)
+	}))
+
+	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
+		handler = siw.HandlerMiddlewares[i](handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetV1Health operation middleware
+func (siw *ServerInterfaceWrapper) GetV1Health(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetV1Health(w, r)
+	}))
+
+	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
+		handler = siw.HandlerMiddlewares[i](handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostV1Posts operation middleware
+func (siw *ServerInterfaceWrapper) PostV1Posts(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostV1Posts(w, r)
+	}))
+
+	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
+		handler = siw.HandlerMiddlewares[i](handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetV1PostsPrivate operation middleware
+func (siw *ServerInterfaceWrapper) GetV1PostsPrivate(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetV1PostsPrivateParams
 
 	// ------------- Optional query parameter "q" -------------
 
@@ -484,7 +565,7 @@ func (siw *ServerInterfaceWrapper) GetApiV1PostsPrivate(w http.ResponseWriter, r
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1PostsPrivate(w, r, params)
+		siw.Handler.GetV1PostsPrivate(w, r, params)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -494,13 +575,13 @@ func (siw *ServerInterfaceWrapper) GetApiV1PostsPrivate(w http.ResponseWriter, r
 	handler.ServeHTTP(w, r)
 }
 
-// GetApiV1PostsPublic operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1PostsPublic(w http.ResponseWriter, r *http.Request) {
+// GetV1PostsPublic operation middleware
+func (siw *ServerInterfaceWrapper) GetV1PostsPublic(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
 	// Parameter object where we will unmarshal all parameters from the context
-	var params GetApiV1PostsPublicParams
+	var params GetV1PostsPublicParams
 
 	// ------------- Optional query parameter "q" -------------
 
@@ -519,7 +600,7 @@ func (siw *ServerInterfaceWrapper) GetApiV1PostsPublic(w http.ResponseWriter, r 
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1PostsPublic(w, r, params)
+		siw.Handler.GetV1PostsPublic(w, r, params)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -529,11 +610,11 @@ func (siw *ServerInterfaceWrapper) GetApiV1PostsPublic(w http.ResponseWriter, r 
 	handler.ServeHTTP(w, r)
 }
 
-// GetApiV1PostsPublicRank operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1PostsPublicRank(w http.ResponseWriter, r *http.Request) {
+// GetV1PostsPublicRank operation middleware
+func (siw *ServerInterfaceWrapper) GetV1PostsPublicRank(w http.ResponseWriter, r *http.Request) {
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1PostsPublicRank(w, r)
+		siw.Handler.GetV1PostsPublicRank(w, r)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -543,8 +624,8 @@ func (siw *ServerInterfaceWrapper) GetApiV1PostsPublicRank(w http.ResponseWriter
 	handler.ServeHTTP(w, r)
 }
 
-// GetApiV1PostsPublicPostId operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1PostsPublicPostId(w http.ResponseWriter, r *http.Request) {
+// GetV1PostsPublicPostId operation middleware
+func (siw *ServerInterfaceWrapper) GetV1PostsPublicPostId(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
@@ -558,7 +639,7 @@ func (siw *ServerInterfaceWrapper) GetApiV1PostsPublicPostId(w http.ResponseWrit
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1PostsPublicPostId(w, r, postId)
+		siw.Handler.GetV1PostsPublicPostId(w, r, postId)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -568,8 +649,8 @@ func (siw *ServerInterfaceWrapper) GetApiV1PostsPublicPostId(w http.ResponseWrit
 	handler.ServeHTTP(w, r)
 }
 
-// DeleteApiV1PostsPostId operation middleware
-func (siw *ServerInterfaceWrapper) DeleteApiV1PostsPostId(w http.ResponseWriter, r *http.Request) {
+// DeleteV1PostsPostId operation middleware
+func (siw *ServerInterfaceWrapper) DeleteV1PostsPostId(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
@@ -583,7 +664,7 @@ func (siw *ServerInterfaceWrapper) DeleteApiV1PostsPostId(w http.ResponseWriter,
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.DeleteApiV1PostsPostId(w, r, postId)
+		siw.Handler.DeleteV1PostsPostId(w, r, postId)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -593,8 +674,8 @@ func (siw *ServerInterfaceWrapper) DeleteApiV1PostsPostId(w http.ResponseWriter,
 	handler.ServeHTTP(w, r)
 }
 
-// GetApiV1PostsPostId operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1PostsPostId(w http.ResponseWriter, r *http.Request) {
+// GetV1PostsPostId operation middleware
+func (siw *ServerInterfaceWrapper) GetV1PostsPostId(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
@@ -608,7 +689,7 @@ func (siw *ServerInterfaceWrapper) GetApiV1PostsPostId(w http.ResponseWriter, r 
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1PostsPostId(w, r, postId)
+		siw.Handler.GetV1PostsPostId(w, r, postId)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -618,8 +699,8 @@ func (siw *ServerInterfaceWrapper) GetApiV1PostsPostId(w http.ResponseWriter, r 
 	handler.ServeHTTP(w, r)
 }
 
-// PostApiV1PostsPostIdPolls operation middleware
-func (siw *ServerInterfaceWrapper) PostApiV1PostsPostIdPolls(w http.ResponseWriter, r *http.Request) {
+// PostV1PostsPostIdPolls operation middleware
+func (siw *ServerInterfaceWrapper) PostV1PostsPostIdPolls(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
@@ -633,7 +714,7 @@ func (siw *ServerInterfaceWrapper) PostApiV1PostsPostIdPolls(w http.ResponseWrit
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostApiV1PostsPostIdPolls(w, r, postId)
+		siw.Handler.PostV1PostsPostIdPolls(w, r, postId)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -643,11 +724,11 @@ func (siw *ServerInterfaceWrapper) PostApiV1PostsPostIdPolls(w http.ResponseWrit
 	handler.ServeHTTP(w, r)
 }
 
-// GetApiV1Users operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1Users(w http.ResponseWriter, r *http.Request) {
+// GetV1Users operation middleware
+func (siw *ServerInterfaceWrapper) GetV1Users(w http.ResponseWriter, r *http.Request) {
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1Users(w, r)
+		siw.Handler.GetV1Users(w, r)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -657,11 +738,11 @@ func (siw *ServerInterfaceWrapper) GetApiV1Users(w http.ResponseWriter, r *http.
 	handler.ServeHTTP(w, r)
 }
 
-// PostApiV1Users operation middleware
-func (siw *ServerInterfaceWrapper) PostApiV1Users(w http.ResponseWriter, r *http.Request) {
+// PostV1Users operation middleware
+func (siw *ServerInterfaceWrapper) PostV1Users(w http.ResponseWriter, r *http.Request) {
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostApiV1Users(w, r)
+		siw.Handler.PostV1Users(w, r)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -671,8 +752,8 @@ func (siw *ServerInterfaceWrapper) PostApiV1Users(w http.ResponseWriter, r *http
 	handler.ServeHTTP(w, r)
 }
 
-// DeleteApiV1UsersUserId operation middleware
-func (siw *ServerInterfaceWrapper) DeleteApiV1UsersUserId(w http.ResponseWriter, r *http.Request) {
+// DeleteV1UsersUserId operation middleware
+func (siw *ServerInterfaceWrapper) DeleteV1UsersUserId(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
@@ -686,7 +767,7 @@ func (siw *ServerInterfaceWrapper) DeleteApiV1UsersUserId(w http.ResponseWriter,
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.DeleteApiV1UsersUserId(w, r, userId)
+		siw.Handler.DeleteV1UsersUserId(w, r, userId)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -696,8 +777,8 @@ func (siw *ServerInterfaceWrapper) DeleteApiV1UsersUserId(w http.ResponseWriter,
 	handler.ServeHTTP(w, r)
 }
 
-// GetApiV1UsersUserId operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1UsersUserId(w http.ResponseWriter, r *http.Request) {
+// GetV1UsersUserId operation middleware
+func (siw *ServerInterfaceWrapper) GetV1UsersUserId(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
@@ -711,7 +792,7 @@ func (siw *ServerInterfaceWrapper) GetApiV1UsersUserId(w http.ResponseWriter, r 
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1UsersUserId(w, r, userId)
+		siw.Handler.GetV1UsersUserId(w, r, userId)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -721,8 +802,8 @@ func (siw *ServerInterfaceWrapper) GetApiV1UsersUserId(w http.ResponseWriter, r 
 	handler.ServeHTTP(w, r)
 }
 
-// PatchApiV1UsersUserId operation middleware
-func (siw *ServerInterfaceWrapper) PatchApiV1UsersUserId(w http.ResponseWriter, r *http.Request) {
+// PatchV1UsersUserId operation middleware
+func (siw *ServerInterfaceWrapper) PatchV1UsersUserId(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
@@ -736,7 +817,7 @@ func (siw *ServerInterfaceWrapper) PatchApiV1UsersUserId(w http.ResponseWriter, 
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PatchApiV1UsersUserId(w, r, userId)
+		siw.Handler.PatchV1UsersUserId(w, r, userId)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -746,8 +827,8 @@ func (siw *ServerInterfaceWrapper) PatchApiV1UsersUserId(w http.ResponseWriter, 
 	handler.ServeHTTP(w, r)
 }
 
-// GetApiV1UsersUserIdPosted operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1UsersUserIdPosted(w http.ResponseWriter, r *http.Request) {
+// GetV1UsersUserIdPosted operation middleware
+func (siw *ServerInterfaceWrapper) GetV1UsersUserIdPosted(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
@@ -761,7 +842,7 @@ func (siw *ServerInterfaceWrapper) GetApiV1UsersUserIdPosted(w http.ResponseWrit
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1UsersUserIdPosted(w, r, userId)
+		siw.Handler.GetV1UsersUserIdPosted(w, r, userId)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -771,8 +852,8 @@ func (siw *ServerInterfaceWrapper) GetApiV1UsersUserIdPosted(w http.ResponseWrit
 	handler.ServeHTTP(w, r)
 }
 
-// GetApiV1UsersUserIdSettings operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request) {
+// GetV1UsersUserIdSettings operation middleware
+func (siw *ServerInterfaceWrapper) GetV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
@@ -786,7 +867,7 @@ func (siw *ServerInterfaceWrapper) GetApiV1UsersUserIdSettings(w http.ResponseWr
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1UsersUserIdSettings(w, r, userId)
+		siw.Handler.GetV1UsersUserIdSettings(w, r, userId)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -796,8 +877,8 @@ func (siw *ServerInterfaceWrapper) GetApiV1UsersUserIdSettings(w http.ResponseWr
 	handler.ServeHTTP(w, r)
 }
 
-// PutApiV1UsersUserIdSettings operation middleware
-func (siw *ServerInterfaceWrapper) PutApiV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request) {
+// PutV1UsersUserIdSettings operation middleware
+func (siw *ServerInterfaceWrapper) PutV1UsersUserIdSettings(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
@@ -811,7 +892,7 @@ func (siw *ServerInterfaceWrapper) PutApiV1UsersUserIdSettings(w http.ResponseWr
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PutApiV1UsersUserIdSettings(w, r, userId)
+		siw.Handler.PutV1UsersUserIdSettings(w, r, userId)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -821,8 +902,8 @@ func (siw *ServerInterfaceWrapper) PutApiV1UsersUserIdSettings(w http.ResponseWr
 	handler.ServeHTTP(w, r)
 }
 
-// GetApiV1UsersUserIdVoted operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1UsersUserIdVoted(w http.ResponseWriter, r *http.Request) {
+// GetV1UsersUserIdVoted operation middleware
+func (siw *ServerInterfaceWrapper) GetV1UsersUserIdVoted(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
@@ -836,7 +917,7 @@ func (siw *ServerInterfaceWrapper) GetApiV1UsersUserIdVoted(w http.ResponseWrite
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1UsersUserIdVoted(w, r, userId)
+		siw.Handler.GetV1UsersUserIdVoted(w, r, userId)
 	}))
 
 	for i := len(siw.HandlerMiddlewares) - 1; i >= 0; i-- {
@@ -960,73 +1041,76 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/frendships/{userId}/followers", wrapper.GetApiV1FrendshipsUserIdFollowers)
+		r.Post(options.BaseURL+"/auth/sign", wrapper.PostAuthSign)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/frendships/{userId}/following", wrapper.GetApiV1FrendshipsUserIdFollowing)
+		r.Get(options.BaseURL+"/v1/frendships/{userId}/followers", wrapper.GetV1FrendshipsUserIdFollowers)
 	})
 	r.Group(func(r chi.Router) {
-		r.Delete(options.BaseURL+"/api/v1/friendships/{userId}", wrapper.DeleteApiV1FriendshipsUserId)
+		r.Get(options.BaseURL+"/v1/frendships/{userId}/following", wrapper.GetV1FrendshipsUserIdFollowing)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/api/v1/friendships/{userId}", wrapper.PostApiV1FriendshipsUserId)
+		r.Delete(options.BaseURL+"/v1/friendships/{userId}", wrapper.DeleteV1FriendshipsUserId)
 	})
 	r.Group(func(r chi.Router) {
-		r.Put(options.BaseURL+"/api/v1/friendships/{userId}", wrapper.PutApiV1FriendshipsUserId)
+		r.Post(options.BaseURL+"/v1/friendships/{userId}", wrapper.PostV1FriendshipsUserId)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/health", wrapper.GetApiV1Health)
+		r.Put(options.BaseURL+"/v1/friendships/{userId}", wrapper.PutV1FriendshipsUserId)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/api/v1/posts", wrapper.PostApiV1Posts)
+		r.Get(options.BaseURL+"/v1/health", wrapper.GetV1Health)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/posts/private", wrapper.GetApiV1PostsPrivate)
+		r.Post(options.BaseURL+"/v1/posts", wrapper.PostV1Posts)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/posts/public", wrapper.GetApiV1PostsPublic)
+		r.Get(options.BaseURL+"/v1/posts/private", wrapper.GetV1PostsPrivate)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/posts/public/rank", wrapper.GetApiV1PostsPublicRank)
+		r.Get(options.BaseURL+"/v1/posts/public", wrapper.GetV1PostsPublic)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/posts/public/{post_id}", wrapper.GetApiV1PostsPublicPostId)
+		r.Get(options.BaseURL+"/v1/posts/public/rank", wrapper.GetV1PostsPublicRank)
 	})
 	r.Group(func(r chi.Router) {
-		r.Delete(options.BaseURL+"/api/v1/posts/{post_id}", wrapper.DeleteApiV1PostsPostId)
+		r.Get(options.BaseURL+"/v1/posts/public/{post_id}", wrapper.GetV1PostsPublicPostId)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/posts/{post_id}", wrapper.GetApiV1PostsPostId)
+		r.Delete(options.BaseURL+"/v1/posts/{post_id}", wrapper.DeleteV1PostsPostId)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/api/v1/posts/{post_id}/polls", wrapper.PostApiV1PostsPostIdPolls)
+		r.Get(options.BaseURL+"/v1/posts/{post_id}", wrapper.GetV1PostsPostId)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/users", wrapper.GetApiV1Users)
+		r.Post(options.BaseURL+"/v1/posts/{post_id}/polls", wrapper.PostV1PostsPostIdPolls)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/api/v1/users", wrapper.PostApiV1Users)
+		r.Get(options.BaseURL+"/v1/users", wrapper.GetV1Users)
 	})
 	r.Group(func(r chi.Router) {
-		r.Delete(options.BaseURL+"/api/v1/users/{user_id}", wrapper.DeleteApiV1UsersUserId)
+		r.Post(options.BaseURL+"/v1/users", wrapper.PostV1Users)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/users/{user_id}", wrapper.GetApiV1UsersUserId)
+		r.Delete(options.BaseURL+"/v1/users/{user_id}", wrapper.DeleteV1UsersUserId)
 	})
 	r.Group(func(r chi.Router) {
-		r.Patch(options.BaseURL+"/api/v1/users/{user_id}", wrapper.PatchApiV1UsersUserId)
+		r.Get(options.BaseURL+"/v1/users/{user_id}", wrapper.GetV1UsersUserId)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/users/{user_id}/posted", wrapper.GetApiV1UsersUserIdPosted)
+		r.Patch(options.BaseURL+"/v1/users/{user_id}", wrapper.PatchV1UsersUserId)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/users/{user_id}/settings", wrapper.GetApiV1UsersUserIdSettings)
+		r.Get(options.BaseURL+"/v1/users/{user_id}/posted", wrapper.GetV1UsersUserIdPosted)
 	})
 	r.Group(func(r chi.Router) {
-		r.Put(options.BaseURL+"/api/v1/users/{user_id}/settings", wrapper.PutApiV1UsersUserIdSettings)
+		r.Get(options.BaseURL+"/v1/users/{user_id}/settings", wrapper.GetV1UsersUserIdSettings)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/users/{user_id}/voted", wrapper.GetApiV1UsersUserIdVoted)
+		r.Put(options.BaseURL+"/v1/users/{user_id}/settings", wrapper.PutV1UsersUserIdSettings)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/v1/users/{user_id}/voted", wrapper.GetV1UsersUserIdVoted)
 	})
 
 	return r
