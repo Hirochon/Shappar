@@ -86,8 +86,8 @@ describe('useVote', () => {
     const wrapper = createHookWrapper(queryClient);
     const deferred = createDeferred<VoteResponse>();
     const initialPost = getMockPollPost(postId);
+    const postSpy = vi.spyOn(apiClient, 'post').mockReturnValue(deferred.promise);
 
-    vi.spyOn(apiClient, 'post').mockReturnValue(deferred.promise);
     queryClient.setQueryData(pollDetailQueryKey(postId), initialPost);
 
     const { result } = renderHook(() => useVote(postId), { wrapper });
@@ -105,7 +105,7 @@ describe('useVote', () => {
     });
 
     await waitFor(() => {
-      expect(apiClient.post).toHaveBeenCalledTimes(1);
+      expect(postSpy).toHaveBeenCalledTimes(1);
     });
 
     deferred.reject(

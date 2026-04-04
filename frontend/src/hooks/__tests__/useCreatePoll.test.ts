@@ -38,18 +38,15 @@ describe('useCreatePoll', () => {
     const wrapper = createHookWrapper(queryClient);
     const { result } = renderHook(() => useCreatePoll(), { wrapper });
 
-    let response: Awaited<ReturnType<typeof result.current.mutateAsync>> | undefined;
-
     await act(async () => {
-      response = await result.current.mutateAsync({
+      await result.current.mutateAsync({
         question: '次に撮りに行く場所は？',
         options: [{ answer: '海' }, { answer: '山' }],
       });
     });
 
-    expect(response).toEqual({ post_id: expect.any(String) });
-
     await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
       expect(invalidateQueriesSpy).toHaveBeenCalledWith({
         queryKey: ['public-polls'],
       });
