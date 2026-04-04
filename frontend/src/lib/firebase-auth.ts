@@ -25,7 +25,7 @@ type AuthClient = {
 type AuthStateListener = (user: FirebaseUser | null) => void;
 
 export const isMockAuthEnabled =
-  import.meta.env.VITE_ENABLE_MOCKS === 'true';
+  import.meta.env.DEV && import.meta.env.VITE_ENABLE_MOCKS === 'true';
 
 function getStoredMockSession() {
   if (typeof window === 'undefined') {

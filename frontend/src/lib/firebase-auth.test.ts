@@ -24,6 +24,7 @@ describe('firebase-auth runtime wrapper', () => {
   });
 
   it('creates and clears a mock auth session when VITE_ENABLE_MOCKS=true', async () => {
+    vi.stubEnv('DEV', true);
     vi.stubEnv('VITE_ENABLE_MOCKS', 'true');
 
     const firebaseAuth = await loadFirebaseAuthModule();
@@ -62,6 +63,7 @@ describe('firebase-auth runtime wrapper', () => {
   });
 
   it('restores a mock auth session from localStorage', async () => {
+    vi.stubEnv('DEV', true);
     vi.stubEnv('VITE_ENABLE_MOCKS', 'true');
     window.localStorage.setItem('shappar:mock-auth-session', 'mock-user-123');
 
@@ -71,6 +73,30 @@ describe('firebase-auth runtime wrapper', () => {
       uid: 'mock-user-123',
       displayName: 'Shappar User',
     });
+  });
+
+  it('disables mock auth outside DEV even when VITE_ENABLE_MOCKS=true', async () => {
+    vi.stubEnv('DEV', false);
+    vi.stubEnv('VITE_ENABLE_MOCKS', 'true');
+
+    const authModule = await import('firebase/auth');
+    const firebaseUser = { uid: 'firebase-user-123' } as never;
+    vi.mocked(authModule.signInWithPopup).mockResolvedValueOnce({
+      user: firebaseUser,
+    } as never);
+
+    const firebaseAuth = await loadFirebaseAuthModule();
+
+    expect(firebaseAuth.isMockAuthEnabled).toBe(false);
+    await expect(
+      firebaseAuth.signInWithPopup(
+        firebaseAuth.auth,
+        firebaseAuth.googleProvider,
+      ),
+    ).resolves.toEqual({
+      user: firebaseUser,
+    });
+    expect(window.localStorage.getItem('shappar:mock-auth-session')).toBeNull();
   });
 
   it('delegates to Firebase auth when mocks are disabled', async () => {
